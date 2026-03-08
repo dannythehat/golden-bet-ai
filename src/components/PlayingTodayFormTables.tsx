@@ -58,7 +58,7 @@ const BET_TABS: { id: BetType; label: string; shortLabel: string; icon: React.Re
   { id: 'over_35_cards', label: 'Over 3.5 Cards', shortLabel: 'O3.5 Cards', icon: <CreditCard className="w-3.5 h-3.5" /> },
 ];
 
-import { EXCLUDED_LEAGUE_PATTERNS, isAllowedTeam, isAllowedLeague } from '@/lib/teamFilters';
+import { EXCLUDED_LEAGUE_PATTERNS, isAllowedTeam } from '@/lib/teamFilters';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -102,27 +102,38 @@ function getRowBandClass(rank: number): string {
 }
 
 function normalizeTeam(name: string): string {
-  return name.toLowerCase().replace(/\bfc\b|\bcf\b|\bsc\b|\bac\b|\bas\b|\bafc\b/gi, '').replace(/[^a-z0-9]/g, '').trim();
+  return name
+    .toLowerCase()
+    .replace(/\bfc\b|\bcf\b|\bsc\b|\bac\b|\bas\b|\bafc\b/gi, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+function strictTeamNameMatch(aRaw: string, bRaw: string): boolean {
+  const a = normalizeTeam(aRaw);
+  const b = normalizeTeam(bRaw);
+  if (!a || !b || a.length < 4 || b.length < 4) return false;
+  if (a === b) return true;
+
+  const shorter = a.length <= b.length ? a : b;
+  const longer = a.length > b.length ? a : b;
+  if (shorter.length < 6) return false;
+  if (shorter.length / longer.length < 0.75) return false;
+  return longer.includes(shorter);
+}
+
+function hasKnownFormTeam(fixtureTeam: string, normalizedFormTeams: string[]): boolean {
+  const normalizedFixtureTeam = normalizeTeam(fixtureTeam);
+  if (normalizedFixtureTeam.length < 4) return false;
+
+  return normalizedFormTeams.some((formTeam) =>
+    strictTeamNameMatch(normalizedFixtureTeam, formTeam)
+  );
 }
 
 function teamMatchesFixture(teamName: string, fixture: TodaysFixture): 'home' | 'away' | null {
-  const tn = normalizeTeam(teamName);
-  const ht = normalizeTeam(fixture.home_team);
-  const at = normalizeTeam(fixture.away_team);
-  if (tn.length < 4) return null;
-  // Exact match first
-  if (tn === ht) return 'home';
-  if (tn === at) return 'away';
-  // Strict substring: shorter must be ≥75% of longer AND ≥6 chars
-  const strictMatch = (a: string, b: string) => {
-    const shorter = a.length <= b.length ? a : b;
-    const longer = a.length > b.length ? a : b;
-    if (shorter.length < 6) return false;
-    if (shorter.length / longer.length < 0.75) return false;
-    return longer.includes(shorter);
-  };
-  if (strictMatch(tn, ht)) return 'home';
-  if (strictMatch(tn, at)) return 'away';
+  if (strictTeamNameMatch(teamName, fixture.home_team)) return 'home';
+  if (strictTeamNameMatch(teamName, fixture.away_team)) return 'away';
   return null;
 }
 
@@ -175,7 +186,7 @@ export function PlayingTodayFormTables({ onNavigate }: PlayingTodayFormTablesPro
       if (error) { console.error('Error fetching teams:', error); return; }
       if (data) {
         const filtered = (data as RollingTeamStat[]).filter(t =>
-          isAllowedLeague(t.league, t.region) && isAllowedTeam(t.team_name)
+          !EXCLUDED_LEAGUE_PATTERNS.some(p => p.test(t.league || '')) && isAllowedTeam(t.team_name)
         );
         setAllTeams(filtered);
       }
@@ -221,11 +232,21 @@ export function PlayingTodayFormTables({ onNavigate }: PlayingTodayFormTablesPro
   // Cross-reference teams with today's fixtures
   const playingTeams = useMemo((): PlayingTeam[] => {
     if (!fixtures.length || !allTeams.length) return [];
+
+    const normalizedFormTeams = allTeams
+      .map((team) => normalizeTeam(team.team_name || ''))
+      .filter((name) => name.length >= 4);
+
+    const validFixtures = fixtures.filter((fixture) =>
+      hasKnownFormTeam(fixture.home_team || '', normalizedFormTeams) &&
+      hasKnownFormTeam(fixture.away_team || '', normalizedFormTeams)
+    );
+
     const result: PlayingTeam[] = [];
     const seen = new Set<string>();
 
     for (const team of allTeams) {
-      for (const fixture of fixtures) {
+      for (const fixture of validFixtures) {
         const side = teamMatchesFixture(team.team_name, fixture);
         if (side && !seen.has(team.team_name)) {
           seen.add(team.team_name);
