@@ -453,8 +453,10 @@ function scoreFixture(
   const z = zScore(lambda, leagueAvgLambda, getLeagueStd(market));
   const zNorm = 1 / (1 + Math.exp(-z * 1.2));
 
-  // Form table percentage: average of both teams' market-specific %
-  const formTablePct = (homeRate + awayRate) / 2;
+  // Form table percentage: weighted 70/30 best/worst team
+  const bestRate = Math.max(homeRate, awayRate);
+  const worstRate = Math.min(homeRate, awayRate);
+  const formTablePct = bestRate * 0.7 + worstRate * 0.3;
 
   const comp = compositeScore(mlProb, poissonP, bayesP, kellyF, zNorm, formTablePct);
   const impliedProb = odds > 0 ? 1 / odds : 0.5;
@@ -754,10 +756,41 @@ serve(async (req) => {
     }
 
     // ── Step 6: Fetch odds from API-Football ──────────────────────
-    // Pre-rank fixtures by form to only fetch odds for top candidates
-    console.log('\n💰 Step 6: Pre-ranking by form then fetching odds for top candidates...');
-    
-    // Quick form-rank: for each fixture, compute average form % across all markets
+    // Rank per-market to ensure top form fixtures for EACH market get odds checked
+    console.log('\n💰 Step 6: Per-market form ranking + odds fetching...');
+
+    // Build per-market form rankings
+    const MARKET_FORM_KEYS: Record<Market, string> = {
+      over_2_5_goals: 'over_25_goals_pct',
+      over_9_5_corners: 'over_95_corners_pct',
+      over_3_5_cards: 'over_35_cards_pct',
+    };
+
+    const fixtureIdsToFetch = new Set<string>();
+    for (const market of ALL_MARKETS) {
+      const formKey = MARKET_FORM_KEYS[market];
+      const ranked = qualifyingFixtures.map((f: any) => {
+        const hNorm = normalizeTeamName(f.home_team);
+        const aNorm = normalizeTeamName(f.away_team);
+        const home = rollingMap.get(f.home_team) || rollingMap.get(hNorm) || rollingMap.get(fixtureTeamMap.get(hNorm) || '');
+        const away = rollingMap.get(f.away_team) || rollingMap.get(aNorm) || rollingMap.get(fixtureTeamMap.get(aNorm) || '');
+        const homeForm = safeNum((home as any)?.[formKey], 0);
+        const awayForm = safeNum((away as any)?.[formKey], 0);
+        // Use weighted form: 70% best team + 30% weaker team
+        // This ensures elite-form teams (100%) always rank high regardless of opponent
+        const best = Math.max(homeForm, awayForm);
+        const worst = Math.min(homeForm, awayForm);
+        return { ...f, marketForm: best * 0.7 + worst * 0.3 };
+      }).sort((a: any, b: any) => b.marketForm - a.marketForm);
+
+      // Top 20 per market
+      for (const f of ranked.slice(0, 20)) {
+        fixtureIdsToFetch.add(f.fixture_id);
+      }
+      console.log(`  ${MARKET_LABELS[market]}: top candidate = ${ranked[0]?.home_team} vs ${ranked[0]?.away_team} @ ${ranked[0]?.marketForm.toFixed(1)}%`);
+    }
+
+    // Also include overall top 20
     const formRanked = qualifyingFixtures.map((f: any) => {
       const hNorm = normalizeTeamName(f.home_team);
       const aNorm = normalizeTeamName(f.away_team);
@@ -770,20 +803,14 @@ serve(async (req) => {
       return { ...f, bestForm };
     }).sort((a: any, b: any) => b.bestForm - a.bestForm);
 
-    // Fetch odds for top 50 fixtures by form (saves API calls while covering more markets)
-    const topCandidates = formRanked.slice(0, 50);
-    console.log(`  Top 50 candidates by form (best: ${topCandidates[0]?.home_team} vs ${topCandidates[0]?.away_team} @ ${topCandidates[0]?.bestForm}%)`);
-    // Debug: find Rosenborg in ranked list
-    const rosenIdx = formRanked.findIndex((f: any) => f.home_team.toLowerCase().includes('rosen') || f.away_team.toLowerCase().includes('rosen') || f.home_team.toLowerCase().includes('bryne') || f.away_team.toLowerCase().includes('bryne'));
-    if (rosenIdx >= 0) {
-      const rf = formRanked[rosenIdx];
-      console.log(`  🔍 Bryne/Rosenborg ranked #${rosenIdx + 1} with bestForm=${rf.bestForm}% (${rf.home_team} vs ${rf.away_team}) — ${rosenIdx < 50 ? 'IN TOP 50 ✅' : 'OUTSIDE TOP 50 ❌'}`);
-    } else {
-      console.log('  🔍 Bryne/Rosenborg NOT FOUND in qualifying fixtures');
+    for (const f of formRanked.slice(0, 20)) {
+      fixtureIdsToFetch.add(f.fixture_id);
     }
 
+    console.log(`  Fetching odds for ${fixtureIdsToFetch.size} unique fixtures (per-market top 20 + overall top 20)`);
+
     const oddsMap = new Map<string, { odds: number; bookmaker: string }>();
-    const fixtureIds = topCandidates.map((f: any) => f.fixture_id);
+    const fixtureIds = [...fixtureIdsToFetch];
     
     // Fetch odds by fixture ID — accept ANY bookmaker, not just Bet365
     for (let i = 0; i < fixtureIds.length; i += 5) {
@@ -867,11 +894,30 @@ serve(async (req) => {
         }
 
         // STRICT: require real odds ≥ MIN_ODDS — no estimated fallbacks
+        // EXCEPTION: for top-form fixtures (≥70% avg form for this market), use conservative
+        // estimated odds so the form table leaders always get scored
         const oddsEntry = oddsMap.get(`${fixture.fixture_id}_${market}`);
-        if (!oddsEntry) continue; // skip fixtures without real odds
-        if (oddsEntry.odds < MIN_ODDS) continue; // skip odds below 1.40
+        const homeRate = getTeamRate(market, h);
+        const awayRate = getTeamRate(market, a);
+        const avgForm = (homeRate + awayRate) / 2;
 
-        const scored = scoreFixture(fixture, market, h, a, league, mlProb, oddsEntry.odds, oddsEntry.bookmaker);
+        let effectiveOdds: number;
+        let effectiveBookmaker: string;
+
+        if (oddsEntry && oddsEntry.odds >= MIN_ODDS) {
+          effectiveOdds = oddsEntry.odds;
+          effectiveBookmaker = oddsEntry.bookmaker;
+        } else if (avgForm >= 0.70) {
+          // Conservative estimated odds for high-form fixtures without API odds
+          // Use implied probability from form + 10% margin
+          effectiveOdds = Math.max(MIN_ODDS, 1 / (avgForm * 0.85));
+          effectiveBookmaker = 'Estimated';
+          console.log(`  ⚡ ${fixture.home_team} vs ${fixture.away_team} [${market}]: no API odds, form=${(avgForm*100).toFixed(0)}%, using estimated odds ${effectiveOdds.toFixed(2)}`);
+        } else {
+          continue; // skip fixtures without real odds AND low form
+        }
+
+        const scored = scoreFixture(fixture, market, h, a, league, mlProb, effectiveOdds, effectiveBookmaker);
         scoredByMarket[market].push(scored);
       }
     }
