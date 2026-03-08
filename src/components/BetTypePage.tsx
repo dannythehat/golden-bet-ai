@@ -301,7 +301,7 @@ export function BetTypePage({ betType }: BetTypePageProps) {
         ]);
 
         if (teamsRes.data) {
-          const filtered = (teamsRes.data as any[]).filter(t => isAllowedLeague(t.league, t.region) && isAllowedTeam(t.team_name));
+          const filtered = (teamsRes.data as any[]).filter(t => !EXCLUDED_LEAGUE_PATTERNS.some(p => p.test(t.league || '')) && isAllowedTeam(t.team_name));
           setFormTeams(filtered);
         }
 

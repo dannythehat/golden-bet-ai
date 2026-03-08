@@ -186,7 +186,7 @@ export function PlayingTodayFormTables({ onNavigate }: PlayingTodayFormTablesPro
       if (error) { console.error('Error fetching teams:', error); return; }
       if (data) {
         const filtered = (data as RollingTeamStat[]).filter(t =>
-          isAllowedLeague(t.league, t.region) && isAllowedTeam(t.team_name)
+          !EXCLUDED_LEAGUE_PATTERNS.some(p => p.test(t.league || '')) && isAllowedTeam(t.team_name)
         );
         setAllTeams(filtered);
       }
