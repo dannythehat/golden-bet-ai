@@ -774,7 +774,11 @@ serve(async (req) => {
         const away = rollingMap.get(f.away_team) || rollingMap.get(aNorm) || rollingMap.get(fixtureTeamMap.get(aNorm) || '');
         const homeForm = safeNum((home as any)?.[formKey], 0);
         const awayForm = safeNum((away as any)?.[formKey], 0);
-        return { ...f, marketForm: (homeForm + awayForm) / 2 };
+        // Use weighted form: 70% best team + 30% weaker team
+        // This ensures elite-form teams (100%) always rank high regardless of opponent
+        const best = Math.max(homeForm, awayForm);
+        const worst = Math.min(homeForm, awayForm);
+        return { ...f, marketForm: best * 0.7 + worst * 0.3 };
       }).sort((a: any, b: any) => b.marketForm - a.marketForm);
 
       // Top 20 per market
