@@ -1,0 +1,173 @@
+project_id = "ffonednbxcfhzxardvry"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+double_confirm_changes = false
+
+[auth.external.google]
+enabled = false
+
+[functions.form-stats]
+verify_jwt = false
+
+[functions.golden-bets]
+verify_jwt = false
+
+[functions.acca-builder]
+verify_jwt = false
+
+[functions.bet-builder]
+verify_jwt = false
+
+[functions.live-stats]
+verify_jwt = false
+
+[functions.football-api]
+verify_jwt = false
+
+[functions.ml-fixtures]
+verify_jwt = false
+
+[functions.gaffer-alerts]
+verify_jwt = false
+
+[functions.match-intelligence]
+verify_jwt = false
+
+[functions.populate-stats]
+verify_jwt = false
+
+
+[functions.settle-bets]
+verify_jwt = false
+
+[functions.send-bet-emails]
+verify_jwt = false
+
+[functions.notify-new-signup]
+verify_jwt = false
+
+[functions.ml-upload-predictions]
+verify_jwt = false
+
+[functions.ml-daily-picks]
+verify_jwt = false
+
+[functions.ml-inference]
+verify_jwt = false
+
+[functions.ml-value-engine]
+verify_jwt = false
+
+[functions.ml-bayesian-engine]
+verify_jwt = false
+
+[functions.ml-auto-loader]
+verify_jwt = false
+
+[functions.ml-compute-features]
+verify_jwt = false
+
+[functions.ml-daily-learn]
+verify_jwt = false
+
+[functions.ml-train-models]
+verify_jwt = false
+
+[functions.ml-train-quick]
+verify_jwt = false
+
+[functions.ml-bulk-training]
+verify_jwt = false
+
+[functions.ml-train-ensemble]
+verify_jwt = false
+
+[functions.ml-train-advanced]
+verify_jwt = false
+
+[functions.ml-train-incremental]
+verify_jwt = false
+
+[functions.ml-ingest-results]
+verify_jwt = false
+
+[functions.ml-replicate-train]
+verify_jwt = false
+
+[functions.capture-bet-proof]
+verify_jwt = false
+
+[functions.backfill-bet-proofs]
+verify_jwt = false
+
+[functions.ml-predictions]
+verify_jwt = false
+
+[functions.sportmonks-ingest]
+verify_jwt = false
+
+[functions.sportmonks-compute-features]
+verify_jwt = false
+
+[functions.compute-rolling-stats]
+verify_jwt = false
+
+[functions.ml-ai-manager]
+verify_jwt = false
+
+[functions.ml-export-training]
+verify_jwt = false
+
+[functions.ml-enrich-features]
+verify_jwt = false
+
+[functions.ml-train-engine]
+verify_jwt = false
+
+[functions.ml-ai-layer]
+verify_jwt = false
+
+[functions.ml-orchestrator]
+verify_jwt = false
+
+[functions.gaffer-match-reports]
+verify_jwt = false
+
+[functions.email-blog-digest]
+verify_jwt = false
+
+[functions.generate-blog-post]
+verify_jwt = false
+
+[functions.form-table-ai]
+verify_jwt = false
+
+[functions.daily-orchestrator]
+verify_jwt = false
+
+[functions.match-power-scores]
+verify_jwt = false
+
+[functions.publish-to-social]
+verify_jwt = false

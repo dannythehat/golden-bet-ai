@@ -1,0 +1,33 @@
+run_id,audit_date,dataset,feature_group,sub_feature,coverage_pct,tier,source,backfill_possible,daily_maintainable,notes
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Corners,home_corners_for_avg_10 (rolling L10),39.0,All,API-Football derived,Partial,Yes,61% missing - likely compute_rolling_stats bug
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Corners,combined_corners_10,100.0,All,Derived,Yes,Yes,WARNING - may be zero-filled not NULL when rolling missing
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Corners,total_corners (match),11.6,All,API-Football,Partial,Yes,Only 33k rows have match-level corners
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Corners,home_corners_for_avg_10,41.6,Top 10,API-Football derived,Partial,Yes,Slightly better in top leagues
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Corners,home_corners_for_avg_10,38.4,Rest,API-Football derived,Partial,Yes,255 leagues with poor corners coverage
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Cards,home_cards_for_avg_10 (rolling L10),99.1,All,API-Football derived,Yes,Yes,Good coverage - production ready
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Cards,combined_cards_10,100.0,All,Derived,Yes,Yes,Reliable
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Cards,total_cards (match),11.6,All,API-Football,Partial,Yes,Sparse match-level data
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Referee,referee_name,0.0,All,API-Football,Not started,Needs work,CRITICAL - 285506 rows missing - biggest single gap
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Referee,ref_avg_cards_last50,0.0,All,Derived,Not started,Needs work,Blocked by referee_name being empty
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Referee,ref_over35_cards_rate_last50,0.0,All,Derived,Not started,Needs work,Blocked by referee_name being empty
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,xG,home_xg_for_avg_10 (rolling L10),7.6,All,API-Football,Partial,API-dependent,API-Football doesn't backfill xG for pre-2023 seasons
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,xG,combined_xg_for_10,100.0,All,Derived,Yes,Yes,RED FLAG - likely zero-filled. Real coverage ~7.6%
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,xG,xg_diff_10,100.0,All,Derived,Yes,Yes,RED FLAG - same issue as combined_xg
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,xG,home_xg_for_avg_10,13.5,Top 10,API-Football,Partial,Yes,13.5% in top leagues - 2x better than rest
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,xG,home_xg_for_avg_10,6.3,Rest,API-Football,Partial,Yes,Very sparse in non-top leagues
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Shots,home_shots_for_avg_10 (rolling L10),37.6,All,API-Football derived,Partial,Yes,Shot proxy viable for xG estimation
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Shots,home_shots_on_target_avg_10,37.8,All,API-Football derived,Partial,Yes,Good proxy for xG
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Shots,combined_shots_10,100.0,All,Derived,Yes,Yes,Check for zero-fill issue
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,League Bias,league_avg_goals,99.7,All,league_rolling_stats,Yes,Yes,Production ready
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,League Bias,league_avg_corners,39.5,All,league_rolling_stats,Partial,Yes,Tied to corners rolling issue
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,League Bias,league_avg_cards,39.5,All,league_rolling_stats,Partial,Yes,Tied to corners rolling issue
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Weather,temperature_celsius,0.0,All,OpenWeather,No - not linked,Needs match location mapping,In match_intelligence table only - not joined
+coverage-audit-2026-02-18,2026-02-18,ml_training_data_v2,Weather,wind_speed_kmh,0.0,All,OpenWeather,No - not linked,Needs match location mapping,In match_intelligence table only - not joined
+coverage-audit-2026-02-18,2026-02-18,match_intelligence,Referee,referee_name,26.0,Forward-only,API-Football,Forward-only,Yes,Only Jan 2026+ fixtures
+coverage-audit-2026-02-18,2026-02-18,match_intelligence,Referee,referee_avg_cards,0.0,All,Derived,No,Needs work,Not computed despite referee_name existing in 26% of rows
+coverage-audit-2026-02-18,2026-02-18,match_intelligence,Injuries,home_injury_count > 0,74.0,Forward-only,API-Football,Forward-only,Yes,Not joined to ml_training_data_v2
+coverage-audit-2026-02-18,2026-02-18,match_intelligence,Manager,home_manager,96.9,Forward-only,API-Football,Forward-only,Yes,Not joined to ml_training_data_v2
+coverage-audit-2026-02-18,2026-02-18,match_intelligence,Weather,temperature,0.0,All,OpenWeather,No,No,Not populated despite OpenWeather integration existing
+coverage-audit-2026-02-18,2026-02-18,sportmonks_ml_features,xG,home_xg_l10,11.2,All,SportMonks,Limited,Unknown,Only 1041 rows - 14-day window - NOT training ready
+coverage-audit-2026-02-18,2026-02-18,sportmonks_ml_features,Odds,odds_over25,0.0,All,SportMonks,No,No,Not populated
+coverage-audit-2026-02-18,2026-02-18,sportmonks_ml_features,Odds,odds_btts_yes,0.0,All,SportMonks,No,No,Not populated

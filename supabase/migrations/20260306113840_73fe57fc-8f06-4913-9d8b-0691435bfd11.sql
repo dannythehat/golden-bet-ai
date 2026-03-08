@@ -1,0 +1,1 @@
+DELETE FROM golden_bet_history WHERE prediction_date = '2026-03-06';

@@ -1,0 +1,102 @@
+/* Bulletproof blog article styling — fallback if prose plugin fails */
+.blog-article-content h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.blog-article-content h2 {
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: hsl(var(--foreground));
+}
+
+.blog-article-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+.blog-article-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+  color: hsl(var(--muted-foreground));
+}
+
+.blog-article-content ul,
+.blog-article-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.blog-article-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+}
+
+.blog-article-content blockquote {
+  border-left: 4px solid hsl(var(--gold));
+  background: hsl(var(--gold) / 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+  font-style: italic;
+}
+
+.blog-article-content strong {
+  color: hsl(var(--foreground));
+  font-weight: 700;
+}
+
+.blog-article-content em {
+  font-style: italic;
+}
+
+.blog-article-content a {
+  color: hsl(var(--primary));
+  text-decoration: none;
+}
+
+.blog-article-content a:hover {
+  text-decoration: underline;
+}
+
+.blog-article-content hr {
+  border-color: hsl(var(--border) / 0.3);
+  margin: 2rem 0;
+}
+
+.blog-article-content img {
+  border-radius: 0.75rem;
+  max-width: 100%;
+  height: auto;
+}
+
+.blog-article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.blog-article-content th,
+.blog-article-content td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid hsl(var(--border) / 0.3);
+  text-align: left;
+}
+
+.blog-article-content th {
+  background: hsl(var(--muted));
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
