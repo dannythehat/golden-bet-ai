@@ -356,7 +356,7 @@ export function BetTypePage({ betType }: BetTypePageProps) {
 
   const isProfit = plData.profit >= 0;
   const roi = plData.staked > 0 ? (plData.profit / plData.staked) * 100 : 0;
-  const monthName = new Date().toLocaleString('en-GB', { month: 'long' });
+  
 
   const getPercentColor = (v: number) => {
     if (v >= 80) return 'text-success font-black';
