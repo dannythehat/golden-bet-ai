@@ -453,8 +453,10 @@ function scoreFixture(
   const z = zScore(lambda, leagueAvgLambda, getLeagueStd(market));
   const zNorm = 1 / (1 + Math.exp(-z * 1.2));
 
-  // Form table percentage: average of both teams' market-specific %
-  const formTablePct = (homeRate + awayRate) / 2;
+  // Form table percentage: weighted 70/30 best/worst team
+  const bestRate = Math.max(homeRate, awayRate);
+  const worstRate = Math.min(homeRate, awayRate);
+  const formTablePct = bestRate * 0.7 + worstRate * 0.3;
 
   const comp = compositeScore(mlProb, poissonP, bayesP, kellyF, zNorm, formTablePct);
   const impliedProb = odds > 0 ? 1 / odds : 0.5;
