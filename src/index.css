@@ -1,0 +1,285 @@
+/* Font loaded via index.html for non-render-blocking */
+
+/* ── Copy Protection ── */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow selection inside inputs/textareas so UX isn't broken */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 30% 6%;
+    --foreground: 210 20% 98%;
+
+    --card: 222 25% 10%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222 25% 10%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 30% 6%;
+
+    --secondary: 222 20% 15%;
+    --secondary-foreground: 210 20% 95%;
+
+    --muted: 222 20% 18%;
+    --muted-foreground: 220 15% 65%;
+
+    --accent: 217 70% 55%;
+    --accent-foreground: 222 30% 6%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 152 82% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Golden Bets only - rich gold */
+    --gold: 45 93% 47%;
+    --gold-glow: 48 95% 55%;
+    --gold-dark: 42 80% 40%;
+    
+    /* Premium Ice/Navy palette */
+    --ice: 210 40% 96%;
+    --ice-glow: 200 30% 98%;
+    --navy: 217 70% 45%;
+    --navy-dark: 220 60% 30%;
+    --platinum: 220 15% 75%;
+    
+    /* Stats box - neon blue */
+    --stats: 210 100% 56%;
+    --stats-glow: 210 100% 65%;
+    
+    /* Gaffer box - neon purple */
+    --neon-yellow: 270 100% 65%;
+    --neon-yellow-glow: 270 100% 75%;
+    
+    /* Form Tables accent */
+    --form-accent: 160 84% 44%;
+    --form-accent-glow: 160 84% 55%;
+
+    /* Bet-type page colours */
+    --bet-goals: 160 84% 39%;
+    --bet-goals-glow: 160 84% 50%;
+    --bet-corners: 38 92% 50%;
+    --bet-corners-glow: 42 96% 58%;
+    --bet-cards: 350 89% 60%;
+    --bet-cards-glow: 350 89% 70%;
+
+    /* Neon green for live/won states */
+    --neon-green: 120 100% 50%;
+    --neon-green-glow: 120 100% 60%;
+    --live-pulse: 120 80% 45%;
+
+    --border: 222 20% 18%;
+    --input: 222 20% 15%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 222 25% 8%;
+    --sidebar-foreground: 220 10% 90%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 30% 6%;
+    --sidebar-accent: 222 20% 15%;
+    --sidebar-accent-foreground: 220 10% 90%;
+    --sidebar-border: 222 20% 15%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
+    --background: 222 30% 6%;
+    --foreground: 210 20% 95%;
+    --card: 222 25% 10%;
+    --card-foreground: 210 20% 95%;
+    --popover: 222 25% 10%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 30% 6%;
+    --secondary: 222 20% 15%;
+    --secondary-foreground: 220 10% 90%;
+    --muted: 222 20% 18%;
+    --muted-foreground: 220 15% 55%;
+    --accent: 217 70% 55%;
+    --accent-foreground: 222 30% 6%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 20% 18%;
+    --input: 222 20% 15%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-outfit antialiased;
+  }
+}
+
+@layer utilities {
+  .gold-gradient {
+    @apply bg-gradient-to-r from-gold-dark via-gold to-gold-glow;
+  }
+
+  .gold-text {
+    @apply bg-gradient-to-r from-gold-dark via-gold to-gold-glow bg-clip-text text-transparent;
+  }
+
+  /* Neon gold - only for Golden Bets branding */
+  .neon-gold-text {
+    color: hsl(var(--gold));
+  }
+
+  /* Navy/Ice gradient for premium sections */
+  .navy-gradient {
+    @apply bg-gradient-to-r from-navy-dark via-navy to-primary;
+  }
+
+  .ice-text {
+    color: hsl(var(--ice));
+  }
+
+  .platinum-text {
+    color: hsl(var(--platinum));
+  }
+
+  .glass-card {
+    @apply bg-card/90 border border-border/50 shadow-xl;
+  }
+
+  .glass-card-hover {
+    @apply glass-card hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300;
+  }
+
+  .premium-glass {
+    @apply bg-card/95 border border-primary/20 shadow-xl;
+  }
+
+  /* Crisp, high-contrast 3D box (no blur / no glow) */
+  .premium-3d {
+    @apply bg-gradient-to-b from-card to-muted/20 border-2 border-border/70 shadow-xl;
+  }
+
+  /* Inner inset box for grouped metrics */
+  .premium-3d-inset {
+    @apply bg-muted/20 border border-border/60;
+  }
+
+  .golden-glow {
+    box-shadow: 0 0 40px -10px hsl(var(--gold) / 0.4);
+  }
+
+  .navy-glow {
+    box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.4);
+  }
+
+  .success-glow {
+    box-shadow: 0 0 20px -5px hsl(var(--success) / 0.4);
+  }
+
+  .destructive-glow {
+    box-shadow: 0 0 20px -5px hsl(var(--destructive) / 0.4);
+  }
+
+  .stat-card {
+    @apply glass-card rounded-xl p-5 relative overflow-hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none;
+  }
+
+  .oracle-card {
+    @apply premium-glass rounded-2xl p-6 relative overflow-hidden;
+  }
+
+  .oracle-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none;
+  }
+
+  .sparkle-bg {
+    background-image: radial-gradient(ellipse at top, hsl(var(--primary) / 0.08) 0%, transparent 50%),
+                      radial-gradient(ellipse at bottom right, hsl(var(--primary) / 0.06) 0%, transparent 40%);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px -5px hsl(var(--gold) / 0.3); }
+    50% { box-shadow: 0 0 40px -5px hsl(var(--gold) / 0.5); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes neon-pulse {
+    0%, 100% { box-shadow: 0 0 10px hsl(var(--neon-green) / 0.3); }
+    50% { box-shadow: 0 0 25px hsl(var(--neon-green) / 0.5); }
+  }
+
+  .animate-neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  /* Mobile sharpness mode: Android can render backdrop-filter + gradient text as "fuzzy" */
+  @media (max-width: 768px) {
+    /* Disable backdrop blur on mobile for crisp text/edges */
+    .glass-card,
+    .glass-card-hover,
+    .mystic-glass,
+    .oracle-card {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    /* Disable gradient-text + glow on mobile (renders soft on some devices) */
+    .gold-text,
+    .neon-gold-text {
+      background-image: none !important;
+      -webkit-background-clip: initial !important;
+      background-clip: initial !important;
+      color: hsl(var(--gold)) !important;
+      -webkit-text-fill-color: hsl(var(--gold)) !important;
+      text-shadow: none !important;
+    }
+
+    .neon-mystic-text {
+      text-shadow: none !important;
+    }
+  }
+}
+
+/* Blog article styles moved to src/styles/blog-article.css for lazy loading */
