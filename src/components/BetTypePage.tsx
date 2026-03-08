@@ -404,24 +404,60 @@ export function BetTypePage({ betType }: BetTypePageProps) {
           </div>
 
           {/* Monthly P&L for this market */}
-          <div className="rounded-2xl border overflow-hidden shadow-lg" style={{ borderColor: `hsl(var(${config.colorVar}) / 0.25)` }}>
-            <div className="h-1" style={{ background: `linear-gradient(to right, hsl(var(${config.colorVar}) / 0.6), hsl(var(${config.colorVar})), hsl(var(${config.colorVar}) / 0.6))` }} />
-            <div className="p-4 md:p-5 bg-card/90">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2.5">
-                  <BarChart3 className="w-5 h-5" style={{ color: `hsl(var(${config.colorVar}))` }} />
-                  <h2 className="text-base font-bold text-foreground">{monthName} <span style={{ color: `hsl(var(${config.colorVar}))` }}>{config.title} P&L</span></h2>
+          <div className="rounded-2xl border-2 overflow-hidden shadow-xl" style={{ borderColor: `hsl(var(${config.colorVar}) / 0.3)` }}>
+            <div className="h-1.5" style={{ background: `linear-gradient(to right, hsl(var(${config.colorVar}) / 0.4), hsl(var(${config.colorVar})), hsl(var(${config.colorVar}) / 0.4))` }} />
+            <div className="p-5 md:p-6 bg-card/95">
+              {/* Header row */}
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-md text-white" style={{ background: `hsl(var(${config.colorVar}))` }}>
+                  <BarChart3 className="w-4.5 h-4.5" />
                 </div>
-                <div className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg border", isProfit ? "bg-success/10 border-success/40 text-success" : "bg-destructive/10 border-destructive/40 text-destructive")}>
-                  {isProfit ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                  <span className="text-lg font-black">{isProfit ? '+' : ''}£{plData.profit.toFixed(2)}</span>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">{config.title} <span style={{ color: `hsl(var(${config.colorVar}))` }}>Performance</span></h2>
+                  <p className="text-xs text-muted-foreground">3 doubles + 1 treble daily · £10 per bet · £40/day</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="text-muted-foreground">W/L: <span className="text-success font-bold">{plData.wins}</span>/<span className="text-destructive font-bold">{plData.losses}</span></span>
-                <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-full", isProfit ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive")}>{isProfit ? '+' : ''}{roi.toFixed(1)}% ROI</span>
-                <Link to="/#pnl" className="ml-auto text-xs font-semibold px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                  View Full P&L →
+
+              {/* Stats grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                {/* Net Profit */}
+                <div className={cn("rounded-xl p-3 border text-center", isProfit ? "bg-success/8 border-success/30" : "bg-destructive/8 border-destructive/30")}>
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Net Profit</div>
+                  <div className={cn("text-2xl font-black flex items-center justify-center gap-1", isProfit ? "text-success" : "text-destructive")}>
+                    {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    {isProfit ? '+' : ''}£{plData.profit.toFixed(2)}
+                  </div>
+                </div>
+
+                {/* ROI */}
+                <div className={cn("rounded-xl p-3 border text-center", isProfit ? "bg-success/8 border-success/30" : "bg-destructive/8 border-destructive/30")}>
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">ROI</div>
+                  <div className={cn("text-2xl font-black", isProfit ? "text-success" : "text-destructive")}>
+                    {isProfit ? '+' : ''}{roi.toFixed(1)}%
+                  </div>
+                </div>
+
+                {/* Win/Loss */}
+                <div className="rounded-xl p-3 border border-border/60 bg-muted/30 text-center">
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Bets W / L</div>
+                  <div className="text-2xl font-black text-foreground">
+                    <span className="text-success">{plData.wins}</span>
+                    <span className="text-muted-foreground mx-1">/</span>
+                    <span className="text-destructive">{plData.losses}</span>
+                  </div>
+                </div>
+
+                {/* Total Staked */}
+                <div className="rounded-xl p-3 border border-border/60 bg-muted/30 text-center">
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Staked</div>
+                  <div className="text-2xl font-black text-foreground">£{plData.staked.toFixed(0)}</div>
+                </div>
+              </div>
+
+              {/* Footer link */}
+              <div className="flex items-center justify-end">
+                <Link to="/#pnl" className="text-xs font-semibold px-4 py-1.5 rounded-full border transition-colors" style={{ borderColor: `hsl(var(${config.colorVar}) / 0.3)`, color: `hsl(var(${config.colorVar}))`, background: `hsl(var(${config.colorVar}) / 0.08)` }}>
+                  View Full P&L Hub →
                 </Link>
               </div>
             </div>
