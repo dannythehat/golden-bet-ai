@@ -102,7 +102,7 @@ function getRowBandClass(rank: number): string {
 }
 
 function normalizeTeam(name: string): string {
-  return name.toLowerCase().replace(/fc|cf|sc|ac|as|afc$/gi, '').replace(/^fc|^cf|^sc/gi, '').replace(/[^a-z0-9]/g, '').trim();
+  return name.toLowerCase().replace(/\bfc\b|\bcf\b|\bsc\b|\bac\b|\bas\b|\bafc\b/gi, '').replace(/[^a-z0-9]/g, '').trim();
 }
 
 function teamMatchesFixture(teamName: string, fixture: TodaysFixture): 'home' | 'away' | null {
@@ -110,15 +110,19 @@ function teamMatchesFixture(teamName: string, fixture: TodaysFixture): 'home' | 
   const ht = normalizeTeam(fixture.home_team);
   const at = normalizeTeam(fixture.away_team);
   if (tn.length < 4) return null;
+  // Exact match first
   if (tn === ht) return 'home';
   if (tn === at) return 'away';
-  const match = (a: string, b: string) => {
-    if (a.includes(b) && b.length >= a.length * 0.5) return true;
-    if (b.includes(a) && a.length >= b.length * 0.5) return true;
-    return false;
+  // Strict substring: shorter must be ≥75% of longer AND ≥6 chars
+  const strictMatch = (a: string, b: string) => {
+    const shorter = a.length <= b.length ? a : b;
+    const longer = a.length > b.length ? a : b;
+    if (shorter.length < 6) return false;
+    if (shorter.length / longer.length < 0.75) return false;
+    return longer.includes(shorter);
   };
-  if (match(tn, ht)) return 'home';
-  if (match(tn, at)) return 'away';
+  if (strictMatch(tn, ht)) return 'home';
+  if (strictMatch(tn, at)) return 'away';
   return null;
 }
 

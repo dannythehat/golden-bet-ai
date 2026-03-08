@@ -104,18 +104,26 @@ const TIERS = [
 /*  Helper: normalizeTeam for form table matching                      */
 /* ------------------------------------------------------------------ */
 function normalizeTeam(name: string): string {
-  return name.toLowerCase().replace(/fc|cf|sc|ac|as|afc$/gi, '').replace(/^fc|^cf|^sc/gi, '').replace(/[^a-z0-9]/g, '').trim();
+  return name.toLowerCase().replace(/\bfc\b|\bcf\b|\bsc\b|\bac\b|\bas\b|\bafc\b/gi, '').replace(/[^a-z0-9]/g, '').trim();
 }
 function teamMatchesFixture(teamName: string, fixture: any): 'home' | 'away' | null {
   const tn = normalizeTeam(teamName);
   const ht = normalizeTeam(fixture.home_team);
   const at = normalizeTeam(fixture.away_team);
   if (tn.length < 4) return null;
+  // Exact match first
   if (tn === ht) return 'home';
   if (tn === at) return 'away';
-  const match = (a: string, b: string) => (a.includes(b) && b.length >= a.length * 0.5) || (b.includes(a) && a.length >= b.length * 0.5);
-  if (match(tn, ht)) return 'home';
-  if (match(tn, at)) return 'away';
+  // Strict substring: shorter must be ≥75% of longer AND ≥6 chars
+  const strictMatch = (a: string, b: string) => {
+    const shorter = a.length <= b.length ? a : b;
+    const longer = a.length > b.length ? a : b;
+    if (shorter.length < 6) return false;
+    if (shorter.length / longer.length < 0.75) return false;
+    return longer.includes(shorter);
+  };
+  if (strictMatch(tn, ht)) return 'home';
+  if (strictMatch(tn, at)) return 'away';
   return null;
 }
 
