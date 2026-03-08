@@ -102,27 +102,38 @@ function getRowBandClass(rank: number): string {
 }
 
 function normalizeTeam(name: string): string {
-  return name.toLowerCase().replace(/\bfc\b|\bcf\b|\bsc\b|\bac\b|\bas\b|\bafc\b/gi, '').replace(/[^a-z0-9]/g, '').trim();
+  return name
+    .toLowerCase()
+    .replace(/\bfc\b|\bcf\b|\bsc\b|\bac\b|\bas\b|\bafc\b/gi, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+function strictTeamNameMatch(aRaw: string, bRaw: string): boolean {
+  const a = normalizeTeam(aRaw);
+  const b = normalizeTeam(bRaw);
+  if (!a || !b || a.length < 4 || b.length < 4) return false;
+  if (a === b) return true;
+
+  const shorter = a.length <= b.length ? a : b;
+  const longer = a.length > b.length ? a : b;
+  if (shorter.length < 6) return false;
+  if (shorter.length / longer.length < 0.75) return false;
+  return longer.includes(shorter);
+}
+
+function hasKnownFormTeam(fixtureTeam: string, normalizedFormTeams: string[]): boolean {
+  const normalizedFixtureTeam = normalizeTeam(fixtureTeam);
+  if (normalizedFixtureTeam.length < 4) return false;
+
+  return normalizedFormTeams.some((formTeam) =>
+    strictTeamNameMatch(normalizedFixtureTeam, formTeam)
+  );
 }
 
 function teamMatchesFixture(teamName: string, fixture: TodaysFixture): 'home' | 'away' | null {
-  const tn = normalizeTeam(teamName);
-  const ht = normalizeTeam(fixture.home_team);
-  const at = normalizeTeam(fixture.away_team);
-  if (tn.length < 4) return null;
-  // Exact match first
-  if (tn === ht) return 'home';
-  if (tn === at) return 'away';
-  // Strict substring: shorter must be ≥75% of longer AND ≥6 chars
-  const strictMatch = (a: string, b: string) => {
-    const shorter = a.length <= b.length ? a : b;
-    const longer = a.length > b.length ? a : b;
-    if (shorter.length < 6) return false;
-    if (shorter.length / longer.length < 0.75) return false;
-    return longer.includes(shorter);
-  };
-  if (strictMatch(tn, ht)) return 'home';
-  if (strictMatch(tn, at)) return 'away';
+  if (strictTeamNameMatch(teamName, fixture.home_team)) return 'home';
+  if (strictTeamNameMatch(teamName, fixture.away_team)) return 'away';
   return null;
 }
 
