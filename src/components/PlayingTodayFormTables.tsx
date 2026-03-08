@@ -232,11 +232,21 @@ export function PlayingTodayFormTables({ onNavigate }: PlayingTodayFormTablesPro
   // Cross-reference teams with today's fixtures
   const playingTeams = useMemo((): PlayingTeam[] => {
     if (!fixtures.length || !allTeams.length) return [];
+
+    const normalizedFormTeams = allTeams
+      .map((team) => normalizeTeam(team.team_name || ''))
+      .filter((name) => name.length >= 4);
+
+    const validFixtures = fixtures.filter((fixture) =>
+      hasKnownFormTeam(fixture.home_team || '', normalizedFormTeams) &&
+      hasKnownFormTeam(fixture.away_team || '', normalizedFormTeams)
+    );
+
     const result: PlayingTeam[] = [];
     const seen = new Set<string>();
 
     for (const team of allTeams) {
-      for (const fixture of fixtures) {
+      for (const fixture of validFixtures) {
         const side = teamMatchesFixture(team.team_name, fixture);
         if (side && !seen.has(team.team_name)) {
           seen.add(team.team_name);

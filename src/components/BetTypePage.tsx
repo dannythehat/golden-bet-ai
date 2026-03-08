@@ -319,11 +319,21 @@ export function BetTypePage({ betType }: BetTypePageProps) {
   // Cross-reference form teams with fixtures
   const playingTeams = useMemo(() => {
     if (!fixtures.length || !formTeams.length) return [];
+
+    const normalizedFormTeams = formTeams
+      .map((team) => normalizeTeam(team.team_name || ''))
+      .filter((name) => name.length >= 4);
+
+    const validFixtures = fixtures.filter((fixture) =>
+      hasKnownFormTeam(fixture.home_team || '', normalizedFormTeams) &&
+      hasKnownFormTeam(fixture.away_team || '', normalizedFormTeams)
+    );
+
     const result: any[] = [];
     const seen = new Set<string>();
 
     for (const team of formTeams) {
-      for (const fixture of fixtures) {
+      for (const fixture of validFixtures) {
         const side = teamMatchesFixture(team.team_name, fixture);
         if (side && !seen.has(team.team_name)) {
           seen.add(team.team_name);
@@ -342,7 +352,7 @@ export function BetTypePage({ betType }: BetTypePageProps) {
     return result
       .sort((a, b) => Number(b[config.formStatKey] ?? 0) - Number(a[config.formStatKey] ?? 0))
       .slice(0, 30);
-  }, [formTeams, fixtures, betType]);
+  }, [formTeams, fixtures, config.formStatKey]);
 
   const isProfit = plData.profit >= 0;
   const roi = plData.staked > 0 ? (plData.profit / plData.staked) * 100 : 0;
