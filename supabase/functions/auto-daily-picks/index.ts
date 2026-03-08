@@ -648,12 +648,23 @@ serve(async (req) => {
 
     // ── Step 2: Load form table teams ─────────────────────────────
     console.log('\n📊 Step 2: Loading form table teams...');
-    const { data: formTeams } = await supabase
-      .from('team_rolling_stats')
-      .select('team_name');
+    // Paginate to load ALL team names (max_rows=1000 cap in PostgREST)
+    const allFormTeams: any[] = [];
+    let page = 0;
+    const PAGE_SIZE = 1000;
+    while (true) {
+      const { data: batch } = await supabase
+        .from('team_rolling_stats')
+        .select('team_name')
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+      if (!batch || batch.length === 0) break;
+      allFormTeams.push(...batch);
+      if (batch.length < PAGE_SIZE) break;
+      page++;
+    }
 
-    const formTeamSet = new Set((formTeams || []).map((t: any) => t.team_name));
-    const formTeamNormSet = new Set((formTeams || []).map((t: any) => normalizeTeamName(t.team_name)));
+    const formTeamSet = new Set(allFormTeams.map((t: any) => t.team_name));
+    const formTeamNormSet = new Set(allFormTeams.map((t: any) => normalizeTeamName(t.team_name)));
     console.log(`✅ ${formTeamSet.size} teams in form tables`);
 
     // ── Step 3: Cross-reference — keep fixtures where either team is in form tables ─
@@ -687,18 +698,26 @@ serve(async (req) => {
       leagueNames.add(f.league);
     }
 
-    const [{ data: rollingData }, { data: leagueData }] = await Promise.all([
-      supabase.from('team_rolling_stats')
+    // Paginate rolling stats (max_rows=1000 cap)
+    const allRollingData: any[] = [];
+    let rsPage = 0;
+    while (true) {
+      const { data: rsBatch } = await supabase.from('team_rolling_stats')
         .select('team_name, avg_goals_scored, avg_goals_conceded, avg_total_goals, over_25_goals_pct, btts_pct, avg_corners_for, avg_corners_against, avg_total_corners, over_95_corners_pct, avg_cards_for, avg_cards_against, avg_total_cards, over_35_cards_pct, over_45_cards_pct, matches_used, avg_shots_for, avg_xg_for, avg_xg_against, avg_possession')
         .gte('matches_used', 6)
-        .limit(3000),
-      supabase.from('league_rolling_stats')
-        .select('league, avg_total_goals, over_25_goals_pct, avg_total_corners, over_95_corners_pct, avg_total_cards, over_35_cards_pct')
-        .in('league', [...leagueNames]),
-    ]);
+        .range(rsPage * PAGE_SIZE, (rsPage + 1) * PAGE_SIZE - 1);
+      if (!rsBatch || rsBatch.length === 0) break;
+      allRollingData.push(...rsBatch);
+      if (rsBatch.length < PAGE_SIZE) break;
+      rsPage++;
+    }
+
+    const { data: leagueData } = await supabase.from('league_rolling_stats')
+      .select('league, avg_total_goals, over_25_goals_pct, avg_total_corners, over_95_corners_pct, avg_total_cards, over_35_cards_pct')
+      .in('league', [...leagueNames]);
 
     const rollingMap = new Map<string, RollingStats>();
-    for (const r of (rollingData || [])) {
+    for (const r of allRollingData) {
       rollingMap.set(r.team_name, r as RollingStats);
       rollingMap.set(normalizeTeamName(r.team_name), r as RollingStats);
     }
