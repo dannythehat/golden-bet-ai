@@ -619,7 +619,7 @@ export function BetTypePage({ betType }: BetTypePageProps) {
                           </div>
                           <div className="min-w-0">
                             <div className="font-semibold text-sm truncate">{team.team_name}</div>
-                            <div className="text-[10px] text-muted-foreground truncate">{team.league}</div>
+                            <div className="text-[10px] text-muted-foreground truncate">{team.fixture?.league || team.league}</div>
                           </div>
                           <div className="min-w-0">
                             <div className="text-sm truncate">
