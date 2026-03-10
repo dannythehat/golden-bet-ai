@@ -1,0 +1,39 @@
+name: Collect All Team Stats
+
+on:
+  workflow_dispatch:  # Manual trigger
+  schedule:
+    - cron: '0 4 * * *'  # Daily at 4 AM UTC
+
+jobs:
+  collect-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow pushing commits
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm install mongodb
+        
+      - name: Run data collection
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          VITE_API_FOOTBALL_KEY: ${{ secrets.VITE_API_FOOTBALL_KEY }}
+        run: node scripts/collect-and-cache.js
+        
+      - name: Commit updated files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add cache/stats-cache.json package.json package-lock.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update: Refresh team statistics cache" && git push)

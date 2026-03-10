@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Bet AI - Cache Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success { background: #1a4d2e; border: 2px solid #4ade80; }
+        .error { background: #4d1a1a; border: 2px solid #ef4444; }
+        .loading { background: #1a3a4d; border: 2px solid #3b82f6; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #1a1a1a;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background: #2a2a2a;
+            color: #fbbf24;
+        }
+        .gold { color: #fbbf24; }
+        .green { color: #4ade80; }
+        button {
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover {
+            background: #f59e0b;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="gold">⚽ Golden Bet AI - Cache Test</h1>
+    <p>Testing direct cache access from GitHub</p>
+
+    <button onclick="testCache()">🔄 Test Cache Loading</button>
+
+    <div id="status"></div>
+    <div id="results"></div>
+
+    <script>
+        const CACHE_URLS = [
+            'https://raw.githubusercontent.com/dannythehat/golden-bet-ai/main/cache/stats-cache.json',
+            'https://cdn.jsdelivr.net/gh/dannythehat/golden-bet-ai@main/cache/stats-cache.json',
+        ];
+
+        async function testCache() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            statusDiv.innerHTML = '<div class="status loading">⏳ Loading cache...</div>';
+            resultsDiv.innerHTML = '';
+
+            for (let i = 0; i < CACHE_URLS.length; i++) {
+                const url = CACHE_URLS[i];
+                console.log(`Testing URL ${i + 1}:`, url);
+
+                try {
+                    const response = await fetch(url + '?t=' + Date.now());
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    // Success!
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ <strong>Cache loaded successfully!</strong><br>
+                            Source: ${url}<br>
+                            Response time: ${response.headers.get('x-response-time') || 'N/A'}
+                        </div>
+                    `;
+
+                    resultsDiv.innerHTML = `
+                        <h2 class="gold">📊 Statistics Summary</h2>
+                        <table>
+                            <tr>
+                                <th>Category</th>
+                                <th>Teams</th>
+                                <th>Top Team</th>
+                                <th>Top %</th>
+                            </tr>
+                            <tr>
+                                <td>⚽ Goals (O2.5)</td>
+                                <td>${data.goals?.length || 0}</td>
+                                <td>${data.goals?.[0]?.team || 'N/A'}</td>
+                                <td class="green">${data.goals?.[0]?.over_2_5_pct || 0}%</td>
+                            </tr>
+                            <tr>
+                                <td>🚩 Corners (O9.5)</td>
+                                <td>${data.corners?.length || 0}</td>
+                                <td>${data.corners?.[0]?.team || 'N/A'}</td>
+                                <td class="green">${data.corners?.[0]?.over_9_5_pct || 0}%</td>
+                            </tr>
+                            <tr>
+                                <td>🟨 Cards (O3.5)</td>
+                                <td>${data.cards?.length || 0}</td>
+                                <td>${data.cards?.[0]?.team || 'N/A'}</td>
+                                <td class="green">${data.cards?.[0]?.over_3_5_pct || 0}%</td>
+                            </tr>
+                            <tr>
+                                <td>⚔️ BTTS</td>
+                                <td>${data.btts?.length || 0}</td>
+                                <td>${data.btts?.[0]?.team || 'N/A'}</td>
+                                <td class="green">${data.btts?.[0]?.btts_pct || 0}%</td>
+                            </tr>
+                        </table>
+
+                        <h3 class="gold">Top 5 Teams - Goals (O2.5)</h3>
+                        <table>
+                            <tr>
+                                <th>#</th>
+                                <th>Team</th>
+                                <th>League</th>
+                                <th>O2.5%</th>
+                            </tr>
+                            ${data.goals?.slice(0, 5).map((team, i) => `
+                                <tr>
+                                    <td>${i + 1}</td>
+                                    <td>${team.team}</td>
+                                    <td>${team.league}</td>
+                                    <td class="green">${team.over_2_5_pct}%</td>
+                                </tr>
+                            `).join('') || '<tr><td colspan="4">No data</td></tr>'}
+                        </table>
+
+                        <details>
+                            <summary style="cursor: pointer; padding: 10px; background: #2a2a2a; margin: 20px 0;">
+                                🔍 View Raw JSON (first 50 lines)
+                            </summary>
+                            <pre>${JSON.stringify(data, null, 2).split('\n').slice(0, 50).join('\n')}...</pre>
+                        </details>
+                    `;
+
+                    return; // Success, exit
+                } catch (error) {
+                    console.error(`Failed URL ${i + 1}:`, error);
+                    
+                    if (i === CACHE_URLS.length - 1) {
+                        // All failed
+                        statusDiv.innerHTML = `
+                            <div class="status error">
+                                ❌ <strong>Failed to load cache</strong><br>
+                                Error: ${error.message}<br>
+                                Tried ${CACHE_URLS.length} URLs
+                            </div>
+                        `;
+                        resultsDiv.innerHTML = `
+                            <h3>Troubleshooting:</h3>
+                            <ul>
+                                <li>Check if repository is public</li>
+                                <li>Verify cache file exists at: <code>cache/stats-cache.json</code></li>
+                                <li>Check browser console for CORS errors</li>
+                                <li>Try accessing URLs directly in browser</li>
+                            </ul>
+                            <h4>Tested URLs:</h4>
+                            <pre>${CACHE_URLS.join('\n')}</pre>
+                        `;
+                    }
+                }
+            }
+        }
+
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            setTimeout(testCache, 500);
+        });
+    </script>
+</body>
+</html>
