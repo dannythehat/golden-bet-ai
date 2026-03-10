@@ -7,6 +7,7 @@
 
 import { MongoClient, Db } from 'mongodb';
 
+declare const process: { env: Record<string, string | undefined> };
 const MONGODB_URI = process.env.MONGODB_URI || '***REMOVED***';
 
 // Use separate database name to keep data isolated

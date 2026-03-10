@@ -9,6 +9,7 @@
 import { aggregateAllData, getAggregationStatus } from '../services/dataAggregator';
 import { closeDatabaseConnection } from '../services/database';
 
+declare const process: { argv: string[]; exit: (code: number) => void };
 const command = process.argv[2] || 'run';
 
 async function main() {
