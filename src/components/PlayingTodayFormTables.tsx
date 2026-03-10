@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Target, Flag, CreditCard, Swords, Loader2, ArrowRight, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { getLeagueFlag } from '@/lib/countryFlags';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -369,6 +370,7 @@ export function PlayingTodayFormTables({ onNavigate }: PlayingTodayFormTablesPro
                     <div className="min-w-0">
                       <div className="font-semibold text-sm truncate">{team.team_name}</div>
                       <div className="flex items-center gap-1 mt-0.5">
+                        <span className="text-[11px]">{getLeagueFlag(team.fixture?.league || team.league)}</span>
                         <span className="text-[10px] text-muted-foreground truncate max-w-[100px]">{team.fixture?.league || team.league}</span>
                       </div>
                     </div>

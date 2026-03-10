@@ -15,6 +15,7 @@ import {
 import { Target, Loader2, RefreshCw, Brain, Sparkles, Zap, BarChart3, ChevronUp, ChevronDown, Calendar, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { getLeagueFlag } from '@/lib/countryFlags';
 import theGafferImage from '@/assets/the-gaffer.webp';
 
 /* ------------------------------------------------------------------ */
@@ -605,7 +606,6 @@ export function RealFormTablesSection() {
                   {playingTodayOnly && (
                     <TableHead className="text-[10px] uppercase">Fixture</TableHead>
                   )}
-                  <TableHead className="text-[10px] uppercase hidden sm:table-cell">League</TableHead>
                   {!playingTodayOnly && (
                     <TableHead className="text-[10px] uppercase hidden md:table-cell">Form</TableHead>
                   )}
@@ -649,16 +649,26 @@ export function RealFormTablesSection() {
                         </span>
                       </TableCell>
 
-                      {/* Team Name */}
+                      {/* Team Name + League */}
                       <TableCell className="p-2 font-medium text-sm">
                         <div className="flex items-center gap-2">
-                          <span className="truncate max-w-[120px] sm:max-w-[180px]">{team.team_name}</span>
-                          {pick && (
-                            <Badge variant="outline" className="border-gold/40 bg-gold/10 text-gold text-[9px] px-1.5 py-0 shrink-0 whitespace-nowrap">
-                              <Zap className="w-2.5 h-2.5 mr-0.5" />
-                              Gaffer Pick
-                            </Badge>
-                          )}
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="truncate max-w-[120px] sm:max-w-[180px]">{team.team_name}</span>
+                              {pick && (
+                                <Badge variant="outline" className="border-gold/40 bg-gold/10 text-gold text-[9px] px-1.5 py-0 shrink-0 whitespace-nowrap">
+                                  <Zap className="w-2.5 h-2.5 mr-0.5" />
+                                  Gaffer Pick
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <span className="text-[11px]">{getLeagueFlag(fixtureMatch?.fixture?.league || team.league)}</span>
+                              <span className="text-[10px] text-muted-foreground truncate max-w-[100px] sm:max-w-[140px]">
+                                {fixtureMatch?.fixture?.league || team.league}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </TableCell>
 
@@ -672,16 +682,10 @@ export function RealFormTablesSection() {
                                   ? `vs ${fixtureMatch.fixture.away_team}`
                                   : `@ ${fixtureMatch.fixture.home_team}`
                                 }
-                                {isCupFixture(fixtureMatch.fixture.league) && (
-                                  <span className="text-amber-400 ml-1" title={`${fixtureMatch.fixture.league} — Cup game, league stats may not apply`}>*</span>
-                                )}
                               </span>
                               <span className="flex items-center gap-1 text-muted-foreground text-[10px]">
                                 <Clock className="w-3 h-3" />
                                 {formatKickoff(fixtureMatch.fixture.kickoff)}
-                                {isCupFixture(fixtureMatch.fixture.league) && (
-                                  <span className="text-amber-400/80 ml-1">🏆</span>
-                                )}
                               </span>
                             </div>
                           ) : (
@@ -689,11 +693,6 @@ export function RealFormTablesSection() {
                           )}
                         </TableCell>
                       )}
-
-                      {/* League */}
-                      <TableCell className="p-2 text-xs text-muted-foreground hidden sm:table-cell truncate max-w-[120px]">
-                        {team.league}
-                      </TableCell>
 
                       {/* Form (not shown in Playing Today to save space) */}
                       {!playingTodayOnly && (
