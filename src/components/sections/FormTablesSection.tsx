@@ -372,7 +372,7 @@ export function FormTablesSection({ onAddTeam }: FormTablesSectionProps) {
                         >
                           <TableCell className="font-medium">{index + 1}</TableCell>
                           <TableCell className="font-medium">{team.team}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{team.league}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm"><span className="mr-1">{getLeagueFlag(team.league)}</span>{team.league}</TableCell>
                           <TableCell className="text-center">{team.played}</TableCell>
                           <TableCell className="text-center text-primary font-medium">{team.avgCards}</TableCell>
                           {statType === 'overs' ? (
