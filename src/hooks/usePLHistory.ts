@@ -298,6 +298,12 @@ export function usePLHistory() {
     totalStaked: 0, totalReturns: 0, netProfit: 0, roi: 0,
   };
 
+  const emptyMarketStats: MarketPLStats = {
+    goals: emptyStats,
+    corners: emptyStats,
+    cards: emptyStats,
+  };
+
   return {
     settledBets: query.data?.settledBets || [],
     byDate: query.data?.byDate || [],
@@ -306,6 +312,12 @@ export function usePLHistory() {
       monthly: emptyStats,
       yearly: emptyStats,
       allTime: emptyStats,
+    },
+    marketStats: query.data?.marketStats || {
+      weekly: emptyMarketStats,
+      monthly: emptyMarketStats,
+      yearly: emptyMarketStats,
+      allTime: emptyMarketStats,
     },
     lastMonthStats: query.data?.lastMonthStats || {
       monthName: '',
