@@ -25,7 +25,6 @@ type Region = 'all' | 'uk' | 'european' | 'asia' | 'americas';
 
 type BetType =
   | 'over_15_goals' | 'over_25_goals' | 'over_35_goals'
-  | 'btts'
   | 'over_85_corners' | 'over_95_corners' | 'over_105_corners'
   | 'over_25_cards' | 'over_35_cards' | 'over_45_cards';
 
