@@ -293,8 +293,8 @@ export default function BlogPost() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: post.title,
-    description: post.excerpt,
+    headline: cleanField(post.title),
+    description: cleanField(post.excerpt),
     image: heroImage || undefined,
     author: {
       '@type': 'Person',
