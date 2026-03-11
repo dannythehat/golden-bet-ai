@@ -6,6 +6,24 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 
+/** Strip JSON wrapper from title/excerpt if AI returned { "title": "...", "excerpt": "..." } */
+function cleanField(raw: string): string {
+  if (!raw) return raw;
+  const s = raw.trim();
+  if (s.startsWith('{') && (s.includes('"title"') || s.includes('"excerpt"'))) {
+    try {
+      const parsed = JSON.parse(s);
+      // Return the most relevant field
+      return parsed.excerpt || parsed.title || s;
+    } catch {
+      // Try regex extraction
+      const match = s.match(/"(?:excerpt|title)"\s*:\s*"([^"]+)"/);
+      if (match) return match[1];
+    }
+  }
+  return s;
+}
+
 interface BlogPost {
   id: string;
   slug: string;
@@ -135,10 +153,10 @@ export default function Blog() {
 
                 <div className="p-5 flex-1 flex flex-col">
                   <h2 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
-                    {post.title}
+                    {cleanField(post.title)}
                   </h2>
                   <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
-                    {post.excerpt}
+                    {cleanField(post.excerpt)}
                   </p>
                   <div className="flex items-center justify-between mt-4 pt-3 border-t border-border/30">
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">

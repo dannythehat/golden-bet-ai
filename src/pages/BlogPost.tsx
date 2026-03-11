@@ -77,7 +77,7 @@ function stripJsonWrapper(raw: string): string {
   let s = raw.trim();
 
   // Case 1: Raw JSON string
-  if (s.startsWith('{') && s.includes('"content"')) {
+  if (s.startsWith('{') && (s.includes('"content"') || s.includes('"title"') || s.includes('"excerpt"'))) {
     try {
       const parsed = JSON.parse(s);
       if (parsed.content) return parsed.content;
@@ -92,13 +92,28 @@ function stripJsonWrapper(raw: string): string {
     }
   }
 
-  // Case 2: HTML-wrapped JSON (the AI output was sanitized with the wrapper still in place)
-  // e.g. <p>{<br/>  "title": "...", "content": "</p><h2>actual content...
+  // Case 2: HTML-wrapped JSON
   const htmlJsonPattern = /^<p>\s*\{[\s\S]*?"content"\s*:\s*"<\/p>\s*/i;
   if (htmlJsonPattern.test(s)) {
     s = s.replace(htmlJsonPattern, '');
   }
 
+  return s;
+}
+
+/** Clean a simple field (title/excerpt) from JSON wrapper */
+function cleanField(raw: string): string {
+  if (!raw) return raw;
+  const s = raw.trim();
+  if (s.startsWith('{') && (s.includes('"title"') || s.includes('"excerpt"'))) {
+    try {
+      const parsed = JSON.parse(s);
+      return parsed.title || parsed.excerpt || s;
+    } catch {
+      const match = s.match(/"(?:title|excerpt)"\s*:\s*"([^"]+)"/);
+      if (match) return match[1];
+    }
+  }
   return s;
 }
 
@@ -212,8 +227,8 @@ export default function BlogPost() {
   // Dynamic SEO meta tags
   useEffect(() => {
     if (!post) return;
-    const title = post.seo_title || post.title;
-    const description = post.seo_description || post.excerpt;
+    const title = cleanField(post.seo_title || post.title);
+    const description = cleanField(post.seo_description || post.excerpt);
     document.title = `${title} | The Footy Oracle Blog`;
 
     const setMeta = (name: string, content: string) => {
@@ -278,8 +293,8 @@ export default function BlogPost() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: post.title,
-    description: post.excerpt,
+    headline: cleanField(post.title),
+    description: cleanField(post.excerpt),
     image: heroImage || undefined,
     author: {
       '@type': 'Person',
@@ -343,7 +358,7 @@ export default function BlogPost() {
 
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight mb-6">
-          {post.title}
+          {cleanField(post.title)}
         </h1>
 
         {/* Author + Social Share */}
