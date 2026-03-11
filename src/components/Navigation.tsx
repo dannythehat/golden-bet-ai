@@ -22,7 +22,6 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
     { id: 'over-goals' as Section, label: 'Goals', icon: Target, isRoute: true, path: '/over-goals' },
     { id: 'over-corners' as Section, label: 'Corners', icon: Flag, isRoute: true, path: '/over-corners' },
     { id: 'over-cards' as Section, label: 'Cards', icon: CreditCard, isRoute: true, path: '/over-cards' },
-    { id: 'predictions' as Section, label: 'Golden Bets', icon: Trophy },
     { id: 'bet-builder' as Section, label: 'Bet Builder', icon: Hammer, isRoute: true, path: '/bet-builder' },
     { id: 'acca-delight' as Section, label: 'ACCA Delight', icon: Layers, isRoute: true, path: '/acca-delight' },
     { id: 'pnl' as Section, label: 'P&L Hub', icon: BarChart3 },
