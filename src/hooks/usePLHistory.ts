@@ -266,9 +266,9 @@ async function fetchPLHistory(): Promise<{
     settledBets.filter(b => new Date(b.prediction_date + 'T00:00:00') >= since);
 
   const calcMarketStats = (bets: SettledBet[]): MarketPLStats => ({
-    goals: calcFlatStakePL(filterByMarket(bets, 'goal')),
-    corners: calcFlatStakePL(filterByMarket(bets, 'corner')),
-    cards: calcFlatStakePL(filterByMarket(bets, 'card')),
+    goals: calcGoldenStats(filterByMarket(bets, 'goal')),
+    corners: calcGoldenStats(filterByMarket(bets, 'corner')),
+    cards: calcGoldenStats(filterByMarket(bets, 'card')),
   });
 
   // Last month stats
