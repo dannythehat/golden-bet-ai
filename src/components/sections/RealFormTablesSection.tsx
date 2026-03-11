@@ -149,7 +149,7 @@ function getSecondaryValue(team: RollingTeamStat, bt: BetType): string {
 }
 
 function getSecondaryLabel(bt: BetType): string {
-  if (bt.includes('goals') || bt === 'btts') return 'Avg Goals';
+  if (bt.includes('goals')) return 'Avg Goals';
   if (bt.includes('corners')) return 'Avg Corners';
   if (bt.includes('cards')) return 'Avg Cards';
   return '';
