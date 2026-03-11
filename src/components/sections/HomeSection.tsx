@@ -146,7 +146,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         ) : (
           <MonthlyPLTable
             goldenBets={{
-              name: 'Golden Bets',
+              name: 'All Markets',
               wins: stats.monthly.wins,
               losses: stats.monthly.losses,
               profit: stats.monthly.netProfit,
