@@ -134,7 +134,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         </a>
       )}
 
-      {/* Monthly P&L Summary Table — Golden Bets only */}
+      {/* Monthly P&L Summary Table — All Markets */}
       <Suspense fallback={<div className="rounded-2xl border border-border/50 bg-card/60 p-6 animate-pulse h-40" />}>
         {plLoading ? (
           <div className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm p-6">
@@ -146,7 +146,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         ) : (
           <MonthlyPLTable
             goldenBets={{
-              name: 'Golden Bets',
+              name: 'All Markets',
               wins: stats.monthly.wins,
               losses: stats.monthly.losses,
               profit: stats.monthly.netProfit,

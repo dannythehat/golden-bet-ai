@@ -120,17 +120,19 @@ function calcDoublesAndTreblePL(bets: SettledBet[]): {
 }
 
 function calcGoldenStats(bets: SettledBet[]): PLStats {
-  const dateMap = new Map<string, SettledBet[]>();
+  // Group by date + market so each market's 3 picks get their own doubles+treble calc
+  const groupKey = (b: SettledBet) => `${b.prediction_date}|${b.market}`;
+  const groupMap = new Map<string, SettledBet[]>();
   for (const bet of bets) {
-    const date = bet.prediction_date;
-    if (!dateMap.has(date)) dateMap.set(date, []);
-    dateMap.get(date)!.push(bet);
+    const key = groupKey(bet);
+    if (!groupMap.has(key)) groupMap.set(key, []);
+    groupMap.get(key)!.push(bet);
   }
 
   let totalWins = 0, totalLosses = 0, totalVoids = 0, totalStaked = 0, netProfit = 0;
 
-  for (const [, dayBets] of dateMap) {
-    const day = calcDoublesAndTreblePL(dayBets);
+  for (const [, marketDayBets] of groupMap) {
+    const day = calcDoublesAndTreblePL(marketDayBets);
     totalWins += day.wins;
     totalLosses += day.losses;
     totalVoids += day.voids;
@@ -174,7 +176,7 @@ async function fetchPLHistory(): Promise<{
   const settledBets = (goldenBetsData || []) as SettledBet[];
   console.log('[usePLHistory] Fetched settled Golden Bets:', settledBets.length);
 
-  // Group by date
+  // Group by date for display, but calc P&L per date+market
   const dateMap = new Map<string, SettledBet[]>();
   for (const bet of settledBets) {
     const date = bet.prediction_date;
@@ -185,7 +187,18 @@ async function fetchPLHistory(): Promise<{
   const byDate: DailyGroup[] = Array.from(dateMap.entries())
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .map(([date, bets]) => {
-      const { wins, losses, voids, totalStaked, netProfit } = calcDoublesAndTreblePL(bets);
+      // Group this day's bets by market for proper doubles+treble calc per market
+      const marketMap = new Map<string, SettledBet[]>();
+      for (const b of bets) {
+        if (!marketMap.has(b.market)) marketMap.set(b.market, []);
+        marketMap.get(b.market)!.push(b);
+      }
+      let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
+      for (const [, marketBets] of marketMap) {
+        const r = calcDoublesAndTreblePL(marketBets);
+        wins += r.wins; losses += r.losses; voids += r.voids;
+        totalStaked += r.totalStaked; netProfit += r.netProfit;
+      }
       return { date, bets, wins, losses, voids, totalStaked, netProfit };
     });
 
