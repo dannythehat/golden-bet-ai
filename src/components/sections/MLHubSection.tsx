@@ -79,7 +79,6 @@ const MARKET_LABELS: Record<string, string> = {
 
 const MARKET_ICONS: Record<string, typeof Trophy> = {
   'over_2.5_goals': Target, 'over_2_5': Target, 'over_2_5_goals': Target,
-  'btts': Zap, 'btts_yes': Zap,
   'over_9.5_corners': TrendingUp, 'over_9_5': TrendingUp, 'over_9_5_corners': TrendingUp,
   'over_3.5_cards': AlertTriangle, 'over_3_5': AlertTriangle, 'over_3_5_cards': AlertTriangle,
 };
