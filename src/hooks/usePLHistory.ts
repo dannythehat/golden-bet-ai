@@ -153,6 +153,41 @@ function calcGoldenStats(bets: SettledBet[]): PLStats {
     roi: totalStaked > 0 ? (netProfit / totalStaked) * 100 : 0,
   };
 }
+/**
+ * Flat-stake P&L: each bet is a £10 single. Used for per-market breakdown.
+ */
+function calcFlatStakePL(bets: SettledBet[]): PLStats {
+  const stake = 10;
+  let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
+
+  for (const bet of bets) {
+    if (bet.status === 'void') {
+      voids++;
+      continue;
+    }
+    totalStaked += stake;
+    if (bet.status === 'won') {
+      wins++;
+      netProfit += (stake * bet.bookmaker_odds) - stake;
+    } else {
+      losses++;
+      netProfit -= stake;
+    }
+  }
+
+  const resolved = wins + losses;
+  return {
+    totalBets: resolved,
+    wins,
+    losses,
+    voids,
+    winRate: resolved > 0 ? (wins / resolved) * 100 : 0,
+    totalStaked,
+    totalReturns: totalStaked + netProfit,
+    netProfit,
+    roi: totalStaked > 0 ? (netProfit / totalStaked) * 100 : 0,
+  };
+}
 
 /** Filter bets by market category */
 function filterByMarket(bets: SettledBet[], marketKey: string): SettledBet[] {
@@ -200,18 +235,17 @@ async function fetchPLHistory(): Promise<{
   const byDate: DailyGroup[] = Array.from(dateMap.entries())
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .map(([date, bets]) => {
-      const marketMap = new Map<string, SettledBet[]>();
-      for (const b of bets) {
-        if (!marketMap.has(b.market)) marketMap.set(b.market, []);
-        marketMap.get(b.market)!.push(b);
-      }
-      let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
-      for (const [, marketBets] of marketMap) {
-        const r = calcDoublesAndTreblePL(marketBets);
-        wins += r.wins; losses += r.losses; voids += r.voids;
-        totalStaked += r.totalStaked; netProfit += r.netProfit;
-      }
-      return { date, bets, wins, losses, voids, totalStaked, netProfit };
+      // Flat stake P&L per bet
+      const flatPL = calcFlatStakePL(bets);
+      return {
+        date,
+        bets,
+        wins: flatPL.wins,
+        losses: flatPL.losses,
+        voids: flatPL.voids,
+        totalStaked: flatPL.totalStaked,
+        netProfit: flatPL.netProfit,
+      };
     });
 
   // Period boundaries
@@ -232,9 +266,9 @@ async function fetchPLHistory(): Promise<{
     settledBets.filter(b => new Date(b.prediction_date + 'T00:00:00') >= since);
 
   const calcMarketStats = (bets: SettledBet[]): MarketPLStats => ({
-    goals: calcGoldenStats(filterByMarket(bets, 'goal')),
-    corners: calcGoldenStats(filterByMarket(bets, 'corner')),
-    cards: calcGoldenStats(filterByMarket(bets, 'card')),
+    goals: calcFlatStakePL(filterByMarket(bets, 'goal')),
+    corners: calcFlatStakePL(filterByMarket(bets, 'corner')),
+    cards: calcFlatStakePL(filterByMarket(bets, 'card')),
   });
 
   // Last month stats
@@ -248,7 +282,7 @@ async function fetchPLHistory(): Promise<{
     return d >= lastMonthStart && d <= lastMonthEnd;
   });
 
-  const lastMonthBetsStats = calcGoldenStats(lastMonthBets);
+  const lastMonthBetsStats = calcFlatStakePL(lastMonthBets);
 
   const lastMonthStats: LastMonthStats = {
     monthName: lastMonthStart.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
@@ -264,10 +298,10 @@ async function fetchPLHistory(): Promise<{
     settledBets,
     byDate,
     stats: {
-      weekly: calcGoldenStats(filterByDate(startOfWeek)),
-      monthly: calcGoldenStats(filterByDate(startOfMonth)),
-      yearly: calcGoldenStats(filterByDate(startOfYear)),
-      allTime: calcGoldenStats(settledBets),
+      weekly: calcFlatStakePL(filterByDate(startOfWeek)),
+      monthly: calcFlatStakePL(filterByDate(startOfMonth)),
+      yearly: calcFlatStakePL(filterByDate(startOfYear)),
+      allTime: calcFlatStakePL(settledBets),
     },
     marketStats: {
       weekly: calcMarketStats(filterByDate(startOfWeek)),
