@@ -15,9 +15,9 @@ const PLSection = lazy(() => import('@/components/sections/PLSection').then(m =>
 
 const AboutSection = lazy(() => import('@/components/sections/AboutSection').then(m => ({ default: m.AboutSection })));
 
-type Section = 'home' | 'predictions' | 'pnl' | 'about';
+type Section = 'home' | 'pnl' | 'about';
 
-const validSections: Section[] = ['home', 'predictions', 'pnl', 'about'];
+const validSections: Section[] = ['home', 'pnl', 'about'];
 
 const Index = () => {
   const location = useLocation();
