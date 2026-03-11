@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Trophy, BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers } from 'lucide-react';
+import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers } from 'lucide-react';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
 
