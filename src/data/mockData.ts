@@ -133,9 +133,9 @@ export const marketLabels: Record<string, string> = {
   'over_2_5_goals': 'Over 2.5 Goals',
   'over_25_goals': 'Over 2.5 Goals',
   // Corners markets
-  'over_9.5_corners': 'Over 9.5 Corners',
-  'over_9_5_corners': 'Over 9.5 Corners',
-  'over_95_corners': 'Over 9.5 Corners',
+  'over_9.5_corners': 'Over 8.5 Corners',
+  'over_9_5_corners': 'Over 8.5 Corners',
+  'over_95_corners': 'Over 8.5 Corners',
   'over_8.5_corners': 'Over 8.5 Corners',
   'over_8_5_corners': 'Over 8.5 Corners',
   'over_85_corners': 'Over 8.5 Corners',

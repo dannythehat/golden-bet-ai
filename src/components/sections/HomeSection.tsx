@@ -55,7 +55,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
     },
     {
       path: '/over-corners',
-      label: 'Over 9.5 Corners',
+      label: 'Over 8.5 Corners',
       icon: <Flag className="w-5 h-5" />,
       colorVar: '--bet-corners',
       desc: '3 daily picks · Gold, Silver, Bronze',

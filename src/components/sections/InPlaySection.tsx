@@ -75,9 +75,9 @@ function formatMarket(market: string): string {
   const labels: Record<string, string> = {
     'over_2.5_goals': 'O2.5 Goals',
     'over_25_goals': 'O2.5 Goals',
-    'btts': 'BTTS',
-    'over_9.5_corners': 'O9.5 Corners',
-    'over_95_corners': 'O9.5 Corners',
+    'over_9.5_corners': 'O8.5 Corners',
+    'over_95_corners': 'O8.5 Corners',
+    'over_9_5_corners': 'O8.5 Corners',
     'over_3.5_cards': 'O3.5 Cards',
     'over_35_cards': 'O3.5 Cards',
     'over_2.5_cards': 'O2.5 Cards',

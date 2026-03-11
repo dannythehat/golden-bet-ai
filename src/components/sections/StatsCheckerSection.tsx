@@ -61,8 +61,8 @@ export function StatsCheckerSection() {
 
         if (cornerData) {
           if (cornerData.over_9_5 >= 55) {
-            recommendations.push(`Good Over 9.5 Corners option with ${cornerData.over_9_5}% success`);
-            bestMarkets.push('Over 9.5 Corners');
+            recommendations.push(`Good Over 8.5 Corners option with ${cornerData.over_9_5}% success`);
+            bestMarkets.push('Over 8.5 Corners');
           }
           if (cornerData.avgCorners >= 10) {
             recommendations.push(`High corner average of ${cornerData.avgCorners} per game`);

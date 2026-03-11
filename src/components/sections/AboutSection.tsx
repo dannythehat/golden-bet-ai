@@ -127,7 +127,7 @@ export function AboutSection() {
               </div>
               <h3 className="font-bold text-lg">Corners</h3>
               <p className="text-sm text-muted-foreground">
-                Over 9.5 corners tracking with attacking style and match tempo analysis
+                Over 8.5 corners tracking with attacking style and match tempo analysis
               </p>
             </CardContent>
           </Card>

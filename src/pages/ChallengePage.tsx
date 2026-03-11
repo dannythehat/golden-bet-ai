@@ -89,8 +89,7 @@ interface BlogPostLink {
 
 const marketLabels: Record<string, string> = {
   'over_2_5_goals': 'Over 2.5 Goals',
-  'btts': 'BTTS',
-  'over_9_5_corners': 'Over 9.5 Corners',
+  'over_9_5_corners': 'Over 8.5 Corners',
   'over_3_5_cards': 'Over 3.5 Cards',
 };
 

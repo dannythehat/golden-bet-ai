@@ -102,8 +102,8 @@ const HOW_IT_WORKS = [
   },
   {
     step: '02', icon: Cpu, title: 'ML Probability Engine',
-    desc: 'Four trained Gradient Boosted models each specialise in a different market — Goals, BTTS, Corners, Cards. They analyse 40+ features per fixture and output a raw probability.',
-    tags: ['Over 2.5 Goals', 'BTTS', 'Over 9.5 Corners', 'Over 3.5 Cards'],
+    desc: 'Three trained Gradient Boosted models each specialise in a different market — Goals, Corners, Cards. They analyse 40+ features per fixture and output a raw probability.',
+    tags: ['Over 2.5 Goals', 'Over 8.5 Corners', 'Over 3.5 Cards'],
   },
   {
     step: '03', icon: Sparkles, title: 'AI Intelligence Layer',

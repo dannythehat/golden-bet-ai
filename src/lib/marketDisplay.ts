@@ -65,7 +65,6 @@ export function getMarketIcon(rawMarket: unknown): string {
   const m = normalizeMarketKey(rawMarket);
   if (m.includes('corner')) return '🚩';
   if (m.includes('card')) return '🟨';
-  if (m.includes('btts')) return '⚽';
   if (m.includes('goal')) return '🥅';
   return '📊';
 }

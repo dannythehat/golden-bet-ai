@@ -101,7 +101,6 @@ const BET_TYPES: { id: BetType; label: string; shortLabel: string; category: str
   { id: 'over_15_goals', label: 'Over 1.5 Goals', shortLabel: 'O1.5', category: 'Goals' },
   { id: 'over_25_goals', label: 'Over 2.5 Goals', shortLabel: 'O2.5', category: 'Goals' },
   { id: 'over_35_goals', label: 'Over 3.5 Goals', shortLabel: 'O3.5', category: 'Goals' },
-  { id: 'btts', label: 'BTTS (Yes)', shortLabel: 'BTTS', category: 'Goals' },
   { id: 'over_85_corners', label: 'Over 8.5 Corners', shortLabel: 'O8.5 Crn', category: 'Corners' },
   { id: 'over_95_corners', label: 'Over 9.5 Corners', shortLabel: 'O9.5 Crn', category: 'Corners' },
   { id: 'over_105_corners', label: 'Over 10.5 Corners', shortLabel: 'O10.5 Crn', category: 'Corners' },
