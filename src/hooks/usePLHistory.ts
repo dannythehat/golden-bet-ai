@@ -120,17 +120,19 @@ function calcDoublesAndTreblePL(bets: SettledBet[]): {
 }
 
 function calcGoldenStats(bets: SettledBet[]): PLStats {
-  const dateMap = new Map<string, SettledBet[]>();
+  // Group by date + market so each market's 3 picks get their own doubles+treble calc
+  const groupKey = (b: SettledBet) => `${b.prediction_date}|${b.market}`;
+  const groupMap = new Map<string, SettledBet[]>();
   for (const bet of bets) {
-    const date = bet.prediction_date;
-    if (!dateMap.has(date)) dateMap.set(date, []);
-    dateMap.get(date)!.push(bet);
+    const key = groupKey(bet);
+    if (!groupMap.has(key)) groupMap.set(key, []);
+    groupMap.get(key)!.push(bet);
   }
 
   let totalWins = 0, totalLosses = 0, totalVoids = 0, totalStaked = 0, netProfit = 0;
 
-  for (const [, dayBets] of dateMap) {
-    const day = calcDoublesAndTreblePL(dayBets);
+  for (const [, marketDayBets] of groupMap) {
+    const day = calcDoublesAndTreblePL(marketDayBets);
     totalWins += day.wins;
     totalLosses += day.losses;
     totalVoids += day.voids;
