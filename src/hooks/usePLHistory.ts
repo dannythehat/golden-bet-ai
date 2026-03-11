@@ -153,6 +153,41 @@ function calcGoldenStats(bets: SettledBet[]): PLStats {
     roi: totalStaked > 0 ? (netProfit / totalStaked) * 100 : 0,
   };
 }
+/**
+ * Flat-stake P&L: each bet is a £10 single. Used for per-market breakdown.
+ */
+function calcFlatStakePL(bets: SettledBet[]): PLStats {
+  const stake = 10;
+  let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
+
+  for (const bet of bets) {
+    if (bet.status === 'void') {
+      voids++;
+      continue;
+    }
+    totalStaked += stake;
+    if (bet.status === 'won') {
+      wins++;
+      netProfit += (stake * bet.bookmaker_odds) - stake;
+    } else {
+      losses++;
+      netProfit -= stake;
+    }
+  }
+
+  const resolved = wins + losses;
+  return {
+    totalBets: resolved,
+    wins,
+    losses,
+    voids,
+    winRate: resolved > 0 ? (wins / resolved) * 100 : 0,
+    totalStaked,
+    totalReturns: totalStaked + netProfit,
+    netProfit,
+    roi: totalStaked > 0 ? (netProfit / totalStaked) * 100 : 0,
+  };
+}
 
 /** Filter bets by market category */
 function filterByMarket(bets: SettledBet[], marketKey: string): SettledBet[] {
