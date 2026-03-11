@@ -10,7 +10,7 @@ import { HomeSection } from '@/components/sections/HomeSection';
 const SignUpPromptModal = lazy(() => import('@/components/SignUpPromptModal').then(m => ({ default: m.SignUpPromptModal })));
 
 // Lazy-load non-home sections to reduce initial JS bundle blocking LCP
-const PredictionsSection = lazy(() => import('@/components/sections/PredictionsSection').then(m => ({ default: m.PredictionsSection })));
+
 const PLSection = lazy(() => import('@/components/sections/PLSection').then(m => ({ default: m.PLSection })));
 
 const AboutSection = lazy(() => import('@/components/sections/AboutSection').then(m => ({ default: m.AboutSection })));
