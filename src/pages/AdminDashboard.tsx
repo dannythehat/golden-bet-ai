@@ -1,9 +1,24 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Database, Play, RefreshCw, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+
+const ADMIN_EMAILS = ['contact@thefootyoracle.com'];
 
 export default function AdminDashboard() {
+  const { session, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && (!session || !ADMIN_EMAILS.includes(session.user.email ?? ''))) {
+      navigate('/');
+    }
+  }, [authLoading, session, navigate]);
+
+  if (authLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+  if (!session || !ADMIN_EMAILS.includes(session.user.email ?? '')) return null;
   const [status, setStatus] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [aggregating, setAggregating] = useState(false);
