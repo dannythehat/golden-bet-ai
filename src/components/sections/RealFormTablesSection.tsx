@@ -132,7 +132,7 @@ function getStatValue(team: RollingTeamStat, bt: BetType): number {
     over_15_goals: 'over_15_goals_pct',
     over_25_goals: 'over_25_goals_pct',
     over_35_goals: 'over_35_goals_pct',
-    btts: 'btts_pct',
+    over_85_corners: 'over_85_corners_pct',
     over_85_corners: 'over_85_corners_pct',
     over_95_corners: 'over_95_corners_pct',
     over_105_corners: 'over_105_corners_pct',

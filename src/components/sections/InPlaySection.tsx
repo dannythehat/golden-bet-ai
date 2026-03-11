@@ -44,9 +44,9 @@ function getRelevantStat(bet: InPlayBet): { label: string; value: string | numbe
   
   // Corners markets
   if (market.includes('corner') || markets.some(m => m.includes('corner'))) {
-    const target = market.includes('9.5') || market.includes('95') ? 10 :
-                   market.includes('8.5') || market.includes('85') ? 9 :
-                   market.includes('10.5') || market.includes('105') ? 11 : 10;
+    const target = market.includes('8.5') || market.includes('85') ? 9 :
+                   market.includes('9.5') || market.includes('95') ? 9 :
+                   market.includes('10.5') || market.includes('105') ? 11 : 9;
     return {
       label: 'Corners',
       value: stats.corners_total,
