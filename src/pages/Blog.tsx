@@ -6,6 +6,24 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 
+/** Strip JSON wrapper from title/excerpt if AI returned { "title": "...", "excerpt": "..." } */
+function cleanField(raw: string): string {
+  if (!raw) return raw;
+  const s = raw.trim();
+  if (s.startsWith('{') && (s.includes('"title"') || s.includes('"excerpt"'))) {
+    try {
+      const parsed = JSON.parse(s);
+      // Return the most relevant field
+      return parsed.excerpt || parsed.title || s;
+    } catch {
+      // Try regex extraction
+      const match = s.match(/"(?:excerpt|title)"\s*:\s*"([^"]+)"/);
+      if (match) return match[1];
+    }
+  }
+  return s;
+}
+
 interface BlogPost {
   id: string;
   slug: string;
