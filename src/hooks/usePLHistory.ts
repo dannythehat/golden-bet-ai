@@ -68,7 +68,7 @@ export interface LastMonthStats {
 function calcDoublesAndTreblePL(bets: SettledBet[]): {
   wins: number; losses: number; voids: number; totalStaked: number; netProfit: number;
 } {
-  const stake = 10;
+  const stake = 2;
 
   // We always expect exactly 3 bets (Corners / Goals / Cards).
   // Order in DB: highest ml_confidence first (or insertion order from ML pipeline).
@@ -157,7 +157,7 @@ function calcGoldenStats(bets: SettledBet[]): PLStats {
  * Flat-stake P&L: each bet is a £10 single. Used for per-market breakdown.
  */
 function calcFlatStakePL(bets: SettledBet[]): PLStats {
-  const stake = 10;
+  const stake = 2;
   let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
 
   for (const bet of bets) {
