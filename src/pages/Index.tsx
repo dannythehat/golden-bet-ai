@@ -100,7 +100,7 @@ const Index = () => {
       <main className="relative container mx-auto px-4 md:px-6 pt-28 md:pt-32 pb-24 flex-1">
         <Suspense fallback={<div style={{ minHeight: '60vh' }} className="flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}>
           {activeSection === 'home' && <HomeSection onNavigate={(section) => handleSectionChange(section as Section)} />}
-          {activeSection === 'predictions' && <PredictionsSection />}
+          
           {activeSection === 'pnl' && <PLSection />}
           {activeSection === 'about' && <AboutSection />}
         </Suspense>

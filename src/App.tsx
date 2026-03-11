@@ -65,7 +65,8 @@ const App = () => {
               <Route path="/sportmonks-loader" element={<SportMonksLoader />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/golden-bets" element={<GoldenBets />} />
+              {/* Golden Bets deprecated — redirects to home */}
+              <Route path="/golden-bets" element={<Index />} />
               <Route path="/bet-builder" element={<BetBuilderPage />} />
               <Route path="/acca-delight" element={<AccaDelightPage />} />
               <Route path="/over-goals" element={<OverGoalsPage />} />
