@@ -358,7 +358,7 @@ export default function BlogPost() {
 
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight mb-6">
-          {post.title}
+          {cleanField(post.title)}
         </h1>
 
         {/* Author + Social Share */}
