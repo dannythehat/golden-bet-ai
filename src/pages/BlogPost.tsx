@@ -227,8 +227,8 @@ export default function BlogPost() {
   // Dynamic SEO meta tags
   useEffect(() => {
     if (!post) return;
-    const title = post.seo_title || post.title;
-    const description = post.seo_description || post.excerpt;
+    const title = cleanField(post.seo_title || post.title);
+    const description = cleanField(post.seo_description || post.excerpt);
     document.title = `${title} | The Footy Oracle Blog`;
 
     const setMeta = (name: string, content: string) => {
