@@ -235,16 +235,16 @@ async function fetchPLHistory(): Promise<{
   const byDate: DailyGroup[] = Array.from(dateMap.entries())
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .map(([date, bets]) => {
-      // Flat stake P&L per bet
-      const flatPL = calcFlatStakePL(bets);
+      // Doubles + treble P&L per day (grouped by market)
+      const dayPL = calcGoldenStats(bets);
       return {
         date,
         bets,
-        wins: flatPL.wins,
-        losses: flatPL.losses,
-        voids: flatPL.voids,
-        totalStaked: flatPL.totalStaked,
-        netProfit: flatPL.netProfit,
+        wins: dayPL.wins,
+        losses: dayPL.losses,
+        voids: dayPL.voids,
+        totalStaked: dayPL.totalStaked,
+        netProfit: dayPL.netProfit,
       };
     });
 
