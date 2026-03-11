@@ -235,16 +235,16 @@ async function fetchPLHistory(): Promise<{
   const byDate: DailyGroup[] = Array.from(dateMap.entries())
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .map(([date, bets]) => {
-      // Flat stake P&L per bet
-      const flatPL = calcFlatStakePL(bets);
+      // Doubles + treble P&L per day (grouped by market)
+      const dayPL = calcGoldenStats(bets);
       return {
         date,
         bets,
-        wins: flatPL.wins,
-        losses: flatPL.losses,
-        voids: flatPL.voids,
-        totalStaked: flatPL.totalStaked,
-        netProfit: flatPL.netProfit,
+        wins: dayPL.wins,
+        losses: dayPL.losses,
+        voids: dayPL.voids,
+        totalStaked: dayPL.totalStaked,
+        netProfit: dayPL.netProfit,
       };
     });
 
@@ -266,9 +266,9 @@ async function fetchPLHistory(): Promise<{
     settledBets.filter(b => new Date(b.prediction_date + 'T00:00:00') >= since);
 
   const calcMarketStats = (bets: SettledBet[]): MarketPLStats => ({
-    goals: calcFlatStakePL(filterByMarket(bets, 'goal')),
-    corners: calcFlatStakePL(filterByMarket(bets, 'corner')),
-    cards: calcFlatStakePL(filterByMarket(bets, 'card')),
+    goals: calcGoldenStats(filterByMarket(bets, 'goal')),
+    corners: calcGoldenStats(filterByMarket(bets, 'corner')),
+    cards: calcGoldenStats(filterByMarket(bets, 'card')),
   });
 
   // Last month stats
@@ -282,7 +282,7 @@ async function fetchPLHistory(): Promise<{
     return d >= lastMonthStart && d <= lastMonthEnd;
   });
 
-  const lastMonthBetsStats = calcFlatStakePL(lastMonthBets);
+  const lastMonthBetsStats = calcGoldenStats(lastMonthBets);
 
   const lastMonthStats: LastMonthStats = {
     monthName: lastMonthStart.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
@@ -298,10 +298,10 @@ async function fetchPLHistory(): Promise<{
     settledBets,
     byDate,
     stats: {
-      weekly: calcFlatStakePL(filterByDate(startOfWeek)),
-      monthly: calcFlatStakePL(filterByDate(startOfMonth)),
-      yearly: calcFlatStakePL(filterByDate(startOfYear)),
-      allTime: calcFlatStakePL(settledBets),
+      weekly: calcGoldenStats(filterByDate(startOfWeek)),
+      monthly: calcGoldenStats(filterByDate(startOfMonth)),
+      yearly: calcGoldenStats(filterByDate(startOfYear)),
+      allTime: calcGoldenStats(settledBets),
     },
     marketStats: {
       weekly: calcMarketStats(filterByDate(startOfWeek)),
