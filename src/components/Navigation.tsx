@@ -6,7 +6,7 @@ import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Ham
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
 
-type Section = 'home' | 'predictions' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight';
+type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight';
 
 interface NavigationProps {
   activeSection: Section;
