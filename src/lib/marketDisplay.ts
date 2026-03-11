@@ -36,12 +36,6 @@ export function getMarketLabel(rawMarket: unknown): string {
   const m = normalizeMarketKey(rawMarket);
   if (!m) return 'Market TBD';
 
-  // BTTS / No BTTS
-  if (m === 'btts' || m.includes('btts')) {
-    if (m.includes('no_btts') || m.includes('nobtts') || m.includes('btts_no')) return 'BTTS (No)';
-    return 'BTTS (Yes)';
-  }
-
   const isUnder = m.includes('under');
   const isOver = m.includes('over');
   const threshold = parseThreshold(m);
@@ -56,6 +50,10 @@ export function getMarketLabel(rawMarket: unknown): string {
         : null;
 
   if (side && threshold !== null && category) {
+    // Display corners as 8.5 regardless of underlying data threshold
+    if (category === 'Corners' && (threshold === 9.5)) {
+      return `${side} 8.5 Corners`;
+    }
     return `${side} ${threshold} ${category}`;
   }
 
