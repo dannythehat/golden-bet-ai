@@ -282,7 +282,7 @@ async function fetchPLHistory(): Promise<{
     return d >= lastMonthStart && d <= lastMonthEnd;
   });
 
-  const lastMonthBetsStats = calcFlatStakePL(lastMonthBets);
+  const lastMonthBetsStats = calcGoldenStats(lastMonthBets);
 
   const lastMonthStats: LastMonthStats = {
     monthName: lastMonthStart.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
