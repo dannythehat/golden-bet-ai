@@ -77,7 +77,7 @@ function stripJsonWrapper(raw: string): string {
   let s = raw.trim();
 
   // Case 1: Raw JSON string
-  if (s.startsWith('{') && s.includes('"content"')) {
+  if (s.startsWith('{') && (s.includes('"content"') || s.includes('"title"') || s.includes('"excerpt"'))) {
     try {
       const parsed = JSON.parse(s);
       if (parsed.content) return parsed.content;
@@ -92,13 +92,28 @@ function stripJsonWrapper(raw: string): string {
     }
   }
 
-  // Case 2: HTML-wrapped JSON (the AI output was sanitized with the wrapper still in place)
-  // e.g. <p>{<br/>  "title": "...", "content": "</p><h2>actual content...
+  // Case 2: HTML-wrapped JSON
   const htmlJsonPattern = /^<p>\s*\{[\s\S]*?"content"\s*:\s*"<\/p>\s*/i;
   if (htmlJsonPattern.test(s)) {
     s = s.replace(htmlJsonPattern, '');
   }
 
+  return s;
+}
+
+/** Clean a simple field (title/excerpt) from JSON wrapper */
+function cleanField(raw: string): string {
+  if (!raw) return raw;
+  const s = raw.trim();
+  if (s.startsWith('{') && (s.includes('"title"') || s.includes('"excerpt"'))) {
+    try {
+      const parsed = JSON.parse(s);
+      return parsed.title || parsed.excerpt || s;
+    } catch {
+      const match = s.match(/"(?:title|excerpt)"\s*:\s*"([^"]+)"/);
+      if (match) return match[1];
+    }
+  }
   return s;
 }
 
