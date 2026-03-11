@@ -28,7 +28,7 @@ export function Footer() {
               <img 
                 src={footyOracleLogo} 
                 alt="The Footy Oracle logo" 
-                className="w-16 h-16 rounded-xl object-cover border-2 border-primary/30 logo"
+                className="w-16 h-16 rounded-xl object-cover border-2 border-primary/30"
                 id="site-logo"
               />
               <div>

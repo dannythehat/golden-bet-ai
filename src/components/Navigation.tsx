@@ -57,7 +57,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
                 <img 
                   src={footyOracleLogo} 
                   alt="The Footy Oracle logo" 
-                  className="relative w-20 h-20 rounded-xl object-cover border-2 border-primary/30 shadow-lg logo"
+                  className="relative w-20 h-20 rounded-xl object-cover border-2 border-primary/30 shadow-lg"
                   id="nav-logo"
                   width={80}
                   height={80}
