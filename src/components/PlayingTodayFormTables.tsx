@@ -54,8 +54,7 @@ interface PlayingTeam extends RollingTeamStat {
 /* ------------------------------------------------------------------ */
 const BET_TABS: { id: BetType; label: string; shortLabel: string; icon: React.ReactNode }[] = [
   { id: 'over_25_goals', label: 'Over 2.5 Goals', shortLabel: 'O2.5 Goals', icon: <Target className="w-3.5 h-3.5" /> },
-  { id: 'btts', label: 'BTTS (Yes)', shortLabel: 'BTTS', icon: <Swords className="w-3.5 h-3.5" /> },
-  { id: 'over_95_corners', label: 'Over 9.5 Corners', shortLabel: 'O9.5 Corners', icon: <Flag className="w-3.5 h-3.5" /> },
+  { id: 'over_95_corners', label: 'Over 8.5 Corners', shortLabel: 'O8.5 Corners', icon: <Flag className="w-3.5 h-3.5" /> },
   { id: 'over_35_cards', label: 'Over 3.5 Cards', shortLabel: 'O3.5 Cards', icon: <CreditCard className="w-3.5 h-3.5" /> },
 ];
 

@@ -289,8 +289,8 @@ export default function GoldenBets() {
                 <h3 className="text-lg font-bold text-foreground">Markets We Cover</h3>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>⚽ <strong>Over 2.5 Goals</strong> — High-scoring fixture predictions</li>
-                  <li>🥅 <strong>Both Teams to Score (BTTS)</strong> — When both sides will find the net</li>
-                  <li>🚩 <strong>Over 9.5 Corners</strong> — Corner-heavy match selections</li>
+                  <li>🚩 <strong>Over 8.5 Corners</strong> — Corner-heavy match selections</li>
+                  <li>🟨 <strong>Over 3.5 Cards</strong> — High-discipline match selections</li>
                 </ul>
               </CardContent>
             </Card>

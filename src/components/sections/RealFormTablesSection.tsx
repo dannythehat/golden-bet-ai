@@ -25,7 +25,6 @@ type Region = 'all' | 'uk' | 'european' | 'asia' | 'americas';
 
 type BetType =
   | 'over_15_goals' | 'over_25_goals' | 'over_35_goals'
-  | 'btts'
   | 'over_85_corners' | 'over_95_corners' | 'over_105_corners'
   | 'over_25_cards' | 'over_35_cards' | 'over_45_cards';
 
@@ -101,7 +100,6 @@ const BET_TYPES: { id: BetType; label: string; shortLabel: string; category: str
   { id: 'over_15_goals', label: 'Over 1.5 Goals', shortLabel: 'O1.5', category: 'Goals' },
   { id: 'over_25_goals', label: 'Over 2.5 Goals', shortLabel: 'O2.5', category: 'Goals' },
   { id: 'over_35_goals', label: 'Over 3.5 Goals', shortLabel: 'O3.5', category: 'Goals' },
-  { id: 'btts', label: 'BTTS (Yes)', shortLabel: 'BTTS', category: 'Goals' },
   { id: 'over_85_corners', label: 'Over 8.5 Corners', shortLabel: 'O8.5 Crn', category: 'Corners' },
   { id: 'over_95_corners', label: 'Over 9.5 Corners', shortLabel: 'O9.5 Crn', category: 'Corners' },
   { id: 'over_105_corners', label: 'Over 10.5 Corners', shortLabel: 'O10.5 Crn', category: 'Corners' },
@@ -133,7 +131,6 @@ function getStatValue(team: RollingTeamStat, bt: BetType): number {
     over_15_goals: 'over_15_goals_pct',
     over_25_goals: 'over_25_goals_pct',
     over_35_goals: 'over_35_goals_pct',
-    btts: 'btts_pct',
     over_85_corners: 'over_85_corners_pct',
     over_95_corners: 'over_95_corners_pct',
     over_105_corners: 'over_105_corners_pct',
@@ -145,14 +142,14 @@ function getStatValue(team: RollingTeamStat, bt: BetType): number {
 }
 
 function getSecondaryValue(team: RollingTeamStat, bt: BetType): string {
-  if (bt.includes('goals') || bt === 'btts') return Number(team.avg_total_goals).toFixed(1);
+  if (bt.includes('goals')) return Number(team.avg_total_goals).toFixed(1);
   if (bt.includes('corners')) return Number(team.avg_total_corners).toFixed(1);
   if (bt.includes('cards')) return Number(team.avg_total_cards).toFixed(1);
   return '';
 }
 
 function getSecondaryLabel(bt: BetType): string {
-  if (bt.includes('goals') || bt === 'btts') return 'Avg Goals';
+  if (bt.includes('goals')) return 'Avg Goals';
   if (bt.includes('corners')) return 'Avg Corners';
   if (bt.includes('cards')) return 'Avg Cards';
   return '';

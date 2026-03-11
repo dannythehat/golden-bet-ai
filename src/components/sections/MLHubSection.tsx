@@ -73,21 +73,18 @@ interface RollingEngineStats {
 // ─────────────────────────────────────────────
 const MARKET_LABELS: Record<string, string> = {
   'over_2.5_goals': 'Over 2.5 Goals', 'over_2_5': 'Over 2.5 Goals', 'over_2_5_goals': 'Over 2.5 Goals',
-  'btts': 'BTTS', 'btts_yes': 'BTTS',
-  'over_9.5_corners': 'Over 9.5 Corners', 'over_9_5': 'Over 9.5 Corners', 'over_9_5_corners': 'Over 9.5 Corners',
+  'over_9.5_corners': 'Over 8.5 Corners', 'over_9_5': 'Over 8.5 Corners', 'over_9_5_corners': 'Over 8.5 Corners',
   'over_3.5_cards': 'Over 3.5 Cards', 'over_3_5': 'Over 3.5 Cards', 'over_3_5_cards': 'Over 3.5 Cards',
 };
 
 const MARKET_ICONS: Record<string, typeof Trophy> = {
   'over_2.5_goals': Target, 'over_2_5': Target, 'over_2_5_goals': Target,
-  'btts': Zap, 'btts_yes': Zap,
   'over_9.5_corners': TrendingUp, 'over_9_5': TrendingUp, 'over_9_5_corners': TrendingUp,
   'over_3.5_cards': AlertTriangle, 'over_3_5': AlertTriangle, 'over_3_5_cards': AlertTriangle,
 };
 
 const MARKET_COLORS: Record<string, string> = {
   'over_2.5_goals': 'hsl(var(--primary))', 'over_2_5': 'hsl(var(--primary))', 'over_2_5_goals': 'hsl(var(--primary))',
-  'btts': '#f59e0b', 'btts_yes': '#f59e0b',
   'over_9.5_corners': '#06b6d4', 'over_9_5': '#06b6d4', 'over_9_5_corners': '#06b6d4',
   'over_3.5_cards': '#ef4444', 'over_3_5': '#ef4444', 'over_3_5_cards': '#ef4444',
 };
@@ -105,8 +102,8 @@ const HOW_IT_WORKS = [
   },
   {
     step: '02', icon: Cpu, title: 'ML Probability Engine',
-    desc: 'Four trained Gradient Boosted models each specialise in a different market — Goals, BTTS, Corners, Cards. They analyse 40+ features per fixture and output a raw probability.',
-    tags: ['Over 2.5 Goals', 'BTTS', 'Over 9.5 Corners', 'Over 3.5 Cards'],
+    desc: 'Three trained Gradient Boosted models each specialise in a different market — Goals, Corners, Cards. They analyse 40+ features per fixture and output a raw probability.',
+    tags: ['Over 2.5 Goals', 'Over 8.5 Corners', 'Over 3.5 Cards'],
   },
   {
     step: '03', icon: Sparkles, title: 'AI Intelligence Layer',

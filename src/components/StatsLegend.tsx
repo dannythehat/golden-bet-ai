@@ -14,8 +14,8 @@ export function StatsLegend() {
               <div><span className="font-medium text-foreground">Avg</span> = Average per game</div>
               <div><span className="font-medium text-foreground">O2.5</span> = Over 2.5 (3+ goals/cards)</div>
               <div><span className="font-medium text-foreground">U2.5</span> = Under 2.5 (0-2 goals/cards)</div>
-              <div><span className="font-medium text-foreground">O9.5</span> = Over 9.5 corners (10+ corners)</div>
-              <div><span className="font-medium text-foreground">U9.5</span> = Under 9.5 corners (0-9 corners)</div>
+              <div><span className="font-medium text-foreground">O8.5</span> = Over 8.5 corners (9+ corners)</div>
+              <div><span className="font-medium text-foreground">U8.5</span> = Under 8.5 corners (0-8 corners)</div>
             </div>
             <p className="text-xs pt-1">
               <span className="text-green-400 font-medium">●</span> 75%+ = Very High | 

@@ -28,7 +28,7 @@ interface MonthlyPLTableProps {
 export function MonthlyPLTable({ goals, corners, cards, monthName, isLoading, onViewFullPL }: MonthlyPLTableProps) {
   const rows: BetTypeRow[] = [
     { name: 'Over 2.5 Goals', icon: <Target className="w-3.5 h-3.5" />, colorVar: '--bet-goals', ...goals },
-    { name: 'Over 9.5 Corners', icon: <Flag className="w-3.5 h-3.5" />, colorVar: '--bet-corners', ...corners },
+    { name: 'Over 8.5 Corners', icon: <Flag className="w-3.5 h-3.5" />, colorVar: '--bet-corners', ...corners },
     { name: 'Over 3.5 Cards', icon: <CreditCard className="w-3.5 h-3.5" />, colorVar: '--bet-cards', ...cards },
   ];
 

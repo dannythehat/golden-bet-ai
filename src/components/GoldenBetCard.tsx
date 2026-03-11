@@ -150,8 +150,9 @@ export function GoldenBetCard({ bet, index, liveStats }: GoldenBetCardProps) {
     
     // Corners markets
     if (market.includes('corner')) {
-      const target = market.includes('9.5') || market.includes('95') ? 10 : 
-                     market.includes('10.5') || market.includes('105') ? 11 : 10;
+      const target = market.includes('8.5') || market.includes('85') ? 9 :
+                     market.includes('9.5') || market.includes('95') ? 9 : 
+                     market.includes('10.5') || market.includes('105') ? 11 : 9;
       return { label: 'Corners', value: displayStats.corners_total, target, icon: <Flag className="w-4 h-4" /> };
     }
     

@@ -133,9 +133,9 @@ export const marketLabels: Record<string, string> = {
   'over_2_5_goals': 'Over 2.5 Goals',
   'over_25_goals': 'Over 2.5 Goals',
   // Corners markets
-  'over_9.5_corners': 'Over 9.5 Corners',
-  'over_9_5_corners': 'Over 9.5 Corners',
-  'over_95_corners': 'Over 9.5 Corners',
+  'over_9.5_corners': 'Over 8.5 Corners',
+  'over_9_5_corners': 'Over 8.5 Corners',
+  'over_95_corners': 'Over 8.5 Corners',
   'over_8.5_corners': 'Over 8.5 Corners',
   'over_8_5_corners': 'Over 8.5 Corners',
   'over_85_corners': 'Over 8.5 Corners',
@@ -146,9 +146,6 @@ export const marketLabels: Record<string, string> = {
   'over_2.5_cards': 'Over 2.5 Cards',
   'over_2_5_cards': 'Over 2.5 Cards',
   'over_25_cards': 'Over 2.5 Cards',
-  // BTTS
-  'btts': 'BTTS Yes',
-  'btts_yes': 'BTTS Yes',
 };
 
 export const marketIcons: Record<string, string> = {
@@ -170,7 +167,4 @@ export const marketIcons: Record<string, string> = {
   'over_2.5_cards': '🟨',
   'over_2_5_cards': '🟨',
   'over_25_cards': '🟨',
-  // BTTS
-  'btts': '⚔️',
-  'btts_yes': '⚔️',
 };

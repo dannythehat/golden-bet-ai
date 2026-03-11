@@ -62,11 +62,11 @@ export const BET_TYPE_CONFIGS: Record<BetTypeKey, BetTypeConfig> = {
   corners: {
     key: 'corners',
     title: 'Over Corners',
-    subtitle: 'Over 9.5 Corners Specialist Picks',
+    subtitle: 'Over 8.5 Corners Specialist Picks',
     marketFilter: ['over_9_5_corners', 'over_9.5_corners', 'over_8_5_corners', 'over_8.5_corners'],
     formStatKey: 'over_95_corners_pct',
     formAvgKey: 'avg_total_corners',
-    formLabel: 'O9.5 Corners %',
+    formLabel: 'O8.5 Corners %',
     avgLabel: 'Avg Corners',
     colorVar: '--bet-corners',
     colorClass: 'bet-corners',
