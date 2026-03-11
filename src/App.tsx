@@ -17,7 +17,7 @@ const MLDataLoader = lazy(() => import("./pages/MLDataLoader"));
 const SportMonksLoader = lazy(() => import("./pages/SportMonksLoader"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
-const GoldenBets = lazy(() => import("./pages/GoldenBets"));
+
 const BetBuilderPage = lazy(() => import("./pages/BetBuilderPage"));
 const AccaDelightPage = lazy(() => import("./pages/AccaDelightPage"));
 const OverGoalsPage = lazy(() => import("./pages/OverGoalsPage"));
