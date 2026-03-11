@@ -154,13 +154,27 @@ function calcGoldenStats(bets: SettledBet[]): PLStats {
   };
 }
 
+/** Filter bets by market category */
+function filterByMarket(bets: SettledBet[], marketKey: string): SettledBet[] {
+  return bets.filter(b => {
+    const m = b.market.toLowerCase().replace(/[.\s]/g, '_');
+    return m.includes(marketKey);
+  });
+}
+
+export interface MarketPLStats {
+  goals: PLStats;
+  corners: PLStats;
+  cards: PLStats;
+}
+
 async function fetchPLHistory(): Promise<{
   settledBets: SettledBet[];
   byDate: DailyGroup[];
   stats: Record<'weekly' | 'monthly' | 'yearly' | 'allTime', PLStats>;
+  marketStats: Record<'weekly' | 'monthly' | 'yearly' | 'allTime', MarketPLStats>;
   lastMonthStats: LastMonthStats;
 }> {
-  // ONLY Golden Bets — Bet Builder and ACCA are excluded from P&L
   const { data: goldenBetsData, error: goldenError } = await supabase
     .from('golden_bet_history')
     .select('*')
@@ -174,7 +188,6 @@ async function fetchPLHistory(): Promise<{
   }
 
   const settledBets = (goldenBetsData || []) as SettledBet[];
-  console.log('[usePLHistory] Fetched settled Golden Bets:', settledBets.length);
 
   // Group by date for display, but calc P&L per date+market
   const dateMap = new Map<string, SettledBet[]>();
@@ -187,7 +200,6 @@ async function fetchPLHistory(): Promise<{
   const byDate: DailyGroup[] = Array.from(dateMap.entries())
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .map(([date, bets]) => {
-      // Group this day's bets by market for proper doubles+treble calc per market
       const marketMap = new Map<string, SettledBet[]>();
       for (const b of bets) {
         if (!marketMap.has(b.market)) marketMap.set(b.market, []);
@@ -218,6 +230,12 @@ async function fetchPLHistory(): Promise<{
 
   const filterByDate = (since: Date) =>
     settledBets.filter(b => new Date(b.prediction_date + 'T00:00:00') >= since);
+
+  const calcMarketStats = (bets: SettledBet[]): MarketPLStats => ({
+    goals: calcGoldenStats(filterByMarket(bets, 'goal')),
+    corners: calcGoldenStats(filterByMarket(bets, 'corner')),
+    cards: calcGoldenStats(filterByMarket(bets, 'card')),
+  });
 
   // Last month stats
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -251,6 +269,12 @@ async function fetchPLHistory(): Promise<{
       yearly: calcGoldenStats(filterByDate(startOfYear)),
       allTime: calcGoldenStats(settledBets),
     },
+    marketStats: {
+      weekly: calcMarketStats(filterByDate(startOfWeek)),
+      monthly: calcMarketStats(filterByDate(startOfMonth)),
+      yearly: calcMarketStats(filterByDate(startOfYear)),
+      allTime: calcMarketStats(settledBets),
+    },
     lastMonthStats,
   };
 }
@@ -274,6 +298,12 @@ export function usePLHistory() {
     totalStaked: 0, totalReturns: 0, netProfit: 0, roi: 0,
   };
 
+  const emptyMarketStats: MarketPLStats = {
+    goals: emptyStats,
+    corners: emptyStats,
+    cards: emptyStats,
+  };
+
   return {
     settledBets: query.data?.settledBets || [],
     byDate: query.data?.byDate || [],
@@ -282,6 +312,12 @@ export function usePLHistory() {
       monthly: emptyStats,
       yearly: emptyStats,
       allTime: emptyStats,
+    },
+    marketStats: query.data?.marketStats || {
+      weekly: emptyMarketStats,
+      monthly: emptyMarketStats,
+      yearly: emptyMarketStats,
+      allTime: emptyMarketStats,
     },
     lastMonthStats: query.data?.lastMonthStats || {
       monthName: '',

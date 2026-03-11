@@ -67,7 +67,7 @@ export default function GoldenBets() {
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gold/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
       
-      <Navigation activeSection="predictions" onSectionChange={() => {}} />
+      <Navigation activeSection="home" onSectionChange={() => {}} />
       
       <main className="relative container mx-auto px-4 md:px-6 pt-28 md:pt-32 pb-24 flex-1">
         <div className="space-y-8">

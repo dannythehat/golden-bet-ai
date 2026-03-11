@@ -1,9 +1,8 @@
 /**
- * Monthly P&L Summary Table — Compact frosted glass table for homepage
- * Shows current month performance for Golden Bets, Bet Builder, and Accas
+ * Monthly P&L Summary Table — Shows per-market rows (Goals, Corners, Cards) + combined total
  */
 
-import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowRight, Target, Flag, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import theGafferImage from '@/assets/the-gaffer.webp';
 
@@ -13,17 +12,26 @@ interface BetTypeRow {
   losses: number;
   profit: number;
   staked: number;
+  colorVar: string;
+  icon: React.ReactNode;
 }
 
 interface MonthlyPLTableProps {
-  goldenBets: BetTypeRow;
+  goals: { wins: number; losses: number; profit: number; staked: number };
+  corners: { wins: number; losses: number; profit: number; staked: number };
+  cards: { wins: number; losses: number; profit: number; staked: number };
   monthName: string;
   isLoading?: boolean;
   onViewFullPL?: () => void;
 }
 
-export function MonthlyPLTable({ goldenBets, monthName, isLoading, onViewFullPL }: MonthlyPLTableProps) {
-  const rows = [goldenBets];
+export function MonthlyPLTable({ goals, corners, cards, monthName, isLoading, onViewFullPL }: MonthlyPLTableProps) {
+  const rows: BetTypeRow[] = [
+    { name: 'Over 2.5 Goals', icon: <Target className="w-3.5 h-3.5" />, colorVar: '--bet-goals', ...goals },
+    { name: 'Over 9.5 Corners', icon: <Flag className="w-3.5 h-3.5" />, colorVar: '--bet-corners', ...corners },
+    { name: 'Over 3.5 Cards', icon: <CreditCard className="w-3.5 h-3.5" />, colorVar: '--bet-cards', ...cards },
+  ];
+
   const totalProfit = rows.reduce((s, r) => s + r.profit, 0);
   const totalStaked = rows.reduce((s, r) => s + r.staked, 0);
   const totalWins = rows.reduce((s, r) => s + r.wins, 0);
@@ -83,7 +91,7 @@ export function MonthlyPLTable({ goldenBets, monthName, isLoading, onViewFullPL 
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-muted/50 border-b border-border/50">
-                <th className="text-left py-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strategy</th>
+                <th className="text-left py-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Market</th>
                 <th className="text-center py-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">W/L</th>
                 <th className="text-right py-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">P&L</th>
               </tr>
@@ -97,7 +105,14 @@ export function MonthlyPLTable({ goldenBets, monthName, isLoading, onViewFullPL 
                     "border-t border-border/30 transition-colors",
                     i % 2 === 0 ? "bg-transparent" : "bg-muted/10"
                   )}>
-                    <td className="py-2.5 px-3 font-medium text-foreground">{row.name}</td>
+                    <td className="py-2.5 px-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-white" style={{ background: `hsl(var(${row.colorVar}))` }}>
+                          {row.icon}
+                        </div>
+                        <span className="font-medium text-foreground">{row.name}</span>
+                      </div>
+                    </td>
                     <td className="py-2.5 px-2 text-center">
                       {hasData ? (
                         <span className="text-foreground/80">
