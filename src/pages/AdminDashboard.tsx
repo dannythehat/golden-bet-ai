@@ -16,6 +16,13 @@ export default function AdminDashboard() {
   const [testResult, setTestResult] = useState<any>(null);
   const [testLoading, setTestLoading] = useState(false);
 
+  // Load status on mount
+  useEffect(() => {
+    if (!authLoading && session && ADMIN_EMAILS.includes(session.user.email ?? '')) {
+      checkStatus();
+    }
+  }, [authLoading, session]);
+
   useEffect(() => {
     if (!authLoading && (!session || !ADMIN_EMAILS.includes(session.user.email ?? ''))) {
       navigate('/');
@@ -24,11 +31,6 @@ export default function AdminDashboard() {
 
   if (authLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   if (!session || !ADMIN_EMAILS.includes(session.user.email ?? '')) return null;
-
-  // Load status on mount
-  useEffect(() => {
-    checkStatus();
-  }, []);
 
   const checkStatus = async () => {
     setLoading(true);
