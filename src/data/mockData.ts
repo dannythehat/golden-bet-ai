@@ -146,9 +146,6 @@ export const marketLabels: Record<string, string> = {
   'over_2.5_cards': 'Over 2.5 Cards',
   'over_2_5_cards': 'Over 2.5 Cards',
   'over_25_cards': 'Over 2.5 Cards',
-  // BTTS
-  'btts': 'BTTS Yes',
-  'btts_yes': 'BTTS Yes',
 };
 
 export const marketIcons: Record<string, string> = {
