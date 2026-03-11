@@ -142,7 +142,7 @@ function getStatValue(team: RollingTeamStat, bt: BetType): number {
 }
 
 function getSecondaryValue(team: RollingTeamStat, bt: BetType): string {
-  if (bt.includes('goals') || bt === 'btts') return Number(team.avg_total_goals).toFixed(1);
+  if (bt.includes('goals')) return Number(team.avg_total_goals).toFixed(1);
   if (bt.includes('corners')) return Number(team.avg_total_corners).toFixed(1);
   if (bt.includes('cards')) return Number(team.avg_total_cards).toFixed(1);
   return '';
