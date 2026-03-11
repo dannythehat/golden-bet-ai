@@ -157,7 +157,7 @@ function calcGoldenStats(bets: SettledBet[]): PLStats {
  * Flat-stake P&L: each bet is a £10 single. Used for per-market breakdown.
  */
 function calcFlatStakePL(bets: SettledBet[]): PLStats {
-  const stake = 10;
+  const stake = 2;
   let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
 
   for (const bet of bets) {
