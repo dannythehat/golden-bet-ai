@@ -298,10 +298,10 @@ async function fetchPLHistory(): Promise<{
     settledBets,
     byDate,
     stats: {
-      weekly: calcGoldenStats(filterByDate(startOfWeek)),
-      monthly: calcGoldenStats(filterByDate(startOfMonth)),
-      yearly: calcGoldenStats(filterByDate(startOfYear)),
-      allTime: calcGoldenStats(settledBets),
+      weekly: calcFlatStakePL(filterByDate(startOfWeek)),
+      monthly: calcFlatStakePL(filterByDate(startOfMonth)),
+      yearly: calcFlatStakePL(filterByDate(startOfYear)),
+      allTime: calcFlatStakePL(settledBets),
     },
     marketStats: {
       weekly: calcMarketStats(filterByDate(startOfWeek)),
