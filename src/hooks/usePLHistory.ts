@@ -68,7 +68,7 @@ export interface LastMonthStats {
 function calcDoublesAndTreblePL(bets: SettledBet[]): {
   wins: number; losses: number; voids: number; totalStaked: number; netProfit: number;
 } {
-  const stake = 10;
+  const stake = 2;
 
   // We always expect exactly 3 bets (Corners / Goals / Cards).
   // Order in DB: highest ml_confidence first (or insertion order from ML pipeline).
