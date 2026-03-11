@@ -85,7 +85,6 @@ const MARKET_ICONS: Record<string, typeof Trophy> = {
 
 const MARKET_COLORS: Record<string, string> = {
   'over_2.5_goals': 'hsl(var(--primary))', 'over_2_5': 'hsl(var(--primary))', 'over_2_5_goals': 'hsl(var(--primary))',
-  'btts': '#f59e0b', 'btts_yes': '#f59e0b',
   'over_9.5_corners': '#06b6d4', 'over_9_5': '#06b6d4', 'over_9_5_corners': '#06b6d4',
   'over_3.5_cards': '#ef4444', 'over_3_5': '#ef4444', 'over_3_5_cards': '#ef4444',
 };
