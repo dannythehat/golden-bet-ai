@@ -167,7 +167,4 @@ export const marketIcons: Record<string, string> = {
   'over_2.5_cards': '🟨',
   'over_2_5_cards': '🟨',
   'over_25_cards': '🟨',
-  // BTTS
-  'btts': '⚔️',
-  'btts_yes': '⚔️',
 };
