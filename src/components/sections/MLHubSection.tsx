@@ -73,8 +73,7 @@ interface RollingEngineStats {
 // ─────────────────────────────────────────────
 const MARKET_LABELS: Record<string, string> = {
   'over_2.5_goals': 'Over 2.5 Goals', 'over_2_5': 'Over 2.5 Goals', 'over_2_5_goals': 'Over 2.5 Goals',
-  'btts': 'BTTS', 'btts_yes': 'BTTS',
-  'over_9.5_corners': 'Over 9.5 Corners', 'over_9_5': 'Over 9.5 Corners', 'over_9_5_corners': 'Over 9.5 Corners',
+  'over_9.5_corners': 'Over 8.5 Corners', 'over_9_5': 'Over 8.5 Corners', 'over_9_5_corners': 'Over 8.5 Corners',
   'over_3.5_cards': 'Over 3.5 Cards', 'over_3_5': 'Over 3.5 Cards', 'over_3_5_cards': 'Over 3.5 Cards',
 };
 
