@@ -235,18 +235,17 @@ async function fetchPLHistory(): Promise<{
   const byDate: DailyGroup[] = Array.from(dateMap.entries())
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .map(([date, bets]) => {
-      const marketMap = new Map<string, SettledBet[]>();
-      for (const b of bets) {
-        if (!marketMap.has(b.market)) marketMap.set(b.market, []);
-        marketMap.get(b.market)!.push(b);
-      }
-      let wins = 0, losses = 0, voids = 0, totalStaked = 0, netProfit = 0;
-      for (const [, marketBets] of marketMap) {
-        const r = calcDoublesAndTreblePL(marketBets);
-        wins += r.wins; losses += r.losses; voids += r.voids;
-        totalStaked += r.totalStaked; netProfit += r.netProfit;
-      }
-      return { date, bets, wins, losses, voids, totalStaked, netProfit };
+      // Flat stake P&L per bet
+      const flatPL = calcFlatStakePL(bets);
+      return {
+        date,
+        bets,
+        wins: flatPL.wins,
+        losses: flatPL.losses,
+        voids: flatPL.voids,
+        totalStaked: flatPL.totalStaked,
+        netProfit: flatPL.netProfit,
+      };
     });
 
   // Period boundaries
