@@ -12,7 +12,7 @@ const Index = lazy(() => import("./pages/Index"));
 // Lazy load non-critical routes to reduce initial JS bundle
 const Auth = lazy(() => import("./pages/Auth"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const GetKeys = lazy(() => import("./pages/GetKeys"));
+
 const MLDataLoader = lazy(() => import("./pages/MLDataLoader"));
 const SportMonksLoader = lazy(() => import("./pages/SportMonksLoader"));
 const Blog = lazy(() => import("./pages/Blog"));
