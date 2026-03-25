@@ -589,7 +589,7 @@ serve(async (req) => {
     }
 
     if (validFixtures.length === 0) {
-      return new Response(JSON.stringify({ success: true, noAcca: true, reason: 'no_valid', message: "No qualifying fixtures today. Check back tomorrow!" }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ success: true, noAcca: true, reason: 'no_valid', message: "No qualifying fixtures today — this can happen during international breaks or light fixture days. Check back tomorrow!" }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // ===== Fetch ALL market stats =====
