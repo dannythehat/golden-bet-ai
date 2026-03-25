@@ -187,7 +187,7 @@ export default function BetBuilderPage() {
                 </div>
                 <h3 className="text-xl font-bold">No Bet Builder Today</h3>
                 <p className="text-muted-foreground max-w-md mx-auto text-sm">
-                  {noBetBuilderMessage || 'No fixtures meet the 70%+ confidence threshold across 2+ markets today. The Gaffer only backs winners.'}
+                  {noBetBuilderMessage || 'No qualifying fixtures today — this can happen during international breaks or light fixture days. The Gaffer only backs winners, so check back tomorrow!'}
                 </p>
               </div>
             )}

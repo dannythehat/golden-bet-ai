@@ -1494,7 +1494,7 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({
             ...base,
-            message: `ML feed not updated for today yet (expected ${today}, current feed is ${ml.feedDate}). Run your training/upload, then refresh.`,
+            message: 'No qualifying fixtures available today — this can happen during international breaks or light fixture days. Check back tomorrow!',
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -1503,7 +1503,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           ...base,
-          message: 'No fixtures meet the threshold requirements today',
+          message: 'No fixtures meet The Gaffer\'s quality threshold today. This often happens during international breaks or when fixture lists are thin. Check back tomorrow!',
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );

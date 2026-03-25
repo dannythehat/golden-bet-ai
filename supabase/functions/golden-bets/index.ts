@@ -1491,7 +1491,7 @@ serve(async (req) => {
     if (heuristicPicks.length === 0) {
       return new Response(JSON.stringify({
         success: false,
-        message: `No qualifying European picks for ${targetDate}`,
+        message: 'No qualifying fixtures today — this can happen during international breaks or light fixture days. Check back tomorrow!',
         bets: [],
         betBuilder: null,
       }), {
@@ -1549,7 +1549,7 @@ serve(async (req) => {
     if (verifiedPicks.length === 0) {
       return new Response(JSON.stringify({
         success: false,
-        message: `No qualifying picks for ${targetDate} — no fixtures had both real odds AND positive value edge`,
+        message: 'No fixtures meet The Gaffer\'s quality threshold today. This often happens during international breaks or when fixture lists are thin. Check back tomorrow!',
         bets: [],
         betBuilder: null,
       }), {
