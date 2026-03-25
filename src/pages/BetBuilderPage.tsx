@@ -189,7 +189,6 @@ export default function BetBuilderPage() {
                 <p className="text-muted-foreground max-w-md mx-auto text-sm">
                   {noBetBuilderMessage || 'No qualifying fixtures today — this can happen during international breaks or light fixture days. The Gaffer only backs winners, so check back tomorrow!'}
                 </p>
-                </p>
               </div>
             )}
           </section>
