@@ -249,7 +249,7 @@ export function AccaOfTheDayCard() {
             <AlertCircle className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
             <div className="space-y-2">
               <p className="text-sm text-foreground">
-                {noAccaMessage || "No form table teams playing today. Check back tomorrow!"}
+                {noAccaMessage || "No qualifying fixtures today — this can happen during international breaks or light fixture days. Check back tomorrow!"}
               </p>
             </div>
           </div>
