@@ -125,37 +125,20 @@ const SCHEDULE: Record<number, Record<number, Task[]>> = {
     15: [
       ["acca-builder", { scheduled: true }],
     ],
-    // 05:20 - Morning briefing
-    20: [
-      ["generate-blog-post", { type: "morning-briefing", auto: true }],
-    ],
-    // 05:30 - More blog content
-    30: [
-      ["generate-blog-post", { type: "match-preview", auto: true }],
-      ["generate-blog-post", { type: "ai-ml-insight", auto: true }],
-      ["generate-blog-post", { type: "funny-story", auto: true }],
-    ],
   },
-  // 06:00 - Match reports & recaps
+  // 06:00 - Yesterday's results recap article
   6: {
     0: [
-      ["gaffer-match-reports", { scheduled: true }],
-    ],
-    15: [
       ["gaffer-results-recap", { scheduled: true }],
     ],
-  // 06:30 - Email digest
     30: [
       ["email-blog-digest", { scheduled: true }],
     ],
   },
-  // 09:30 - Gaffer's Golden Picks article + Form Table Intel
+  // 09:30 - Today's selections article (the only other daily article)
   9: {
     30: [
       ["gaffer-daily-picks-article", { scheduled: true }],
-    ],
-    45: [
-      ["form-table-article", { scheduled: true }],
     ],
   },
   // 16:00-23:00 - Settle bets every 30 min
