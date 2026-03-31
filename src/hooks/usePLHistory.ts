@@ -188,10 +188,16 @@ function calcFlatStakePL(bets: SettledBet[]): PLStats {
   };
 }
 
+/** Normalise market key: replace dots with underscores for consistent matching */
+function normaliseMarket(raw: string): string {
+  return raw.toLowerCase().replace(/[.\s]/g, '_');
+}
+
 /** Filter bets by market category */
 function filterByMarket(bets: SettledBet[], marketKey: string): SettledBet[] {
   return bets.filter(b => {
-    const m = b.market.toLowerCase().replace(/[.\s]/g, '_');
+    const m = normaliseMarket(b.market);
+    if (marketKey === 'goal') return m.includes('goal') || m === 'btts';
     return m.includes(marketKey);
   });
 }
