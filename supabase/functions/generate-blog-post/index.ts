@@ -294,7 +294,6 @@ serve(async (req) => {
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const body: GenerateRequest = await req.json();
     const { type, prediction_date, topic, title: manualTitle, content: manualContent, auto } = body;
 
     // Manual post creation
