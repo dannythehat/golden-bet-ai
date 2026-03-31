@@ -411,7 +411,7 @@ export function PLSection() {
                           </div>
                           <div>
                             <CardTitle className="text-lg">Doubles &amp; Treble</CardTitle>
-                            <p className="text-xs text-muted-foreground">3 doubles + 1 treble · £10 each · £40/day</p>
+                            <p className="text-xs text-muted-foreground">3 doubles + 1 treble · £2 each · £8/day</p>
                           </div>
                         </div>
                         <div className="text-right">
