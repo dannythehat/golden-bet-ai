@@ -32,9 +32,13 @@ const periodLabels: Record<TimePeriod, string> = {
 // Market labels for the 3 Golden Bet types
 const MARKET_LABELS: Record<string, { label: string; icon: string; color: string }> = {
   over_9_5_corners: { label: 'Corners', icon: '📐', color: 'text-blue-400' },
+  'over_9.5_corners': { label: 'Corners', icon: '📐', color: 'text-blue-400' },
   over_2_5_goals:   { label: 'Goals',   icon: '⚽', color: 'text-emerald-400' },
+  'over_2.5_goals':   { label: 'Goals',   icon: '⚽', color: 'text-emerald-400' },
   over_3_5_cards:   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
+  'over_3.5_cards':   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
   over_4_5_cards:   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
+  btts:             { label: 'BTTS',    icon: '⚽', color: 'text-emerald-400' },
 };
 
 function getBetLabel(market: string) {
