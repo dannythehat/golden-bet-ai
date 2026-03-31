@@ -42,7 +42,7 @@ function getBetLabel(market: string) {
   return m ? `${m.icon} ${m.label}` : market.replace(/_/g, ' ');
 }
 
-function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = 10) {
+function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = 2) {
   const nonVoid = legs.filter(b => b.status !== 'void');
   if (nonVoid.length === 0) return { outcome: 'void' as const, combinedOdds: 1, profit: 0 };
   if (nonVoid.some(b => b.status === 'lost')) {
