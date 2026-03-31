@@ -120,19 +120,18 @@ function calcDoublesAndTreblePL(bets: SettledBet[]): {
 }
 
 function calcGoldenStats(bets: SettledBet[]): PLStats {
-  // Group by date + market so each market's 3 picks get their own doubles+treble calc
-  const groupKey = (b: SettledBet) => `${b.prediction_date}|${b.market}`;
-  const groupMap = new Map<string, SettledBet[]>();
+  // Group by date — each day's 3 picks (one per market) form doubles + treble
+  const dateMap = new Map<string, SettledBet[]>();
   for (const bet of bets) {
-    const key = groupKey(bet);
-    if (!groupMap.has(key)) groupMap.set(key, []);
-    groupMap.get(key)!.push(bet);
+    const key = bet.prediction_date;
+    if (!dateMap.has(key)) dateMap.set(key, []);
+    dateMap.get(key)!.push(bet);
   }
 
   let totalWins = 0, totalLosses = 0, totalVoids = 0, totalStaked = 0, netProfit = 0;
 
-  for (const [, marketDayBets] of groupMap) {
-    const day = calcDoublesAndTreblePL(marketDayBets);
+  for (const [, dayBets] of dateMap) {
+    const day = calcDoublesAndTreblePL(dayBets);
     totalWins += day.wins;
     totalLosses += day.losses;
     totalVoids += day.voids;
@@ -189,10 +188,16 @@ function calcFlatStakePL(bets: SettledBet[]): PLStats {
   };
 }
 
+/** Normalise market key: replace dots with underscores for consistent matching */
+function normaliseMarket(raw: string): string {
+  return raw.toLowerCase().replace(/[.\s]/g, '_');
+}
+
 /** Filter bets by market category */
 function filterByMarket(bets: SettledBet[], marketKey: string): SettledBet[] {
   return bets.filter(b => {
-    const m = b.market.toLowerCase().replace(/[.\s]/g, '_');
+    const m = normaliseMarket(b.market);
+    if (marketKey === 'goal') return m.includes('goal') || m === 'btts';
     return m.includes(marketKey);
   });
 }
@@ -266,9 +271,9 @@ async function fetchPLHistory(): Promise<{
     settledBets.filter(b => new Date(b.prediction_date + 'T00:00:00') >= since);
 
   const calcMarketStats = (bets: SettledBet[]): MarketPLStats => ({
-    goals: calcGoldenStats(filterByMarket(bets, 'goal')),
-    corners: calcGoldenStats(filterByMarket(bets, 'corner')),
-    cards: calcGoldenStats(filterByMarket(bets, 'card')),
+    goals: calcFlatStakePL(filterByMarket(bets, 'goal')),
+    corners: calcFlatStakePL(filterByMarket(bets, 'corner')),
+    cards: calcFlatStakePL(filterByMarket(bets, 'card')),
   });
 
   // Last month stats

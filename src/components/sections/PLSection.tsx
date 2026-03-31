@@ -32,9 +32,13 @@ const periodLabels: Record<TimePeriod, string> = {
 // Market labels for the 3 Golden Bet types
 const MARKET_LABELS: Record<string, { label: string; icon: string; color: string }> = {
   over_9_5_corners: { label: 'Corners', icon: '📐', color: 'text-blue-400' },
+  'over_9.5_corners': { label: 'Corners', icon: '📐', color: 'text-blue-400' },
   over_2_5_goals:   { label: 'Goals',   icon: '⚽', color: 'text-emerald-400' },
+  'over_2.5_goals':   { label: 'Goals',   icon: '⚽', color: 'text-emerald-400' },
   over_3_5_cards:   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
+  'over_3.5_cards':   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
   over_4_5_cards:   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
+  btts:             { label: 'BTTS',    icon: '⚽', color: 'text-emerald-400' },
 };
 
 function getBetLabel(market: string) {
@@ -42,7 +46,7 @@ function getBetLabel(market: string) {
   return m ? `${m.icon} ${m.label}` : market.replace(/_/g, ' ');
 }
 
-function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = 10) {
+function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = 2) {
   const nonVoid = legs.filter(b => b.status !== 'void');
   if (nonVoid.length === 0) return { outcome: 'void' as const, combinedOdds: 1, profit: 0 };
   if (nonVoid.some(b => b.status === 'lost')) {
@@ -99,7 +103,7 @@ export function PLSection() {
   // Build doubles + treble summary from a day's 3 picks
   const calcCombos = (day: DailyGroup) => {
     const picks = day.bets.slice(0, 3);
-    const stake = 10;
+    const stake = 2;
     const combos: Array<{ label: string; legs: typeof picks; result: ReturnType<typeof evalCombo> }> = [];
 
     for (let i = 0; i < picks.length; i++) {
@@ -217,19 +221,19 @@ export function PLSection() {
                     <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
                       <Layers className="w-3.5 h-3.5 text-primary" />
                     </div>
-                    <span><span className="font-semibold text-foreground">3 Doubles:</span> £10 each</span>
+                    <span><span className="font-semibold text-foreground">3 Doubles:</span> £2 each</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-gold/20 flex items-center justify-center">
                       <Star className="w-3.5 h-3.5 text-gold" />
                     </div>
-                    <span><span className="font-semibold text-foreground">1 Treble:</span> £10</span>
+                    <span><span className="font-semibold text-foreground">1 Treble:</span> £2</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center">
                       <Zap className="w-3.5 h-3.5 text-muted-foreground" />
                     </div>
-                    <span className="text-muted-foreground"><span className="font-semibold">Daily stake:</span> £40</span>
+                    <span className="text-muted-foreground"><span className="font-semibold">Daily stake:</span> £8</span>
                   </div>
                 </div>
               </div>
@@ -411,7 +415,7 @@ export function PLSection() {
                           </div>
                           <div>
                             <CardTitle className="text-lg">Doubles &amp; Treble</CardTitle>
-                            <p className="text-xs text-muted-foreground">3 doubles + 1 treble · £10 each · £40/day</p>
+                            <p className="text-xs text-muted-foreground">3 doubles + 1 treble · £2 each · £8/day</p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -511,7 +515,7 @@ export function PLSection() {
                           </div>
                           <div>
                             <CardTitle className="text-lg">Bet Builder</CardTitle>
-                            <p className="text-xs text-muted-foreground">Multi-leg single game · £10 each</p>
+                            <p className="text-xs text-muted-foreground">Multi-leg single game · £10 stake</p>
                           </div>
                         </div>
                         <div className="text-right">
