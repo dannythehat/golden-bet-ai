@@ -99,7 +99,7 @@ export function PLSection() {
   // Build doubles + treble summary from a day's 3 picks
   const calcCombos = (day: DailyGroup) => {
     const picks = day.bets.slice(0, 3);
-    const stake = 10;
+    const stake = 2;
     const combos: Array<{ label: string; legs: typeof picks; result: ReturnType<typeof evalCombo> }> = [];
 
     for (let i = 0; i < picks.length; i++) {
