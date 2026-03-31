@@ -6,6 +6,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+/** Only allow service_role or internal cron callers */
+function isAuthorized(req: Request): boolean {
+  const authHeader = req.headers.get("Authorization") || "";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  // Allow if bearer token matches service role key
+  if (serviceKey && authHeader === `Bearer ${serviceKey}`) return true;
+  // Allow if called with the anon key + scheduled flag (internal orchestrator)
+  return false;
+}
+
 const CONTENT_TYPES = [
   'match-preview',
   'weekly-roundup',
@@ -25,6 +35,7 @@ interface GenerateRequest {
   title?: string;
   content?: string;
   auto?: boolean; // true when called from cron
+  scheduled?: boolean; // true when called from orchestrator
 }
 
 // Internal links for SEO juice
@@ -271,13 +282,19 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  try {
+    // Auth check: only service_role or internal orchestrator can call this
+    const body: GenerateRequest = await req.json();
+    const isScheduled = body.auto === true || body.scheduled === true;
+    if (!isScheduled && !isAuthorized(req)) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const body: GenerateRequest = await req.json();
     const { type, prediction_date, topic, title: manualTitle, content: manualContent, auto } = body;
 
     // Manual post creation
