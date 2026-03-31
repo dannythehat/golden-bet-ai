@@ -35,6 +35,7 @@ interface GenerateRequest {
   title?: string;
   content?: string;
   auto?: boolean; // true when called from cron
+  scheduled?: boolean; // true when called from orchestrator
 }
 
 // Internal links for SEO juice
