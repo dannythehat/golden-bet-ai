@@ -281,7 +281,14 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  try {
+    // Auth check: only service_role or internal orchestrator can call this
+    const body: GenerateRequest = await req.json();
+    const isScheduled = body.auto === true || body.scheduled === true;
+    if (!isScheduled && !isAuthorized(req)) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
