@@ -515,7 +515,7 @@ export function PLSection() {
                           </div>
                           <div>
                             <CardTitle className="text-lg">Bet Builder</CardTitle>
-                            <p className="text-xs text-muted-foreground">Multi-leg single game · £10 each</p>
+                            <p className="text-xs text-muted-foreground">Multi-leg single game · £10 stake</p>
                           </div>
                         </div>
                         <div className="text-right">
