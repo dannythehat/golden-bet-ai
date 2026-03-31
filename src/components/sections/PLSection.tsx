@@ -217,19 +217,19 @@ export function PLSection() {
                     <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
                       <Layers className="w-3.5 h-3.5 text-primary" />
                     </div>
-                    <span><span className="font-semibold text-foreground">3 Doubles:</span> £10 each</span>
+                    <span><span className="font-semibold text-foreground">3 Doubles:</span> £2 each</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-gold/20 flex items-center justify-center">
                       <Star className="w-3.5 h-3.5 text-gold" />
                     </div>
-                    <span><span className="font-semibold text-foreground">1 Treble:</span> £10</span>
+                    <span><span className="font-semibold text-foreground">1 Treble:</span> £2</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center">
                       <Zap className="w-3.5 h-3.5 text-muted-foreground" />
                     </div>
-                    <span className="text-muted-foreground"><span className="font-semibold">Daily stake:</span> £40</span>
+                    <span className="text-muted-foreground"><span className="font-semibold">Daily stake:</span> £8</span>
                   </div>
                 </div>
               </div>
