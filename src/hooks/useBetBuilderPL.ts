@@ -39,7 +39,11 @@ function calcStats(bets: BetBuilderSettled[]): BetBuilderPLStats {
   const wins = bets.filter(b => b.status === 'won').length;
   const losses = bets.filter(b => b.status === 'lost').length;
   const totalStaked = bets.reduce((sum, b) => sum + (b.stake || 10), 0);
-  const netProfit = bets.reduce((sum, b) => sum + (b.profit_loss || 0), 0);
+  const netProfit = bets.reduce((sum, b) => {
+    if (b.status === 'won') return sum + ((b.stake || 10) * b.combined_odds - (b.stake || 10));
+    if (b.status === 'lost') return sum - (b.stake || 10);
+    return sum;
+  }, 0);
   return {
     totalBets: wins + losses,
     wins,
