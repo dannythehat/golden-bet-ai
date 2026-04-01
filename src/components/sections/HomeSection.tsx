@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 const MonthlyPLTable = lazy(() => import('@/components/MonthlyPLTable').then(m => ({ default: m.MonthlyPLTable })));
 import { usePLHistory } from '@/hooks/usePLHistory';
+import { useBetBuilderPL } from '@/hooks/useBetBuilderPL';
+import { useAccaPL } from '@/hooks/useAccaPL';
 import { cn } from '@/lib/utils';
 const theGafferImage = '/images/the-gaffer.webp';
 
