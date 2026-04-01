@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePLHistory, type DailyGroup, type SettlementStatus } from '@/hooks/usePLHistory';
+import { usePLHistory, type DailyGroup, type SettlementStatus, marketCategory, calcComboPL } from '@/hooks/usePLHistory';
 import { useBetBuilderPL } from '@/hooks/useBetBuilderPL';
 import { useAccaPL } from '@/hooks/useAccaPL';
 import { PLSummaryCard } from '@/components/pl/PLSummaryCard';
@@ -13,11 +13,10 @@ import { PLAccaHistoryTable } from '@/components/pl/PLAccaHistoryTable';
 import { MonthlyProfitBanner } from '@/components/pl/MonthlyProfitBanner';
 import {
   Loader2, Trophy, RefreshCw, AlertCircle,
-  Calendar, TrendingUp, TrendingDown, History, ChartLine, Layers, Star,
-  Target, Zap
+  Calendar, TrendingUp, TrendingDown, History, ChartLine, Layers,
+  Target, Flag, CreditCard, Zap, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { formatTeamName } from '@/lib/teamNames';
 import theGafferImage from '@/assets/the-gaffer.webp';
 
 type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'allTime';
@@ -29,22 +28,11 @@ const periodLabels: Record<TimePeriod, string> = {
   allTime: 'All Time',
 };
 
-// Market labels for the 3 Golden Bet types
-const MARKET_LABELS: Record<string, { label: string; icon: string; color: string }> = {
-  over_9_5_corners: { label: 'Corners', icon: '📐', color: 'text-blue-400' },
-  'over_9.5_corners': { label: 'Corners', icon: '📐', color: 'text-blue-400' },
-  over_2_5_goals:   { label: 'Goals',   icon: '⚽', color: 'text-emerald-400' },
-  'over_2.5_goals':   { label: 'Goals',   icon: '⚽', color: 'text-emerald-400' },
-  over_3_5_cards:   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
-  'over_3.5_cards':   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
-  over_4_5_cards:   { label: 'Cards',   icon: '🟨', color: 'text-amber-400' },
-  btts:             { label: 'BTTS',    icon: '⚽', color: 'text-emerald-400' },
-};
-
-function getBetLabel(market: string) {
-  const m = MARKET_LABELS[market];
-  return m ? `${m.icon} ${m.label}` : market.replace(/_/g, ' ');
-}
+const MARKET_META = {
+  goals: { label: 'Over 2.5 Goals', icon: <Target className="w-4 h-4" />, colorClass: 'bg-emerald-500', borderClass: 'border-emerald-500/40' },
+  corners: { label: 'Over 8.5 Corners', icon: <Flag className="w-4 h-4" />, colorClass: 'bg-blue-500', borderClass: 'border-blue-500/40' },
+  cards: { label: 'Over 3.5 Cards', icon: <CreditCard className="w-4 h-4" />, colorClass: 'bg-amber-500', borderClass: 'border-amber-500/40' },
+} as const;
 
 function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = 2) {
   const nonVoid = legs.filter(b => b.status !== 'void');
@@ -57,13 +45,34 @@ function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[],
   return { outcome: 'won' as const, combinedOdds, profit: stake * combinedOdds - stake };
 }
 
+/** Build doubles + treble combos for a market's 3 picks on a given day */
+function buildMarketCombos(picks: { id: string; home_team: string; away_team: string; status: SettlementStatus; bookmaker_odds: number; market: string }[]) {
+  const valid = picks.slice(0, 3);
+  const combos: Array<{ label: string; legs: typeof valid; result: ReturnType<typeof evalCombo> }> = [];
+
+  for (let i = 0; i < valid.length; i++) {
+    for (let j = i + 1; j < valid.length; j++) {
+      combos.push({
+        label: `Double: ${valid[i].home_team} vs ${valid[i].away_team} + ${valid[j].home_team} vs ${valid[j].away_team}`,
+        legs: [valid[i], valid[j]],
+        result: evalCombo([valid[i], valid[j]]),
+      });
+    }
+  }
+  if (valid.length >= 3) {
+    combos.push({
+      label: 'Treble (all 3)',
+      legs: valid,
+      result: evalCombo(valid),
+    });
+  }
+  return combos;
+}
+
 export function PLSection() {
   const [period, setPeriod] = useState<TimePeriod>('monthly');
   const {
-    settledBets,
-    byDate,
-    stats,
-    lastMonthStats,
+    settledBets, byDate, stats, marketStats, lastMonthStats,
     isLoading, isError, refetch,
   } = usePLHistory();
 
@@ -74,7 +83,7 @@ export function PLSection() {
   const currentBB = bbStats[period];
   const currentAcca = accaStats[period];
 
-  // Combined P&L
+  // Combined P&L across all 5 bet types
   const totalProfit = currentStats.netProfit + currentBB.netProfit + currentAcca.netProfit;
   const totalStaked = currentStats.totalStaked + currentBB.totalStaked + currentAcca.totalStaked;
   const overallROI = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
@@ -84,8 +93,8 @@ export function PLSection() {
 
   const now = new Date();
   const startOfWeek = new Date(now);
-  const dayOfWeek = startOfWeek.getDay();
-  startOfWeek.setDate(startOfWeek.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+  const dow = startOfWeek.getDay();
+  startOfWeek.setDate(startOfWeek.getDate() - (dow === 0 ? 6 : dow - 1));
   startOfWeek.setHours(0, 0, 0, 0);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -100,42 +109,8 @@ export function PLSection() {
   const filterDays = (p: TimePeriod, days: DailyGroup[]) =>
     days.filter(d => new Date(d.date + 'T00:00:00') >= filterDates[p]);
 
-  // Build doubles + treble summary from a day's 3 picks
-  const calcCombos = (day: DailyGroup) => {
-    const picks = day.bets.slice(0, 3);
-    const stake = 2;
-    const combos: Array<{ label: string; legs: typeof picks; result: ReturnType<typeof evalCombo> }> = [];
-
-    for (let i = 0; i < picks.length; i++) {
-      for (let j = i + 1; j < picks.length; j++) {
-        combos.push({
-          label: `${getBetLabel(picks[i].market)} + ${getBetLabel(picks[j].market)}`,
-          legs: [picks[i], picks[j]],
-          result: evalCombo([picks[i], picks[j]], stake),
-        });
-      }
-    }
-    if (picks.length >= 3) {
-      combos.push({
-        label: 'Treble',
-        legs: picks,
-        result: evalCombo(picks, stake),
-      });
-    }
-    return combos;
-  };
-
   return (
     <div className="space-y-6">
-      {/* Golden Bets only notice */}
-      <div className="flex items-center gap-3 p-3 rounded-xl bg-gold/10 border border-gold/30">
-        <span className="text-lg">🏆</span>
-        <div>
-          <p className="text-sm font-semibold text-gold">Full P&L — All Strategies Combined</p>
-          <p className="text-xs text-muted-foreground">Golden Bets (doubles &amp; trebles), Bet Builder, and Accas Delight — every bet tracked and verified.</p>
-        </div>
-      </div>
-
       {/* Header */}
       <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card shadow-xl shadow-primary/10 overflow-hidden">
         <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
@@ -147,23 +122,18 @@ export function PLSection() {
                 <CardTitle className="text-2xl md:text-3xl">
                   <span className="text-primary">P&L Hub</span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">The Gaffer's verified track record</p>
+                <p className="text-sm text-muted-foreground">Every bet tracked &amp; verified</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              disabled={allLoading}
-              className="border-primary/30 text-primary hover:bg-primary/10 self-start md:self-center"
-            >
+            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={allLoading}
+              className="border-primary/30 text-primary hover:bg-primary/10 self-start md:self-center">
               {allLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
               Refresh
             </Button>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent>
           {hasData && (
             <div className="flex justify-center">
               <div className="inline-flex items-center gap-4 px-8 py-5 rounded-2xl premium-3d">
@@ -185,60 +155,6 @@ export function PLSection() {
               </div>
             </div>
           )}
-
-          {/* Strategy explainer */}
-          <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
-            <div className="flex items-start gap-4">
-              <img src={theGafferImage} alt="The Gaffer" className="w-10 h-10 rounded-full object-cover border-2 border-primary/40 shrink-0" />
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-primary">How The Gaffer Bets</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Every day The Gaffer selects <span className="text-foreground font-semibold">3 Golden Bets</span> — one from each specialist ML model.
-                  Each selection is the single best pick of the day for that market.
-                </p>
-                <div className="flex flex-wrap gap-3 text-sm pt-1">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                      <span className="text-xs">📐</span>
-                    </div>
-                    <span><span className="font-semibold text-foreground">Corners ML:</span> Over 9.5</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                      <span className="text-xs">⚽</span>
-                    </div>
-                    <span><span className="font-semibold text-foreground">Goals ML:</span> Over 2.5</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                      <span className="text-xs">🟨</span>
-                    </div>
-                    <span><span className="font-semibold text-foreground">Cards ML:</span> Over 3.5/4.5 (Bet365)</span>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-3 text-sm pt-1 border-t border-border/30 mt-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Layers className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                    <span><span className="font-semibold text-foreground">3 Doubles:</span> £2 each</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-gold/20 flex items-center justify-center">
-                      <Star className="w-3.5 h-3.5 text-gold" />
-                    </div>
-                    <span><span className="font-semibold text-foreground">1 Treble:</span> £2</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center">
-                      <Zap className="w-3.5 h-3.5 text-muted-foreground" />
-                    </div>
-                    <span className="text-muted-foreground"><span className="font-semibold">Daily stake:</span> £8</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
 
@@ -258,15 +174,8 @@ export function PLSection() {
       <Tabs value={period} onValueChange={(v) => setPeriod(v as TimePeriod)}>
         <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 rounded-xl">
           {(Object.keys(periodLabels) as TimePeriod[]).map((p) => (
-            <TabsTrigger
-              key={p}
-              value={p}
-              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-            >
-              {p === 'weekly' && <Calendar className="w-4 h-4 mr-2 hidden sm:block" />}
-              {p === 'monthly' && <TrendingUp className="w-4 h-4 mr-2 hidden sm:block" />}
-              {p === 'yearly' && <ChartLine className="w-4 h-4 mr-2 hidden sm:block" />}
-              {p === 'allTime' && <History className="w-4 h-4 mr-2 hidden sm:block" />}
+            <TabsTrigger key={p} value={p}
+              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium">
               <span className="hidden sm:inline">{periodLabels[p]}</span>
               <span className="sm:hidden">
                 {p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : p === 'yearly' ? 'Year' : 'All'}
@@ -293,13 +202,9 @@ export function PLSection() {
         {!allLoading && !isError && !hasData && (
           <Card className="mt-6 border-primary/20 bg-gradient-to-br from-primary/5 to-card">
             <CardContent className="py-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
-                <Trophy className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-2 text-foreground">Building Track Record</h3>
-              <p className="text-muted-foreground max-w-md mx-auto mb-4">
-                The Gaffer's 3 Golden Bets are generated daily at 6am. Results are settled after matches finish.
-              </p>
+              <Trophy className="w-8 h-8 text-primary mx-auto mb-3" />
+              <h3 className="text-xl font-bold mb-2">Building Track Record</h3>
+              <p className="text-muted-foreground">Bets are generated daily and settled after matches finish.</p>
             </CardContent>
           </Card>
         )}
@@ -308,224 +213,170 @@ export function PLSection() {
           <>
             {(Object.keys(periodLabels) as TimePeriod[]).map((p) => {
               const filteredDays = filterDays(p, byDate);
-              const s = stats[p];
-
-              // Aggregate doubles/treble counts from filtered days
-              let totalDoubleWins = 0, totalDoubleLosses = 0;
-              let totalTrebleWins = 0, totalTrebleLosses = 0;
-
-              filteredDays.forEach(day => {
-                const combos = calcCombos(day);
-                combos.forEach(c => {
-                  const isDouble = c.legs.length === 2;
-                  if (isDouble) {
-                    if (c.result.outcome === 'won') totalDoubleWins++;
-                    else if (c.result.outcome === 'lost') totalDoubleLosses++;
-                  } else {
-                    if (c.result.outcome === 'won') totalTrebleWins++;
-                    else if (c.result.outcome === 'lost') totalTrebleLosses++;
-                  }
-                });
-              });
+              const ms = marketStats[p];
+              const bb = bbStats[p];
+              const ac = accaStats[p];
+              const combinedProfit = ms.goals.netProfit + ms.corners.netProfit + ms.cards.netProfit + bb.netProfit + ac.netProfit;
+              const combinedStaked = ms.goals.totalStaked + ms.corners.totalStaked + ms.cards.totalStaked + bb.totalStaked + ac.totalStaked;
 
               return (
                 <TabsContent key={p} value={p} className="space-y-6 mt-6">
-                  <PLSummaryCard
-                    period={periodLabels[p]}
-                    totalBets={s.totalBets}
-                    wins={s.wins}
-                    losses={s.losses}
-                    winRate={s.winRate}
-                    totalStaked={s.totalStaked}
-                    netProfit={s.netProfit}
-                    roi={s.roi}
-                  />
-
-                  {/* ====== GOLDEN BETS: Individual Selections ====== */}
-                  <Card className="border-2 border-gold/40 bg-gradient-to-br from-gold/10 via-card to-card overflow-hidden">
-                    <div className="h-1.5 bg-gradient-to-r from-gold/60 via-gold to-gold/60" />
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gold/25 flex items-center justify-center border border-gold/30">
-                            <Target className="w-5 h-5 text-gold" />
+                  {/* Summary cards for each bet type */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                    {([
+                      { label: 'Goals', s: ms.goals, icon: <Target className="w-4 h-4" />, color: 'emerald' },
+                      { label: 'Corners', s: ms.corners, icon: <Flag className="w-4 h-4" />, color: 'blue' },
+                      { label: 'Cards', s: ms.cards, icon: <CreditCard className="w-4 h-4" />, color: 'amber' },
+                      { label: 'Bet Builder', s: bb, icon: <Layers className="w-4 h-4" />, color: 'purple' },
+                      { label: 'Accas', s: ac, icon: <Sparkles className="w-4 h-4" />, color: 'pink' },
+                    ] as const).map(item => (
+                      <div key={item.label} className="rounded-xl border border-border/50 bg-card/80 p-3 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white",
+                            `bg-${item.color}-500`)}>
+                            {item.icon}
                           </div>
-                          <div>
-                            <CardTitle className="text-lg">Individual Selections</CardTitle>
-                            <p className="text-xs text-muted-foreground">Corners ML · Goals ML · Cards ML</p>
-                          </div>
+                          <span className="text-xs font-semibold text-foreground">{item.label}</span>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">
-                            <span className="text-success font-bold">{s.wins}W</span>
-                            <span className="mx-1">-</span>
-                            <span className="text-destructive font-bold">{s.losses}L</span>
-                            {s.voids > 0 && <><span className="mx-2">•</span><span className="font-bold text-muted-foreground">{s.voids}V</span></>}
-                          </div>
-                          <div className={cn('text-lg font-black tabular-nums', s.netProfit >= 0 ? 'text-success' : 'text-destructive')}>
-                            {s.netProfit >= 0 ? '+' : ''}£{s.netProfit.toFixed(2)}
-                          </div>
+                        <div className={cn('text-lg font-black tabular-nums',
+                          item.s.netProfit >= 0 ? 'text-success' : 'text-destructive')}>
+                          {item.s.netProfit >= 0 ? '+' : ''}£{item.s.netProfit.toFixed(2)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          <span className="text-success font-semibold">{item.s.wins}W</span>
+                          <span className="mx-0.5">·</span>
+                          <span className="text-destructive font-semibold">{item.s.losses}L</span>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      {filteredDays.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-4">No settled bets in this period</p>
-                      ) : (
-                        filteredDays.map(day => (
-                          <PLDateCollapsible
-                            key={day.date}
-                            date={day.date}
-                            wins={day.wins}
-                            losses={day.losses}
-                            voids={day.voids}
-                            profit={day.netProfit}
-                            count={day.bets.length}
-                            defaultOpen={false}
-                          >
-                            {day.bets.map(bet => (
-                              <PLBetRow
-                                key={bet.id}
-                                homeTeam={bet.home_team}
-                                awayTeam={bet.away_team}
-                                league={bet.league}
-                                market={bet.market}
-                                odds={bet.bookmaker_odds}
-                                result={bet.result}
-                                status={bet.status}
-                                profitLoss={bet.profit_loss}
-                                proofScreenshotUrl={bet.proof_screenshot_url}
-                                proofCapturedAt={bet.proof_captured_at}
-                              />
-                            ))}
-                          </PLDateCollapsible>
-                        ))
-                      )}
-                    </CardContent>
-                  </Card>
+                    ))}
+                  </div>
 
-                  {/* ====== DOUBLES + TREBLE ====== */}
-                  <Card className="border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card overflow-hidden">
-                    <div className="h-1.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-primary/25 flex items-center justify-center border border-primary/30">
-                            <Layers className="w-5 h-5 text-primary" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">Doubles &amp; Treble</CardTitle>
-                            <p className="text-xs text-muted-foreground">3 doubles + 1 treble · £2 each · £8/day</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">
-                            <span className="text-success font-bold">{totalDoubleWins + totalTrebleWins}W</span>
-                            <span className="mx-1">-</span>
-                            <span className="text-destructive font-bold">{totalDoubleLosses + totalTrebleLosses}L</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {filteredDays.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-4">No results in this period</p>
-                      ) : (
-                        filteredDays.map(day => {
-                          const combos = calcCombos(day);
-                          const dayDoublesProfit = combos
-                            .filter(c => c.legs.length === 2)
-                            .reduce((sum, c) => sum + c.result.profit, 0);
-                          const trebleCombo = combos.find(c => c.legs.length === 3);
-                          const dayTotal = combos.reduce((sum, c) => sum + c.result.profit, 0);
-                          const dayWins = combos.filter(c => c.result.outcome === 'won').length;
-                          const dayLosses = combos.filter(c => c.result.outcome === 'lost').length;
+                  {/* Per-market day-by-day detail for Golden Bets */}
+                  {(['goals', 'corners', 'cards'] as const).map(cat => {
+                    const meta = MARKET_META[cat];
+                    const catStats = ms[cat];
 
-                          return (
-                            <PLDateCollapsible
-                              key={day.date}
-                              date={day.date}
-                              wins={dayWins}
-                              losses={dayLosses}
-                              voids={0}
-                              profit={dayTotal}
-                              count={combos.length}
-                              defaultOpen={false}
-                            >
-                              <div className="space-y-2">
-                                {combos.map((combo, i) => (
-                                  <div
-                                    key={i}
-                                    className={cn(
-                                      'p-3 rounded-lg border text-sm',
-                                      combo.result.outcome === 'won' && 'bg-success/5 border-success/30',
-                                      combo.result.outcome === 'lost' && 'bg-destructive/5 border-destructive/30',
-                                      combo.result.outcome === 'void' && 'bg-muted/20 border-border/50',
-                                    )}
-                                  >
-                                    <div className="flex justify-between items-center">
-                                      <span className="font-medium">
-                                        {combo.label}
-                                        {combo.result.outcome !== 'void' && (
-                                          <span className="text-muted-foreground ml-1">@ {combo.result.combinedOdds.toFixed(2)}</span>
-                                        )}
-                                      </span>
-                                      <span className={cn(
-                                        'font-bold',
-                                        combo.result.outcome === 'won' && 'text-success',
-                                        combo.result.outcome === 'lost' && 'text-destructive',
-                                        combo.result.outcome === 'void' && 'text-muted-foreground',
-                                      )}>
-                                        {combo.result.profit >= 0 ? '+' : ''}£{combo.result.profit.toFixed(2)}
-                                      </span>
-                                    </div>
-                                    {/* Legs */}
-                                    <div className="mt-1 space-y-0.5">
-                                      {combo.legs.map(leg => (
-                                        <div key={leg.id} className="flex items-center justify-between text-xs text-muted-foreground">
-                                          <span className={cn(
-                                            leg.status === 'won' && 'text-success',
-                                            leg.status === 'lost' && 'text-destructive',
-                                          )}>
-                                            {leg.status === 'won' ? '✓' : leg.status === 'lost' ? '✗' : '–'}{' '}
-                                            {leg.home_team} vs {leg.away_team}
+                    return (
+                      <Card key={cat} className={cn("border-2 overflow-hidden", meta.borderClass, "bg-gradient-to-br from-card to-card")}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white", meta.colorClass)}>
+                                {meta.icon}
+                              </div>
+                              <div>
+                                <CardTitle className="text-base">{meta.label}</CardTitle>
+                                <p className="text-xs text-muted-foreground">3 picks · 3 doubles + 1 treble · £2 each</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-xs text-muted-foreground">
+                                <span className="text-success font-bold">{catStats.wins}W</span>
+                                <span className="mx-1">-</span>
+                                <span className="text-destructive font-bold">{catStats.losses}L</span>
+                              </div>
+                              <div className={cn('text-lg font-black tabular-nums', catStats.netProfit >= 0 ? 'text-success' : 'text-destructive')}>
+                                {catStats.netProfit >= 0 ? '+' : ''}£{catStats.netProfit.toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          {filteredDays.length === 0 ? (
+                            <p className="text-sm text-muted-foreground text-center py-4">No settled bets in this period</p>
+                          ) : (
+                            filteredDays.map(day => {
+                              // Get this market's picks for the day
+                              const marketPicks = day.bets.filter(b => marketCategory(b.market) === cat);
+                              if (marketPicks.length === 0) return null;
+
+                              const combos = buildMarketCombos(marketPicks);
+                              const dayProfit = combos.reduce((sum, c) => sum + c.result.profit, 0);
+                              const dayWins = combos.filter(c => c.result.outcome === 'won').length;
+                              const dayLosses = combos.filter(c => c.result.outcome === 'lost').length;
+
+                              return (
+                                <PLDateCollapsible
+                                  key={day.date}
+                                  date={day.date}
+                                  wins={dayWins}
+                                  losses={dayLosses}
+                                  voids={0}
+                                  profit={dayProfit}
+                                  count={combos.length}
+                                  defaultOpen={false}
+                                >
+                                  <div className="space-y-2">
+                                    {/* Show the 3 individual picks */}
+                                    <div className="space-y-1 mb-3">
+                                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Selections</p>
+                                      {marketPicks.slice(0, 3).map(bet => (
+                                        <div key={bet.id} className={cn(
+                                          "flex items-center justify-between text-sm px-3 py-1.5 rounded-lg border",
+                                          bet.status === 'won' ? 'bg-success/5 border-success/20' : 'bg-destructive/5 border-destructive/20'
+                                        )}>
+                                          <span className={cn(bet.status === 'won' ? 'text-success' : 'text-destructive')}>
+                                            {bet.status === 'won' ? '✓' : '✗'} {bet.home_team} vs {bet.away_team}
                                           </span>
-                                          <span>@{leg.bookmaker_odds.toFixed(2)}</span>
+                                          <span className="text-muted-foreground">@{bet.bookmaker_odds.toFixed(2)}</span>
                                         </div>
                                       ))}
                                     </div>
+
+                                    {/* Show combo results */}
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Combo Bets (£2 each)</p>
+                                    {combos.map((combo, i) => (
+                                      <div key={i} className={cn(
+                                        'p-3 rounded-lg border text-sm',
+                                        combo.result.outcome === 'won' && 'bg-success/5 border-success/30',
+                                        combo.result.outcome === 'lost' && 'bg-destructive/5 border-destructive/30',
+                                        combo.result.outcome === 'void' && 'bg-muted/20 border-border/50',
+                                      )}>
+                                        <div className="flex justify-between items-center">
+                                          <span className="font-medium">
+                                            {combo.legs.length === 3 ? '🏆 Treble' : `Double ${i + 1}`}
+                                            <span className="text-muted-foreground ml-1">@ {combo.result.combinedOdds.toFixed(2)}</span>
+                                          </span>
+                                          <span className={cn('font-bold',
+                                            combo.result.outcome === 'won' && 'text-success',
+                                            combo.result.outcome === 'lost' && 'text-destructive',
+                                          )}>
+                                            {combo.result.profit >= 0 ? '+' : ''}£{combo.result.profit.toFixed(2)}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            </PLDateCollapsible>
-                          );
-                        })
-                      )}
-                    </CardContent>
-                  </Card>
+                                </PLDateCollapsible>
+                              );
+                            })
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
 
                   {/* ====== BET BUILDER P&L ====== */}
-                  <Card className="border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card overflow-hidden">
-                    <div className="h-1.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+                  <Card className="border-2 border-purple-500/40 bg-gradient-to-br from-purple-500/10 via-card to-card overflow-hidden">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-primary/25 flex items-center justify-center border border-primary/30">
-                            <Layers className="w-5 h-5 text-primary" />
+                          <div className="w-9 h-9 rounded-xl bg-purple-500 flex items-center justify-center text-white">
+                            <Layers className="w-4 h-4" />
                           </div>
                           <div>
-                            <CardTitle className="text-lg">Bet Builder</CardTitle>
-                            <p className="text-xs text-muted-foreground">Multi-leg single game · £10 stake</p>
+                            <CardTitle className="text-base">Bet Builder of the Day</CardTitle>
+                            <p className="text-xs text-muted-foreground">Multi-market combo · £10 stake</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm text-muted-foreground">
-                            <span className="text-success font-bold">{bbStats[p].wins}W</span>
+                          <div className="text-xs text-muted-foreground">
+                            <span className="text-success font-bold">{bb.wins}W</span>
                             <span className="mx-1">-</span>
-                            <span className="text-destructive font-bold">{bbStats[p].losses}L</span>
+                            <span className="text-destructive font-bold">{bb.losses}L</span>
                           </div>
-                          <div className={cn('text-lg font-black tabular-nums', bbStats[p].netProfit >= 0 ? 'text-success' : 'text-destructive')}>
-                            {bbStats[p].netProfit >= 0 ? '+' : ''}£{bbStats[p].netProfit.toFixed(2)}
+                          <div className={cn('text-lg font-black tabular-nums', bb.netProfit >= 0 ? 'text-success' : 'text-destructive')}>
+                            {bb.netProfit >= 0 ? '+' : ''}£{bb.netProfit.toFixed(2)}
                           </div>
                         </div>
                       </div>
@@ -561,27 +412,26 @@ export function PLSection() {
                   </Card>
 
                   {/* ====== ACCA P&L ====== */}
-                  <Card className="border-2 border-success/40 bg-gradient-to-br from-success/10 via-card to-card overflow-hidden">
-                    <div className="h-1.5 bg-gradient-to-r from-success/60 via-success to-success/60" />
+                  <Card className="border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 via-card to-card overflow-hidden">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-success/25 flex items-center justify-center border border-success/30">
-                            <Zap className="w-5 h-5 text-success" />
+                          <div className="w-9 h-9 rounded-xl bg-pink-500 flex items-center justify-center text-white">
+                            <Sparkles className="w-4 h-4" />
                           </div>
                           <div>
-                            <CardTitle className="text-lg">Accas Delight</CardTitle>
-                            <p className="text-xs text-muted-foreground">Form table accumulator · £10 each</p>
+                            <CardTitle className="text-base">Accas Delight</CardTitle>
+                            <p className="text-xs text-muted-foreground">3-leg treble · £10 stake</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm text-muted-foreground">
-                            <span className="text-success font-bold">{accaStats[p].wins}W</span>
+                          <div className="text-xs text-muted-foreground">
+                            <span className="text-success font-bold">{ac.wins}W</span>
                             <span className="mx-1">-</span>
-                            <span className="text-destructive font-bold">{accaStats[p].losses}L</span>
+                            <span className="text-destructive font-bold">{ac.losses}L</span>
                           </div>
-                          <div className={cn('text-lg font-black tabular-nums', accaStats[p].netProfit >= 0 ? 'text-success' : 'text-destructive')}>
-                            {accaStats[p].netProfit >= 0 ? '+' : ''}£{accaStats[p].netProfit.toFixed(2)}
+                          <div className={cn('text-lg font-black tabular-nums', ac.netProfit >= 0 ? 'text-success' : 'text-destructive')}>
+                            {ac.netProfit >= 0 ? '+' : ''}£{ac.netProfit.toFixed(2)}
                           </div>
                         </div>
                       </div>
