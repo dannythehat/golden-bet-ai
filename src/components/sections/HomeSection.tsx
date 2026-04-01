@@ -175,8 +175,10 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
           goals={{ wins: marketStats.monthly.goals.wins, losses: marketStats.monthly.goals.losses, profit: marketStats.monthly.goals.netProfit, staked: marketStats.monthly.goals.totalStaked }}
           corners={{ wins: marketStats.monthly.corners.wins, losses: marketStats.monthly.corners.losses, profit: marketStats.monthly.corners.netProfit, staked: marketStats.monthly.corners.totalStaked }}
           cards={{ wins: marketStats.monthly.cards.wins, losses: marketStats.monthly.cards.losses, profit: marketStats.monthly.cards.netProfit, staked: marketStats.monthly.cards.totalStaked }}
+          betBuilder={{ wins: bbStats.monthly.wins, losses: bbStats.monthly.losses, profit: bbStats.monthly.netProfit, staked: bbStats.monthly.totalStaked }}
+          acca={{ wins: accaStats.monthly.wins, losses: accaStats.monthly.losses, profit: accaStats.monthly.netProfit, staked: accaStats.monthly.totalStaked }}
           monthName={new Date().toLocaleString('en-GB', { month: 'long' })}
-          isLoading={plLoading}
+          isLoading={anyLoading}
           onViewFullPL={() => onNavigate('pnl')}
         />
       </Suspense>
