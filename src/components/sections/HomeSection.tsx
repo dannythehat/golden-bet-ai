@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 const MonthlyPLTable = lazy(() => import('@/components/MonthlyPLTable').then(m => ({ default: m.MonthlyPLTable })));
 import { usePLHistory } from '@/hooks/usePLHistory';
+import { useBetBuilderPL } from '@/hooks/useBetBuilderPL';
+import { useAccaPL } from '@/hooks/useAccaPL';
 import { cn } from '@/lib/utils';
 const theGafferImage = '/images/the-gaffer.webp';
 
@@ -15,6 +17,9 @@ interface HomeSectionProps {
 
 export function HomeSection({ onNavigate }: HomeSectionProps) {
   const { stats, marketStats, isLoading: plLoading } = usePLHistory();
+  const { stats: bbStats, isLoading: bbLoading } = useBetBuilderPL();
+  const { stats: accaStats, isLoading: accaLoading } = useAccaPL();
+  const anyLoading = plLoading || bbLoading || accaLoading;
 
   // Fetch latest 3 blog posts
   const { data: latestPosts } = useQuery({
@@ -170,8 +175,10 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
           goals={{ wins: marketStats.monthly.goals.wins, losses: marketStats.monthly.goals.losses, profit: marketStats.monthly.goals.netProfit, staked: marketStats.monthly.goals.totalStaked }}
           corners={{ wins: marketStats.monthly.corners.wins, losses: marketStats.monthly.corners.losses, profit: marketStats.monthly.corners.netProfit, staked: marketStats.monthly.corners.totalStaked }}
           cards={{ wins: marketStats.monthly.cards.wins, losses: marketStats.monthly.cards.losses, profit: marketStats.monthly.cards.netProfit, staked: marketStats.monthly.cards.totalStaked }}
+          betBuilder={{ wins: bbStats.monthly.wins, losses: bbStats.monthly.losses, profit: bbStats.monthly.netProfit, staked: bbStats.monthly.totalStaked }}
+          acca={{ wins: accaStats.monthly.wins, losses: accaStats.monthly.losses, profit: accaStats.monthly.netProfit, staked: accaStats.monthly.totalStaked }}
           monthName={new Date().toLocaleString('en-GB', { month: 'long' })}
-          isLoading={plLoading}
+          isLoading={anyLoading}
           onViewFullPL={() => onNavigate('pnl')}
         />
       </Suspense>
