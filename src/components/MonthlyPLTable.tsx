@@ -1,11 +1,7 @@
-/**
- * Monthly P&L Summary Table — Shows per-bet-type rows + combined total
- * 5 bet types: Goals, Corners, Cards, Bet Builder, ACCA Delight
- */
-
 import { TrendingUp, TrendingDown, ArrowRight, Target, Flag, CreditCard, Layers, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import theGafferImage from '@/assets/the-gaffer.webp';
+import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 
 interface BetTypeRow {
   name: string;
@@ -13,8 +9,9 @@ interface BetTypeRow {
   losses: number;
   profit: number;
   staked: number;
+   description: string;
   icon: React.ReactNode;
-  colorClass: string;
+  iconClass: string;
 }
 
 interface MonthlyPLTableProps {
@@ -30,11 +27,41 @@ interface MonthlyPLTableProps {
 
 export function MonthlyPLTable({ goals, corners, cards, betBuilder, acca, monthName, isLoading, onViewFullPL }: MonthlyPLTableProps) {
   const rows: BetTypeRow[] = [
-    { name: 'Over 2.5 Goals', icon: <Target className="w-3.5 h-3.5" />, colorClass: 'bg-emerald-500', ...goals },
-    { name: 'Over 8.5 Corners', icon: <Flag className="w-3.5 h-3.5" />, colorClass: 'bg-blue-500', ...corners },
-    { name: 'Over 3.5 Cards', icon: <CreditCard className="w-3.5 h-3.5" />, colorClass: 'bg-amber-500', ...cards },
-    { name: 'Bet Builder', icon: <Layers className="w-3.5 h-3.5" />, colorClass: 'bg-purple-500', ...betBuilder },
-    { name: 'Accas Delight', icon: <Sparkles className="w-3.5 h-3.5" />, colorClass: 'bg-pink-500', ...acca },
+    {
+      name: 'Over 2.5 Goals',
+      description: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
+      icon: <Target className="w-3.5 h-3.5" />,
+      iconClass: 'bg-bet-goals/20 text-foreground border border-bet-goals/40',
+      ...goals,
+    },
+    {
+      name: 'Over 8.5 Corners',
+      description: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
+      icon: <Flag className="w-3.5 h-3.5" />,
+      iconClass: 'bg-bet-corners/20 text-foreground border border-bet-corners/40',
+      ...corners,
+    },
+    {
+      name: 'Over 3.5 Cards',
+      description: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
+      icon: <CreditCard className="w-3.5 h-3.5" />,
+      iconClass: 'bg-bet-cards/20 text-foreground border border-bet-cards/40',
+      ...cards,
+    },
+    {
+      name: 'Bet Builder',
+      description: `Same-game combo · fixed £${SINGLE_BET_STAKE.toFixed(0)} stake`,
+      icon: <Layers className="w-3.5 h-3.5" />,
+      iconClass: 'bg-bet-builder/20 text-foreground border border-bet-builder/40',
+      ...betBuilder,
+    },
+    {
+      name: 'Accas Delight',
+      description: `3-leg ACCA · fixed £${SINGLE_BET_STAKE.toFixed(0)} stake`,
+      icon: <Sparkles className="w-3.5 h-3.5" />,
+      iconClass: 'bg-bet-acca/20 text-foreground border border-bet-acca/40',
+      ...acca,
+    },
   ];
 
   const totalProfit = rows.reduce((s, r) => s + r.profit, 0);
@@ -60,97 +87,112 @@ export function MonthlyPLTable({ goals, corners, cards, betBuilder, acca, monthN
       <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
 
       <div className="p-4 md:p-5">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
           <div className="flex items-center gap-2.5">
             <img src={theGafferImage} alt="The Gaffer" className="w-9 h-9 rounded-full border border-primary/40 object-cover" />
             <div>
               <h2 className="text-base font-bold text-foreground">
-                {monthName} <span className="text-primary">P&L</span>
+                {monthName} <span className="text-primary">Month-to-Date P&amp;L</span>
               </h2>
-              <p className="text-[11px] text-muted-foreground">All 5 bet types combined</p>
+              <p className="text-[11px] text-muted-foreground">Every bet type, one fixed stake model</p>
             </div>
           </div>
-          <div className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border",
-            isOverallProfit
-              ? "bg-success/10 border-success/40 text-success"
-              : "bg-destructive/10 border-destructive/40 text-destructive"
-          )}>
-            {isOverallProfit ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-            <span className="text-lg font-black">
-              {isOverallProfit ? '+' : ''}£{totalProfit.toFixed(2)}
-            </span>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className={cn(
+              'rounded-xl border px-3 py-2 text-center',
+              isOverallProfit ? 'border-success/40 bg-success/10' : 'border-destructive/40 bg-destructive/10',
+            )}>
+              <div className="flex items-center justify-center gap-1 text-xs font-semibold text-muted-foreground">
+                {isOverallProfit ? <TrendingUp className="w-3 h-3 text-success" /> : <TrendingDown className="w-3 h-3 text-destructive" />}
+                Combined
+              </div>
+              <div className={cn('text-lg font-black tabular-nums', isOverallProfit ? 'text-success' : 'text-destructive')}>
+                {isOverallProfit ? '+' : ''}£{totalProfit.toFixed(2)}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border/50 bg-muted/20 px-3 py-2 text-center">
+              <div className="text-xs font-semibold text-muted-foreground">Staked</div>
+              <div className="text-lg font-black tabular-nums text-foreground">£{totalStaked.toFixed(2)}</div>
+            </div>
+
+            <div className="rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-center">
+              <div className="text-xs font-semibold text-muted-foreground">ROI</div>
+              <div className={cn('text-lg font-black tabular-nums', isOverallProfit ? 'text-success' : 'text-destructive')}>
+                {isOverallProfit ? '+' : ''}{totalROI.toFixed(1)}%
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="rounded-xl overflow-hidden border border-border/50">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-muted/50 border-b border-border/50">
-                <th className="text-left py-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bet Type</th>
-                <th className="text-center py-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">W/L</th>
-                <th className="text-right py-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">P&L</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => {
-                const isProfit = row.profit >= 0;
-                const hasData = row.wins > 0 || row.losses > 0;
-                return (
-                  <tr key={row.name} className={cn(
-                    "border-t border-border/30 transition-colors",
-                    i % 2 === 0 ? "bg-transparent" : "bg-muted/10"
-                  )}>
-                    <td className="py-2.5 px-3">
-                      <div className="flex items-center gap-2">
-                        <div className={cn("w-6 h-6 rounded-md flex items-center justify-center text-white", row.colorClass)}>
-                          {row.icon}
-                        </div>
-                        <span className="font-medium text-foreground text-xs sm:text-sm">{row.name}</span>
+        <div className="space-y-3">
+          {rows.map((row) => {
+            const isProfit = row.profit >= 0;
+            const hasData = row.wins > 0 || row.losses > 0;
+
+            return (
+              <div key={row.name} className="rounded-xl border border-border/50 bg-muted/10 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', row.iconClass)}>
+                      {row.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-foreground">{row.name}</h3>
+                      <p className="text-xs text-muted-foreground">{row.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3 sm:min-w-[320px]">
+                    <div className="rounded-lg bg-card/70 px-3 py-2 text-center border border-border/40">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">W/L</div>
+                      <div className="text-sm font-black">
+                        {hasData ? (
+                          <>
+                            <span className="text-success">{row.wins}</span>
+                            <span className="text-muted-foreground mx-1">/</span>
+                            <span className="text-destructive">{row.losses}</span>
+                          </>
+                        ) : '—'}
                       </div>
-                    </td>
-                    <td className="py-2.5 px-2 text-center">
-                      {hasData ? (
-                        <span className="text-foreground/80">
-                          <span className="text-success font-semibold">{row.wins}</span>
-                          <span className="text-muted-foreground mx-0.5">/</span>
-                          <span className="text-destructive font-semibold">{row.losses}</span>
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">—</span>
-                      )}
-                    </td>
-                    <td className={cn(
-                      "py-2.5 px-3 text-right font-black",
-                      hasData ? isProfit ? "text-success" : "text-destructive" : "text-muted-foreground"
-                    )}>
-                      {hasData ? `${isProfit ? '+' : ''}£${row.profit.toFixed(2)}` : '—'}
-                    </td>
-                  </tr>
-                );
-              })}
-              {/* Totals row */}
-              <tr className="border-t-2 border-primary/40 bg-primary/8">
-                <td className="py-2.5 px-3 font-bold text-foreground">Combined</td>
-                <td className="py-2.5 px-2 text-center">
-                  <span className="text-success font-bold">{totalWins}</span>
-                  <span className="text-muted-foreground mx-0.5">/</span>
-                  <span className="text-destructive font-bold">{totalLosses}</span>
-                </td>
-                <td className={cn(
-                  "py-2.5 px-3 text-right font-black text-lg",
-                  isOverallProfit ? "text-success" : "text-destructive"
-                )}>
+                    </div>
+
+                    <div className="rounded-lg bg-card/70 px-3 py-2 text-center border border-border/40">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Staked</div>
+                      <div className="text-sm font-black tabular-nums text-foreground">
+                        {hasData ? `£${row.staked.toFixed(2)}` : '—'}
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg bg-card/70 px-3 py-2 text-center border border-border/40">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">P&amp;L</div>
+                      <div className={cn('text-sm font-black tabular-nums', hasData ? (isProfit ? 'text-success' : 'text-destructive') : 'text-muted-foreground')}>
+                        {hasData ? `${isProfit ? '+' : ''}£${row.profit.toFixed(2)}` : '—'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          <div className="rounded-xl border border-primary/35 bg-primary/10 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="font-bold text-foreground">Combined month-to-date total</h3>
+                <p className="text-xs text-muted-foreground">{totalWins} wins · {totalLosses} losses across all five bet types</p>
+              </div>
+              <div className="text-left sm:text-right">
+                <div className={cn('text-2xl font-black tabular-nums', isOverallProfit ? 'text-success' : 'text-destructive')}>
                   {isOverallProfit ? '+' : ''}£{totalProfit.toFixed(2)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+                <div className="text-xs font-semibold text-muted-foreground">£{totalStaked.toFixed(2)} staked</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* ROI + CTA row */}
         <div className="flex items-center justify-between mt-3">
           <span className={cn(
             "text-xs font-semibold px-2 py-0.5 rounded-full",

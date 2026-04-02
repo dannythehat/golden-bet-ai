@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { calcComboPL, marketCategory } from '@/lib/plModel';
 
 export type SettlementStatus = 'won' | 'lost' | 'void';
 
@@ -53,56 +54,6 @@ export interface MarketPLStats {
   goals: PLStats;
   corners: PLStats;
   cards: PLStats;
-}
-
-/** Map any raw market key to one of: goals, corners, cards */
-function marketCategory(raw: string): 'goals' | 'corners' | 'cards' | null {
-  const m = raw.toLowerCase().replace(/[.\s]/g, '_');
-  if (m.includes('goal') || m === 'btts') return 'goals';
-  if (m.includes('corner')) return 'corners';
-  if (m.includes('card')) return 'cards';
-  return null;
-}
-
-const STAKE = 2;
-
-/**
- * Calculate P&L for a set of 3 picks played as 3 doubles + 1 treble at £2 each.
- * If fewer than 3 picks, falls back gracefully.
- */
-function calcComboPL(picks: SettledBet[]): { wins: number; losses: number; voids: number; totalStaked: number; netProfit: number } {
-  const valid = picks.slice(0, 3);
-  if (valid.length === 0) return { wins: 0, losses: 0, voids: 0, totalStaked: 0, netProfit: 0 };
-
-  // Build all combo legs: doubles + treble
-  const combos: SettledBet[][] = [];
-  for (let i = 0; i < valid.length; i++) {
-    for (let j = i + 1; j < valid.length; j++) {
-      combos.push([valid[i], valid[j]]);
-    }
-  }
-  if (valid.length >= 3) {
-    combos.push(valid.slice(0, 3));
-  }
-
-  let wins = 0, losses = 0, totalStaked = 0, netProfit = 0;
-  for (const legs of combos) {
-    const nonVoid = legs.filter(b => b.status !== 'void');
-    totalStaked += STAKE;
-    if (nonVoid.length === 0) {
-      // all void — stake returned
-    } else if (nonVoid.every(b => b.status === 'won')) {
-      const combinedOdds = nonVoid.reduce((acc, b) => acc * b.bookmaker_odds, 1);
-      wins++;
-      netProfit += (STAKE * combinedOdds) - STAKE;
-    } else {
-      losses++;
-      netProfit -= STAKE;
-    }
-  }
-
-  const voids = valid.filter(b => b.status === 'void').length;
-  return { wins, losses, voids, totalStaked, netProfit };
 }
 
 /**
@@ -187,7 +138,12 @@ async function fetchPLHistory() {
     .order('settled_at', { ascending: false });
 
   if (error) throw error;
-  const settledBets = (data || []) as SettledBet[];
+  const settledBets = ((data || []) as SettledBet[]).map((bet) => ({
+    ...bet,
+    bookmaker_odds: Number(bet.bookmaker_odds ?? 1),
+    stake: Number(bet.stake ?? 0),
+    profit_loss: Number(bet.profit_loss ?? 0),
+  }));
 
   // Group by date for display
   const dateMap = new Map<string, SettledBet[]>();
@@ -297,5 +253,4 @@ export function usePLHistory() {
   };
 }
 
-// Re-export for use in PLSection combo display
-export { marketCategory, calcComboPL };
+export { marketCategory, calcComboPL } from '@/lib/plModel';

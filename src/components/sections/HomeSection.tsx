@@ -9,6 +9,7 @@ import { usePLHistory } from '@/hooks/usePLHistory';
 import { useBetBuilderPL } from '@/hooks/useBetBuilderPL';
 import { useAccaPL } from '@/hooks/useAccaPL';
 import { cn } from '@/lib/utils';
+import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 const theGafferImage = '/images/the-gaffer.webp';
 
 interface HomeSectionProps {
@@ -16,7 +17,7 @@ interface HomeSectionProps {
 }
 
 export function HomeSection({ onNavigate }: HomeSectionProps) {
-  const { stats, marketStats, isLoading: plLoading } = usePLHistory();
+  const { marketStats, isLoading: plLoading } = usePLHistory();
   const { stats: bbStats, isLoading: bbLoading } = useBetBuilderPL();
   const { stats: accaStats, isLoading: accaLoading } = useAccaPL();
   const anyLoading = plLoading || bbLoading || accaLoading;
@@ -48,33 +49,59 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
     'betting-news': '📰 Betting News',
   };
 
-  // Market cards config
-  const marketCards = [
+  const monthlyRows = [
     {
       path: '/over-goals',
       label: 'Over 2.5 Goals',
       icon: <Target className="w-5 h-5" />,
-      colorVar: '--bet-goals',
-      desc: '3 daily picks · Gold, Silver, Bronze',
+      iconClass: 'bg-bet-goals/20 text-foreground border border-bet-goals/40',
+      panelClass: 'border-bet-goals/35 bg-gradient-to-br from-bet-goals/10 to-card',
+      desc: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
       stats: marketStats.monthly.goals,
     },
     {
       path: '/over-corners',
       label: 'Over 8.5 Corners',
       icon: <Flag className="w-5 h-5" />,
-      colorVar: '--bet-corners',
-      desc: '3 daily picks · Gold, Silver, Bronze',
+      iconClass: 'bg-bet-corners/20 text-foreground border border-bet-corners/40',
+      panelClass: 'border-bet-corners/35 bg-gradient-to-br from-bet-corners/10 to-card',
+      desc: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
       stats: marketStats.monthly.corners,
     },
     {
       path: '/over-cards',
       label: 'Over 3.5 Cards',
       icon: <CreditCard className="w-5 h-5" />,
-      colorVar: '--bet-cards',
-      desc: '3 daily picks · Gold, Silver, Bronze',
+      iconClass: 'bg-bet-cards/20 text-foreground border border-bet-cards/40',
+      panelClass: 'border-bet-cards/35 bg-gradient-to-br from-bet-cards/10 to-card',
+      desc: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
       stats: marketStats.monthly.cards,
     },
+    {
+      path: '/bet-builder',
+      label: 'Bet Builder',
+      icon: <Layers className="w-5 h-5" />,
+      iconClass: 'bg-bet-builder/20 text-foreground border border-bet-builder/40',
+      panelClass: 'border-bet-builder/35 bg-gradient-to-br from-bet-builder/10 to-card',
+      desc: `Same-game combo · fixed £${SINGLE_BET_STAKE.toFixed(0)} stake`,
+      stats: bbStats.monthly,
+    },
+    {
+      path: '/acca-delight',
+      label: 'Accas Delight',
+      icon: <Sparkles className="w-5 h-5" />,
+      iconClass: 'bg-bet-acca/20 text-foreground border border-bet-acca/40',
+      panelClass: 'border-bet-acca/35 bg-gradient-to-br from-bet-acca/10 to-card',
+      desc: `3-leg ACCA · fixed £${SINGLE_BET_STAKE.toFixed(0)} stake`,
+      stats: accaStats.monthly,
+    },
   ];
+
+  const combinedMonthlyProfit = monthlyRows.reduce((sum, row) => sum + row.stats.netProfit, 0);
+  const combinedMonthlyStaked = monthlyRows.reduce((sum, row) => sum + row.stats.totalStaked, 0);
+  const combinedMonthlyROI = combinedMonthlyStaked > 0 ? (combinedMonthlyProfit / combinedMonthlyStaked) * 100 : 0;
+  const combinedMonthlyWins = monthlyRows.reduce((sum, row) => sum + row.stats.wins, 0);
+  const combinedMonthlyLosses = monthlyRows.reduce((sum, row) => sum + row.stats.losses, 0);
 
   return (
     <div className="space-y-10">
@@ -104,23 +131,44 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         </div>
       </div>
 
-      {/* 3 Market Cards with P&L */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {marketCards.map(card => {
+      <div className="rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-5 md:p-6 shadow-lg shadow-primary/5 space-y-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Month to date</p>
+            <h2 className="text-2xl md:text-3xl font-black text-foreground">Simple P&amp;L at a glance</h2>
+            <p className="text-sm text-muted-foreground">All five bet types use one fixed model: £2.50 combo legs for the daily markets, £10 for Bet Builder and £10 for ACCA.</p>
+          </div>
+
+          <div className="rounded-2xl border border-border/50 bg-card/80 px-4 py-3">
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Combined month-to-date</div>
+            <div className={cn('text-3xl font-black tabular-nums', combinedMonthlyProfit >= 0 ? 'text-success' : 'text-destructive')}>
+              {combinedMonthlyProfit >= 0 ? '+' : ''}£{combinedMonthlyProfit.toFixed(2)}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              <span className="text-success font-semibold">{combinedMonthlyWins}W</span>
+              <span className="mx-1">·</span>
+              <span className="text-destructive font-semibold">{combinedMonthlyLosses}L</span>
+              <span className="mx-1">·</span>
+              <span className={cn('font-semibold', combinedMonthlyProfit >= 0 ? 'text-success' : 'text-destructive')}>
+                {combinedMonthlyProfit >= 0 ? '+' : ''}{combinedMonthlyROI.toFixed(1)}% ROI
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 xl:grid-cols-5 gap-4">
+          {monthlyRows.map(card => {
           const isProfit = card.stats.netProfit >= 0;
           const hasBets = card.stats.totalBets > 0;
+
           return (
             <a
               key={card.path}
               href={card.path}
-              className="group rounded-2xl border-2 p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl no-underline flex flex-col"
-              style={{
-                borderColor: `hsl(var(${card.colorVar}) / 0.35)`,
-                background: `linear-gradient(135deg, hsl(var(${card.colorVar}) / 0.12), hsl(var(--card)))`,
-              }}
+              className={cn('group rounded-2xl border p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl no-underline flex flex-col', card.panelClass)}
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg" style={{ background: `hsl(var(${card.colorVar}))` }}>
+                <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shadow-lg', card.iconClass)}>
                   {card.icon}
                 </div>
                 <div>
@@ -133,7 +181,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
               {hasBets ? (
                 <div className="mt-auto pt-3 border-t border-border/30">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">This month</span>
+                    <span className="text-xs text-muted-foreground">Month to date</span>
                     <span className={cn(
                       "text-lg font-black tabular-nums",
                       isProfit ? "text-success" : "text-destructive"
@@ -147,29 +195,24 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
                       <span className="mx-1">·</span>
                       <span className="text-destructive font-semibold">{card.stats.losses}L</span>
                     </span>
-                    <span className={cn(
-                      "text-xs font-semibold",
-                      isProfit ? "text-success/80" : "text-destructive/80"
-                    )}>
-                      {isProfit ? '+' : ''}{card.stats.roi.toFixed(1)}% ROI
-                    </span>
+                    <span className="text-xs font-semibold text-muted-foreground">£{card.stats.totalStaked.toFixed(2)} staked</span>
                   </div>
                 </div>
               ) : (
                 <div className="mt-auto pt-3 border-t border-border/30">
-                  <span className="text-xs text-muted-foreground">No settled bets this month yet</span>
+                  <span className="text-xs text-muted-foreground">No settled bets month to date</span>
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-sm font-semibold group-hover:gap-3 transition-all mt-3" style={{ color: `hsl(var(${card.colorVar}))` }}>
+              <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all mt-3">
                 View picks & full P&L <ArrowRight className="w-4 h-4" />
               </div>
             </a>
           );
         })}
       </div>
+      </div>
 
-      {/* Monthly P&L Summary Table — Split by market */}
       <Suspense fallback={<div className="rounded-2xl border border-border/50 bg-card/60 p-6 animate-pulse h-40" />}>
         <MonthlyPLTable
           goals={{ wins: marketStats.monthly.goals.wins, losses: marketStats.monthly.goals.losses, profit: marketStats.monthly.goals.netProfit, staked: marketStats.monthly.goals.totalStaked }}

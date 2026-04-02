@@ -79,6 +79,10 @@ input, textarea, [contenteditable] {
     --bet-corners-glow: 42 96% 58%;
     --bet-cards: 350 89% 60%;
     --bet-cards-glow: 350 89% 70%;
+    --bet-builder: 217 91% 60%;
+    --bet-builder-glow: 217 91% 70%;
+    --bet-acca: 45 93% 47%;
+    --bet-acca-glow: 48 95% 55%;
 
     /* Neon green for live/won states */
     --neon-green: 120 100% 50%;

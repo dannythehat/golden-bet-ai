@@ -78,6 +78,14 @@ export default {
           DEFAULT: "hsl(var(--bet-cards))",
           glow: "hsl(var(--bet-cards-glow))",
         },
+        "bet-builder": {
+          DEFAULT: "hsl(var(--bet-builder))",
+          glow: "hsl(var(--bet-builder-glow))",
+        },
+        "bet-acca": {
+          DEFAULT: "hsl(var(--bet-acca))",
+          glow: "hsl(var(--bet-acca-glow))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
