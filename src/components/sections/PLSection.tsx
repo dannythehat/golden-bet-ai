@@ -260,7 +260,7 @@ export function PLSection() {
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white", meta.colorClass)}>
+                              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center", meta.colorClass)}>
                                 {meta.icon}
                               </div>
                               <div>
@@ -356,11 +356,11 @@ export function PLSection() {
                   })}
 
                   {/* ====== BET BUILDER P&L ====== */}
-                  <Card className="border-2 border-purple-500/40 bg-gradient-to-br from-purple-500/10 via-card to-card overflow-hidden">
+                  <Card className="border-2 border-bet-builder/40 bg-gradient-to-br from-bet-builder/10 via-card to-card overflow-hidden">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-purple-500 flex items-center justify-center text-white">
+                          <div className="w-9 h-9 rounded-xl bg-bet-builder flex items-center justify-center text-foreground">
                             <Layers className="w-4 h-4" />
                           </div>
                           <div>
@@ -411,11 +411,11 @@ export function PLSection() {
                   </Card>
 
                   {/* ====== ACCA P&L ====== */}
-                  <Card className="border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 via-card to-card overflow-hidden">
+                  <Card className="border-2 border-bet-acca/40 bg-gradient-to-br from-bet-acca/10 via-card to-card overflow-hidden">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-pink-500 flex items-center justify-center text-white">
+                          <div className="w-9 h-9 rounded-xl bg-bet-acca flex items-center justify-center text-foreground">
                             <Sparkles className="w-4 h-4" />
                           </div>
                           <div>
