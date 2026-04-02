@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePLHistory, type DailyGroup, type SettlementStatus, marketCategory, calcComboPL } from '@/hooks/usePLHistory';
+import { usePLHistory, type DailyGroup, type SettlementStatus, marketCategory } from '@/hooks/usePLHistory';
 import { useBetBuilderPL } from '@/hooks/useBetBuilderPL';
 import { useAccaPL } from '@/hooks/useAccaPL';
-import { PLSummaryCard } from '@/components/pl/PLSummaryCard';
 import { PLDateCollapsible } from '@/components/pl/PLDateCollapsible';
-import { PLBetRow } from '@/components/pl/PLBetRow';
 import { PLHistoryTable } from '@/components/pl/PLHistoryTable';
 import { PLAccaHistoryTable } from '@/components/pl/PLAccaHistoryTable';
 import { MonthlyProfitBanner } from '@/components/pl/MonthlyProfitBanner';
@@ -18,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import theGafferImage from '@/assets/the-gaffer.webp';
+import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 
 type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'allTime';
 
@@ -29,12 +28,12 @@ const periodLabels: Record<TimePeriod, string> = {
 };
 
 const MARKET_META = {
-  goals: { label: 'Over 2.5 Goals', icon: <Target className="w-4 h-4" />, colorClass: 'bg-emerald-500', borderClass: 'border-emerald-500/40' },
-  corners: { label: 'Over 8.5 Corners', icon: <Flag className="w-4 h-4" />, colorClass: 'bg-blue-500', borderClass: 'border-blue-500/40' },
-  cards: { label: 'Over 3.5 Cards', icon: <CreditCard className="w-4 h-4" />, colorClass: 'bg-amber-500', borderClass: 'border-amber-500/40' },
+  goals: { label: 'Over 2.5 Goals', icon: <Target className="w-4 h-4" />, colorClass: 'bg-bet-goals text-foreground', borderClass: 'border-bet-goals/40' },
+  corners: { label: 'Over 8.5 Corners', icon: <Flag className="w-4 h-4" />, colorClass: 'bg-bet-corners text-foreground', borderClass: 'border-bet-corners/40' },
+  cards: { label: 'Over 3.5 Cards', icon: <CreditCard className="w-4 h-4" />, colorClass: 'bg-bet-cards text-foreground', borderClass: 'border-bet-cards/40' },
 } as const;
 
-function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = 2) {
+function evalCombo(legs: { status: SettlementStatus; bookmaker_odds: number }[], stake = COMBO_BET_STAKE) {
   const nonVoid = legs.filter(b => b.status !== 'void');
   if (nonVoid.length === 0) return { outcome: 'void' as const, combinedOdds: 1, profit: 0 };
   if (nonVoid.some(b => b.status === 'lost')) {
@@ -122,7 +121,7 @@ export function PLSection() {
                 <CardTitle className="text-2xl md:text-3xl">
                   <span className="text-primary">P&L Hub</span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Every bet tracked &amp; verified</p>
+                <p className="text-sm text-muted-foreground">Fixed model: £{COMBO_BET_STAKE.toFixed(2)} per double/treble, £{MARKET_DAILY_STAKE.toFixed(0)} per daily market, £{SINGLE_BET_STAKE.toFixed(0)} Bet Builder, £{SINGLE_BET_STAKE.toFixed(0)} ACCA.</p>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => refetch()} disabled={allLoading}
@@ -149,7 +148,7 @@ export function PLSection() {
                   </p>
                   <p className={cn('text-sm font-bold tabular-nums',
                     totalProfit >= 0 ? 'text-success' : 'text-destructive')}>
-                    {totalProfit >= 0 ? '+' : ''}{overallROI.toFixed(1)}% ROI • {periodLabels[period]}
+                    {totalProfit >= 0 ? '+' : ''}{overallROI.toFixed(1)}% ROI • £{totalStaked.toFixed(2)} staked • {periodLabels[period]}
                   </p>
                 </div>
               </div>
@@ -224,16 +223,15 @@ export function PLSection() {
                   {/* Summary cards for each bet type */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     {([
-                      { label: 'Goals', s: ms.goals, icon: <Target className="w-4 h-4" />, color: 'emerald' },
-                      { label: 'Corners', s: ms.corners, icon: <Flag className="w-4 h-4" />, color: 'blue' },
-                      { label: 'Cards', s: ms.cards, icon: <CreditCard className="w-4 h-4" />, color: 'amber' },
-                      { label: 'Bet Builder', s: bb, icon: <Layers className="w-4 h-4" />, color: 'purple' },
-                      { label: 'Accas', s: ac, icon: <Sparkles className="w-4 h-4" />, color: 'pink' },
+                      { label: 'Goals', s: ms.goals, icon: <Target className="w-4 h-4" />, colorClass: 'bg-bet-goals text-foreground' },
+                      { label: 'Corners', s: ms.corners, icon: <Flag className="w-4 h-4" />, colorClass: 'bg-bet-corners text-foreground' },
+                      { label: 'Cards', s: ms.cards, icon: <CreditCard className="w-4 h-4" />, colorClass: 'bg-bet-cards text-foreground' },
+                      { label: 'Bet Builder', s: bb, icon: <Layers className="w-4 h-4" />, colorClass: 'bg-bet-builder text-foreground' },
+                      { label: 'Accas', s: ac, icon: <Sparkles className="w-4 h-4" />, colorClass: 'bg-bet-acca text-foreground' },
                     ] as const).map(item => (
                       <div key={item.label} className="rounded-xl border border-border/50 bg-card/80 p-3 space-y-1">
                         <div className="flex items-center gap-2">
-                          <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white",
-                            `bg-${item.color}-500`)}>
+                          <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center', item.colorClass)}>
                             {item.icon}
                           </div>
                           <span className="text-xs font-semibold text-foreground">{item.label}</span>
@@ -247,6 +245,7 @@ export function PLSection() {
                           <span className="mx-0.5">·</span>
                           <span className="text-destructive font-semibold">{item.s.losses}L</span>
                         </div>
+                        <div className="text-[11px] text-muted-foreground">£{item.s.totalStaked.toFixed(2)} staked</div>
                       </div>
                     ))}
                   </div>
@@ -266,7 +265,7 @@ export function PLSection() {
                               </div>
                               <div>
                                 <CardTitle className="text-base">{meta.label}</CardTitle>
-                                <p className="text-xs text-muted-foreground">3 picks · 3 doubles + 1 treble · £2 each</p>
+                                <p className="text-xs text-muted-foreground">3 picks · 3 doubles + 1 treble · £{COMBO_BET_STAKE.toFixed(2)} each · £{MARKET_DAILY_STAKE.toFixed(0)} total</p>
                               </div>
                             </div>
                             <div className="text-right">
@@ -324,7 +323,7 @@ export function PLSection() {
                                     </div>
 
                                     {/* Show combo results */}
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Combo Bets (£2 each)</p>
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Combo Bets (£{COMBO_BET_STAKE.toFixed(2)} each)</p>
                                     {combos.map((combo, i) => (
                                       <div key={i} className={cn(
                                         'p-3 rounded-lg border text-sm',

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
+import { SINGLE_BET_STAKE, calculateFixedStakeProfit } from '@/lib/plModel';
 
 export interface AccaSettled {
   id: string;
@@ -28,10 +29,12 @@ export interface AccaPLStats {
 }
 
 function calcStats(bets: AccaSettled[]): AccaPLStats {
-  const wins = bets.filter(b => b.status === 'won').length;
-  const losses = bets.filter(b => b.status === 'lost').length;
-  const totalStaked = bets.reduce((sum, b) => sum + (b.stake || 10), 0);
-  const netProfit = bets.reduce((sum, b) => sum + (b.profit_loss || 0), 0);
+  const resolved = bets.filter((bet) => bet.status === 'won' || bet.status === 'lost');
+  const wins = resolved.filter((bet) => bet.status === 'won').length;
+  const losses = resolved.filter((bet) => bet.status === 'lost').length;
+  const totalStaked = resolved.length * SINGLE_BET_STAKE;
+  const netProfit = resolved.reduce((sum, bet) => sum + (bet.profit_loss || 0), 0);
+
   return {
     totalBets: wins + losses,
     wins,
@@ -50,7 +53,16 @@ async function fetchAccaPL() {
     .order('settled_at', { ascending: false });
 
   if (error) throw error;
-  const bets = (data || []) as AccaSettled[];
+  const bets = ((data || []) as AccaSettled[]).map((bet) => {
+    const combinedOdds = Number(bet.combined_odds ?? 1);
+
+    return {
+      ...bet,
+      combined_odds: combinedOdds,
+      stake: SINGLE_BET_STAKE,
+      profit_loss: calculateFixedStakeProfit(bet.status, combinedOdds, SINGLE_BET_STAKE),
+    };
+  });
 
   const now = new Date();
   const startOfWeek = new Date(now);
