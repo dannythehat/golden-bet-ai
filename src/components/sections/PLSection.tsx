@@ -18,9 +18,10 @@ import { cn } from '@/lib/utils';
 import theGafferImage from '@/assets/the-gaffer.webp';
 import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 
-type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'allTime';
+type TimePeriod = 'yesterday' | 'weekly' | 'monthly' | 'yearly' | 'allTime';
 
 const periodLabels: Record<TimePeriod, string> = {
+  yesterday: 'Yesterday',
   weekly: 'This Week',
   monthly: 'This Month',
   yearly: 'This Year',
