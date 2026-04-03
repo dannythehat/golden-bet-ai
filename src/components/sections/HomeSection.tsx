@@ -103,6 +103,15 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
   const combinedMonthlyWins = monthlyRows.reduce((sum, row) => sum + row.stats.wins, 0);
   const combinedMonthlyLosses = monthlyRows.reduce((sum, row) => sum + row.stats.losses, 0);
 
+  // Yesterday's combined P&L
+  const yGoals = yesterdayStats.marketBreakdown.goals;
+  const yCorners = yesterdayStats.marketBreakdown.corners;
+  const yCards = yesterdayStats.marketBreakdown.cards;
+  const yBB = bbStats.yesterday;
+  const yAcca = accaStats.yesterday;
+  const yesterdayProfit = yGoals.netProfit + yCorners.netProfit + yCards.netProfit + yBB.netProfit + yAcca.netProfit;
+  const yesterdayHasData = yesterdayStats.totalBets > 0 || yBB.totalBets > 0 || yAcca.totalBets > 0;
+
   return (
     <div className="space-y-10">
       {/* The Gaffer Hero */}
