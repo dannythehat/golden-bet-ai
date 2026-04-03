@@ -140,11 +140,6 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-5 md:p-6 shadow-lg shadow-primary/5 space-y-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Month to date</p>
-            <h2 className="text-2xl md:text-3xl font-black text-foreground">Simple P&amp;L at a glance</h2>
       {/* Yesterday's Results */}
       {yesterdayHasData && (
         <div className="rounded-2xl border border-border/50 bg-card/80 p-4 md:p-5 shadow-md">
@@ -190,7 +185,13 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         </div>
       )}
 
-
+      {/* Monthly P&L Summary */}
+      <div className="rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-5 md:p-6 shadow-lg shadow-primary/5 space-y-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Month to date</p>
+            <h2 className="text-2xl md:text-3xl font-black text-foreground">Simple P&amp;L at a glance</h2>
+            <p className="text-sm text-muted-foreground">All five bet types use one fixed model: £2.50 combo legs for the daily markets, £10 for Bet Builder and £10 for ACCA.</p>
           </div>
 
           <div className="rounded-2xl border border-border/50 bg-card/80 px-4 py-3">
