@@ -176,13 +176,13 @@ export function PLSection() {
 
       {/* Period Tabs */}
       <Tabs value={period} onValueChange={(v) => setPeriod(v as TimePeriod)}>
-        <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 rounded-xl">
+        <TabsList className="grid w-full grid-cols-5 bg-muted/50 p-1 rounded-xl">
           {(Object.keys(periodLabels) as TimePeriod[]).map((p) => (
             <TabsTrigger key={p} value={p}
-              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium">
+              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium text-xs sm:text-sm">
               <span className="hidden sm:inline">{periodLabels[p]}</span>
               <span className="sm:hidden">
-                {p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : p === 'yearly' ? 'Year' : 'All'}
+                {p === 'yesterday' ? 'Yest' : p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : p === 'yearly' ? 'Year' : 'All'}
               </span>
             </TabsTrigger>
           ))}
