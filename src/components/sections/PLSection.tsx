@@ -110,8 +110,11 @@ export function PLSection() {
     allTime: new Date(0),
   };
 
-  const filterDays = (p: TimePeriod, days: DailyGroup[]) =>
-    days.filter(d => new Date(d.date + 'T00:00:00') >= filterDates[p]);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  const filterDays = (p: TimePeriod, days: DailyGroup[]) => {
+    if (p === 'yesterday') return days.filter(d => d.date === yesterdayStr);
+    return days.filter(d => new Date(d.date + 'T00:00:00') >= filterDates[p]);
+  };
 
   return (
     <div className="space-y-6">
