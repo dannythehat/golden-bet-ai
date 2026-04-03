@@ -17,7 +17,7 @@ export function normaliseMarket(raw: string): string {
 export function marketCategory(raw: string): PLMarketCategory | null {
   const market = normaliseMarket(raw);
 
-  if (market.includes('goal')) return 'goals';
+  if (market.includes('goal') || market.includes('btts')) return 'goals';
   if (market.includes('corner')) return 'corners';
   if (market.includes('card')) return 'cards';
 
