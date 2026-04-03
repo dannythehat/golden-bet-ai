@@ -145,7 +145,52 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Month to date</p>
             <h2 className="text-2xl md:text-3xl font-black text-foreground">Simple P&amp;L at a glance</h2>
-            <p className="text-sm text-muted-foreground">All five bet types use one fixed model: £2.50 combo legs for the daily markets, £10 for Bet Builder and £10 for ACCA.</p>
+      {/* Yesterday's Results */}
+      {yesterdayHasData && (
+        <div className="rounded-2xl border border-border/50 bg-card/80 p-4 md:p-5 shadow-md">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Yesterday's Results</p>
+              <p className="text-sm text-muted-foreground">
+                {new Date(yesterdayStats.date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
+              </p>
+            </div>
+            <div className={cn('text-2xl font-black tabular-nums', yesterdayProfit >= 0 ? 'text-success' : 'text-destructive')}>
+              {yesterdayProfit >= 0 ? '+' : ''}£{yesterdayProfit.toFixed(2)}
+            </div>
+          </div>
+          <div className="grid grid-cols-5 gap-2">
+            {[
+              { label: 'Goals', profit: yGoals.netProfit, wins: yGoals.wins, losses: yGoals.losses },
+              { label: 'Corners', profit: yCorners.netProfit, wins: yCorners.wins, losses: yCorners.losses },
+              { label: 'Cards', profit: yCards.netProfit, wins: yCards.wins, losses: yCards.losses },
+              { label: 'BB', profit: yBB.netProfit, wins: yBB.wins, losses: yBB.losses },
+              { label: 'ACCA', profit: yAcca.netProfit, wins: yAcca.wins, losses: yAcca.losses },
+            ].map(item => {
+              const hasData = item.wins > 0 || item.losses > 0;
+              return (
+                <div key={item.label} className="text-center rounded-lg bg-muted/20 p-2 border border-border/30">
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase">{item.label}</div>
+                  {hasData ? (
+                    <>
+                      <div className={cn('text-sm font-black tabular-nums', item.profit >= 0 ? 'text-success' : 'text-destructive')}>
+                        {item.profit >= 0 ? '+' : ''}£{item.profit.toFixed(2)}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        <span className="text-success">{item.wins}W</span>·<span className="text-destructive">{item.losses}L</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-xs text-muted-foreground">—</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+
           </div>
 
           <div className="rounded-2xl border border-border/50 bg-card/80 px-4 py-3">
