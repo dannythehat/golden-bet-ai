@@ -258,7 +258,7 @@ export function usePLHistory() {
   return {
     settledBets: query.data?.settledBets || [],
     byDate: query.data?.byDate || [],
-    stats: query.data?.stats || { weekly: emptyStats, monthly: emptyStats, yearly: emptyStats, allTime: emptyStats },
+    stats: query.data?.stats || { yesterday: emptyStats, weekly: emptyStats, monthly: emptyStats, yearly: emptyStats, allTime: emptyStats },
     marketStats: query.data?.marketStats || { yesterday: emptyMarketStats, weekly: emptyMarketStats, monthly: emptyMarketStats, yearly: emptyMarketStats, allTime: emptyMarketStats },
     yesterdayStats: query.data?.yesterdayStats || { date: '', totalBets: 0, wins: 0, losses: 0, voids: 0, winRate: 0, totalStaked: 0, totalReturns: 0, netProfit: 0, roi: 0, marketBreakdown: emptyMarketStats },
     lastMonthStats: query.data?.lastMonthStats || { monthName: '', totalProfit: 0, totalBets: 0, wins: 0, losses: 0, roi: 0, totalStaked: 0 },
