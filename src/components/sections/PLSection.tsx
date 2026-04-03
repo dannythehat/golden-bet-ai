@@ -92,6 +92,9 @@ export function PLSection() {
   const allLoading = isLoading || bbLoading || accaLoading;
 
   const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
   const startOfWeek = new Date(now);
   const dow = startOfWeek.getDay();
   startOfWeek.setDate(startOfWeek.getDate() - (dow === 0 ? 6 : dow - 1));
@@ -100,6 +103,7 @@ export function PLSection() {
   const startOfYear = new Date(now.getFullYear(), 0, 1);
 
   const filterDates: Record<TimePeriod, Date> = {
+    yesterday,
     weekly: startOfWeek,
     monthly: startOfMonth,
     yearly: startOfYear,
