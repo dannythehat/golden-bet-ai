@@ -17,7 +17,7 @@ interface HomeSectionProps {
 }
 
 export function HomeSection({ onNavigate }: HomeSectionProps) {
-  const { marketStats, isLoading: plLoading } = usePLHistory();
+  const { marketStats, yesterdayStats, isLoading: plLoading } = usePLHistory();
   const { stats: bbStats, isLoading: bbLoading } = useBetBuilderPL();
   const { stats: accaStats, isLoading: accaLoading } = useAccaPL();
   const anyLoading = plLoading || bbLoading || accaLoading;
