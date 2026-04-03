@@ -113,7 +113,7 @@ export function useBetBuilderPL() {
 
   return {
     bets: query.data?.bets || [],
-    stats: query.data?.stats || { weekly: empty, monthly: empty, yearly: empty, allTime: empty },
+    stats: query.data?.stats || { yesterday: empty, weekly: empty, monthly: empty, yearly: empty, allTime: empty },
     isLoading: query.isLoading,
   };
 }
