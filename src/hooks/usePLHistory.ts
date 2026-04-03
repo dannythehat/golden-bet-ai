@@ -186,6 +186,13 @@ async function fetchPLHistory() {
     cards: calcSingleMarketComboPL(bets, 'cards'),
   });
 
+  // Yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  const yesterdayBets = settledBets.filter(b => b.prediction_date === yesterdayStr);
+  const yesterdayPL = calcMarketComboPL(yesterdayBets);
+
   // Last month
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
@@ -199,16 +206,23 @@ async function fetchPLHistory() {
     settledBets,
     byDate,
     stats: {
+      yesterday: calcMarketComboPL(yesterdayBets),
       weekly: calcMarketComboPL(filterByDate(startOfWeek)),
       monthly: calcMarketComboPL(filterByDate(startOfMonth)),
       yearly: calcMarketComboPL(filterByDate(startOfYear)),
       allTime: calcMarketComboPL(settledBets),
     },
     marketStats: {
+      yesterday: calcMarketBreakdown(yesterdayBets),
       weekly: calcMarketBreakdown(filterByDate(startOfWeek)),
       monthly: calcMarketBreakdown(filterByDate(startOfMonth)),
       yearly: calcMarketBreakdown(filterByDate(startOfYear)),
       allTime: calcMarketBreakdown(settledBets),
+    },
+    yesterdayStats: {
+      date: yesterdayStr,
+      ...yesterdayPL,
+      marketBreakdown: calcMarketBreakdown(yesterdayBets),
     },
     lastMonthStats: {
       monthName: lastMonthStart.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
@@ -244,8 +258,9 @@ export function usePLHistory() {
   return {
     settledBets: query.data?.settledBets || [],
     byDate: query.data?.byDate || [],
-    stats: query.data?.stats || { weekly: emptyStats, monthly: emptyStats, yearly: emptyStats, allTime: emptyStats },
-    marketStats: query.data?.marketStats || { weekly: emptyMarketStats, monthly: emptyMarketStats, yearly: emptyMarketStats, allTime: emptyMarketStats },
+    stats: query.data?.stats || { yesterday: emptyStats, weekly: emptyStats, monthly: emptyStats, yearly: emptyStats, allTime: emptyStats },
+    marketStats: query.data?.marketStats || { yesterday: emptyMarketStats, weekly: emptyMarketStats, monthly: emptyMarketStats, yearly: emptyMarketStats, allTime: emptyMarketStats },
+    yesterdayStats: query.data?.yesterdayStats || { date: '', totalBets: 0, wins: 0, losses: 0, voids: 0, winRate: 0, totalStaked: 0, totalReturns: 0, netProfit: 0, roi: 0, marketBreakdown: emptyMarketStats },
     lastMonthStats: query.data?.lastMonthStats || { monthName: '', totalProfit: 0, totalBets: 0, wins: 0, losses: 0, roi: 0, totalStaked: 0 },
     isLoading: query.isLoading,
     isError: query.isError,

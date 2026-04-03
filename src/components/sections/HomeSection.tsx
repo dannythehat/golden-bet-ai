@@ -17,7 +17,7 @@ interface HomeSectionProps {
 }
 
 export function HomeSection({ onNavigate }: HomeSectionProps) {
-  const { marketStats, isLoading: plLoading } = usePLHistory();
+  const { marketStats, yesterdayStats, isLoading: plLoading } = usePLHistory();
   const { stats: bbStats, isLoading: bbLoading } = useBetBuilderPL();
   const { stats: accaStats, isLoading: accaLoading } = useAccaPL();
   const anyLoading = plLoading || bbLoading || accaLoading;
@@ -103,6 +103,15 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
   const combinedMonthlyWins = monthlyRows.reduce((sum, row) => sum + row.stats.wins, 0);
   const combinedMonthlyLosses = monthlyRows.reduce((sum, row) => sum + row.stats.losses, 0);
 
+  // Yesterday's combined P&L
+  const yGoals = yesterdayStats.marketBreakdown.goals;
+  const yCorners = yesterdayStats.marketBreakdown.corners;
+  const yCards = yesterdayStats.marketBreakdown.cards;
+  const yBB = bbStats.yesterday;
+  const yAcca = accaStats.yesterday;
+  const yesterdayProfit = yGoals.netProfit + yCorners.netProfit + yCards.netProfit + yBB.netProfit + yAcca.netProfit;
+  const yesterdayHasData = yesterdayStats.totalBets > 0 || yBB.totalBets > 0 || yAcca.totalBets > 0;
+
   return (
     <div className="space-y-10">
       {/* The Gaffer Hero */}
@@ -131,6 +140,52 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         </div>
       </div>
 
+      {/* Yesterday's Results */}
+      {yesterdayHasData && (
+        <div className="rounded-2xl border border-border/50 bg-card/80 p-4 md:p-5 shadow-md">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Yesterday's Results</p>
+              <p className="text-sm text-muted-foreground">
+                {new Date(yesterdayStats.date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
+              </p>
+            </div>
+            <div className={cn('text-2xl font-black tabular-nums', yesterdayProfit >= 0 ? 'text-success' : 'text-destructive')}>
+              {yesterdayProfit >= 0 ? '+' : ''}£{yesterdayProfit.toFixed(2)}
+            </div>
+          </div>
+          <div className="grid grid-cols-5 gap-2">
+            {[
+              { label: 'Goals', profit: yGoals.netProfit, wins: yGoals.wins, losses: yGoals.losses },
+              { label: 'Corners', profit: yCorners.netProfit, wins: yCorners.wins, losses: yCorners.losses },
+              { label: 'Cards', profit: yCards.netProfit, wins: yCards.wins, losses: yCards.losses },
+              { label: 'BB', profit: yBB.netProfit, wins: yBB.wins, losses: yBB.losses },
+              { label: 'ACCA', profit: yAcca.netProfit, wins: yAcca.wins, losses: yAcca.losses },
+            ].map(item => {
+              const hasData = item.wins > 0 || item.losses > 0;
+              return (
+                <div key={item.label} className="text-center rounded-lg bg-muted/20 p-2 border border-border/30">
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase">{item.label}</div>
+                  {hasData ? (
+                    <>
+                      <div className={cn('text-sm font-black tabular-nums', item.profit >= 0 ? 'text-success' : 'text-destructive')}>
+                        {item.profit >= 0 ? '+' : ''}£{item.profit.toFixed(2)}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        <span className="text-success">{item.wins}W</span>·<span className="text-destructive">{item.losses}L</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-xs text-muted-foreground">—</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Monthly P&L Summary */}
       <div className="rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-5 md:p-6 shadow-lg shadow-primary/5 space-y-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>

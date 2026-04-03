@@ -65,6 +65,10 @@ async function fetchAccaPL() {
   });
 
   const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
   const startOfWeek = new Date(now);
   const dow = startOfWeek.getDay();
   startOfWeek.setDate(startOfWeek.getDate() - (dow === 0 ? 6 : dow - 1));
@@ -77,6 +81,7 @@ async function fetchAccaPL() {
   return {
     bets,
     stats: {
+      yesterday: calcStats(bets.filter(b => b.prediction_date === yesterdayStr)),
       weekly: calcStats(since(startOfWeek)),
       monthly: calcStats(since(startOfMonth)),
       yearly: calcStats(since(startOfYear)),
@@ -99,7 +104,7 @@ export function useAccaPL() {
 
   return {
     bets: query.data?.bets || [],
-    stats: query.data?.stats || { weekly: empty, monthly: empty, yearly: empty, allTime: empty },
+    stats: query.data?.stats || { yesterday: empty, weekly: empty, monthly: empty, yearly: empty, allTime: empty },
     isLoading: query.isLoading,
   };
 }

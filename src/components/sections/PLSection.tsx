@@ -18,9 +18,10 @@ import { cn } from '@/lib/utils';
 import theGafferImage from '@/assets/the-gaffer.webp';
 import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 
-type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'allTime';
+type TimePeriod = 'yesterday' | 'weekly' | 'monthly' | 'yearly' | 'allTime';
 
 const periodLabels: Record<TimePeriod, string> = {
+  yesterday: 'Yesterday',
   weekly: 'This Week',
   monthly: 'This Month',
   yearly: 'This Year',
@@ -91,6 +92,9 @@ export function PLSection() {
   const allLoading = isLoading || bbLoading || accaLoading;
 
   const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
   const startOfWeek = new Date(now);
   const dow = startOfWeek.getDay();
   startOfWeek.setDate(startOfWeek.getDate() - (dow === 0 ? 6 : dow - 1));
@@ -99,14 +103,18 @@ export function PLSection() {
   const startOfYear = new Date(now.getFullYear(), 0, 1);
 
   const filterDates: Record<TimePeriod, Date> = {
+    yesterday,
     weekly: startOfWeek,
     monthly: startOfMonth,
     yearly: startOfYear,
     allTime: new Date(0),
   };
 
-  const filterDays = (p: TimePeriod, days: DailyGroup[]) =>
-    days.filter(d => new Date(d.date + 'T00:00:00') >= filterDates[p]);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  const filterDays = (p: TimePeriod, days: DailyGroup[]) => {
+    if (p === 'yesterday') return days.filter(d => d.date === yesterdayStr);
+    return days.filter(d => new Date(d.date + 'T00:00:00') >= filterDates[p]);
+  };
 
   return (
     <div className="space-y-6">
@@ -171,13 +179,13 @@ export function PLSection() {
 
       {/* Period Tabs */}
       <Tabs value={period} onValueChange={(v) => setPeriod(v as TimePeriod)}>
-        <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 rounded-xl">
+        <TabsList className="grid w-full grid-cols-5 bg-muted/50 p-1 rounded-xl">
           {(Object.keys(periodLabels) as TimePeriod[]).map((p) => (
             <TabsTrigger key={p} value={p}
-              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium">
+              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium text-xs sm:text-sm">
               <span className="hidden sm:inline">{periodLabels[p]}</span>
               <span className="sm:hidden">
-                {p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : p === 'yearly' ? 'Year' : 'All'}
+                {p === 'yesterday' ? 'Yest' : p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : p === 'yearly' ? 'Year' : 'All'}
               </span>
             </TabsTrigger>
           ))}
