@@ -206,6 +206,7 @@ async function fetchPLHistory() {
     settledBets,
     byDate,
     stats: {
+      yesterday: calcMarketComboPL(yesterdayBets),
       weekly: calcMarketComboPL(filterByDate(startOfWeek)),
       monthly: calcMarketComboPL(filterByDate(startOfMonth)),
       yearly: calcMarketComboPL(filterByDate(startOfYear)),
