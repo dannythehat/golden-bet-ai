@@ -186,6 +186,13 @@ async function fetchPLHistory() {
     cards: calcSingleMarketComboPL(bets, 'cards'),
   });
 
+  // Yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  const yesterdayBets = settledBets.filter(b => b.prediction_date === yesterdayStr);
+  const yesterdayPL = calcMarketComboPL(yesterdayBets);
+
   // Last month
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
@@ -205,10 +212,16 @@ async function fetchPLHistory() {
       allTime: calcMarketComboPL(settledBets),
     },
     marketStats: {
+      yesterday: calcMarketBreakdown(yesterdayBets),
       weekly: calcMarketBreakdown(filterByDate(startOfWeek)),
       monthly: calcMarketBreakdown(filterByDate(startOfMonth)),
       yearly: calcMarketBreakdown(filterByDate(startOfYear)),
       allTime: calcMarketBreakdown(settledBets),
+    },
+    yesterdayStats: {
+      date: yesterdayStr,
+      ...yesterdayPL,
+      marketBreakdown: calcMarketBreakdown(yesterdayBets),
     },
     lastMonthStats: {
       monthName: lastMonthStart.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
