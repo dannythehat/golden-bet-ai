@@ -30,7 +30,7 @@ const periodLabels: Record<TimePeriod, string> = {
 
 const MARKET_META = {
   goals: { label: 'Over 2.5 Goals', icon: <Target className="w-4 h-4" />, colorClass: 'bg-bet-goals text-foreground', borderClass: 'border-bet-goals/40' },
-  corners: { label: 'Corners (Over 9.5 settled)', icon: <Flag className="w-4 h-4" />, colorClass: 'bg-bet-corners text-foreground', borderClass: 'border-bet-corners/40' },
+  corners: { label: 'Over 8.5 Corners', icon: <Flag className="w-4 h-4" />, colorClass: 'bg-bet-corners text-foreground', borderClass: 'border-bet-corners/40' },
   cards: { label: 'Over 3.5 Cards', icon: <CreditCard className="w-4 h-4" />, colorClass: 'bg-bet-cards text-foreground', borderClass: 'border-bet-cards/40' },
 } as const;
 
@@ -273,7 +273,7 @@ export function PLSection() {
                               </div>
                               <div>
                                 <CardTitle className="text-base">{meta.label}</CardTitle>
-                                 <p className="text-xs text-muted-foreground">3 picks · settled on Over 9.5 corners · 3 doubles + 1 treble · £{COMBO_BET_STAKE.toFixed(2)} each · £{MARKET_DAILY_STAKE.toFixed(0)} total</p>
+                                 <p className="text-xs text-muted-foreground">3 picks · 3 doubles + 1 treble · £{COMBO_BET_STAKE.toFixed(2)} each · £{MARKET_DAILY_STAKE.toFixed(0)} total</p>
                               </div>
                             </div>
                             <div className="text-right">

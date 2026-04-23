@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { calcComboPL, marketCategory } from '@/lib/plModel';
+import { isCoveredFixture } from '@/lib/teamFilters';
 
 export type SettlementStatus = 'won' | 'lost' | 'void';
 
@@ -148,13 +149,15 @@ async function fetchPLHistory() {
     .order('settled_at', { ascending: false });
 
   if (error) throw error;
-  const settledBets = ((data || []) as SettledBet[]).map((bet) => ({
-    ...bet,
-    market: normaliseLegacyPLMarket(bet.market),
-    bookmaker_odds: Number(bet.bookmaker_odds ?? 1),
-    stake: Number(bet.stake ?? 0),
-    profit_loss: Number(bet.profit_loss ?? 0),
-  }));
+  const settledBets = ((data || []) as SettledBet[])
+    .filter((bet) => isCoveredFixture(bet.league, bet.home_team, bet.away_team))
+    .map((bet) => ({
+      ...bet,
+      market: normaliseLegacyPLMarket(bet.market),
+      bookmaker_odds: Number(bet.bookmaker_odds ?? 1),
+      stake: Number(bet.stake ?? 0),
+      profit_loss: Number(bet.profit_loss ?? 0),
+    }));
 
   // Group by date for display
   const dateMap = new Map<string, SettledBet[]>();

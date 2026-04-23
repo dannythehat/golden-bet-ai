@@ -86,3 +86,9 @@ export function isAllowedLeague(league: string, region: string): boolean {
   // Asia, Americas, and other regions — allow anything that passed the junk filter
   return true;
 }
+
+/** Fast guard for historical bet rows when region metadata is unavailable. */
+export function isCoveredFixture(league: string, homeTeam: string, awayTeam: string): boolean {
+  if (EXCLUDED_LEAGUE_PATTERNS.some((pattern) => pattern.test(league))) return false;
+  return isAllowedTeam(homeTeam) && isAllowedTeam(awayTeam);
+}
