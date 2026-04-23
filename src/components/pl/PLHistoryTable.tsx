@@ -35,6 +35,8 @@ const marketLabels: Record<string, string> = {
   'over_2.5_goals': 'Over 2.5 Goals',
   'btts': 'BTTS Yes',
   'over_9.5_corners': 'Over 9.5 Corners',
+  'over_9_5_corners': 'Over 9.5 Corners',
+  'over_95_corners': 'Over 9.5 Corners',
   'over_3.5_cards': 'Over 3.5 Cards',
 };
 
