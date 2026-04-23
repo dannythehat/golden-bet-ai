@@ -56,6 +56,16 @@ export interface MarketPLStats {
   cards: PLStats;
 }
 
+function normaliseLegacyPLMarket(raw: string): string {
+  const market = raw.toLowerCase().trim();
+
+  if (market === 'over_2.5_goals') return 'over_2_5_goals';
+  if (market === 'over_3.5_cards') return 'over_3_5_cards';
+  if (market === 'over_9.5_corners' || market === 'over_9_5_corners' || market === 'over_95_corners') return 'over_8_5_corners';
+
+  return market;
+}
+
 /**
  * Calculate combo P&L for a set of bets, grouped by date AND market category.
  * This correctly produces 3 doubles + 1 treble per market per day.
@@ -140,6 +150,7 @@ async function fetchPLHistory() {
   if (error) throw error;
   const settledBets = ((data || []) as SettledBet[]).map((bet) => ({
     ...bet,
+    market: normaliseLegacyPLMarket(bet.market),
     bookmaker_odds: Number(bet.bookmaker_odds ?? 1),
     stake: Number(bet.stake ?? 0),
     profit_loss: Number(bet.profit_loss ?? 0),
