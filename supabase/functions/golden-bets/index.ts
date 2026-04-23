@@ -113,7 +113,7 @@ function getLeagueTier(leagueId: number): number {
 // Cards removed from standalone Golden Bets — API-Football /odds endpoint
 // does NOT carry bookings/cards markets. Cards are ONLY used in Bet Builders
 // where they are combined with other markets using estimated odds.
-type Market = 'over_2_5_goals' | 'btts' | 'over_9_5_corners';
+type Market = 'over_2_5_goals' | 'btts' | 'over_8_5_corners';
 
 interface HeuristicPick {
   fixture_id: string;
@@ -143,7 +143,7 @@ interface PowerScoreEntry {
 const MARKET_SCORE_MAP: Record<string, keyof PowerScoreEntry> = {
   'over_2_5_goals': 'over_25_goals_score',
   'btts': 'btts_score',
-  'over_9_5_corners': 'over_95_corners_score',
+  'over_8_5_corners': 'over_95_corners_score',
   'over_3_5_cards': 'over_35_cards_score',
 };
 
@@ -463,8 +463,8 @@ function parseBookmakerOdds(
         marketKey = 'btts';
       }
       // Corners — various lines
-      else if ((label === 'over 9.5' || label === 'over 9' || label === 'over 10') && betName.includes('corner')) {
-        marketKey = 'over_9_5_corners';
+      else if ((label === 'over 8.5' || label === 'over 8' || label === 'over 9') && betName.includes('corner')) {
+        marketKey = 'over_8_5_corners';
       }
       // Cards — for Bet Builder use (not standalone golden bets)
       else if ((label === 'over 3.5' || label === 'over 4' || label === 'over 3') && (betName.includes('card') || betName.includes('booking'))) {
