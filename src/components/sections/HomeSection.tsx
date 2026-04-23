@@ -61,11 +61,11 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
     },
     {
       path: '/over-corners',
-      label: 'Over 8.5 Corners',
+      label: 'Corners (O9.5 settled)',
       icon: <Flag className="w-5 h-5" />,
       iconClass: 'bg-bet-corners/20 text-foreground border border-bet-corners/40',
       panelClass: 'border-bet-corners/35 bg-gradient-to-br from-bet-corners/10 to-card',
-      desc: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
+      desc: `3 picks · settled on Over 9.5 corners · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
       stats: marketStats.monthly.corners,
     },
     {
@@ -191,7 +191,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Month to date</p>
             <h2 className="text-2xl md:text-3xl font-black text-foreground">Simple P&amp;L at a glance</h2>
-            <p className="text-sm text-muted-foreground">All five bet types use one fixed model: £2.50 combo legs for the daily markets, £10 for Bet Builder and £10 for ACCA.</p>
+              <p className="text-sm text-muted-foreground">All five bet types use one fixed model: £2.50 combo legs for the daily markets, £10 for Bet Builder and £10 for ACCA. Corners history is settled on the stored Over 9.5 line.</p>
           </div>
 
           <div className="rounded-2xl border border-border/50 bg-card/80 px-4 py-3">
