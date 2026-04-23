@@ -49,6 +49,34 @@ interface ValueBet {
   };
 }
 
+const EXCLUDED_FIXTURE_PATTERNS = [
+  /\bu\d{1,2}\b/i,
+  /under[\s-]*\d/i,
+  /youth/i,
+  /academy/i,
+  /reserve/i,
+  /development/i,
+  /\bii\b/i,
+  /\bb\s*$/i,
+  /^jong\s/i,
+  /women/i,
+  /ladies/i,
+  /premier league 2/i,
+  /primavera/i,
+  /regionalliga/i,
+  /serie d/i,
+  /segunda división rfef/i,
+  /lowland league/i,
+  /3\. division/i,
+  /challenger pro league/i,
+  /1\. liga promotion/i,
+];
+
+function isExcludedFixture(league: string, homeTeam: string, awayTeam: string): boolean {
+  const values = [league, homeTeam, awayTeam];
+  return values.some((value) => EXCLUDED_FIXTURE_PATTERNS.some((pattern) => pattern.test(value)));
+}
+
 const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 async function fetchFromApi(apiKey: string, endpoint: string, params: Record<string, string | number> = {}) {
@@ -84,7 +112,7 @@ async function getLeagueRanking(
   const marketCols: Record<string, { homeCol: string; awayCol: string; overallCol: string }> = {
     over25: { homeCol: 'home_avg_total_goals', awayCol: 'away_avg_total_goals', overallCol: 'avg_total_goals' },
     btts: { homeCol: 'home_btts_pct', awayCol: 'away_btts_pct', overallCol: 'btts_pct' },
-    over95corners: { homeCol: 'home_avg_total_corners', awayCol: 'away_avg_total_corners', overallCol: 'avg_total_corners' },
+    over85corners: { homeCol: 'home_avg_total_corners', awayCol: 'away_avg_total_corners', overallCol: 'avg_total_corners' },
     over35cards: { homeCol: 'home_avg_total_cards', awayCol: 'away_avg_total_cards', overallCol: 'avg_total_cards' },
   };
 
@@ -277,7 +305,7 @@ function blendProbability(
   const keys: Record<string, { o: string; hv: string; av: string; h2h: string }> = {
     over25: { o: 'over_25_goals_pct', hv: 'home_over_25_goals_pct', av: 'away_over_25_goals_pct', h2h: 'over25Pct' },
     btts: { o: 'btts_pct', hv: 'home_btts_pct', av: 'away_btts_pct', h2h: 'bttsPct' },
-    over95corners: { o: 'over_95_corners_pct', hv: 'home_over_95_corners_pct', av: 'away_over_95_corners_pct', h2h: 'over95CornersPct' },
+    over85corners: { o: 'over_95_corners_pct', hv: 'home_over_95_corners_pct', av: 'away_over_95_corners_pct', h2h: 'over95CornersPct' },
     over35cards: { o: 'over_35_cards_pct', hv: 'home_over_35_cards_pct', av: 'away_over_35_cards_pct', h2h: 'over35CardsPct' },
   };
 
@@ -291,7 +319,7 @@ function blendProbability(
   let derbyBoost = 0;
   if (h2h.isDerby) {
     if (market === 'over35cards') derbyBoost = 15;
-    else if (market === 'over95corners') derbyBoost = 8;
+    else if (market === 'over85corners') derbyBoost = 8;
     else if (market === 'over25') derbyBoost = 5;
     else if (market === 'btts') derbyBoost = 3;
   }
@@ -311,7 +339,7 @@ async function getRealOdds(apiKey: string, fixtureId: number, market: string): P
     const map: Record<string, { label: string; value: string }> = {
       over25: { label: 'Goals Over/Under', value: 'Over 2.5' },
       btts: { label: 'Both Teams Score', value: 'Yes' },
-      over95corners: { label: 'Total Corners', value: 'Over 9.5' },
+      over85corners: { label: 'Total Corners', value: 'Over 8.5' },
       over35cards: { label: 'Total Cards', value: 'Over 3.5' },
     };
     const target = map[market];
@@ -357,17 +385,20 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const fixtures = fixturesData.response.filter((f: any) =>
-      f.fixture.status.short === 'NS' &&
-      !f.league.name.toLowerCase().includes('women') &&
-      !f.league.name.toLowerCase().includes('u21') &&
-      !f.league.name.toLowerCase().includes('u19')
-    );
+    const fixtures = fixturesData.response.filter((f: any) => {
+      if (f.fixture.status.short !== 'NS') return false;
+
+      const leagueName = String(f.league?.name ?? '');
+      const homeTeam = String(f.teams?.home?.name ?? '');
+      const awayTeam = String(f.teams?.away?.name ?? '');
+
+      return !isExcludedFixture(leagueName, homeTeam, awayTeam);
+    });
 
     console.log(`📊 Analysing ${fixtures.length} fixtures with league rankings...`);
 
     const valueBets: ValueBet[] = [];
-    const markets = ['over25', 'btts', 'over95corners', 'over35cards'];
+      const markets = ['over25', 'btts', 'over85corners', 'over35cards'];
 
     for (const fixture of fixtures.slice(0, 50)) {
       const homeTeam = fixture.teams.home.name;
@@ -425,7 +456,7 @@ serve(async (req) => {
             ? `League rank: Home #${rank.homeRank}/${rank.totalTeams}, Away #${rank.awayRank}/${rank.totalTeams}`
             : 'No league ranking';
           const h2hNote = h2h.games > 0
-            ? `H2H(${h2h.games}g): ${market === 'over25' ? h2h.over25Pct : market === 'btts' ? h2h.bttsPct : market === 'over95corners' ? h2h.over95CornersPct : h2h.over35CardsPct}%`
+            ? `H2H(${h2h.games}g): ${market === 'over25' ? h2h.over25Pct : market === 'btts' ? h2h.bttsPct : market === 'over85corners' ? h2h.over95CornersPct : h2h.over35CardsPct}%`
             : 'No H2H';
           const derbyNote = h2h.isDerby ? ' 🔥DERBY' : '';
 
