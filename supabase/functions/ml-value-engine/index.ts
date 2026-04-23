@@ -49,6 +49,34 @@ interface ValueBet {
   };
 }
 
+const EXCLUDED_FIXTURE_PATTERNS = [
+  /\bu\d{1,2}\b/i,
+  /under[\s-]*\d/i,
+  /youth/i,
+  /academy/i,
+  /reserve/i,
+  /development/i,
+  /\bii\b/i,
+  /\bb\s*$/i,
+  /^jong\s/i,
+  /women/i,
+  /ladies/i,
+  /premier league 2/i,
+  /primavera/i,
+  /regionalliga/i,
+  /serie d/i,
+  /segunda división rfef/i,
+  /lowland league/i,
+  /3\. division/i,
+  /challenger pro league/i,
+  /1\. liga promotion/i,
+];
+
+function isExcludedFixture(league: string, homeTeam: string, awayTeam: string): boolean {
+  const values = [league, homeTeam, awayTeam];
+  return values.some((value) => EXCLUDED_FIXTURE_PATTERNS.some((pattern) => pattern.test(value)));
+}
+
 const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 async function fetchFromApi(apiKey: string, endpoint: string, params: Record<string, string | number> = {}) {
@@ -357,17 +385,20 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const fixtures = fixturesData.response.filter((f: any) =>
-      f.fixture.status.short === 'NS' &&
-      !f.league.name.toLowerCase().includes('women') &&
-      !f.league.name.toLowerCase().includes('u21') &&
-      !f.league.name.toLowerCase().includes('u19')
-    );
+    const fixtures = fixturesData.response.filter((f: any) => {
+      if (f.fixture.status.short !== 'NS') return false;
+
+      const leagueName = String(f.league?.name ?? '');
+      const homeTeam = String(f.teams?.home?.name ?? '');
+      const awayTeam = String(f.teams?.away?.name ?? '');
+
+      return !isExcludedFixture(leagueName, homeTeam, awayTeam);
+    });
 
     console.log(`📊 Analysing ${fixtures.length} fixtures with league rankings...`);
 
     const valueBets: ValueBet[] = [];
-    const markets = ['over25', 'btts', 'over95corners', 'over35cards'];
+      const markets = ['over25', 'btts', 'over85corners', 'over35cards'];
 
     for (const fixture of fixtures.slice(0, 50)) {
       const homeTeam = fixture.teams.home.name;
@@ -425,7 +456,7 @@ serve(async (req) => {
             ? `League rank: Home #${rank.homeRank}/${rank.totalTeams}, Away #${rank.awayRank}/${rank.totalTeams}`
             : 'No league ranking';
           const h2hNote = h2h.games > 0
-            ? `H2H(${h2h.games}g): ${market === 'over25' ? h2h.over25Pct : market === 'btts' ? h2h.bttsPct : market === 'over95corners' ? h2h.over95CornersPct : h2h.over35CardsPct}%`
+            ? `H2H(${h2h.games}g): ${market === 'over25' ? h2h.over25Pct : market === 'btts' ? h2h.bttsPct : market === 'over85corners' ? h2h.over95CornersPct : h2h.over35CardsPct}%`
             : 'No H2H';
           const derbyNote = h2h.isDerby ? ' 🔥DERBY' : '';
 
