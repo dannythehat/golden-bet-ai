@@ -112,7 +112,7 @@ async function getLeagueRanking(
   const marketCols: Record<string, { homeCol: string; awayCol: string; overallCol: string }> = {
     over25: { homeCol: 'home_avg_total_goals', awayCol: 'away_avg_total_goals', overallCol: 'avg_total_goals' },
     btts: { homeCol: 'home_btts_pct', awayCol: 'away_btts_pct', overallCol: 'btts_pct' },
-    over95corners: { homeCol: 'home_avg_total_corners', awayCol: 'away_avg_total_corners', overallCol: 'avg_total_corners' },
+    over85corners: { homeCol: 'home_avg_total_corners', awayCol: 'away_avg_total_corners', overallCol: 'avg_total_corners' },
     over35cards: { homeCol: 'home_avg_total_cards', awayCol: 'away_avg_total_cards', overallCol: 'avg_total_cards' },
   };
 
@@ -305,7 +305,7 @@ function blendProbability(
   const keys: Record<string, { o: string; hv: string; av: string; h2h: string }> = {
     over25: { o: 'over_25_goals_pct', hv: 'home_over_25_goals_pct', av: 'away_over_25_goals_pct', h2h: 'over25Pct' },
     btts: { o: 'btts_pct', hv: 'home_btts_pct', av: 'away_btts_pct', h2h: 'bttsPct' },
-    over95corners: { o: 'over_95_corners_pct', hv: 'home_over_95_corners_pct', av: 'away_over_95_corners_pct', h2h: 'over95CornersPct' },
+    over85corners: { o: 'over_95_corners_pct', hv: 'home_over_95_corners_pct', av: 'away_over_95_corners_pct', h2h: 'over95CornersPct' },
     over35cards: { o: 'over_35_cards_pct', hv: 'home_over_35_cards_pct', av: 'away_over_35_cards_pct', h2h: 'over35CardsPct' },
   };
 
@@ -319,7 +319,7 @@ function blendProbability(
   let derbyBoost = 0;
   if (h2h.isDerby) {
     if (market === 'over35cards') derbyBoost = 15;
-    else if (market === 'over95corners') derbyBoost = 8;
+    else if (market === 'over85corners') derbyBoost = 8;
     else if (market === 'over25') derbyBoost = 5;
     else if (market === 'btts') derbyBoost = 3;
   }
@@ -339,7 +339,7 @@ async function getRealOdds(apiKey: string, fixtureId: number, market: string): P
     const map: Record<string, { label: string; value: string }> = {
       over25: { label: 'Goals Over/Under', value: 'Over 2.5' },
       btts: { label: 'Both Teams Score', value: 'Yes' },
-      over95corners: { label: 'Total Corners', value: 'Over 9.5' },
+      over85corners: { label: 'Total Corners', value: 'Over 8.5' },
       over35cards: { label: 'Total Cards', value: 'Over 3.5' },
     };
     const target = map[market];
