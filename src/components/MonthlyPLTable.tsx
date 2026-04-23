@@ -35,8 +35,8 @@ export function MonthlyPLTable({ goals, corners, cards, betBuilder, acca, monthN
       ...goals,
     },
     {
-      name: 'Corners (O9.5 settled)',
-      description: `3 picks · settled on Over 9.5 corners · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
+      name: 'Over 8.5 Corners',
+      description: `3 picks · 3 doubles + 1 treble · £${COMBO_BET_STAKE.toFixed(2)} each · £${MARKET_DAILY_STAKE.toFixed(0)} total`,
       icon: <Flag className="w-3.5 h-3.5" />,
       iconClass: 'bg-bet-corners/20 text-foreground border border-bet-corners/40',
       ...corners,
