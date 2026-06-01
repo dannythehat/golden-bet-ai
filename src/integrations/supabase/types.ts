@@ -2744,7 +2744,13 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      refresh_v2_referee_features: {
+        Args: never
+        Returns: {
+          referees_covered: number
+          rows_updated: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

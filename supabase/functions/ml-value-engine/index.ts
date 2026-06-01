@@ -220,10 +220,23 @@ function detectDerby(home: string, away: string): boolean {
 }
 
 // ── Intelligence Adjustments ───────────────────────────────────────
+// Reads everything match_intelligence collects (injuries, fatigue, ref,
+// weather, manager changes, kickoff time, key players out) and converts
+// it into a per-market probability nudge. Returns -999 to veto the bet.
 async function getIntelligenceAdj(supabase: any, fixtureId: string, market: string): Promise<number> {
   const { data: intel } = await supabase
     .from('match_intelligence')
-    .select('home_injury_count, away_injury_count, home_is_fatigued, away_is_fatigued, referee_avg_cards, should_avoid')
+    .select(`
+      home_injury_count, away_injury_count,
+      home_key_players_out, away_key_players_out,
+      home_is_fatigued, away_is_fatigued,
+      fatigue_risk_score, injury_risk_score, weather_risk_score, overall_risk_score,
+      referee_avg_cards, referee_strictness,
+      is_adverse_weather, weather_condition, wind_speed_kmh, temperature_celsius,
+      home_new_manager, away_new_manager,
+      kickoff_hour, is_early_kickoff,
+      should_avoid
+    `)
     .eq('fixture_id', fixtureId)
     .maybeSingle();
 
@@ -232,20 +245,71 @@ async function getIntelligenceAdj(supabase: any, fixtureId: string, market: stri
 
   let adj = 0;
   const totalInjuries = (intel.home_injury_count ?? 0) + (intel.away_injury_count ?? 0);
+  const keyOut = (intel.home_key_players_out?.length ?? 0) + (intel.away_key_players_out?.length ?? 0);
+  const isGoalsMkt = market === 'over25' || market === 'btts';
+  const isCornersMkt = market === 'over95corners' || market === 'over85corners';
+  const isCardsMkt = market === 'over35cards';
 
-  if (market === 'over25' || market === 'btts') adj += Math.min(5, totalInjuries);
+  // Injuries — modest goals/btts bump (more chaos = more goals on average)
+  if (isGoalsMkt) adj += Math.min(5, totalInjuries);
+  // Key player(s) out — punish goals/btts (attacking talent missing)
+  if (keyOut > 0 && isGoalsMkt) adj -= Math.min(8, keyOut * 3);
+
+  // Fatigue
   if (intel.home_is_fatigued || intel.away_is_fatigued) {
-    if (market === 'over25' || market === 'btts') adj += 3;
-    if (market === 'over35cards') adj += 3;
+    if (isGoalsMkt) adj += 3;
+    if (isCardsMkt) adj += 3;
+    if (isCornersMkt) adj += 2;
   }
-  if (market === 'over35cards') {
+
+  // Referee for cards
+  if (isCardsMkt) {
     const refCards = intel.referee_avg_cards ?? 0;
     if (refCards >= 5.0) adj += 7;
     else if (refCards >= 4.5) adj += 4;
     else if (refCards < 3.5) adj -= 5;
+    if (intel.referee_strictness === 'strict') adj += 2;
+    else if (intel.referee_strictness === 'lenient') adj -= 2;
   }
 
-  return adj;
+  // Adverse weather — suppresses goals + corners (slower, scrappier game),
+  // can nudge cards up via slick conditions / fouls
+  if (intel.is_adverse_weather) {
+    if (isGoalsMkt) adj -= 6;
+    if (isCornersMkt) adj -= 4;
+    if (isCardsMkt) adj += 2;
+  }
+  // High wind hurts corner deliveries + finishing
+  if ((intel.wind_speed_kmh ?? 0) >= 35) {
+    if (isGoalsMkt) adj -= 3;
+    if (isCornersMkt) adj -= 3;
+  }
+  // Freezing/very hot extremes slow tempo
+  const temp = intel.temperature_celsius;
+  if (temp != null && (temp <= 0 || temp >= 32)) {
+    if (isGoalsMkt) adj -= 2;
+    if (isCornersMkt) adj -= 2;
+  }
+
+  // New manager — first few games unpredictable, often more cards & cagier
+  if (intel.home_new_manager || intel.away_new_manager) {
+    if (isGoalsMkt) adj -= 3;
+    if (isCardsMkt) adj += 2;
+  }
+
+  // Early kickoff (lunchtime) — historically lower-scoring
+  if (intel.is_early_kickoff || (intel.kickoff_hour != null && intel.kickoff_hour < 13)) {
+    if (isGoalsMkt) adj -= 3;
+    if (isCornersMkt) adj -= 2;
+  }
+
+  // Overall risk score — global dampener for anything fragile
+  const risk = intel.overall_risk_score ?? 0;
+  if (risk >= 70) adj -= 6;
+  else if (risk >= 50) adj -= 3;
+
+  // Cap the swing so a single fixture's intelligence can't overwhelm the model
+  return Math.max(-20, Math.min(15, adj));
 }
 
 // ── Self-Calibration from Learning Log ─────────────────────────────

@@ -797,12 +797,32 @@ async function runComputeStats(supabase: any) {
     if (!error) updated++;
   }
 
+  // ── Propagate ref features back onto ml_training_data_v2 ────────────────────
+  // Without this step the per-row ref_avg_cards_last50 / over35_rate columns
+  // stay NULL forever and the trainer can't actually use the referee signal.
+  let propagated: { rows_updated: number; referees_covered: number } | null = null;
+  try {
+    const { data: propRes, error: propErr } = await supabase.rpc('refresh_v2_referee_features');
+    if (propErr) {
+      console.warn(`⚠️ refresh_v2_referee_features failed: ${propErr.message}`);
+    } else if (Array.isArray(propRes) && propRes.length > 0) {
+      propagated = {
+        rows_updated: Number(propRes[0].rows_updated ?? 0),
+        referees_covered: Number(propRes[0].referees_covered ?? 0),
+      };
+      console.log(`🔁 Propagated ref features → ${propagated.rows_updated} rows / ${propagated.referees_covered} refs`);
+    }
+  } catch (e: any) {
+    console.warn(`⚠️ propagate ref features threw: ${e?.message ?? e}`);
+  }
+
   return {
     run_id: runId,
     step: '3B — referee stats computed',
     referees_with_data: refMap.size,
     dim_referee_updated: updated,
     collisions_flagged: collisionsFlagged,
+    v2_ref_features_propagated: propagated,
     mini_retrain_ready: cov.withKey >= 10000,
     mini_retrain_message: cov.withKey >= 10000
       ? `✅ ${cov.withKey} rows — ready for mini-retrain on Cards (Top leagues)`
