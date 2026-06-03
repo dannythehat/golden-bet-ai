@@ -10,6 +10,7 @@ import { useBetBuilderPL } from '@/hooks/useBetBuilderPL';
 import { useAccaPL } from '@/hooks/useAccaPL';
 import { cn } from '@/lib/utils';
 import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
+import { GafferStreakBanner } from '@/components/GafferStreakBanner';
 const theGafferImage = '/images/the-gaffer.webp';
 
 interface HomeSectionProps {
@@ -114,6 +115,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
 
   return (
     <div className="space-y-10">
+      <GafferStreakBanner />
       {/* The Gaffer Hero */}
       <div className="relative overflow-hidden rounded-3xl oracle-card shadow-xl shadow-primary/5">
         <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/30 via-transparent to-primary/8" />
