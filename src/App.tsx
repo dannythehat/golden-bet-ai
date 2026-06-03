@@ -23,6 +23,7 @@ const AccaDelightPage = lazy(() => import("./pages/AccaDelightPage"));
 const OverGoalsPage = lazy(() => import("./pages/OverGoalsPage"));
 const OverCornersPage = lazy(() => import("./pages/OverCornersPage"));
 const OverCardsPage = lazy(() => import("./pages/OverCardsPage"));
+const LeaguePage = lazy(() => import("./pages/LeaguePage"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -72,6 +73,7 @@ const App = () => {
               <Route path="/over-goals" element={<OverGoalsPage />} />
               <Route path="/over-corners" element={<OverCornersPage />} />
               <Route path="/over-cards" element={<OverCardsPage />} />
+              <Route path="/league/:slug" element={<LeaguePage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
