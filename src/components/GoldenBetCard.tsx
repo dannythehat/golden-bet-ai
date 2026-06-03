@@ -22,6 +22,7 @@ import { isFinishedStatus, isInPlayStatus } from '@/lib/fixtureStatus';
 import { didMarketHit } from '@/lib/marketEval';
 import { getMarketIcon, getMarketLabel, normalizeMarketKey } from '@/lib/marketDisplay';
 import { LiveMarketTracker, LiveScore, MatchStatusBadge } from '@/components/LiveMarketTracker';
+import { WhyThisBet } from '@/components/WhyThisBet';
 
 // Fallback bookmaker logo component
 const BookmakerLogo = ({ bookmaker, size = 'sm' }: { bookmaker?: { key: string; title: string; logo?: string }; size?: 'sm' | 'lg' }) => {
@@ -440,6 +441,23 @@ export function GoldenBetCard({ bet, index, liveStats }: GoldenBetCardProps) {
             </>
           )}
         </Button>
+      )}
+
+      {/* Why this bet? — Tier 2 on-demand Gaffer explainer */}
+      {!isSettled && (
+        <div className="mt-2">
+          <WhyThisBet
+            fixtureId={bet.fixtureId}
+            homeTeam={bet.homeTeam}
+            awayTeam={bet.awayTeam}
+            league={bet.league}
+            market={marketLabels[marketKey] || getMarketLabel(marketKey)}
+            odds={bet.bookmakerOdds}
+            mlConfidence={bet.mlConfidence}
+            valueEdge={bet.valueEdge}
+            gafferReasoning={bet.gafferReasoning}
+          />
+        </div>
       )}
       
       {/* Settled summary */}
