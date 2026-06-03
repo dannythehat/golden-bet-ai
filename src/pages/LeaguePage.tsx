@@ -130,7 +130,7 @@ export default function LeaguePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Navigation activeSection={'home' as any} onSectionChange={() => { window.location.href = '/'; }} />
       <main className="container max-w-5xl mx-auto px-4 py-6 space-y-6">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="w-4 h-4" /> Back
