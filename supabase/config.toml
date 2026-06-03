@@ -171,3 +171,6 @@ verify_jwt = false
 
 [functions.publish-to-social]
 verify_jwt = false
+
+[functions.why-this-bet]
+verify_jwt = false
