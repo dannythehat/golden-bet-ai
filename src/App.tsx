@@ -24,6 +24,8 @@ const OverGoalsPage = lazy(() => import("./pages/OverGoalsPage"));
 const OverCornersPage = lazy(() => import("./pages/OverCornersPage"));
 const OverCardsPage = lazy(() => import("./pages/OverCardsPage"));
 const LeaguePage = lazy(() => import("./pages/LeaguePage"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -74,6 +76,8 @@ const App = () => {
               <Route path="/over-corners" element={<OverCornersPage />} />
               <Route path="/over-cards" element={<OverCardsPage />} />
               <Route path="/league/:slug" element={<LeaguePage />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/checkout/return" element={<CheckoutReturn />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

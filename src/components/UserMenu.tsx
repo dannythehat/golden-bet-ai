@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, LogOut, Bell, Settings } from 'lucide-react';
+import { User, LogOut, Bell, Settings, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function UserMenu() {
@@ -55,6 +55,12 @@ export function UserMenu() {
           </div>
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/pricing" className="flex items-center">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Inner Circle
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
           <Link to="/#in-play" className="flex items-center">
             <Bell className="w-4 h-4 mr-2" />
