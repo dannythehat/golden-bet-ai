@@ -174,3 +174,12 @@ verify_jwt = false
 
 [functions.why-this-bet]
 verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.payments-webhook]
+verify_jwt = false
+
+[functions.create-portal-session]
+verify_jwt = false
