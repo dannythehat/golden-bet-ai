@@ -4,6 +4,7 @@ import { Layers, Sparkles, Loader2, ArrowLeft, Brain, Target, Shield, TrendingUp
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BetBuilderCard } from '@/components/BetBuilderCard';
+import { Paywall } from '@/components/Paywall';
 import { useBetBuilder } from '@/hooks/useBetBuilder';
 import { useInPlayStats, LiveFixtureStats } from '@/hooks/useInPlayStats';
 import { Navigation } from '@/components/Navigation';
@@ -175,10 +176,12 @@ export default function BetBuilderPage() {
               </div>
             ) : betBuilder ? (
               <div className="max-w-2xl mx-auto">
-                <BetBuilderCard
-                  betBuilder={betBuilder}
-                  liveStats={findLiveStatsForMatch(betBuilder.home_team, betBuilder.away_team, liveFixtures, betBuilder.fixture_id)}
-                />
+                <Paywall title="Today's Bet Builder — Inner Circle" message="Daily Same Game Multi. Unlock with Inner Circle — £3/mo.">
+                  <BetBuilderCard
+                    betBuilder={betBuilder}
+                    liveStats={findLiveStatsForMatch(betBuilder.home_team, betBuilder.away_team, liveFixtures, betBuilder.fixture_id)}
+                  />
+                </Paywall>
               </div>
             ) : (
               <div className="rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-card p-8 text-center space-y-4">

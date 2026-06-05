@@ -5,6 +5,7 @@ import { useInPlayStats } from '@/hooks/useInPlayStats';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AccaBuilderSection } from '@/components/AccaBuilderSection';
+import { Paywall } from '@/components/Paywall';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import theGafferImage from '@/assets/the-gaffer.webp';
@@ -143,7 +144,9 @@ export default function AccaDelightPage() {
           {/* Today's ACCA */}
           <section aria-labelledby="todays-acca-heading">
             <h2 id="todays-acca-heading" className="text-2xl font-bold text-foreground mb-4">Today's <span className="text-primary">ACCA</span></h2>
-            <AccaBuilderSection liveFixtures={liveFixtures} />
+            <Paywall title="Today's ACCA — Inner Circle" message="Daily AI 3-fold treble. Unlock with Inner Circle membership — £3/mo.">
+              <AccaBuilderSection liveFixtures={liveFixtures} />
+            </Paywall>
           </section>
 
           {/* How the Odds Work */}
