@@ -129,7 +129,7 @@ export function PredictionsSection() {
               <span className="ml-2 text-muted-foreground">The Gaffer is analyzing fixtures...</span>
             </div>
           ) : goldenBets.length > 0 ? (
-            <>
+            <Paywall title="The Gaffer's Golden Picks — Inner Circle" message="Today's 3 Golden Picks plus recommended doubles & treble. Unlock with Inner Circle — £3/mo.">
               {/* Individual Cards */}
               <div className="grid md:grid-cols-3 gap-4">
                 {goldenBets.slice(0, 3).map((bet, index) => {
@@ -213,7 +213,7 @@ export function PredictionsSection() {
                   </div>
                 );
               })()}
-            </>
+            </Paywall>
           ) : (
             <div className="glass-card rounded-xl p-8 text-center space-y-4">
               <Trophy className="w-12 h-12 text-gold mx-auto" />
