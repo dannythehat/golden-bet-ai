@@ -73,22 +73,26 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
             </div>
 
             <div className="flex items-center gap-1">
-              {navItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant={activeSection === item.id ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => handleNavClick(item)}
-                  className={cn(
-                    'gap-2 transition-all duration-300',
-                    activeSection === item.id && 'shadow-lg shadow-primary/20',
-                    activeSection !== item.id && 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
-                  )}
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </Button>
-              ))}
+              {navItems.map((item) => {
+                const isPremium = (item as { premium?: boolean }).premium;
+                return (
+                  <Button
+                    key={item.id}
+                    variant={activeSection === item.id ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => handleNavClick(item)}
+                    className={cn(
+                      'gap-2 transition-all duration-300',
+                      activeSection === item.id && 'shadow-lg shadow-primary/20',
+                      activeSection !== item.id && !isPremium && 'text-muted-foreground hover:text-foreground hover:bg-primary/10',
+                      isPremium && activeSection !== item.id && 'text-gold border border-gold/30 bg-gold/5 hover:bg-gold/15 hover:text-gold',
+                    )}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </Button>
+                );
+              })}
               <div className="ml-2 pl-2 border-l border-border/50">
                 <UserMenu />
               </div>
