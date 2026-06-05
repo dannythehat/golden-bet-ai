@@ -5,6 +5,7 @@ import { useInPlayStats } from '@/hooks/useInPlayStats';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AccaBuilderSection } from '@/components/AccaBuilderSection';
+import { Paywall } from '@/components/Paywall';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import theGafferImage from '@/assets/the-gaffer.webp';
