@@ -1,9 +1,15 @@
+import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Anyone whose auth account was created strictly before this instant
+// gets 50% off for their first 3 months (Inner Circle launch perk).
+const EARLY_USER_CUTOFF = new Date("2026-06-05T00:00:00Z").getTime();
+const EARLY_BIRD_COUPON_ID = "earlybird_50_3mo";
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
@@ -38,6 +44,30 @@ async function resolveOrCreateCustomer(
   return created.id;
 }
 
+async function ensureEarlyBirdCoupon(stripe: ReturnType<typeof createStripeClient>) {
+  try {
+    return await stripe.coupons.retrieve(EARLY_BIRD_COUPON_ID);
+  } catch {
+    return await stripe.coupons.create({
+      id: EARLY_BIRD_COUPON_ID,
+      percent_off: 50,
+      duration: "repeating",
+      duration_in_months: 3,
+      name: "Founding member — 50% off for 3 months",
+    });
+  }
+}
+
+async function isEarlyUser(userId: string): Promise<boolean> {
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const { data, error } = await supabase.auth.admin.getUserById(userId);
+  if (error || !data?.user?.created_at) return false;
+  return new Date(data.user.created_at).getTime() < EARLY_USER_CUTOFF;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") {
@@ -67,6 +97,13 @@ Deno.serve(async (req) => {
       productDescription = product.name;
     }
 
+    // Apply 50% off 3 months for accounts created before the launch cutoff.
+    let discounts: { coupon: string }[] | undefined;
+    if (isRecurring && userId && await isEarlyUser(userId)) {
+      await ensureEarlyBirdCoupon(stripe);
+      discounts = [{ coupon: EARLY_BIRD_COUPON_ID }];
+    }
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: quantity || 1 }],
       mode: isRecurring ? "subscription" : "payment",
@@ -74,9 +111,10 @@ Deno.serve(async (req) => {
       return_url: returnUrl,
       ...(customerId && { customer: customerId }),
       ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
+      ...(discounts && { discounts }),
       ...(userId && {
-        metadata: { userId },
-        ...(isRecurring && { subscription_data: { metadata: { userId } } }),
+        metadata: { userId, ...(discounts && { early_bird: "true" }) },
+        ...(isRecurring && { subscription_data: { metadata: { userId, ...(discounts && { early_bird: "true" }) } } }),
       }),
     });
 
