@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers } from 'lucide-react';
+import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers, Crown } from 'lucide-react';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
+import { useSubscription } from '@/hooks/useSubscription';
 
-type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight';
+type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight' | 'members';
 
 interface NavigationProps {
   activeSection: Section;
@@ -16,6 +17,7 @@ interface NavigationProps {
 export function Navigation({ activeSection, onSectionChange }: NavigationProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const { isActive: isMember } = useSubscription();
 
   const navItems = [
     { id: 'home' as Section, label: 'Home', icon: Home },
@@ -27,6 +29,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
     { id: 'pnl' as Section, label: 'P&L Hub', icon: BarChart3 },
     { id: 'blog' as Section, label: 'Blog', icon: BookOpen },
     { id: 'about' as Section, label: 'About', icon: Info },
+    ...(isMember ? [{ id: 'members' as Section, label: 'Members', icon: Crown, isRoute: true, path: '/members', premium: true }] : []),
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
@@ -70,22 +73,26 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
             </div>
 
             <div className="flex items-center gap-1">
-              {navItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant={activeSection === item.id ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => handleNavClick(item)}
-                  className={cn(
-                    'gap-2 transition-all duration-300',
-                    activeSection === item.id && 'shadow-lg shadow-primary/20',
-                    activeSection !== item.id && 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
-                  )}
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </Button>
-              ))}
+              {navItems.map((item) => {
+                const isPremium = (item as { premium?: boolean }).premium;
+                return (
+                  <Button
+                    key={item.id}
+                    variant={activeSection === item.id ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => handleNavClick(item)}
+                    className={cn(
+                      'gap-2 transition-all duration-300',
+                      activeSection === item.id && 'shadow-lg shadow-primary/20',
+                      activeSection !== item.id && !isPremium && 'text-muted-foreground hover:text-foreground hover:bg-primary/10',
+                      isPremium && activeSection !== item.id && 'text-gold border border-gold/30 bg-gold/5 hover:bg-gold/15 hover:text-gold',
+                    )}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </Button>
+                );
+              })}
               <div className="ml-2 pl-2 border-l border-border/50">
                 <UserMenu />
               </div>
