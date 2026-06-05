@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers } from 'lucide-react';
+import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers, Crown } from 'lucide-react';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
+import { useSubscription } from '@/hooks/useSubscription';
 
-type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight';
+type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight' | 'members';
 
 interface NavigationProps {
   activeSection: Section;
@@ -16,6 +17,7 @@ interface NavigationProps {
 export function Navigation({ activeSection, onSectionChange }: NavigationProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const { isActive: isMember } = useSubscription();
 
   const navItems = [
     { id: 'home' as Section, label: 'Home', icon: Home },
@@ -27,6 +29,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
     { id: 'pnl' as Section, label: 'P&L Hub', icon: BarChart3 },
     { id: 'blog' as Section, label: 'Blog', icon: BookOpen },
     { id: 'about' as Section, label: 'About', icon: Info },
+    ...(isMember ? [{ id: 'members' as Section, label: 'Members', icon: Crown, isRoute: true, path: '/members', premium: true }] : []),
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
