@@ -4,6 +4,7 @@ import { Layers, Sparkles, Loader2, ArrowLeft, Brain, Target, Shield, TrendingUp
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BetBuilderCard } from '@/components/BetBuilderCard';
+import { Paywall } from '@/components/Paywall';
 import { useBetBuilder } from '@/hooks/useBetBuilder';
 import { useInPlayStats, LiveFixtureStats } from '@/hooks/useInPlayStats';
 import { Navigation } from '@/components/Navigation';
