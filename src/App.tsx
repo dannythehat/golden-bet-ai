@@ -27,6 +27,7 @@ const LeaguePage = lazy(() => import("./pages/LeaguePage"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
+const WorldCupPage = lazy(() => import("./pages/WorldCupPage"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -80,6 +81,7 @@ const App = () => {
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/checkout/return" element={<CheckoutReturn />} />
               <Route path="/members" element={<MembersDashboard />} />
+              <Route path="/world-cup" element={<WorldCupPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
