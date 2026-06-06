@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GoldenBetCard } from '@/components/GoldenBetCard';
+import { InnerCircleFrame } from '@/components/InnerCircleFrame';
 import { GoldenDoubleCard } from '@/components/GoldenDoubleCard';
 import { useGoldenBets } from '@/hooks/useGoldenBets';
 import { useInPlayStats, LiveFixtureStats } from '@/hooks/useInPlayStats';
@@ -174,7 +175,11 @@ export default function GoldenBets() {
                 <div className="grid gap-4 md:grid-cols-3">
                   {goldenBets.slice(0, 3).map((bet, index) => {
                     const liveStats = findLiveStatsForMatch(bet.homeTeam, bet.awayTeam, liveFixtures, bet.fixtureId);
-                    return <GoldenBetCard key={bet.id} bet={bet} index={index} liveStats={liveStats} />;
+                    return (
+                      <InnerCircleFrame key={bet.id} showRibbon={index === 0}>
+                        <GoldenBetCard bet={bet} index={index} liveStats={liveStats} />
+                      </InnerCircleFrame>
+                    );
                   })}
                 </div>
 
