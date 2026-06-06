@@ -258,6 +258,34 @@ input, textarea, [contenteditable] {
     animation: neon-pulse 2s ease-in-out infinite;
   }
 
+  /* Inner Circle — subtle members-only frame */
+  @keyframes inner-circle-shimmer {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px hsl(var(--gold) / 0.35),
+        0 0 18px -6px hsl(var(--gold) / 0.35);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px hsl(var(--gold) / 0.55),
+        0 0 30px -4px hsl(var(--gold) / 0.55);
+    }
+  }
+  .inner-circle-frame {
+    position: relative;
+    border-radius: 0.95rem;
+    padding: 1.5px;
+    background: linear-gradient(135deg,
+      hsl(var(--gold) / 0.55),
+      hsl(var(--gold-glow) / 0.25) 40%,
+      hsl(var(--gold) / 0.15) 60%,
+      hsl(var(--gold) / 0.55));
+    animation: inner-circle-shimmer 4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .inner-circle-frame { animation: none; }
+  }
+
   /* Mobile sharpness mode: Android can render backdrop-filter + gradient text as "fuzzy" */
   @media (max-width: 768px) {
     /* Disable backdrop blur on mobile for crisp text/edges */
