@@ -23,13 +23,13 @@ export default function WorldCupPage() {
 
   const intro = useWCContent<any>("tournament_intro", "intro");
 
+  useEffect(() => {
+    document.title = "World Cup 2026 Hub — Gaffer's Picks, Reviews & Tips | The Footy Oracle";
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>World Cup 2026 Hub — Gaffer's Picks, Reviews & Tips | The Footy Oracle</title>
-        <meta name="description" content="The Gaffer's full World Cup 2026 hub: team reviews, group previews, live match tips and dark horse picks across USA, Canada and Mexico." />
-        <link rel="canonical" href="https://thefootyoracle.com/world-cup" />
-      </Helmet>
+
 
       <Navigation
         activeSection={"home" as Section}
