@@ -134,7 +134,11 @@ export function PredictionsSection() {
               <div className="grid md:grid-cols-3 gap-4">
                 {goldenBets.slice(0, 3).map((bet, index) => {
                   const liveStats = findLiveStatsForMatch(bet.homeTeam, bet.awayTeam, liveFixtures, bet.fixtureId);
-                  return <GoldenBetCard key={bet.id} bet={bet} index={index} liveStats={liveStats} />;
+                  return (
+                    <InnerCircleFrame key={bet.id} showRibbon={index === 0}>
+                      <GoldenBetCard bet={bet} index={index} liveStats={liveStats} />
+                    </InnerCircleFrame>
+                  );
                 })}
               </div>
 
