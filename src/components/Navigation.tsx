@@ -21,7 +21,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
 
   const navItems = [
     { id: 'home' as Section, label: 'Home', icon: Home },
-    { id: 'world-cup' as Section, label: 'World Cup', icon: Trophy, isRoute: true, path: '/world-cup', accent: true },
+    { id: 'world-cup' as Section, label: 'World Cup', icon: Trophy, isRoute: true, path: '/world-cup', premium: true },
     { id: 'over-goals' as Section, label: 'Goals', icon: Target, isRoute: true, path: '/over-goals' },
     { id: 'over-corners' as Section, label: 'Corners', icon: Flag, isRoute: true, path: '/over-corners' },
     { id: 'over-cards' as Section, label: 'Cards', icon: CreditCard, isRoute: true, path: '/over-cards' },
