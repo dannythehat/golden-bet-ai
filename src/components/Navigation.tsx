@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers, Crown } from 'lucide-react';
+import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers, Crown, Trophy } from 'lucide-react';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight' | 'members';
+type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight' | 'members' | 'world-cup';
 
 interface NavigationProps {
   activeSection: Section;
@@ -21,6 +21,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
 
   const navItems = [
     { id: 'home' as Section, label: 'Home', icon: Home },
+    { id: 'world-cup' as Section, label: 'World Cup', icon: Trophy, isRoute: true, path: '/world-cup', premium: true },
     { id: 'over-goals' as Section, label: 'Goals', icon: Target, isRoute: true, path: '/over-goals' },
     { id: 'over-corners' as Section, label: 'Corners', icon: Flag, isRoute: true, path: '/over-corners' },
     { id: 'over-cards' as Section, label: 'Cards', icon: CreditCard, isRoute: true, path: '/over-cards' },

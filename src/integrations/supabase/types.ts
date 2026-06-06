@@ -2775,6 +2775,33 @@ export type Database = {
         }
         Relationships: []
       }
+      wc_content: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          key: string
+          kind: string
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          id?: string
+          key: string
+          kind: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          key?: string
+          kind?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       pl_summary: {
