@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GoldenBetCard } from '@/components/GoldenBetCard';
 import { Paywall } from '@/components/Paywall';
+import { InnerCircleFrame } from '@/components/InnerCircleFrame';
 import { GoldenDoubleCard } from '@/components/GoldenDoubleCard';
 import { useGoldenBets } from '@/hooks/useGoldenBets';
 import { useInPlayStats, LiveFixtureStats } from '@/hooks/useInPlayStats';
