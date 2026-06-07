@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Sparkles, Flame, AlertTriangle, ChevronRight, RefreshCw } from "lucide-react";
+import { Trophy, Sparkles, Flame, AlertTriangle, ChevronRight, RefreshCw, Calendar, MapPin, Users } from "lucide-react";
 import { WC2026_GROUPS, WC2026_TEAMS, WC2026_DATES, WC2026_HOSTS, getTeam } from "@/data/worldCup2026";
 import { useWCContent } from "@/hooks/useWCContent";
 import { Paywall } from "@/components/Paywall";
 import { InnerCircleFrame } from "@/components/InnerCircleFrame";
+import wcHero from "@/assets/wc2026-hero.jpg";
+
 
 type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight' | 'members';
 
