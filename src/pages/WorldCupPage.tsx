@@ -162,24 +162,30 @@ export default function WorldCupPage() {
                 {WC2026_GROUPS.map(g => (
                   <Card
                     key={g.group}
-                    className="p-4 cursor-pointer hover:border-primary/50 transition-colors"
+                    className="wc-group-card p-4 cursor-pointer"
                     onClick={() => setSelectedGroup(g.group)}
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-bold text-lg">Group {g.group}</h3>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/30 to-gold/20 grid place-items-center text-sm font-extrabold text-foreground border border-primary/30">
+                          {g.group}
+                        </div>
+                        <h3 className="font-bold text-lg">Group {g.group}</h3>
+                      </div>
                       <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     </div>
                     <div className="space-y-1.5">
                       {g.teams.map(t => (
                         <div key={t.code} className="flex items-center gap-2 text-sm">
                           <span className="text-base">{t.flag}</span>
-                          <span>{t.name}</span>
+                          <span className="truncate">{t.name}</span>
                         </div>
                       ))}
                     </div>
                   </Card>
                 ))}
               </div>
+
             )}
           </TabsContent>
 
