@@ -199,16 +199,17 @@ export default function WorldCupPage() {
                   <button
                     key={t.code}
                     onClick={() => setSelectedTeam(t.code)}
-                    className="flex items-center gap-2 p-3 rounded-lg border border-border/50 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all text-left"
+                    className="wc-team-card flex items-center gap-2.5 p-3 rounded-lg border border-border/60 bg-card text-left"
                   >
-                    <span className="text-xl">{t.flag}</span>
-                    <div className="min-w-0">
+                    <span className="text-2xl drop-shadow-sm">{t.flag}</span>
+                    <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold truncate">{t.name}</div>
-                      <div className="text-xs text-muted-foreground">Group {t.group}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Group {t.group} · Pot {t.pot}</div>
                     </div>
                   </button>
                 ))}
               </div>
+
             )}
           </TabsContent>
 
