@@ -29,6 +29,17 @@ export default function WorldCupPage() {
     document.title = "World Cup 2026 Hub — Gaffer's Picks, Reviews & Tips | The Footy Oracle";
   }, []);
 
+  // Countdown to WC 2026 kickoff (June 11, 2026)
+  const countdown = useMemo(() => {
+    const target = new Date("2026-06-11T20:00:00Z").getTime();
+    const diff = Math.max(0, target - Date.now());
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    return { d, h, m };
+  }, []);
+
+
   return (
     <div className="min-h-screen bg-background">
 
