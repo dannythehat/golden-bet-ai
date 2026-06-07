@@ -52,45 +52,97 @@ export default function WorldCupPage() {
       <main className="container mx-auto px-4 pt-24 pb-12 max-w-6xl">
         {/* Hero */}
         <section className="mb-8">
-          <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-card to-background p-6 md:p-10">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex-1 min-w-[260px]">
-                <div className="flex items-center gap-2 mb-3">
-                  <Trophy className="w-6 h-6 text-gold" />
-                  <Badge variant="outline" className="border-gold/40 text-gold">FIFA World Cup 2026</Badge>
+          <div className="wc-hero p-6 md:p-10">
+            {/* Background image, cropped to avoid garbled bottom text */}
+            <div
+              className="absolute inset-0 opacity-25 pointer-events-none"
+              style={{
+                backgroundImage: `url(${wcHero})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center top',
+                maskImage: 'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 55%, transparent 85%)',
+                WebkitMaskImage: 'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 55%, transparent 85%)',
+              }}
+            />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="rounded-full bg-gold/15 border border-gold/40 p-1.5">
+                  <Trophy className="w-4 h-4 text-gold" />
                 </div>
-                <h1 className="text-3xl md:text-5xl font-extrabold mb-3 leading-tight">
-                  The Gaffer's <span className="text-primary">World Cup</span> Hub
-                </h1>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {WC2026_DATES} · {WC2026_HOSTS.join(" · ")} · 48 teams · 12 groups
-                </p>
+                <Badge variant="outline" className="border-gold/40 text-gold uppercase tracking-wider text-[10px]">
+                  FIFA World Cup 2026
+                </Badge>
+                <Badge variant="outline" className="border-primary/40 text-primary uppercase tracking-wider text-[10px]">
+                  Inner Circle Exclusive
+                </Badge>
+              </div>
 
-                {intro.loading ? (
-                  <div className="space-y-2"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-2/3" /></div>
-                ) : intro.data ? (
-                  <div className="space-y-3">
-                    <p className="text-base md:text-lg font-semibold text-foreground italic">"{intro.data.hook}"</p>
-                    <p className="text-sm text-muted-foreground">{intro.data.intro}</p>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {intro.data.favourites?.map((f: string) => (
-                        <Badge key={f} className="bg-gold/20 text-gold border-gold/40"><Flame className="w-3 h-3 mr-1" />{f}</Badge>
-                      ))}
-                      {intro.data.dark_horse && (
-                        <Badge variant="outline" className="border-primary/40 text-primary"><Sparkles className="w-3 h-3 mr-1" />Dark Horse: {intro.data.dark_horse}</Badge>
-                      )}
-                    </div>
-                    {intro.data.wildcard_storyline && (
-                      <p className="text-xs text-muted-foreground/80 pt-2"><AlertTriangle className="w-3 h-3 inline mr-1" />{intro.data.wildcard_storyline}</p>
+              <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-[1.05] tracking-tight">
+                The Gaffer's<br />
+                <span className="wc-gold-text">World Cup</span> Hub
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs md:text-sm text-muted-foreground mb-6">
+                <span className="inline-flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-gold" />{WC2026_DATES}</span>
+                <span className="inline-flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-primary" />{WC2026_HOSTS.join(" · ")}</span>
+                <span className="inline-flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />48 teams · 12 groups</span>
+              </div>
+
+              {/* Countdown */}
+              {countdown.d > 0 && (
+                <div className="inline-flex items-center gap-3 rounded-xl border border-gold/30 bg-background/40 backdrop-blur px-4 py-3 mb-6">
+                  <span className="text-[10px] uppercase tracking-widest text-gold font-bold">Kick-off in</span>
+                  <div className="flex items-center gap-3">
+                    {[
+                      { v: countdown.d, l: 'days' },
+                      { v: countdown.h, l: 'hrs' },
+                      { v: countdown.m, l: 'min' },
+                    ].map(x => (
+                      <div key={x.l} className="text-center">
+                        <div className="text-xl md:text-2xl font-extrabold tabular-nums wc-gold-text leading-none">
+                          {String(x.v).padStart(2, '0')}
+                        </div>
+                        <div className="text-[9px] uppercase tracking-wider text-muted-foreground mt-0.5">{x.l}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {intro.loading ? (
+                <div className="space-y-2"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-2/3" /></div>
+              ) : intro.data ? (
+                <div className="space-y-3 max-w-3xl">
+                  <p className="text-base md:text-xl font-semibold text-foreground italic border-l-2 border-gold/60 pl-3">
+                    "{intro.data.hook}"
+                  </p>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{intro.data.intro}</p>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {intro.data.favourites?.map((f: string) => (
+                      <Badge key={f} className="bg-gold/15 text-gold border-gold/40 hover:bg-gold/25">
+                        <Flame className="w-3 h-3 mr-1" />{f}
+                      </Badge>
+                    ))}
+                    {intro.data.dark_horse && (
+                      <Badge variant="outline" className="border-primary/40 text-primary">
+                        <Sparkles className="w-3 h-3 mr-1" />Dark Horse: {intro.data.dark_horse}
+                      </Badge>
                     )}
                   </div>
-                ) : (
-                  <Button size="sm" onClick={() => intro.refresh()}>Get the Gaffer's take</Button>
-                )}
-              </div>
+                  {intro.data.wildcard_storyline && (
+                    <p className="text-xs text-muted-foreground/80 pt-2 flex items-start gap-1.5">
+                      <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0 text-amber-400" />
+                      {intro.data.wildcard_storyline}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <Button size="sm" onClick={() => intro.refresh()}>Get the Gaffer's take</Button>
+              )}
             </div>
           </div>
         </section>
+
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="grid grid-cols-3 mb-6 h-auto">
