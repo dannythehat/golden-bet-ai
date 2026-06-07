@@ -2562,6 +2562,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sweepstake_signups: {
+        Row: {
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          tournament: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          email: string
+          id?: string
+          tournament?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          email?: string
+          id?: string
+          tournament?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       team_rolling_stats: {
         Row: {
           avg_cards_against: number | null
