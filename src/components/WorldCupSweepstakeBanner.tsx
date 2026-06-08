@@ -1,7 +1,27 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Ticket, Sparkles, ArrowRight } from 'lucide-react';
+import { Trophy, Ticket, Sparkles, ArrowRight, Flame } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+const TOTAL_SPOTS = 48;
 
 export function WorldCupSweepstakeBanner() {
+  const [spotsLeft, setSpotsLeft] = useState<number>(22);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { count } = await supabase
+          .from('sweepstake_signups')
+          .select('id', { count: 'exact', head: true })
+          .eq('tournament', 'wc2026');
+        if (typeof count === 'number') {
+          setSpotsLeft(Math.max(0, TOTAL_SPOTS - count));
+        }
+      } catch { /* ignore */ }
+    })();
+  }, []);
+
   return (
     <Link
       to="/sweepstake"
@@ -23,6 +43,9 @@ export function WorldCupSweepstakeBanner() {
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-ice">
               World Cup 2026
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-rose-300 animate-pulse">
+              <Flame className="h-3 w-3" /> Only {spotsLeft} spots left
             </span>
           </div>
 
