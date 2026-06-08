@@ -44,6 +44,9 @@ export function WorldCupSweepstakeBanner() {
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-ice">
               World Cup 2026
             </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-rose-300 animate-pulse">
+              <Flame className="h-3 w-3" /> Only {spotsLeft} spots left
+            </span>
           </div>
 
           <h2 className="text-xl md:text-2xl font-black leading-tight text-foreground">
