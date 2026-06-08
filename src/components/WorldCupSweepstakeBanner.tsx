@@ -66,13 +66,17 @@ export function WorldCupSweepstakeBanner() {
 
           <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-muted-foreground">
             <Ticket className="h-3.5 w-3.5 text-gold" />
-            <span>First 48 sign-ups get a team. Ticket sales open <span className="font-semibold text-foreground">tomorrow</span>.</span>
+            {spotsLeft === 0 ? (
+              <span>All 48 spots snapped up. The Gaffer's hat is full — draw incoming.</span>
+            ) : (
+              <span>First 48 sign-ups get a team. Ticket sales open <span className="font-semibold text-foreground">tomorrow</span>.</span>
+            )}
           </div>
         </div>
 
         <div className="flex items-center justify-end md:flex-col md:items-end gap-2">
           <span className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-gold-dark via-gold to-gold-glow px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-gold/30 transition-transform group-hover:scale-[1.03]">
-            Reserve my spot <ArrowRight className="h-4 w-4" />
+            {spotsLeft === 0 ? 'View the sweepstake' : 'Reserve my spot'} <ArrowRight className="h-4 w-4" />
           </span>
         </div>
       </div>
