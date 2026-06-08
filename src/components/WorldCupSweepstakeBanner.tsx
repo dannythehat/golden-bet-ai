@@ -1,7 +1,27 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Ticket, Sparkles, ArrowRight } from 'lucide-react';
+import { Trophy, Ticket, Sparkles, ArrowRight, Flame } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+const TOTAL_SPOTS = 48;
 
 export function WorldCupSweepstakeBanner() {
+  const [spotsLeft, setSpotsLeft] = useState<number>(22);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { count } = await supabase
+          .from('sweepstake_signups')
+          .select('id', { count: 'exact', head: true })
+          .eq('tournament', 'wc2026');
+        if (typeof count === 'number') {
+          setSpotsLeft(Math.max(0, TOTAL_SPOTS - count));
+        }
+      } catch { /* ignore */ }
+    })();
+  }, []);
+
   return (
     <Link
       to="/sweepstake"
