@@ -116,6 +116,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
 
   return (
     <div className="space-y-10">
+      <WorldCupTeaser />
       <GafferStreakBanner />
       {/* The Gaffer Hero */}
       <div className="relative overflow-hidden rounded-3xl oracle-card shadow-xl shadow-primary/5">
