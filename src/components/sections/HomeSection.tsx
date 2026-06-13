@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 import { GafferStreakBanner } from '@/components/GafferStreakBanner';
 import { WorldCupTeaser } from '@/components/WorldCupTeaser';
+const theGafferImage = '/images/the-gaffer.webp';
 
 interface HomeSectionProps {
   onNavigate: (section: string) => void;
