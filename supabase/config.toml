@@ -39,6 +39,15 @@ verify_jwt = false
 [functions.admin-member]
 verify_jwt = false
 
+[functions.ingest-form-stats]
+verify_jwt = false
+
+[functions.gaffer-daily-pick]
+verify_jwt = false
+
+[functions.settle-gaffer-picks]
+verify_jwt = false
+
 [functions.form-stats]
 verify_jwt = false
 

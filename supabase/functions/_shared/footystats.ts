@@ -23,10 +23,144 @@ async function getJson(path: string): Promise<any> {
   return json;
 }
 
+export interface TodayFixture {
+  fixtureId: number;
+  leagueId: number;
+  kickoff: string;
+  homeId: number; awayId: number;
+  homeName: string; awayName: string;
+  odds: Record<string, number>;
+}
+
+/** Today's fixtures with normalised per-market odds. */
+export async function fetchTodaysMatches(key: string): Promise<TodayFixture[]> {
+  const json = await getJson(`/todays-matches?key=${key}`);
+  const data: any[] = Array.isArray(json?.data) ? json.data : [];
+  return data.map((m) => ({
+    fixtureId: m.id,
+    leagueId: m.competition_id ?? m.season_id,
+    kickoff: m.date_unix ? new Date(m.date_unix * 1000).toISOString() : "",
+    homeId: m.homeID ?? m.home_id,
+    awayId: m.awayID ?? m.away_id,
+    homeName: m.home_name,
+    awayName: m.away_name,
+    odds: normalizeOdds(m),
+  }));
+}
+
+export interface MatchResult {
+  status: string;
+  goals: number; corners: number; cards: number; btts: boolean;
+}
+
+/** Final stats for one match (for settlement). */
+export async function fetchMatchResult(matchId: number, key: string): Promise<MatchResult | null> {
+  const json = await getJson(`/match?key=${key}&match_id=${matchId}`);
+  const m = json?.data;
+  if (!m) return null;
+  const home = num(m.homeGoalCount), away = num(m.awayGoalCount);
+  return {
+    status: m.status,
+    goals: home + away,
+    corners: m.totalCornerCount ?? (num(m.team_a_corners) + num(m.team_b_corners)),
+    cards: num(m.team_a_cards_num) + num(m.team_b_cards_num),
+    btts: home > 0 && away > 0,
+  };
+}
+
 /** Full league catalogue (which leagues/seasons exist). */
 export async function fetchLeagueList(key: string): Promise<FootyStatsLeague[]> {
   const json = await getJson(`/league-list?key=${key}`);
   return Array.isArray(json?.data) ? json.data : [];
+}
+
+// ── Market <-> FootyStats field maps (verified against the API) ─────────────
+/** over-% field per market label (works on lastx + league-teams stat objects). */
+const OVER_PCT_FIELD: Record<string, string> = {
+  "Over 2.5 Goals": "seasonOver25Percentage_overall",
+  "Over 3.5 Goals": "seasonOver35Percentage_overall",
+  "Over 4.5 Goals": "seasonOver45Percentage_overall",
+  "Over 5.5 Goals": "seasonOver55Percentage_overall",
+  "BTTS": "seasonBTTSPercentage_overall",
+  "Over 8.5 Corners": "over85CornersPercentage_overall",
+  "Over 9.5 Corners": "over95CornersPercentage_overall",
+  "Over 10.5 Corners": "over105CornersPercentage_overall",
+  "Over 11.5 Corners": "over115CornersPercentage_overall",
+  "Over 12.5 Corners": "over125CornersPercentage_overall",
+  "Over 3.5 Cards": "over35CardsPercentage_overall",
+  "Over 4.5 Cards": "over45CardsPercentage_overall",
+  "Over 5.5 Cards": "over55CardsPercentage_overall",
+  "Over 6.5 Cards": "over65CardsPercentage_overall",
+};
+/** decimal-odds field per market label on a match object. */
+const ODDS_FIELD: Record<string, string> = {
+  "Over 2.5 Goals": "odds_ft_over25",
+  "Over 3.5 Goals": "odds_ft_over35",
+  "Over 4.5 Goals": "odds_ft_over45",
+  "Over 5.5 Goals": "odds_ft_over55",
+  "BTTS": "odds_btts_yes",
+  "Over 8.5 Corners": "odds_corners_over_85",
+  "Over 9.5 Corners": "odds_corners_over_95",
+  "Over 10.5 Corners": "odds_corners_over_105",
+  "Over 11.5 Corners": "odds_corners_over_115",
+  "Over 12.5 Corners": "odds_corners_over_125",
+  "Over 3.5 Cards": "odds_cards_over_35",
+  "Over 4.5 Cards": "odds_cards_over_45",
+  "Over 5.5 Cards": "odds_cards_over_55",
+  "Over 6.5 Cards": "odds_cards_over_65",
+};
+
+export interface TeamFormStats {
+  overPct: Record<string, number>;
+  avgGoals: number;
+  avgCorners: number;
+  avgCards: number;
+}
+
+function num(v: unknown): number { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+
+/** Map a FootyStats stat object (lastx or league-teams) into our form shape. */
+export function mapStatsToForm(s: Record<string, any>): TeamFormStats {
+  const overPct: Record<string, number> = {};
+  for (const [label, field] of Object.entries(OVER_PCT_FIELD)) {
+    if (s[field] != null) overPct[label] = num(s[field]);
+  }
+  const avgCards = s.cardsTotalAVG_overall != null
+    ? num(s.cardsTotalAVG_overall)
+    : num(s.cardsAVG_overall) + num(s.cardsAgainstAVG_overall);
+  return {
+    overPct,
+    avgGoals: num(s.seasonScoredAVG_overall) + num(s.seasonConcededAVG_overall),
+    avgCorners: num(s.cornersTotalAVG_overall),
+    avgCards,
+  };
+}
+
+/** Normalise a match object's per-market odds into our market labels (priced only). */
+export function normalizeOdds(m: Record<string, any>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [label, field] of Object.entries(ODDS_FIELD)) {
+    const v = Number(m[field]);
+    if (Number.isFinite(v) && v > 1) out[label] = v;
+  }
+  return out;
+}
+
+/** Teams in a season (id + name). */
+export async function fetchLeagueTeams(seasonId: number, key: string): Promise<{ id: number; name: string }[]> {
+  const json = await getJson(`/league-teams?key=${key}&season_id=${seasonId}`);
+  const data: any[] = Array.isArray(json?.data) ? json.data : [];
+  return data.map((t) => ({ id: t.id, name: t.cleanName || t.name }));
+}
+
+/** A team's LAST-10 form (from the /lastx endpoint), mapped into our form shape. */
+export async function fetchLast10(teamId: number, key: string): Promise<TeamFormStats | null> {
+  const json = await getJson(`/lastx?key=${key}&team_id=${teamId}`);
+  const arr: any[] = Array.isArray(json?.data) ? json.data : [];
+  if (!arr.length) return null;
+  // entries are last 5/6/10 — pick the 10 window (fallback: last entry).
+  const pick = arr.find((e) => (e.last_x_match_num ?? e.stats?.last_x_match_num) === 10) ?? arr[arr.length - 1];
+  return mapStatsToForm(pick.stats ?? pick);
 }
 
 /**
