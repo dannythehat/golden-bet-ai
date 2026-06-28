@@ -21,6 +21,7 @@ const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
 const WorldCupPage = lazy(() => import("./pages/WorldCupPage"));
 const SweepstakePage = lazy(() => import("./pages/SweepstakePage"));
 const FantasyLeaguePage = lazy(() => import("./pages/FantasyLeaguePage"));
+const FormTablesPreview = lazy(() => import("./pages/FormTablesPreview"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -66,6 +67,7 @@ const App = () => {
               <Route path="/world-cup" element={<WorldCupPage />} />
               <Route path="/sweepstake" element={<SweepstakePage />} />
               <Route path="/fantasy-league" element={<FantasyLeaguePage />} />
+              <Route path="/form-tables" element={<FormTablesPreview />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
