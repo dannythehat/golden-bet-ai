@@ -1,13 +1,9 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 
 import { HomeSection } from '@/components/sections/HomeSection';
-
-// Lazy-load non-default sections and modals
-const SignUpPromptModal = lazy(() => import('@/components/SignUpPromptModal').then(m => ({ default: m.SignUpPromptModal })));
 
 // Lazy-load non-home sections to reduce initial JS bundle blocking LCP
 const AboutSection = lazy(() => import('@/components/sections/AboutSection').then(m => ({ default: m.AboutSection })));
@@ -19,11 +15,7 @@ const validSections: Section[] = ['home', 'about'];
 const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  
-  // Show sign-up prompt for non-authenticated users after a delay
-  const [showSignUpPrompt, setShowSignUpPrompt] = useState(false);
-  
+
   // Get section from URL hash, default to 'home'
   const getSectionFromHash = useCallback((): Section => {
     const hash = location.hash.replace('#', '');
@@ -36,25 +28,6 @@ const Index = () => {
     return validSections.includes(hash as Section) ? (hash as Section) : 'home';
   });
   
-  // Show sign-up prompt after 30 seconds for non-authenticated users (once per 24h)
-  useEffect(() => {
-    if (user) return; // Don't show if logged in
-    
-    // Check if seen in last 24 hours
-    const lastSeen = localStorage.getItem('signUpPromptLastSeen');
-    if (lastSeen) {
-      const hoursSince = (Date.now() - parseInt(lastSeen)) / (1000 * 60 * 60);
-      if (hoursSince < 24) return; // Don't show if seen in last 24 hours
-    }
-    
-    const timer = setTimeout(() => {
-      setShowSignUpPrompt(true);
-      localStorage.setItem('signUpPromptLastSeen', Date.now().toString());
-    }, 30000);
-    
-    return () => clearTimeout(timer);
-  }, [user]);
-
   // Update section when hash changes (e.g., browser back/forward)
   useEffect(() => {
     const newSection = getSectionFromHash();
@@ -102,14 +75,6 @@ const Index = () => {
       </main>
 
       <Footer />
-      
-      {/* Sign-up prompt modal for non-authenticated users */}
-      <Suspense fallback={null}>
-        <SignUpPromptModal 
-          open={showSignUpPrompt} 
-          onOpenChange={setShowSignUpPrompt} 
-        />
-      </Suspense>
     </div>
   );
 };

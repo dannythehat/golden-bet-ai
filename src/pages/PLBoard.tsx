@@ -7,6 +7,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
+import { LivePickTracker } from "@/components/LivePickTracker";
 import sample from "@/data/gafferResultsSample.json";
 
 interface Leg { market: string; home: string; away: string; league: string; odds: number }
@@ -72,6 +73,9 @@ export default function PLBoard() {
           <Info className="h-4 w-4 text-gold shrink-0 mt-0.5" />
           <span>Preview with sample data to show the board. Real settled picks replace this once the Gaffer goes live.</span>
         </div>
+
+        {/* Today's live pick */}
+        <div className="mb-5"><LivePickTracker /></div>
 
         {/* Headline P&L */}
         <div className="relative overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-navy-dark via-primary/10 to-navy-dark p-6 md:p-8 mb-5 shadow-xl shadow-gold/10">

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WorldCupTeaser } from '@/components/WorldCupTeaser';
 import { FantasyLeagueBanner } from '@/components/FantasyLeagueBanner';
+import { LivePickTracker } from '@/components/LivePickTracker';
 import { cleanTitle, cleanExcerpt } from '@/lib/cleanAiText';
 
 const theGafferImage = '/images/the-gaffer.webp';
@@ -43,6 +44,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
 
   return (
     <div className="space-y-10">
+      <LivePickTracker />
       <FantasyLeagueBanner />
       <WorldCupTeaser />
 

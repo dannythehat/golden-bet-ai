@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 
@@ -15,7 +14,7 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { signIn, signUp, isAuthenticated, loading: authLoading } = useAuth();
+  const { signIn, isAuthenticated, loading: authLoading } = useAuth();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,19 +51,6 @@ export default function Auth() {
     
     setLoading(true);
     const { error } = await signIn(email, password);
-    setLoading(false);
-    
-    if (!error) {
-      navigate('/');
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    
-    setLoading(true);
-    const { error } = await signUp(email, password);
     setLoading(false);
     
     if (!error) {
@@ -113,129 +99,56 @@ export default function Auth() {
 
           <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader className="space-y-1 pb-4">
-              <CardTitle className="text-xl text-center">Welcome</CardTitle>
+              <CardTitle className="text-xl text-center">Welcome back</CardTitle>
               <CardDescription className="text-center">
-                Sign in or create an account to continue
+                Sign in to your Footy Oracle account
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="signin" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                </TabsList>
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="signin-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10"
+                      disabled={loading}
+                    />
+                  </div>
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                </div>
 
-                <TabsContent value="signin">
-                  <form onSubmit={handleSignIn} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="signin-email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          id="signin-email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="pl-10"
-                          disabled={loading}
-                        />
-                      </div>
-                      {errors.email && (
-                        <p className="text-sm text-destructive">{errors.email}</p>
-                      )}
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="signin-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10"
+                      disabled={loading}
+                    />
+                  </div>
+                  {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="signin-password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          id="signin-password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="pl-10"
-                          disabled={loading}
-                        />
-                      </div>
-                      {errors.password && (
-                        <p className="text-sm text-destructive">{errors.password}</p>
-                      )}
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Signing in...
-                        </>
-                      ) : (
-                        'Sign In'
-                      )}
-                    </Button>
-                  </form>
-                </TabsContent>
-
-                <TabsContent value="signup">
-                  <form onSubmit={handleSignUp} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          id="signup-email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="pl-10"
-                          disabled={loading}
-                        />
-                      </div>
-                      {errors.email && (
-                        <p className="text-sm text-destructive">{errors.email}</p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          id="signup-password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="pl-10"
-                          disabled={loading}
-                        />
-                      </div>
-                      {errors.password && (
-                        <p className="text-sm text-destructive">{errors.password}</p>
-                      )}
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Creating account...
-                        </>
-                      ) : (
-                        'Create Account'
-                      )}
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Signing in...</>) : 'Sign In'}
+                </Button>
+              </form>
             </CardContent>
           </Card>
 
           <p className="text-center text-xs text-muted-foreground">
-            By continuing, you agree to our terms of service.
+            New member sign-ups open with the Club launch. Existing members, sign in above.
           </p>
         </div>
       </div>
