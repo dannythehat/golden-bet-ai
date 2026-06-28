@@ -10,14 +10,11 @@ import { HomeSection } from '@/components/sections/HomeSection';
 const SignUpPromptModal = lazy(() => import('@/components/SignUpPromptModal').then(m => ({ default: m.SignUpPromptModal })));
 
 // Lazy-load non-home sections to reduce initial JS bundle blocking LCP
-
-const PLSection = lazy(() => import('@/components/sections/PLSection').then(m => ({ default: m.PLSection })));
-
 const AboutSection = lazy(() => import('@/components/sections/AboutSection').then(m => ({ default: m.AboutSection })));
 
-type Section = 'home' | 'pnl' | 'about';
+type Section = 'home' | 'about';
 
-const validSections: Section[] = ['home', 'pnl', 'about'];
+const validSections: Section[] = ['home', 'about'];
 
 const Index = () => {
   const location = useLocation();
@@ -100,8 +97,6 @@ const Index = () => {
       <main className="relative container mx-auto px-4 md:px-6 pt-28 md:pt-32 pb-24 flex-1">
         <Suspense fallback={<div style={{ minHeight: '60vh' }} className="flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}>
           {activeSection === 'home' && <HomeSection onNavigate={(section) => handleSectionChange(section as Section)} />}
-          
-          {activeSection === 'pnl' && <PLSection />}
           {activeSection === 'about' && <AboutSection />}
         </Suspense>
       </main>

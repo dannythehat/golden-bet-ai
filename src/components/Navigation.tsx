@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Menu, X, Home, Info, BookOpen, Target, Flag, CreditCard, Hammer, Layers, Crown, Trophy } from 'lucide-react';
+import { Menu, X, Home, Info, BookOpen, Crown, Trophy } from 'lucide-react';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type Section = 'home' | 'pnl' | 'about' | 'blog' | 'over-goals' | 'over-corners' | 'over-cards' | 'bet-builder' | 'acca-delight' | 'members' | 'world-cup';
+type Section = 'home' | 'about' | 'blog' | 'members' | 'world-cup' | 'fantasy-league';
 
 interface NavigationProps {
   activeSection: Section;
@@ -21,13 +21,8 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
 
   const navItems = [
     { id: 'home' as Section, label: 'Home', icon: Home },
-    { id: 'world-cup' as Section, label: 'World Cup', icon: Trophy, isRoute: true, path: '/world-cup', premium: true },
-    { id: 'over-goals' as Section, label: 'Goals', icon: Target, isRoute: true, path: '/over-goals' },
-    { id: 'over-corners' as Section, label: 'Corners', icon: Flag, isRoute: true, path: '/over-corners' },
-    { id: 'over-cards' as Section, label: 'Cards', icon: CreditCard, isRoute: true, path: '/over-cards' },
-    { id: 'bet-builder' as Section, label: 'Bet Builder', icon: Hammer, isRoute: true, path: '/bet-builder' },
-    { id: 'acca-delight' as Section, label: 'ACCA Delight', icon: Layers, isRoute: true, path: '/acca-delight' },
-    { id: 'pnl' as Section, label: 'P&L Hub', icon: BarChart3 },
+    { id: 'fantasy-league' as Section, label: 'Fantasy League', icon: Trophy, isRoute: true, path: '/fantasy-league', premium: true },
+    { id: 'world-cup' as Section, label: 'World Cup', icon: Trophy, isRoute: true, path: '/world-cup' },
     { id: 'blog' as Section, label: 'Blog', icon: BookOpen },
     { id: 'about' as Section, label: 'About', icon: Info },
     ...(isMember ? [{ id: 'members' as Section, label: 'Members', icon: Crown, isRoute: true, path: '/members', premium: true }] : []),

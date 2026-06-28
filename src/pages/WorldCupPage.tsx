@@ -45,8 +45,8 @@ export default function WorldCupPage() {
 
 
       <Navigation
-        activeSection={"home" as Section}
-        onSectionChange={(s) => { if (s !== ("world-cup" as any)) navigate("/"); }}
+        activeSection="home"
+        onSectionChange={() => navigate("/")}
       />
 
       <main className="container mx-auto px-4 pt-24 pb-12 max-w-6xl">

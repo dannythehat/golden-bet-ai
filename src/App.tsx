@@ -14,11 +14,6 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 
-const BetBuilderPage = lazy(() => import("./pages/BetBuilderPage"));
-const AccaDelightPage = lazy(() => import("./pages/AccaDelightPage"));
-const OverGoalsPage = lazy(() => import("./pages/OverGoalsPage"));
-const OverCornersPage = lazy(() => import("./pages/OverCornersPage"));
-const OverCardsPage = lazy(() => import("./pages/OverCardsPage"));
 const LeaguePage = lazy(() => import("./pages/LeaguePage"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
@@ -64,13 +59,6 @@ const App = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
-              {/* Golden Bets deprecated — redirects to home */}
-              <Route path="/golden-bets" element={<Index />} />
-              <Route path="/bet-builder" element={<BetBuilderPage />} />
-              <Route path="/acca-delight" element={<AccaDelightPage />} />
-              <Route path="/over-goals" element={<OverGoalsPage />} />
-              <Route path="/over-corners" element={<OverCornersPage />} />
-              <Route path="/over-cards" element={<OverCardsPage />} />
               <Route path="/league/:slug" element={<LeaguePage />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/checkout/return" element={<CheckoutReturn />} />
