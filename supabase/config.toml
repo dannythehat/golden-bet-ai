@@ -27,6 +27,12 @@ double_confirm_changes = false
 [auth.external.google]
 enabled = false
 
+[functions.emit_memory_event]
+verify_jwt = false
+
+[functions.memory_query]
+verify_jwt = false
+
 [functions.form-stats]
 verify_jwt = false
 
