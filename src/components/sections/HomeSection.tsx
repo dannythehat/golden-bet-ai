@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plModel';
 import { GafferStreakBanner } from '@/components/GafferStreakBanner';
 import { WorldCupTeaser } from '@/components/WorldCupTeaser';
+import { FantasyLeagueBanner } from '@/components/FantasyLeagueBanner';
 const theGafferImage = '/images/the-gaffer.webp';
 
 interface HomeSectionProps {
@@ -116,6 +117,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
 
   return (
     <div className="space-y-10">
+      <FantasyLeagueBanner />
       <WorldCupTeaser />
       <GafferStreakBanner />
       {/* The Gaffer Hero */}
