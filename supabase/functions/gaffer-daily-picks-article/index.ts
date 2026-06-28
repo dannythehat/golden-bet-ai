@@ -189,9 +189,21 @@ Return JSON:
       if (!jsonMatch) throw new Error("No JSON block found");
       parsed = JSON.parse(jsonMatch[0]);
     } catch {
-      const titleMatch = rawContent.match(/"title"\s*:\s*"([^"]+)"/);
+      // Hardened fallback: extract each field individually so excerpt/content
+      // never become the raw JSON envelope (the cause of "{ \"title\": ... }"
+      // leaking into cards).
+      const unesc = (x: string) => x.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\").trim();
+      const titleMatch = rawContent.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/);
       if (!titleMatch) throw new Error("Could not extract title from AI response");
-      parsed = { title: titleMatch[1], excerpt: "", content: rawContent };
+      const excerptMatch = rawContent.match(/"excerpt"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+      const contentMatch = rawContent.match(/"content"\s*:\s*"([\s\S]*?)"\s*\}?\s*$/);
+      parsed = {
+        title: unesc(titleMatch[1]),
+        excerpt: excerptMatch ? unesc(excerptMatch[1]) : "",
+        content: contentMatch
+          ? unesc(contentMatch[1])
+          : rawContent.replace(/^\s*\{[\s\S]*?"content"\s*:\s*"/, "").replace(/"\s*\}\s*$/, ""),
+      };
     }
 
     if (!parsed.title || !parsed.content) throw new Error("AI returned incomplete response");

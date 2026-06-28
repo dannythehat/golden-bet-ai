@@ -9,6 +9,7 @@ import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { useEffect, useMemo } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { cleanTitle, cleanExcerpt } from '@/lib/cleanAiText';
 
 interface BlogPostData {
   id: string;
@@ -101,21 +102,9 @@ function stripJsonWrapper(raw: string): string {
   return s;
 }
 
-/** Clean a simple field (title/excerpt) from JSON wrapper */
-function cleanField(raw: string): string {
-  if (!raw) return raw;
-  const s = raw.trim();
-  if (s.startsWith('{') && (s.includes('"title"') || s.includes('"excerpt"'))) {
-    try {
-      const parsed = JSON.parse(s);
-      return parsed.title || parsed.excerpt || s;
-    } catch {
-      const match = s.match(/"(?:title|excerpt)"\s*:\s*"([^"]+)"/);
-      if (match) return match[1];
-    }
-  }
-  return s;
-}
+// Simple title/excerpt cleaning is centralised in '@/lib/cleanAiText'
+// (imported as cleanTitle / cleanExcerpt). stripJsonWrapper above handles the
+// richer HTML-wrapped content body.
 
 /** Detect if content is markdown (not HTML) and convert, then sanitize */
 function renderContent(raw: string): string {
@@ -227,8 +216,8 @@ export default function BlogPost() {
   // Dynamic SEO meta tags
   useEffect(() => {
     if (!post) return;
-    const title = cleanField(post.seo_title || post.title);
-    const description = cleanField(post.seo_description || post.excerpt);
+    const title = cleanTitle(post.seo_title || post.title);
+    const description = cleanExcerpt(post.seo_description || post.excerpt);
     document.title = `${title} | The Footy Oracle Blog`;
 
     const setMeta = (name: string, content: string) => {
@@ -293,8 +282,8 @@ export default function BlogPost() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: cleanField(post.title),
-    description: cleanField(post.excerpt),
+    headline: cleanTitle(post.title),
+    description: cleanExcerpt(post.excerpt),
     image: heroImage || undefined,
     author: {
       '@type': 'Person',
@@ -358,7 +347,7 @@ export default function BlogPost() {
 
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight mb-6">
-          {cleanField(post.title)}
+          {cleanTitle(post.title)}
         </h1>
 
         {/* Author + Social Share */}

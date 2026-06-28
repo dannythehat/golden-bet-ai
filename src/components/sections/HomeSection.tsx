@@ -13,6 +13,7 @@ import { COMBO_BET_STAKE, MARKET_DAILY_STAKE, SINGLE_BET_STAKE } from '@/lib/plM
 import { GafferStreakBanner } from '@/components/GafferStreakBanner';
 import { WorldCupTeaser } from '@/components/WorldCupTeaser';
 import { FantasyLeagueBanner } from '@/components/FantasyLeagueBanner';
+import { cleanTitle, cleanExcerpt } from '@/lib/cleanAiText';
 const theGafferImage = '/images/the-gaffer.webp';
 
 interface HomeSectionProps {
@@ -374,10 +375,10 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
                     )}
                   </div>
                   <h3 className="font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                    {post.title}
+                    {cleanTitle(post.title)}
                   </h3>
                   {post.excerpt && (
-                    <p className="text-xs text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{cleanExcerpt(post.excerpt)}</p>
                   )}
                 </div>
               </a>
