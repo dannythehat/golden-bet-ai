@@ -4,16 +4,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
-  "crons": [
-    {
-      "path": "/api/cron/refresh-stats-github",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/incremental-bootstrap",
-      "schedule": "0 */6 * * *"
-    }
-  ],
   "rewrites": [
     {
       "source": "/api/(.*)",

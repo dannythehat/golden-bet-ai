@@ -8,11 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "aggregate": "tsx src/scripts/aggregate.ts",
-    "aggregate:status": "tsx src/scripts/aggregate.ts status",
-    "fetch-stats": "node scripts/fetch-real-stats.js",
-    "fetch-stats:quick": "node scripts/fetch-real-stats.js --quick"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -58,7 +54,6 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.462.0",
     "marked": "^17.0.2",
-    "mongodb": "^6.21.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",

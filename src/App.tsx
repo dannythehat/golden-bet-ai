@@ -11,10 +11,6 @@ const Index = lazy(() => import("./pages/Index"));
 
 // Lazy load non-critical routes to reduce initial JS bundle
 const Auth = lazy(() => import("./pages/Auth"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-
-const MLDataLoader = lazy(() => import("./pages/MLDataLoader"));
-const SportMonksLoader = lazy(() => import("./pages/SportMonksLoader"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 
@@ -66,10 +62,6 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              
-              <Route path="/ml-loader" element={<MLDataLoader />} />
-              <Route path="/sportmonks-loader" element={<SportMonksLoader />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               {/* Golden Bets deprecated — redirects to home */}
