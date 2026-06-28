@@ -33,6 +33,12 @@ verify_jwt = false
 [functions.memory_query]
 verify_jwt = false
 
+[functions.change_member_handle]
+verify_jwt = false
+
+[functions.admin-member]
+verify_jwt = false
+
 [functions.form-stats]
 verify_jwt = false
 
