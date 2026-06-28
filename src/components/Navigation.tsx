@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Info, BookOpen, Crown, Trophy, BarChart3, TrendingUp } from 'lucide-react';
+import { Menu, X, Home, Info, BookOpen, Crown, Trophy, BarChart3, TrendingUp, CalendarDays } from 'lucide-react';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 import { UserMenu } from '@/components/UserMenu';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type Section = 'home' | 'about' | 'blog' | 'members' | 'world-cup' | 'fantasy-league' | 'form-tables' | 'pnl';
+type Section = 'home' | 'about' | 'blog' | 'members' | 'world-cup' | 'fantasy-league' | 'form-tables' | 'pnl' | 'fixtures';
 
 interface NavigationProps {
   activeSection: Section;
@@ -22,6 +22,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
   const navItems = [
     { id: 'home' as Section, label: 'Home', icon: Home },
     { id: 'fantasy-league' as Section, label: 'Fantasy League', icon: Trophy, isRoute: true, path: '/fantasy-league', premium: true },
+    { id: 'fixtures' as Section, label: 'Fixtures', icon: CalendarDays, isRoute: true, path: '/fixtures' },
     { id: 'form-tables' as Section, label: 'Form Tables', icon: BarChart3, isRoute: true, path: '/form-tables' },
     { id: 'pnl' as Section, label: 'P&L', icon: TrendingUp, isRoute: true, path: '/pnl' },
     { id: 'world-cup' as Section, label: 'World Cup', icon: Trophy, isRoute: true, path: '/world-cup' },
