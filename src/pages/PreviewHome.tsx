@@ -25,8 +25,6 @@ export default function PreviewHome() {
       <HeroBanner />
 
       <main className="relative mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-4 md:space-y-4 md:px-6 md:py-5">
-
-
         <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
           <FormTablesSection />
           <FantasyLeagueFeatureCard />

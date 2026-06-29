@@ -1,4 +1,5 @@
 import heroAsset from '@/assets/homepage/footy-homepage-hero.png.asset.json';
+import heroBannerAsset from '@/assets/homepage/hero-banner.png.asset.json';
 import fantasyAsset from '@/assets/homepage/footy-fantasy-league.png.asset.json';
 import formTablesAsset from '@/assets/homepage/footy-form-tables.png.asset.json';
 import weeklyPrizesAsset from '@/assets/homepage/footy-weekly-prizes.png.asset.json';
@@ -13,6 +14,7 @@ const withOrigin = (path: string) => `${ASSET_ORIGIN}${path}`;
 
 export const HOMEPAGE_APPROVED_ASSETS = {
   hero: withOrigin(heroAsset.url),
+  heroBanner: withOrigin(heroBannerAsset.url),
   fantasy: withOrigin(fantasyAsset.url),
   formTables: withOrigin(formTablesAsset.url),
   weeklyPrizes: withOrigin(weeklyPrizesAsset.url),
