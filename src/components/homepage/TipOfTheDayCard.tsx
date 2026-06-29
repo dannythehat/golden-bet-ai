@@ -1,4 +1,5 @@
-import { HOMEPAGE_APPROVED_ASSETS } from './assets';
+import { Link } from 'react-router-dom';
+import { ArrowRight, BadgeCheck, BarChart3, TrendingUp, Users } from 'lucide-react';
 import { useTipOfTheDay } from './useHomepageData';
 
 function formatTipTime(value?: string | null) {
@@ -10,64 +11,73 @@ function formatOdds(odds: number | string) {
   return typeof odds === 'number' ? odds.toFixed(2) : odds;
 }
 
-/** Tip of the day — approved artwork with live pick data overlaid in-place. */
 export function TipOfTheDayCard() {
   const { data: tip } = useTipOfTheDay();
+
+  const stats = [
+    { Icon: BadgeCheck, value: `${tip?.confidence ?? 72}%`, label: 'Confidence' },
+    { Icon: BarChart3, value: '8/10', label: 'Form Guide' },
+    { Icon: TrendingUp, value: '4', label: 'Tips Won' },
+    { Icon: Users, value: '9.4K+', label: 'Following' },
+  ];
 
   return (
     <section
       id="tip-of-the-day"
-      className="relative overflow-hidden rounded-[1.15rem] border border-sky-400/45 bg-[#04111f] shadow-[0_0_70px_-20px_rgba(56,189,248,0.55)] md:rounded-[1.45rem]"
+      className="overflow-hidden rounded-2xl border border-sky-400/45 bg-gradient-to-br from-[#04111f] via-[#020a16] to-[#01060e] p-5 shadow-[0_0_70px_-20px_rgba(56,189,248,0.55)] md:rounded-3xl md:p-7"
     >
-      <img
-        src={HOMEPAGE_APPROVED_ASSETS.tipOfDay}
-        alt="Tip of the day panel"
-        className="block w-full"
-        loading="lazy"
-        width={1752}
-        height={968}
-      />
-
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-[6.6%] top-[7.3%] rounded-[0.8rem] bg-[#07111d]/82 px-[1.1vw] py-[0.7vw] text-[clamp(8px,0.95vw,16px)] font-semibold text-white/92 shadow-[0_0_24px_-10px_rgba(56,189,248,0.9)] backdrop-blur-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-300">
+          Tip of the Day
+        </span>
+        <span className="rounded-full bg-sky-500/15 px-2.5 py-1 text-[10px] font-semibold text-sky-200">
           {formatTipTime(tip?.updated_at)}
-        </div>
+        </span>
+      </div>
 
-        <div className="absolute left-[21.5%] top-[38.2%] w-[21%] rounded-[0.9rem] bg-[#07111d]/82 px-[1vw] py-[0.8vw] text-center shadow-[0_0_24px_-10px_rgba(56,189,248,0.9)] backdrop-blur-sm">
-          <div className="text-[clamp(14px,2.35vw,40px)] font-black uppercase leading-none text-white">{tip?.home_team ?? 'Home'}</div>
-        </div>
-
-        <div className="absolute right-[10.5%] top-[38.2%] w-[23%] rounded-[0.9rem] bg-[#07111d]/82 px-[1vw] py-[0.8vw] text-center shadow-[0_0_24px_-10px_rgba(56,189,248,0.9)] backdrop-blur-sm">
-          <div className="text-[clamp(14px,2.35vw,40px)] font-black uppercase leading-none text-white">{tip?.away_team ?? 'Away'}</div>
-        </div>
-
-        <div className="absolute left-1/2 top-[50.6%] w-[29%] -translate-x-1/2 rounded-[0.95rem] bg-[#07111d]/88 px-[1vw] py-[0.9vw] text-center shadow-[0_0_28px_-8px_rgba(56,189,248,0.95)] backdrop-blur-sm">
-          <div className="text-[clamp(10px,1vw,16px)] font-black uppercase tracking-[0.18em] text-sky-300">Our Tip</div>
-          <div className="mt-[0.2vw] text-[clamp(16px,2.2vw,38px)] font-black uppercase leading-none text-white">{tip?.market ?? 'Today\'s Pick'}</div>
-          <div className="mt-[0.2vw] text-[clamp(16px,2.3vw,40px)] font-black leading-none text-sky-300">{tip ? formatOdds(tip.odds) : '—'}</div>
-        </div>
-
-        <div className="absolute bottom-[9.7%] left-[7.3%] right-[7.3%] grid grid-cols-4 overflow-hidden rounded-[1rem] border border-sky-400/20 bg-[#07111d]/78 text-center shadow-[0_0_26px_-10px_rgba(56,189,248,0.8)] backdrop-blur-sm">
-          <div className="px-[0.8vw] py-[1vw] text-white/95">
-            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">{tip?.confidence ?? 72}%</div>
-            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Confidence</div>
+      <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-sky-400/25 bg-sky-500/5 p-3">
+        <div className="text-center">
+          <div className="text-[10px] font-black uppercase tracking-wider text-white/60">Home</div>
+          <div className="mt-0.5 text-base font-black uppercase leading-tight text-white sm:text-lg">
+            {tip?.home_team ?? 'Home'}
           </div>
-          <div className="px-[0.8vw] py-[1vw] text-white/95">
-            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">8/10</div>
-            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Form Guide</div>
-          </div>
-          <div className="px-[0.8vw] py-[1vw] text-white/95">
-            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">4</div>
-            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Tips Won</div>
-          </div>
-          <div className="px-[0.8vw] py-[1vw] text-white/95">
-            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">9.4K+</div>
-            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Following</div>
+        </div>
+        <div className="text-[10px] font-black uppercase tracking-wider text-sky-300">vs</div>
+        <div className="text-center">
+          <div className="text-[10px] font-black uppercase tracking-wider text-white/60">Away</div>
+          <div className="mt-0.5 text-base font-black uppercase leading-tight text-white sm:text-lg">
+            {tip?.away_team ?? 'Away'}
           </div>
         </div>
       </div>
 
-      <a href="/fixtures" aria-label="View all today's tips" className="absolute bottom-[2.8%] left-[24%] h-[8%] w-[52%] rounded-[1rem]" />
+      <div className="mt-3 rounded-xl border border-sky-400/40 bg-sky-500/10 p-4 text-center shadow-[0_0_30px_-12px_rgba(56,189,248,0.7)]">
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-sky-300">Our Tip</div>
+        <div className="mt-1 text-xl font-black uppercase leading-tight text-white sm:text-2xl">
+          {tip?.market ?? "Today's Pick"}
+        </div>
+        <div className="mt-1 text-2xl font-black text-sky-300 sm:text-3xl">
+          {tip ? formatOdds(tip.odds) : '—'}
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.label} className="rounded-lg border border-sky-400/20 bg-sky-500/5 p-2 text-center">
+            <s.Icon className="mx-auto h-4 w-4 text-sky-300" />
+            <div className="mt-1 text-sm font-black text-white">{s.value}</div>
+            <div className="text-[9px] font-semibold uppercase tracking-wider text-white/60">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <Link
+        to="/fixtures"
+        className="mt-4 flex items-center justify-center gap-1.5 rounded-full border border-sky-400/50 bg-sky-500/15 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-sky-100 transition-colors hover:bg-sky-500/25"
+      >
+        View All Today's Tips
+        <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
     </section>
   );
 }
