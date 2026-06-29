@@ -13,7 +13,8 @@ export function CommunityFeatureCard() {
           body="Live tip drops, banter and member-only updates — pick your poison."
           image={HOMEPAGE_APPROVED_ASSETS.community}
           imageAlt="Join our community"
-          imagePosition="object-[center_25%]"
+          imagePosition="object-[center_45%]"
+          imageAspect="aspect-[5/4]"
           tone="sky"
           ctas={[
             { label: 'Facebook', href: SOCIAL_LINKS.facebook },

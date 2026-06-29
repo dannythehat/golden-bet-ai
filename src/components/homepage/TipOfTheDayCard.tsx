@@ -12,7 +12,8 @@ export function TipOfTheDayCard() {
           body="One stand-out value bet picked every morning — straight from The Gaffer."
           image={HOMEPAGE_APPROVED_ASSETS.tipOfDay}
           imageAlt="Tip of the day"
-          imagePosition="object-[center_25%]"
+          imagePosition="object-[center_50%]"
+          imageAspect="aspect-[5/4]"
           tone="emerald"
           ctas={[{ label: "View Today's Tips", to: '/fixtures' }]}
         />
