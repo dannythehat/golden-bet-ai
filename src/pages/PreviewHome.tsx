@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { HomepageNav } from '@/components/homepage/HomepageNav';
-import { HeroSection } from '@/components/homepage/HeroSection';
+import { HeroBanner } from '@/components/homepage/HeroBanner';
 import { FeatureStrip } from '@/components/homepage/FeatureStrip';
 import { FormTablesSection } from '@/components/homepage/FormTablesSection';
 import { FantasyLeagueFeatureCard } from '@/components/homepage/FantasyLeagueFeatureCard';
@@ -23,10 +22,9 @@ export default function PreviewHome() {
       <div className="pointer-events-none fixed inset-0 opacity-80 [background:radial-gradient(circle_at_12%_-8%,rgba(88,28,135,0.45),transparent_42%),radial-gradient(circle_at_92%_4%,rgba(124,58,237,0.22),transparent_38%),radial-gradient(circle_at_50%_105%,rgba(245,158,11,0.1),transparent_34%)]" />
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:46px_46px] opacity-25" />
 
-      <HomepageNav />
+      <HeroBanner />
 
       <main className="relative mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-4 md:space-y-4 md:px-6 md:py-5">
-        <HeroSection />
         <FeatureStrip />
 
         <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
