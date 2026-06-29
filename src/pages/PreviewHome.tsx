@@ -11,6 +11,7 @@ import { DonkeyOfTheWeekFeatureCard } from '@/components/homepage/DonkeyOfTheWee
 import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard';
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
+import { HomepageScene } from '@/components/homepage/HomepageScene';
 
 export default function PreviewHome() {
   useEffect(() => {
@@ -19,33 +20,56 @@ export default function PreviewHome() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#05020b] text-white">
-      <div className="pointer-events-none fixed inset-0 opacity-80 [background:radial-gradient(circle_at_12%_-8%,rgba(88,28,135,0.45),transparent_42%),radial-gradient(circle_at_92%_4%,rgba(124,58,237,0.22),transparent_38%),radial-gradient(circle_at_50%_105%,rgba(245,158,11,0.1),transparent_34%)]" />
-      <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:46px_46px] opacity-25" />
+      {/* Very faint global grain — page-wide radial removed so per-scene tints can breathe */}
+      <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:46px_46px] opacity-20" />
 
-      <HeroBanner />
+      <HomepageScene tone="hero" flushTop flushBottom>
+        <HeroBanner />
+      </HomepageScene>
 
-      <main className="relative mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-4 md:space-y-4 md:px-6 md:py-5">
-        <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
-          <FormTablesSection />
-          <FantasyLeagueFeatureCard />
+      <HomepageScene tone="emerald" eyebrow="01 · Form & Fantasy">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
+            <FormTablesSection />
+            <FantasyLeagueFeatureCard />
+          </div>
         </div>
+      </HomepageScene>
 
-        <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
-          <LatestArticlesSection />
-          <WeeklyPrizesFeatureCard />
-          <GafferStoryCard />
+      <HomepageScene tone="editorial" eyebrow="02 · The Newsroom">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
+            <LatestArticlesSection />
+            <WeeklyPrizesFeatureCard />
+            <GafferStoryCard />
+          </div>
         </div>
+      </HomepageScene>
 
-        <DonkeyOfTheWeekFeatureCard />
-
-        <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
-          <CommunityFeatureCard />
-          <TipOfTheDayCard />
+      <HomepageScene tone="violet" eyebrow="03 · Donkey of the Week">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <DonkeyOfTheWeekFeatureCard />
         </div>
+      </HomepageScene>
 
-        <FinalCallToActionBanner />
+      <HomepageScene tone="crowd" eyebrow="04 · The Community">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
+            <CommunityFeatureCard />
+            <TipOfTheDayCard />
+          </div>
+        </div>
+      </HomepageScene>
+
+      <HomepageScene tone="finale" eyebrow="05 · Join the Club">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <FinalCallToActionBanner />
+        </div>
+      </HomepageScene>
+
+      <div className="mx-auto max-w-7xl px-3 pb-8 sm:px-4 md:px-6">
         <FooterNavigation />
-      </main>
+      </div>
     </div>
   );
 }
