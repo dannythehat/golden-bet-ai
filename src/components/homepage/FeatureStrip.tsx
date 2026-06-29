@@ -1,18 +1,22 @@
 import { Icon } from './icons';
-import { FEATURE_STRIP } from './content';
 import { cn } from '@/lib/utils';
+import { useFeatureStrip } from './useHomepageData';
 
 /**
- * Editable frosted-glass card row beneath the hero. These are UI cards (not part
- * of the hero image) so they can be swapped/reordered any time.
+ * Frosted-glass card ribbon beneath the hero. Fully data-driven from
+ * homepage_feature_strip (icon, label, subtitle, link, highlight, order).
  */
 export function FeatureStrip() {
+  const { data: items = [] } = useFeatureStrip();
+
+  if (items.length === 0) return null;
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
-      {FEATURE_STRIP.map((f) => (
+      {items.map((f) => (
         <a
-          key={f.label}
-          href={f.href}
+          key={f.id}
+          href={f.link ?? '#'}
           className={cn(
             'group flex flex-col items-center gap-1.5 rounded-2xl border p-4 text-center backdrop-blur-md transition-all hover:-translate-y-0.5',
             f.highlight
@@ -27,7 +31,7 @@ export function FeatureStrip() {
             <Icon name={f.icon} className="h-5 w-5" />
           </span>
           <span className="text-[13px] font-bold leading-tight text-white">{f.label}</span>
-          <span className="text-[11px] leading-tight text-white/50">{f.sub}</span>
+          {f.subtitle && <span className="text-[11px] leading-tight text-white/50">{f.subtitle}</span>}
         </a>
       ))}
     </div>
