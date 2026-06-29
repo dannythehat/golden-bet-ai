@@ -231,6 +231,15 @@ input, textarea, [contenteditable] {
     50% { transform: translateY(-10px); }
   }
 
+  @keyframes artFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(0.15deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-\[artFloat_7s_ease-in-out_infinite\] { animation: none !important; }
+  }
+
   @keyframes pulse-glow {
     0%, 100% { box-shadow: 0 0 20px -5px hsl(var(--gold) / 0.3); }
     50% { box-shadow: 0 0 40px -5px hsl(var(--gold) / 0.5); }
