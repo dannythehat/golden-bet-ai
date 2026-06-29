@@ -64,7 +64,7 @@ export function HeroBanner() {
           <div className="relative z-0 mx-auto w-full max-w-sm md:max-w-none">
             <div className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(circle_at_50%_55%,rgba(124,58,237,0.55),transparent_60%)] blur-2xl" />
             <img
-              src={gafferPortrait.url}
+              src={PORTRAIT_URL}
               alt="The Gaffer"
               className="block h-auto w-full select-none drop-shadow-[0_25px_45px_rgba(0,0,0,0.7)]"
               draggable={false}
