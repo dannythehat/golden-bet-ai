@@ -13,11 +13,12 @@ export function GafferStoryCard() {
           eyebrow="The Gaffer"
           title="Meet The Gaffer"
           body="The voice behind every pick — sharp, witty, and built on millions of data points."
-          image={HOMEPAGE_APPROVED_ASSETS.gafferStory}
-          imageAlt="Trust The Gaffer story"
-          imagePosition="object-[center_25%]"
+          image={HOMEPAGE_APPROVED_ASSETS.gafferPortrait}
+          imageAlt="Meet The Gaffer"
+          imagePosition="object-[center_20%]"
+          imageAspect="aspect-[4/3]"
           tone="violet"
-          ctas={[{ label: story?.cta_label ?? 'Read The Story', to: ctaHref }]}
+          ctas={[{ label: 'Meet The Gaffer', to: ctaHref }]}
         />
       </div>
       <div className="hidden md:block">
