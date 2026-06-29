@@ -7,7 +7,8 @@ const TooltipProvider = lazy(() => import("@/components/ui/tooltip").then(m => (
 const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
 const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
 
-const Index = lazy(() => import("./pages/Index"));
+// The Club homepage is the new site homepage (see src/pages/PreviewHome.tsx).
+const Home = lazy(() => import("./pages/PreviewHome"));
 
 // Lazy load non-critical routes to reduce initial JS bundle
 const Auth = lazy(() => import("./pages/Auth"));
@@ -24,7 +25,6 @@ const FantasyLeaguePage = lazy(() => import("./pages/FantasyLeaguePage"));
 const FormTablesPreview = lazy(() => import("./pages/FormTablesPreview"));
 const PLBoard = lazy(() => import("./pages/PLBoard"));
 const TodaysFixtures = lazy(() => import("./pages/TodaysFixtures"));
-const PreviewHome = lazy(() => import("./pages/PreviewHome"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -59,7 +59,7 @@ const App = () => {
         <BrowserRouter>
           <Suspense fallback={<div className="min-h-screen bg-background" />}>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
@@ -73,7 +73,8 @@ const App = () => {
               <Route path="/form-tables" element={<FormTablesPreview />} />
               <Route path="/pnl" element={<PLBoard />} />
               <Route path="/fixtures" element={<TodaysFixtures />} />
-              <Route path="/preview" element={<PreviewHome />} />
+              {/* Alias kept so existing /preview links still resolve to the homepage */}
+              <Route path="/preview" element={<Home />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
