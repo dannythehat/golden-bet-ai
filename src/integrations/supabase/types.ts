@@ -715,6 +715,156 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_donkey: {
+        Row: {
+          created_at: string
+          cta_href: string | null
+          cta_label: string | null
+          description: string | null
+          enabled: boolean
+          headline: string
+          id: string
+          image: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          description?: string | null
+          enabled?: boolean
+          headline: string
+          id?: string
+          image?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          description?: string | null
+          enabled?: boolean
+          headline?: string
+          id?: string
+          image?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      homepage_feature_strip: {
+        Row: {
+          created_at: string
+          display_order: number
+          enabled: boolean
+          highlight: boolean
+          icon: string
+          id: string
+          label: string
+          link: string | null
+          subtitle: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          enabled?: boolean
+          highlight?: boolean
+          icon: string
+          id?: string
+          label: string
+          link?: string | null
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          enabled?: boolean
+          highlight?: boolean
+          icon?: string
+          id?: string
+          label?: string
+          link?: string | null
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      homepage_gaffer_story: {
+        Row: {
+          created_at: string
+          cta_href: string | null
+          cta_label: string | null
+          enabled: boolean
+          headline: string
+          id: string
+          image: string | null
+          intro: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          enabled?: boolean
+          headline: string
+          id?: string
+          image?: string | null
+          intro?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          enabled?: boolean
+          headline?: string
+          id?: string
+          image?: string | null
+          intro?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      homepage_weekly_prizes: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          display_order: number
+          enabled: boolean
+          id: string
+          image: string | null
+          link: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          enabled?: boolean
+          id?: string
+          image?: string | null
+          link?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          enabled?: boolean
+          id?: string
+          image?: string | null
+          link?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       league_rolling_stats: {
         Row: {
           avg_away_cards: number | null
