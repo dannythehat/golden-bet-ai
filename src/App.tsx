@@ -24,6 +24,7 @@ const FantasyLeaguePage = lazy(() => import("./pages/FantasyLeaguePage"));
 const FormTablesPreview = lazy(() => import("./pages/FormTablesPreview"));
 const PLBoard = lazy(() => import("./pages/PLBoard"));
 const TodaysFixtures = lazy(() => import("./pages/TodaysFixtures"));
+const PreviewHome = lazy(() => import("./pages/PreviewHome"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -72,6 +73,7 @@ const App = () => {
               <Route path="/form-tables" element={<FormTablesPreview />} />
               <Route path="/pnl" element={<PLBoard />} />
               <Route path="/fixtures" element={<TodaysFixtures />} />
+              <Route path="/preview" element={<PreviewHome />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
