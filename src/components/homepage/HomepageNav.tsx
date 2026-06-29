@@ -8,14 +8,30 @@ export function HomepageNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#05010a]/90 backdrop-blur-xl">
-      {/* Gold/violet accent line */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#05010a]/95 backdrop-blur-xl">
+      {/* Top utility ribbon — always visible */}
+      <div className="border-b border-white/5 bg-gradient-to-r from-violet-950/40 via-[#05010a] to-amber-950/30">
+        <div className="mx-auto flex w-full max-w-[1480px] items-center justify-between gap-3 px-4 py-1.5 md:px-6">
+          <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-amber-300/90">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
+            Live · The Gaffer is in
+          </span>
+          <div className="flex items-center gap-2 text-white/55">
+            <a href="https://facebook.com" aria-label="Facebook" className="transition-colors hover:text-violet-300"><Facebook className="h-3.5 w-3.5" /></a>
+            <a href="https://t.me" aria-label="Telegram" className="transition-colors hover:text-violet-300"><Send className="h-3.5 w-3.5" /></a>
+            <a href="https://instagram.com" aria-label="Instagram" className="transition-colors hover:text-violet-300"><Instagram className="h-3.5 w-3.5" /></a>
+            <a href="https://youtube.com" aria-label="YouTube" className="transition-colors hover:text-violet-300"><Youtube className="h-3.5 w-3.5" /></a>
+          </div>
+        </div>
+      </div>
 
-      <div className="mx-auto flex w-full max-w-[1480px] items-center justify-between gap-4 px-4 py-3 md:px-6 md:py-4">
+      {/* Gold accent line */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-violet-500/0 via-amber-400/80 to-violet-500/0" />
+
+      <div className="mx-auto flex w-full max-w-[1480px] items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4">
         {/* Brand */}
-        <a href="#top" className="flex shrink-0 items-center gap-3">
-          <OracleCrest className="h-11 w-11 md:h-12 md:w-12" />
+        <a href="#top" className="flex shrink-0 items-center gap-2.5 md:gap-3">
+          <OracleCrest className="h-10 w-10 md:h-12 md:w-12" />
           <OracleWordmark />
         </a>
 
