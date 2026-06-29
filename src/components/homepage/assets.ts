@@ -8,6 +8,7 @@ import communityAsset from '@/assets/homepage/footy-community.png.asset.json';
 import donkeyAsset from '@/assets/homepage/footy-donkey.png.asset.json';
 import tipOfDayAsset from '@/assets/homepage/footy-tip-of-day.png.asset.json';
 import finalCtaFooterAsset from '@/assets/homepage/footy-final-cta-footer.png.asset.json';
+import gafferPortraitAsset from '@/assets/homepage/gaffer-hero-portrait.png.asset.json';
 
 const ASSET_ORIGIN = 'https://thefootyoracle.com';
 const withOrigin = (path: string) => `${ASSET_ORIGIN}${path}`;
@@ -23,4 +24,5 @@ export const HOMEPAGE_APPROVED_ASSETS = {
   donkey: withOrigin(donkeyAsset.url),
   tipOfDay: withOrigin(tipOfDayAsset.url),
   finalCtaFooter: withOrigin(finalCtaFooterAsset.url),
+  gafferPortrait: withOrigin(gafferPortraitAsset.url),
 } as const;
