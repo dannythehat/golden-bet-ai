@@ -120,9 +120,7 @@ export function ArtworkCard({
     >
       <div
         ref={innerRef}
-        className={`relative overflow-hidden rounded-[14px] border border-white/10 bg-[#07000f] shadow-[0_22px_70px_-30px_rgba(0,0,0,0.95)] transition-transform duration-300 ease-out ${
-          flat ? '' : 'animate-[artFloat_7s_ease-in-out_infinite]'
-        } ${className}`}
+        className={`relative overflow-hidden rounded-[14px] border border-white/10 bg-[#07000f] shadow-[0_22px_70px_-30px_rgba(0,0,0,0.95)] transition-transform duration-300 ease-out ${className}`}
         style={{ transformStyle: 'preserve-3d' }}
       >
         {/* soft glow halo */}
