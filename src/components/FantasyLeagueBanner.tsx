@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Trophy, Sparkles, ArrowRight, Calendar, Gift, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const theGaffer = '/images/the-gaffer.webp';
+const theGaffer = '/images/the-gaffer.png';
 
 /**
  * Premium pre-season call-to-action introducing the Footy Oracle Fantasy League.
@@ -26,6 +26,7 @@ export function FantasyLeagueBanner() {
             src={theGaffer}
             alt="The Gaffer"
             className="relative w-28 h-28 md:w-40 md:h-40 rounded-2xl object-cover border-2 border-gold/40 shadow-2xl"
+            style={{ objectPosition: '58% 20%' }}
             width={160}
             height={160}
             loading="lazy"

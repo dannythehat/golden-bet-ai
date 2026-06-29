@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Target, Flag, CreditCard, Swords, Trophy, Brain, Sparkles, Clock, TrendingUp } from 'lucide-react';
-import theGafferImage from '@/assets/the-gaffer.webp';
+import theGafferImage from '@/assets/the-gaffer.png';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 
 export function AboutSection() {

@@ -15,7 +15,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { useToast } from "@/hooks/use-toast";
-import theGafferImage from "@/assets/the-gaffer.webp";
+import theGafferImage from "@/assets/the-gaffer.png";
 
 export default function MembersDashboard() {
   const navigate = useNavigate();
@@ -96,6 +96,7 @@ export default function MembersDashboard() {
                 src={theGafferImage}
                 alt="The Gaffer"
                 className="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border-2 border-gold/40 shadow-lg shrink-0"
+                style={{ objectPosition: '58% 20%' }}
                 width={80}
                 height={80}
               />

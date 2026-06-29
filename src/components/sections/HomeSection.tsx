@@ -8,7 +8,7 @@ import { FantasyLeagueBanner } from '@/components/FantasyLeagueBanner';
 import { LivePickTracker } from '@/components/LivePickTracker';
 import { cleanTitle, cleanExcerpt } from '@/lib/cleanAiText';
 
-const theGafferImage = '/images/the-gaffer.webp';
+const theGafferImage = '/images/the-gaffer.png';
 
 interface HomeSectionProps {
   onNavigate: (section: string) => void;
@@ -54,7 +54,7 @@ export function HomeSection({ onNavigate }: HomeSectionProps) {
         <div className="relative flex flex-col md:flex-row items-center gap-6 md:gap-10 p-6 md:p-10">
           <div className="relative flex-shrink-0">
             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
-            <img src={theGafferImage} alt="The Gaffer" className="relative w-40 h-40 md:w-52 md:h-52 rounded-2xl object-cover border-2 border-primary/40 shadow-2xl" fetchPriority="high" width={208} height={208} />
+            <img src={theGafferImage} alt="The Gaffer" className="relative w-40 h-40 md:w-52 md:h-52 rounded-2xl object-cover border-2 border-primary/40 shadow-2xl" style={{ objectPosition: '58% 20%' }} fetchPriority="high" width={208} height={208} />
             <div className="absolute -bottom-2 -right-2 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold shadow-lg">
               <Sparkles className="w-3 h-3 inline mr-1" />The Boss
             </div>

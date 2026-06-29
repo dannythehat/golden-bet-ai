@@ -7,7 +7,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 
-const theGaffer = '/images/the-gaffer.webp';
+const theGaffer = '/images/the-gaffer.png';
 
 /**
  * Footy Oracle Fantasy League — PLACEHOLDER landing page (structure + routing
@@ -48,6 +48,7 @@ export default function FantasyLeaguePage() {
               src={theGaffer}
               alt="The Gaffer"
               className="w-32 h-32 md:w-48 md:h-48 rounded-2xl object-cover border-2 border-gold/40 shadow-2xl flex-shrink-0"
+              style={{ objectPosition: '58% 20%' }}
               width={192}
               height={192}
               fetchPriority="high"
