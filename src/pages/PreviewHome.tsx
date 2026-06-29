@@ -14,9 +14,9 @@ import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToAction
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 
 /**
- * Footy Oracle Club homepage — built to the locked design reference.
- * Lives at /preview so the live homepage at "/" is untouched. Every section is
- * a reusable, data-driven component (see src/components/homepage/content.ts).
+ * Footy Oracle Club homepage — locked to the approved mock-up direction.
+ * Every section is a reusable, data-driven component. The layout stays stable;
+ * content/images can rotate through the season.
  */
 export default function PreviewHome() {
   useEffect(() => {
@@ -24,27 +24,33 @@ export default function PreviewHome() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
-      {/* Ambient purple atmosphere */}
-      <div className="pointer-events-none fixed inset-0 opacity-70 [background:radial-gradient(circle_at_15%_-5%,rgba(88,28,135,0.35),transparent_45%),radial-gradient(circle_at_85%_10%,rgba(124,58,237,0.18),transparent_40%)]" />
+    <div className="min-h-screen overflow-x-hidden bg-[#05020b] text-white">
+      <div className="pointer-events-none fixed inset-0 opacity-80 [background:radial-gradient(circle_at_12%_-8%,rgba(88,28,135,0.45),transparent_42%),radial-gradient(circle_at_92%_4%,rgba(124,58,237,0.22),transparent_38%),radial-gradient(circle_at_50%_105%,rgba(245,158,11,0.1),transparent_34%)]" />
+      <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:46px_46px] opacity-25" />
 
       <HomepageNav />
 
-      <main className="relative mx-auto max-w-7xl space-y-6 px-3 py-6 md:space-y-8 md:px-6 md:py-8">
+      <main className="relative mx-auto max-w-7xl space-y-5 px-3 py-5 sm:px-4 md:space-y-7 md:px-6 md:py-8">
         <HeroSection />
         <FeatureStrip />
-        <FormTablesSection />
-        <FantasyLeagueFeatureCard />
 
-        {/* Articles + Tip of the Day side by side on desktop */}
-        <div className="grid gap-6 md:gap-8 lg:grid-cols-2">
+        <div className="grid gap-5 md:gap-7 xl:grid-cols-[0.95fr_1.05fr]">
+          <FormTablesSection />
+          <FantasyLeagueFeatureCard />
+        </div>
+
+        <div className="grid gap-5 md:gap-7 lg:grid-cols-[1.05fr_0.95fr]">
           <LatestArticlesSection />
           <TipOfTheDayCard />
         </div>
 
         <WeeklyPrizesFeatureCard />
-        <GafferStoryCard />
-        <DonkeyOfTheWeekFeatureCard />
+
+        <div className="grid gap-5 md:gap-7 xl:grid-cols-[0.92fr_1.08fr]">
+          <GafferStoryCard />
+          <DonkeyOfTheWeekFeatureCard />
+        </div>
+
         <CommunityFeatureCard />
         <FinalCallToActionBanner />
         <FooterNavigation />
