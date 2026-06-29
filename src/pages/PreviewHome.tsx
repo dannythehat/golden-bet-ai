@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
-import { FeatureStrip } from '@/components/homepage/FeatureStrip';
+
 import { FormTablesSection } from '@/components/homepage/FormTablesSection';
 import { FantasyLeagueFeatureCard } from '@/components/homepage/FantasyLeagueFeatureCard';
 import { LatestArticlesSection } from '@/components/homepage/LatestArticlesSection';
@@ -25,7 +25,7 @@ export default function PreviewHome() {
       <HeroBanner />
 
       <main className="relative mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-4 md:space-y-4 md:px-6 md:py-5">
-        <FeatureStrip />
+
 
         <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
           <FormTablesSection />
