@@ -64,7 +64,7 @@ export function HeroSection() {
             <a href="/pricing" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-dark via-gold to-gold-glow px-6 py-3.5 font-black text-[#160a2b] shadow-lg shadow-gold/25 transition-transform hover:scale-[1.03]">
               Join the Club <ArrowRight className="h-4 w-4" />
             </a>
-            <a href="#tip-of-the-day" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-black/20 px-6 py-3.5 font-bold text-white backdrop-blur-sm hover:bg-white/8">
+            <a href="#tip-of-the-day" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-black/20 px-6 py-3.5 font-bold text-white backdrop-blur-sm hover:bg-white/10">
               Explore Today's Tips
             </a>
           </div>
