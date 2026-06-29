@@ -3,6 +3,8 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import gafferPortrait from '@/assets/homepage/gaffer-hero-portrait.png.asset.json';
 import { HomepageNav } from './HomepageNav';
 
+const PORTRAIT_URL = `https://thefootyoracle.com${gafferPortrait.url}`;
+
 /**
  * Fully responsive hero. Stacks on mobile, two columns on md+.
  * No baked-in text — every word/button is real HTML so it scales.
