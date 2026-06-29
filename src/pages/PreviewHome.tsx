@@ -31,28 +31,29 @@ export default function PreviewHome() {
       <HomepageNav />
 
       <main className="relative mx-auto max-w-7xl space-y-5 px-3 py-5 sm:px-4 md:space-y-7 md:px-6 md:py-8">
+        {/* 1. Hero */}
         <HeroSection />
+        {/* 2. Feature ribbon */}
         <FeatureStrip />
-
-        <div className="grid gap-5 md:gap-7 xl:grid-cols-[0.95fr_1.05fr]">
-          <FormTablesSection />
-          <FantasyLeagueFeatureCard />
-        </div>
-
-        <div className="grid gap-5 md:gap-7 lg:grid-cols-[1.05fr_0.95fr]">
-          <LatestArticlesSection />
-          <TipOfTheDayCard />
-        </div>
-
+        {/* 3. Form Tables — full-width feature */}
+        <FormTablesSection />
+        {/* 4. Fantasy League — full-width feature */}
+        <FantasyLeagueFeatureCard />
+        {/* 5. Latest Articles */}
+        <LatestArticlesSection />
+        {/* 6. Weekly Prizes */}
         <WeeklyPrizesFeatureCard />
-
-        <div className="grid gap-5 md:gap-7 xl:grid-cols-[0.92fr_1.08fr]">
-          <GafferStoryCard />
-          <DonkeyOfTheWeekFeatureCard />
-        </div>
-
+        {/* 7. Trust The Gaffer */}
+        <GafferStoryCard />
+        {/* 8. Donkey of the Week */}
+        <DonkeyOfTheWeekFeatureCard />
+        {/* 9. Community */}
         <CommunityFeatureCard />
+        {/* 10. Tip of the Day */}
+        <TipOfTheDayCard />
+        {/* 11. Join The Club CTA */}
         <FinalCallToActionBanner />
+        {/* 12. Footer */}
         <FooterNavigation />
       </main>
     </div>
