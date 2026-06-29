@@ -12,7 +12,8 @@ export function FormTablesSection() {
           body="Live-weighted form tables for the Premier League, Championship, La Liga and more — updated every matchweek."
           image={HOMEPAGE_APPROVED_ASSETS.formTables}
           imageAlt="Footy Oracle form tables"
-          imagePosition="object-[center_30%]"
+          imagePosition="object-[center_55%]"
+          imageAspect="aspect-[5/4]"
           tone="emerald"
           ctas={[{ label: 'Open Form Tables', to: '/form-tables' }]}
         />

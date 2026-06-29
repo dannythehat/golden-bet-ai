@@ -12,7 +12,8 @@ export function FantasyLeagueFeatureCard() {
           body="Footy Oracle's flagship fantasy league — weekly cash prizes, live leaderboards and Gaffer-powered insights."
           image={HOMEPAGE_APPROVED_ASSETS.fantasy}
           imageAlt="Footy Oracle fantasy premier league"
-          imagePosition="object-[center_30%]"
+          imagePosition="object-[center_45%]"
+          imageAspect="aspect-[5/4]"
           tone="violet"
           ctas={[{ label: 'Play Fantasy', to: '/fantasy-league' }]}
         />

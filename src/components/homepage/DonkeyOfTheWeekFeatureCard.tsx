@@ -15,7 +15,8 @@ export function DonkeyOfTheWeekFeatureCard() {
           body="Every Monday we crown the donkey — the player, punter or pundit who fluffed it hardest."
           image={HOMEPAGE_APPROVED_ASSETS.donkey}
           imageAlt="Donkey of the week"
-          imagePosition="object-[center_30%]"
+          imagePosition="object-[35%_50%]"
+          imageAspect="aspect-[5/4]"
           tone="rose"
           ctas={[{ label: donkey?.cta_label ?? "See This Week's Donkey", to: ctaHref }]}
         />

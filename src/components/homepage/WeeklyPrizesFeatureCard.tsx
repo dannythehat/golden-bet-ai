@@ -16,7 +16,8 @@ export function WeeklyPrizesFeatureCard() {
           body="Climb the leaderboard, win weekly prize pots paid straight to members."
           image={HOMEPAGE_APPROVED_ASSETS.weeklyPrizes}
           imageAlt="Footy Oracle weekly prizes"
-          imagePosition="object-[center_30%]"
+          imagePosition="object-[center_45%]"
+          imageAspect="aspect-[5/4]"
           tone="amber"
           ctas={[{ label: 'See Prizes', to: primaryLink }]}
         />
