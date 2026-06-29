@@ -13,11 +13,6 @@ import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 
-/**
- * Footy Oracle Club homepage — locked to the approved mock-up direction.
- * Every section is a reusable, data-driven component. The layout stays stable;
- * content/images can rotate through the season.
- */
 export default function PreviewHome() {
   useEffect(() => {
     document.title = 'Footy Oracle Club — The Gaffer Knows';
@@ -30,30 +25,29 @@ export default function PreviewHome() {
 
       <HomepageNav />
 
-      <main className="relative mx-auto max-w-7xl space-y-5 px-3 py-5 sm:px-4 md:space-y-7 md:px-6 md:py-8">
-        {/* 1. Hero */}
+      <main className="relative mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-4 md:space-y-4 md:px-6 md:py-5">
         <HeroSection />
-        {/* 2. Feature ribbon */}
         <FeatureStrip />
-        {/* 3. Form Tables — full-width feature */}
-        <FormTablesSection />
-        {/* 4. Fantasy League — full-width feature */}
-        <FantasyLeagueFeatureCard />
-        {/* 5. Latest Articles */}
-        <LatestArticlesSection />
-        {/* 6. Weekly Prizes */}
-        <WeeklyPrizesFeatureCard />
-        {/* 7. Trust The Gaffer */}
-        <GafferStoryCard />
-        {/* 8. Donkey of the Week */}
+
+        <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
+          <FormTablesSection />
+          <FantasyLeagueFeatureCard />
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
+          <LatestArticlesSection />
+          <WeeklyPrizesFeatureCard />
+          <GafferStoryCard />
+        </div>
+
         <DonkeyOfTheWeekFeatureCard />
-        {/* 9. Community */}
-        <CommunityFeatureCard />
-        {/* 10. Tip of the Day */}
-        <TipOfTheDayCard />
-        {/* 11. Join The Club CTA */}
+
+        <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
+          <CommunityFeatureCard />
+          <TipOfTheDayCard />
+        </div>
+
         <FinalCallToActionBanner />
-        {/* 12. Footer */}
         <FooterNavigation />
       </main>
     </div>

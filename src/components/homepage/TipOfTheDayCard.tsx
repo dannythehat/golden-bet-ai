@@ -1,120 +1,73 @@
-import { ArrowRight, Clock, Flame, Sparkles } from 'lucide-react';
-import { SectionShell } from './primitives';
+import { HOMEPAGE_APPROVED_ASSETS } from './assets';
+import { useTipOfTheDay } from './useHomepageData';
 
-/**
- * Tip of the Day — premium placeholder until the live daily-pick data source
- * is wired in. Expected shape when connected:
- *   { home_team, away_team, home_badge, away_badge,
- *     market, odds, confidence, short_reason, updated_at }
- *
- * Pass `tip` as a prop once available; renders the "warming up" state when null.
- */
-export interface DailyTip {
-  home_team: string;
-  away_team: string;
-  home_badge?: string | null;
-  away_badge?: string | null;
-  market: string;
-  odds: number | string;
-  confidence: number; // 0-100
-  short_reason?: string | null;
-  updated_at?: string | null;
+function formatTipTime(value?: string | null) {
+  if (!value) return 'Updated daily';
+  return `Updated ${new Date(value).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
 }
 
-function TeamBadge({ name, badge }: { name: string; badge?: string | null }) {
-  const short = name.slice(0, 3).toUpperCase();
-  return (
-    <span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-sky-400/40 bg-sky-950/60 font-display text-lg tracking-wide text-sky-200 shadow-[0_0_25px_-8px_rgba(56,189,248,0.8)]">
-      {badge ? <img src={badge} alt={name} className="h-full w-full object-contain p-1.5" loading="lazy" /> : short}
-    </span>
-  );
+function formatOdds(odds: number | string) {
+  return typeof odds === 'number' ? odds.toFixed(2) : odds;
 }
 
-export function TipOfTheDayCard({ tip }: { tip?: DailyTip | null }) {
+/** Tip of the day — approved artwork with live pick data overlaid in-place. */
+export function TipOfTheDayCard() {
+  const { data: tip } = useTipOfTheDay();
+
   return (
-    <SectionShell
+    <section
       id="tip-of-the-day"
-      glow={{ border: 'rgba(56,189,248,0.45)', glow: 'rgba(14,165,233,0.5)' }}
-      className="bg-gradient-to-br from-[#04111f] via-[#06182b] to-[#040d18] p-5 md:p-8"
+      className="relative overflow-hidden rounded-[1.15rem] border border-sky-400/45 bg-[#04111f] shadow-[0_0_70px_-20px_rgba(56,189,248,0.55)] md:rounded-[1.45rem]"
     >
-      {/* Header */}
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <Flame className="h-9 w-9 text-sky-400" />
-          <div>
-            <h2 className="font-display text-3xl tracking-wide md:text-4xl">
-              <span className="text-sky-400">TIP</span> <span className="text-white">OF THE DAY</span>
-            </h2>
-            <p className="text-white/60">Expert pick. Back it with confidence.</p>
-          </div>
+      <img
+        src={HOMEPAGE_APPROVED_ASSETS.tipOfDay}
+        alt="Tip of the day panel"
+        className="block w-full"
+        loading="lazy"
+        width={1752}
+        height={968}
+      />
+
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute right-[6.6%] top-[7.3%] rounded-[0.8rem] bg-[#07111d]/82 px-[1.1vw] py-[0.7vw] text-[clamp(8px,0.95vw,16px)] font-semibold text-white/92 shadow-[0_0_24px_-10px_rgba(56,189,248,0.9)] backdrop-blur-sm">
+          {formatTipTime(tip?.updated_at)}
         </div>
-        <div className="flex items-center gap-2 rounded-xl border border-sky-400/30 px-4 py-2">
-          <Clock className="h-5 w-5 text-sky-400" />
-          <span>
-            <span className="block text-sm font-bold text-white">Daily Tip</span>
-            <span className="block text-xs text-white/55">
-              {tip?.updated_at
-                ? new Date(tip.updated_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-                : 'Updated daily'}
-            </span>
-          </span>
+
+        <div className="absolute left-[21.5%] top-[38.2%] w-[21%] rounded-[0.9rem] bg-[#07111d]/82 px-[1vw] py-[0.8vw] text-center shadow-[0_0_24px_-10px_rgba(56,189,248,0.9)] backdrop-blur-sm">
+          <div className="text-[clamp(14px,2.35vw,40px)] font-black uppercase leading-none text-white">{tip?.home_team ?? 'Home'}</div>
+        </div>
+
+        <div className="absolute right-[10.5%] top-[38.2%] w-[23%] rounded-[0.9rem] bg-[#07111d]/82 px-[1vw] py-[0.8vw] text-center shadow-[0_0_24px_-10px_rgba(56,189,248,0.9)] backdrop-blur-sm">
+          <div className="text-[clamp(14px,2.35vw,40px)] font-black uppercase leading-none text-white">{tip?.away_team ?? 'Away'}</div>
+        </div>
+
+        <div className="absolute left-1/2 top-[50.6%] w-[29%] -translate-x-1/2 rounded-[0.95rem] bg-[#07111d]/88 px-[1vw] py-[0.9vw] text-center shadow-[0_0_28px_-8px_rgba(56,189,248,0.95)] backdrop-blur-sm">
+          <div className="text-[clamp(10px,1vw,16px)] font-black uppercase tracking-[0.18em] text-sky-300">Our Tip</div>
+          <div className="mt-[0.2vw] text-[clamp(16px,2.2vw,38px)] font-black uppercase leading-none text-white">{tip?.market ?? 'Today\'s Pick'}</div>
+          <div className="mt-[0.2vw] text-[clamp(16px,2.3vw,40px)] font-black leading-none text-sky-300">{tip ? formatOdds(tip.odds) : '—'}</div>
+        </div>
+
+        <div className="absolute bottom-[9.7%] left-[7.3%] right-[7.3%] grid grid-cols-4 overflow-hidden rounded-[1rem] border border-sky-400/20 bg-[#07111d]/78 text-center shadow-[0_0_26px_-10px_rgba(56,189,248,0.8)] backdrop-blur-sm">
+          <div className="px-[0.8vw] py-[1vw] text-white/95">
+            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">{tip?.confidence ?? 72}%</div>
+            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Confidence</div>
+          </div>
+          <div className="px-[0.8vw] py-[1vw] text-white/95">
+            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">8/10</div>
+            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Form Guide</div>
+          </div>
+          <div className="px-[0.8vw] py-[1vw] text-white/95">
+            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">4</div>
+            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Tips Won</div>
+          </div>
+          <div className="px-[0.8vw] py-[1vw] text-white/95">
+            <div className="text-[clamp(13px,2vw,34px)] font-black leading-none text-sky-300">9.4K+</div>
+            <div className="mt-[0.25vw] text-[clamp(8px,0.95vw,15px)] font-semibold uppercase tracking-[0.14em] text-white/70">Following</div>
+          </div>
         </div>
       </div>
 
-      {tip ? (
-        <>
-          {/* Match */}
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-sky-400/15 bg-sky-950/20 p-5 md:flex-row md:justify-center md:gap-8">
-            <div className="flex items-center gap-3">
-              <TeamBadge name={tip.home_team} badge={tip.home_badge} />
-              <div className="text-left">
-                <div className="font-display text-2xl tracking-wide text-white">{tip.home_team}</div>
-                <div className="text-xs uppercase tracking-widest text-white/50">Home</div>
-              </div>
-            </div>
-
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-sky-400/40 font-display text-lg text-white">VS</div>
-
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <div className="font-display text-2xl tracking-wide text-white">{tip.away_team}</div>
-                <div className="text-xs uppercase tracking-widest text-white/50">Away</div>
-              </div>
-              <TeamBadge name={tip.away_team} badge={tip.away_badge} />
-            </div>
-          </div>
-
-          {/* Our tip */}
-          <div className="mx-auto -mt-3 w-fit rounded-2xl border border-sky-400/40 bg-[#06182b] px-8 py-3 text-center shadow-[0_0_30px_-10px_rgba(56,189,248,0.8)]">
-            <div className="text-xs font-black uppercase tracking-widest text-sky-400">Our Tip</div>
-            <div className="font-display text-2xl tracking-wide text-white">{tip.market}</div>
-            <div className="font-display text-3xl text-sky-400">{typeof tip.odds === 'number' ? tip.odds.toFixed(2) : tip.odds}</div>
-          </div>
-
-          {tip.short_reason && (
-            <p className="mt-5 rounded-2xl border border-sky-400/15 bg-sky-950/20 p-4 text-center text-sm text-white/75">
-              {tip.short_reason}
-            </p>
-          )}
-
-          <div className="mt-4 flex items-center justify-center gap-3 text-sm text-white/70">
-            <span className="rounded-full border border-sky-400/30 px-3 py-1">
-              Confidence <span className="font-display text-base text-sky-300">{tip.confidence}%</span>
-            </span>
-          </div>
-        </>
-      ) : (
-        /* Premium "warming up" placeholder */
-        <div className="rounded-2xl border border-sky-400/15 bg-sky-950/20 p-10 text-center">
-          <Sparkles className="mx-auto h-10 w-10 animate-pulse text-sky-400" />
-          <p className="mt-4 font-display text-2xl tracking-wide text-white">The Gaffer's still picking today's tip.</p>
-          <p className="mt-2 text-sm text-white/55">Pop back shortly — the next call lands daily.</p>
-        </div>
-      )}
-
-      <a href="/fixtures" className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sky-600 to-blue-600 px-6 py-4 font-display text-xl tracking-wide text-white shadow-[0_10px_30px_-12px_rgba(56,189,248,0.8)] transition-transform hover:scale-[1.01]">
-        VIEW ALL TODAY'S TIPS <ArrowRight className="h-5 w-5" />
-      </a>
-    </SectionShell>
+      <a href="/fixtures" aria-label="View all today's tips" className="absolute bottom-[2.8%] left-[24%] h-[8%] w-[52%] rounded-[1rem]" />
+    </section>
   );
 }
