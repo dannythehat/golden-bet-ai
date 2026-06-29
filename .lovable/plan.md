@@ -1,96 +1,42 @@
-# Tier 5 — Monetise the Audience
+## Goal
 
-Three connected builds: upgrade Form Tables, launch a World Cup Specials hub, and put daily picks + Telegram alerts behind a £3/mo paywall. Soft, friendly paywall message: *"Due to growing demand and to keep the lights on, we've added a tiny £3/mo charge for premium picks. Free stuff stays free."*
+Every homepage section is currently a single desktop-resolution PNG, which is why mobile shows tiny text and squished grids. We'll rebuild each section as real responsive HTML/CSS so text, icons, buttons, and grids scale natively. Desktop will keep the same visual identity (purple/black, neon accents, color-per-section borders); mobile will reflow to one column with full-size legible content.
 
----
+## What gets rebuilt
 
-## 1. Free vs Paid — the line in the sand
+Each item below stops being an `<img>` and becomes a real component built from primitives, lucide icons, and tailwind. Existing data hooks (`useDonkey`, `useGafferStory`, `useFeatureStrip`, etc.) stay; only the rendering changes.
 
-**Free (lead magnets — drive signups & SEO):**
-- Form Tables v2 (full read access)
-- Blog: Results recaps, form-table articles, league pages
-- Verified P&L history (full transparency stays free — it's our trust signal)
-- Homepage Gaffer streak banner
-- ACCA of the Day result (yesterday's) — *teases today's locked pick*
+1. **HeroBanner** — Replace the desktop hero PNG with: brand block (crest + "Footy Oracle / The Gaffer Knows"), social row, headline "Witty. Fun. Football. Tips That Hit.", subhead, JOIN THE CLUB + EXPLORE TODAY'S TIPS buttons, and the gaffer cut-out (kept as a transparent PNG asset, not the whole hero) on the right at md+. Login + Join in a real header above it.
+2. **FeatureStrip** — Already responsive; keep but verify mobile sizing (2-col → 7-col).
+3. **FormTablesSection** — Green-glow card with 8-tile grid (Over 2.5, BTTS, Over 9.5 Corners, Team Corners, Cards, Home Form, Away Form, Last 5/10) using lucide icons; 2-col on mobile, 4-col desktop. Single "Explore Today's Form Tables" CTA below.
+4. **FantasyLeagueFeatureCard** — Purple panel with "Fantasy Premier League / NEW" eyebrow, "JOIN THE LEAGUE" headline, copy, and a trophy/crown lucide icon block. CTA to /fantasy-league.
+5. **WeeklyPrizesFeatureCard** — Amber-glow card listing prize types (hampers, gear, glory) with gift icon and CTA.
+6. **GafferStoryCard** — Pink-glow card: avatar circle + "Meet The Gaffer" headline + short bio pulled from `useGafferStory` + CTA.
+7. **DonkeyOfTheWeekFeatureCard** — Fuchsia-glow card showing donkey-of-the-week name/team from `useDonkey` + CTA.
+8. **CommunityFeatureCard** — Cyan-glow card with Facebook + Telegram tiles using `SOCIAL_LINKS`, each a real button.
+9. **TipOfTheDayCard** — keep if already responsive; otherwise rebuild similarly.
+10. **FinalCallToActionBanner** — Purple banner: headline + JOIN CTA, no baked image.
 
-**Paid — Gaffer's Inner Circle (£3/mo):**
-- Today's 3 Golden Bets (currently free → move behind paywall)
-- ACCA Delight & Bet Builder daily picks
-- "Why this bet?" Gaffer explainer
-- Telegram alerts: 09:30 daily picks + in-play value alerts
-- Email digest of daily picks
-- World Cup Specials hub (outright, group winners, top scorer, golden boot)
-- Alert Preferences (league/market filters)
+## Design tokens (kept consistent across sections)
 
-**Soft paywall pattern**: show the fixture + market name, blur the pick & odds, with a "Unlock for £3/mo" CTA + the friendly message above.
+- Background: `#05020b` page, section surfaces `#0c0418`/`#10051a`
+- Accents per section: emerald (form tables), amber (prizes), fuchsia (donkey), pink (gaffer), cyan (community), violet (fantasy), gold `#f5c542` (CTAs)
+- Headings: existing display font; body: existing sans
+- Card pattern: `rounded-2xl border border-{accent}/40 bg-{surface} shadow-[0_0_60px_-20px_{accent-glow}] p-5 md:p-7`
+- Mobile-first: every grid starts `grid-cols-1` or `grid-cols-2`, expands at `md:`/`lg:`
 
----
+## Cleanup
 
-## 2. Form Tables v2 (free, upgraded)
+- Delete unused PNG assets via `lovable-assets delete` after the rebuild is verified: footy-homepage-hero, footy-form-tables, footy-fantasy-league, footy-weekly-prizes, footy-gaffer-story, footy-community, footy-donkey, footy-tip-of-day, footy-final-cta-footer, plus `hero-banner.png` once HeroBanner is rebuilt.
+- Trim `HOMEPAGE_APPROVED_ASSETS` map.
+- Keep `gaffer-hero-portrait` (transparent PNG) for the new hero.
 
-Goal: make this the best free form table on the web → SEO + signup driver.
+## Out of scope
 
-- **New columns**: xG for/against, clean sheet %, BTTS %, avg corners for/against, avg cards, home/away splits toggle
-- **Sortable** by any column, sticky team column on mobile
-- **"Hot/Cold" badges**: auto-flag teams on 5+ scoring streak, 3+ clean sheets, etc.
-- **Gaffer Quick Take**: tiny AI blurb per league ("Arsenal are unplayable at home — 8 wins from 9")
-- **Per-team drill-down**: click a team → last 10 fixtures + upcoming + Gaffer notes
-- Reuses existing `team_rolling_stats` + `LeaguePage` data; no new ingest needed
+- No data/API changes — same hooks, same routes (`/pricing`, `/predictions`, `/form-tables`, `/fantasy-league`, `/blog`, `/auth`).
+- No content/copy changes beyond what's already on the PNGs.
+- No theme overhaul — same palette and tone.
 
----
+## Verification
 
-## 3. World Cup Specials Hub (free article landing, paid for picks)
-
-New route `/world-cup-2026` (or current major tournament):
-- Outright winner odds tracker (best price across books, movement chart)
-- Group-by-group preview pages (free) — SEO honey
-- Top scorer / Golden boot / Golden glove markets
-- **Gaffer's Tournament Picks** — locked behind paywall (£3/mo unlocks all)
-- Daily tournament recap blog posts during the event
-- Auto-update from `odds-api` for the tournament-specific markets
-
----
-
-## 4. Telegram Alerts (paid tier killer feature)
-
-- Connect Telegram via Lovable connector
-- New `telegram_subscribers` table: `user_id`, `chat_id`, `verified_at`, `preferences` (markets, leagues)
-- Bot flow: user clicks "Connect Telegram" in app → opens bot → bot sends `/start <user_id>` → webhook verifies & links
-- **Cron pushes**:
-  - 09:30 — today's Golden Bets + ACCA + Bet Builder
-  - In-play value alerts (re-use `gaffer-alerts`)
-  - Results recap at 23:00
-- Gate behind `is_subscriber = true` check before sending
-
----
-
-## 5. Payments — £3/mo via Stripe
-
-- Enable `enable_stripe_payments` (built-in, no Stripe account needed to start)
-- One product, one price: "Gaffer's Inner Circle — £3/mo"
-- `subscribers` table: `user_id`, `stripe_customer_id`, `subscription_status`, `current_period_end`
-- Webhook handler for `customer.subscription.*` events
-- `useSubscription()` hook → drives paywall blur on all gated components
-- "My Subscription" page with cancel/manage link
-
----
-
-## 6. Build order (recommended)
-
-1. **Stripe + paywall plumbing** (foundation — nothing else gates without it)
-2. **Form Tables v2** (free upgrade — broaden top of funnel first)
-3. **Paywall the existing daily picks** (with friendly message + 7-day free trial?)
-4. **Telegram alerts** (the "must-have" feature that converts free → paid)
-5. **World Cup Specials hub** (timed to tournament — biggest traffic spike of the year)
-
----
-
-## Decisions I need from you
-
-1. **7-day free trial on the £3 plan?** (Recommended — boosts conversion ~2-3x)
-2. **Annual price?** e.g. £30/year (saves £6) — adds upfront cash & reduces churn
-3. **Grandfather existing users?** Anyone who signed up before launch gets 1 month free
-4. **Telegram: one shared channel or per-user DMs?** (DMs = more personal & filterable; channel = simpler & viral)
-5. **Which tournament for the Specials hub?** World Cup 2026 is 2 years out — start with Euros / current Champions League knockouts as the MVP?
-
-Ping me with answers (or just say "you pick" again) and I'll start with step 1.
+After build: load `/index` at mobile (393px), tablet (768px), and desktop (1280px); confirm no horizontal scroll, every headline ≥ 18px, every CTA tappable ≥ 44px, every section reflows to one column on mobile.
