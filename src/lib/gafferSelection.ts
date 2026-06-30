@@ -1,13 +1,14 @@
 /**
  * The Gaffer's daily selection — derived from the form-table signals.
  *
- * The ENGINE picks the value (objective). The Gaffer Engine owns the WORDING;
- * `placeholderReason` here is a factual stand-in only, replaced by his real
- * voice once docs/gaffer/ is populated. Staking model: £10 per bet; if two
- * picks qualify they combine into a £10 DOUBLE, otherwise a £10 SINGLE.
+ * The ENGINE picks the value (objective). The Gaffer Engine owns the WORDING:
+ * `placeholderReason` carries his real voice (gafferReason) — a fresh, anti-repeat
+ * read assembled from the phrase banks, never a fixed sentence. Staking model:
+ * £10 per bet; if two picks qualify they combine into a £10 DOUBLE, else a £10 SINGLE.
  */
 import raw from '@/data/formTablesData.json';
 import type { FormFixtureRow, FormValueCell } from '@/types/footy';
+import { gafferReason } from '@/lib/gafferVoice';
 
 const DATA = raw as unknown as { fixtures: FormFixtureRow[] };
 export const STAKE = 10;
@@ -33,11 +34,6 @@ export type DailyBet =
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-function reason(leg: Omit<Leg, 'placeholderReason'>): string {
-  const where = leg.market === 'Corners' ? 'corners' : leg.market === 'Goals' ? 'goals' : 'both teams scoring';
-  return `Form points to ${leg.selection.toLowerCase()} — the numbers say ${leg.prob}% on ${where}, the bookies are pricing it at ${Math.round(1000 / leg.odds) / 10}%. That's the value.`;
-}
-
 /** All qualifying value picks across markets, best edge first. */
 export function getGafferPicks(): Leg[] {
   const legs: Leg[] = [];
@@ -47,7 +43,17 @@ export function getGafferPicks(): Leg[] {
       fixtureId: f.id, home: f.home, away: f.away, region: f.region, league: f.league, time: f.time,
       market, selection, odds: cell.odds, prob: cell.prob, edge: cell.edge, flag: cell.flag,
     };
-    legs.push({ ...base, placeholderReason: reason(base) });
+    legs.push({
+      ...base,
+      placeholderReason: gafferReason(
+        {
+          team: base.home.name, opp: base.away.name, market: base.market,
+          selection: base.selection, odds: base.odds, pct: base.prob,
+          edge: base.edge, tier: base.flag,
+        },
+        base.fixtureId,
+      ),
+    });
   };
   for (const f of DATA.fixtures) {
     add(f, 'Corners', 'Over 9.5 Corners', f.value.corners['9.5']);

@@ -26,7 +26,7 @@ export interface PickSignals {
   odds: number;
   pct: number;           // form %
   edge: number;
-  streak: number;
+  streak?: number;       // current run in the market (optional)
   tier: 'strong' | 'value';
 }
 
@@ -64,32 +64,54 @@ function pick<T>(bank: T[], key: string, rng: () => number): T {
 const fill = (s: string, v: Record<string, string | number>) =>
   s.replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? String(v[k]) : `{${k}}`));
 
+const varsFor = (s: PickSignals, rng: () => number) => ({
+  team: s.team, opp: s.opp,
+  teamNick: nickname(s.team, Math.floor(rng() * 4)),
+  oppNick: nickname(s.opp, Math.floor(rng() * 4)),
+  market: s.market, mark: s.mark ?? '', odds: s.odds.toFixed(2),
+  pct: Math.round(s.pct), edge: `+${Math.round(s.edge)}`, streak: `${s.streak ?? 0}`,
+});
+
+// Only use streak-flavoured edge phrases when there's a real streak to mention.
+const edgeBankFor = (s: PickSignals) =>
+  s.streak && s.streak > 0 ? EDGE_PHRASES : EDGE_PHRASES.filter((e) => !e.includes('{streak}'));
+
+const verdictBankFor = (s: PickSignals) => (s.tier === 'strong' ? VERDICT_STRONG : VERDICT_VALUE);
+
 /**
- * Build the Gaffer's line for a value pick. Pass a unique `seed` (e.g. fixtureId
- * + date) so the same pick is stable, but different picks/days never collide.
- * `flavourful` adds a banter aside ~half the time.
+ * Full Gaffer pick line — opener → read → value → verdict → (aside) → hedge →
+ * sign-off. Pass a unique `seed` (e.g. fixtureId + date) so the same pick is
+ * stable, but different picks/days never collide.
  */
 export function gafferPickLine(s: PickSignals, seed = '', flavourful = true): string {
   const rng = mulberry32(seedOf(`${s.team}|${s.opp}|${s.market}|${seed}`));
-  const vars = {
-    team: s.team, opp: s.opp,
-    teamNick: nickname(s.team, Math.floor(rng() * 4)),
-    oppNick: nickname(s.opp, Math.floor(rng() * 4)),
-    market: s.market, mark: s.mark ?? '', odds: s.odds.toFixed(2),
-    pct: Math.round(s.pct), edge: `+${Math.round(s.edge)}`, streak: `${s.streak}`,
-  };
-
-  const verdictBank = s.tier === 'strong' ? VERDICT_STRONG : VERDICT_VALUE;
+  const vars = varsFor(s, rng);
   const parts = [
     pick(OPENERS, 'opener', rng),
     pick(MARKET_FLAVOUR[s.market] ?? MARKET_FLAVOUR.Goals, `flavour:${s.market}`, rng),
-    pick(EDGE_PHRASES, 'edge', rng),
-    pick(verdictBank, `verdict:${s.tier}`, rng),
+    pick(edgeBankFor(s), 'edge', rng),
+    pick(verdictBankFor(s), `verdict:${s.tier}`, rng),
   ];
   if (flavourful && rng() > 0.5) parts.push(pick(ASIDES, 'aside', rng));
   parts.push(pick(HEDGES, 'hedge', rng));
   parts.push(pick(SIGN_OFFS, 'signoff', rng));
+  return parts.map((p) => fill(p, vars)).join(' ');
+}
 
+/**
+ * Gaffer's READ for a pick whose fixture is already shown on screen — the
+ * football read + the value + verdict + a hedge, with no opener naming the teams
+ * and no sign-off. Ideal for the picks box / tip cards.
+ */
+export function gafferReason(s: PickSignals, seed = ''): string {
+  const rng = mulberry32(seedOf(`${s.team}|${s.opp}|${s.market}|reason|${seed}`));
+  const vars = varsFor(s, rng);
+  const parts = [
+    pick(MARKET_FLAVOUR[s.market] ?? MARKET_FLAVOUR.Goals, `flavour:${s.market}`, rng),
+    pick(edgeBankFor(s), 'edge', rng),
+    pick(verdictBankFor(s), `verdict:${s.tier}`, rng),
+    pick(HEDGES, 'hedge', rng),
+  ];
   return parts.map((p) => fill(p, vars)).join(' ');
 }
 
