@@ -1,8 +1,5 @@
 import { Mail, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
-import { MAJOR_LEAGUES } from '@/config/majorLeagues';
-import { leagueSlug } from '@/pages/LeaguePage';
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -84,20 +81,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">
               Got questions or feedback? We'd love to hear from you.
             </p>
-          </div>
-
-          {/* League pages — internal links for SEO */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Top Leagues</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {MAJOR_LEAGUES.filter(l => l.priority === 1).slice(0, 8).map(l => (
-                <li key={l.id}>
-                  <Link to={`/league/${leagueSlug(l)}`} className="hover:text-foreground transition-colors">
-                    {l.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 
