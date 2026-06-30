@@ -5,7 +5,7 @@ import { ArtworkCard } from './ArtworkCard';
 import { HOMEPAGE_APPROVED_ASSETS } from './assets';
 import { NAV_LINKS } from './content';
 import heroBannerClean from '@/assets/homepage/hero-banner-clean.png';
-import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
+import footyOracleLogo from '@/assets/footy-oracle-logo-v2.png.asset.json';
 
 export function HeroBanner() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,20 +15,18 @@ export function HeroBanner() {
       {/* Mobile hero — readable HTML composition */}
       <div className="md:hidden px-3 pt-6 pb-2">
         <div className="relative overflow-hidden rounded-2xl border border-amber-300/30 bg-gradient-to-b from-[#1a0a2e] via-[#0a0414] to-[#0a0414] shadow-[0_30px_80px_-30px_rgba(245,197,66,0.45)]">
-          {/* Top nav bar: real logo + menu + auth buttons */}
-          <div className="relative z-10 flex items-center justify-between gap-2 border-b border-amber-300/15 bg-[#07000f]/80 px-3 py-2 backdrop-blur">
-            <Link to="/" className="flex min-w-0 items-center gap-2">
+          {/* Top nav bar: big logo + menu + auth buttons */}
+          <div className="relative z-10 flex items-center justify-between gap-2 border-b border-amber-300/15 bg-[#07000f]/80 px-3 py-3 backdrop-blur">
+            <Link to="/" className="flex min-w-0 items-center" aria-label="Footy Oracle home">
               <img
-                src={footyOracleLogo}
-                alt="Footy Oracle"
-                width={32}
-                height={32}
-                className="h-8 w-8 rounded-md border border-amber-300/40 object-cover"
+                src={footyOracleLogo.url}
+                alt="Footy Oracle — Tips. Stats. Success."
+                width={220}
+                height={220}
+                className="h-20 w-auto object-contain drop-shadow-[0_4px_20px_rgba(139,92,246,0.45)]"
               />
-              <span className="truncate text-[12px] font-extrabold uppercase tracking-[0.14em] text-amber-300">
-                Footy Oracle
-              </span>
             </Link>
+
             <div className="flex items-center gap-1.5">
               <Link
                 to="/auth"
