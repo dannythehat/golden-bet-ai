@@ -51,7 +51,7 @@ the database remembers; the Gaffer narrates.
 | `OPENERS` | how he kicks a pick off |
 | `MARKET_FLAVOUR` | colour per market (Corners/Goals/Cards/BTTS) |
 | `VERDICT_STRONG` / `VERDICT_VALUE` | his call, by value tier |
-| `EDGE_LINES` | the "bookies asleep" lines (numbers slot in) |
+| `EDGE_PHRASES` | the "bookies asleep" lines (numbers slot in) |
 | `HEDGES` | the never-a-guarantee caveats |
 | `NO_BET` | ways to say "no value, I'm passing" |
 | `SIGN_OFFS` | closers |
@@ -73,6 +73,6 @@ the database remembers; the Gaffer narrates.
 
 ## Placeholders
 
-`{team} {opp} {teamNick} {oppNick} {market} {line} {odds} {pct} {edge} {streak}`
+`{team} {opp} {teamNick} {oppNick} {market} {mark} {odds} {pct} {edge} {streak}`
 — filled by the voice engine from the live signals. Never hard-code a team or a
 number into a bank entry.

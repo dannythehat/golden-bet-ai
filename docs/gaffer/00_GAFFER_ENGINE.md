@@ -58,7 +58,7 @@ conflict — personality drives interpretation).
 ## How it runs (code)
 
 - **Phrase banks:** `src/data/gaffer/phraseLibrary.ts` — openers, market flavour,
-  verdicts, edge lines, hedges, no-bet lines, sign-offs, banter, donkey roasts,
+  verdicts, edge lines, hedges, no-bet phrases, sign-offs, banter, donkey roasts,
   real-team nicknames. Seed banks, designed to grow indefinitely.
 - **Voice engine:** `src/lib/gafferVoice.ts` — assembles a fresh line from the
   banks (`gafferPickLine`, `gafferNoBetLine`, `gafferDonkeyLine`), with an

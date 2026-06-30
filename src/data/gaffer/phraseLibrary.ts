@@ -7,7 +7,7 @@
  * src/lib/gafferVoice.ts). Modest banks combine into millions of unique lines.
  *
  * Placeholders the assembler fills: {team} {opp} {teamNick} {oppNick} {market}
- * {line} {odds} {pct} {edge} {streak}.
+ * {mark} {odds} {pct} {edge} {streak}.
  *
  * These are SEED banks — designed to keep growing. Add entries freely; the
  * engine scales automatically. Voice rules live in docs/gaffer/03_LANGUAGE.md
@@ -131,8 +131,8 @@ export const VERDICT_VALUE = [
   'That’ll do nicely for value.',
 ];
 
-/* ── Edge / "bookies asleep" lines (slot the numbers in) ─────────────────── */
-export const EDGE_LINES = [
+/* ── Edge / "bookies asleep" phrases (slot the numbers in) ─────────────────── */
+export const EDGE_PHRASES = [
   'Form says {pct}% and the bookies are still kipping at {odds}.',
   'My numbers have it {pct}%, they’ve priced {odds} — that gap is the value.',
   'The book’s asleep: {pct}% on the form, {odds} on the board.',
@@ -153,7 +153,7 @@ export const HEDGES = [
   'Keep it tidy with the stakes — long game, this.',
 ];
 
-/* ── No-bet lines — when there's no value, he passes (loads of these) ─────── */
+/* ── No-bet phrases — when there's no value, he passes (loads of these) ─────── */
 export const NO_BET = [
   'Had a proper look at today’s card and… nothing. Bookies have got it bang on.',
   'No value out there today, lads. I’m sitting on me hands.',

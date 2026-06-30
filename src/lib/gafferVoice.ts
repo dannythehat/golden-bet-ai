@@ -11,7 +11,7 @@
  * docs/gaffer/03_LANGUAGE.md, 04_HUMOUR.md, 10_PHRASE_MEMORY.md.
  */
 import {
-  OPENERS, MARKET_FLAVOUR, VERDICT_STRONG, VERDICT_VALUE, EDGE_LINES,
+  OPENERS, MARKET_FLAVOUR, VERDICT_STRONG, VERDICT_VALUE, EDGE_PHRASES,
   HEDGES, SIGN_OFFS, ASIDES, NO_BET, DONKEY_ROASTS, nickname,
 } from '../data/gaffer/phraseLibrary';
 
@@ -22,7 +22,7 @@ export interface PickSignals {
   opp: string;
   market: Market;
   selection: string;     // 'Over 9.5 Corners'
-  line?: string;         // '9.5'
+  mark?: string;          // '9.5'
   odds: number;
   pct: number;           // form %
   edge: number;
@@ -75,7 +75,7 @@ export function gafferPickLine(s: PickSignals, seed = '', flavourful = true): st
     team: s.team, opp: s.opp,
     teamNick: nickname(s.team, Math.floor(rng() * 4)),
     oppNick: nickname(s.opp, Math.floor(rng() * 4)),
-    market: s.market, line: s.line ?? '', odds: s.odds.toFixed(2),
+    market: s.market, mark: s.mark ?? '', odds: s.odds.toFixed(2),
     pct: Math.round(s.pct), edge: `+${Math.round(s.edge)}`, streak: `${s.streak}`,
   };
 
@@ -83,7 +83,7 @@ export function gafferPickLine(s: PickSignals, seed = '', flavourful = true): st
   const parts = [
     pick(OPENERS, 'opener', rng),
     pick(MARKET_FLAVOUR[s.market] ?? MARKET_FLAVOUR.Goals, `flavour:${s.market}`, rng),
-    pick(EDGE_LINES, 'edge', rng),
+    pick(EDGE_PHRASES, 'edge', rng),
     pick(verdictBank, `verdict:${s.tier}`, rng),
   ];
   if (flavourful && rng() > 0.5) parts.push(pick(ASIDES, 'aside', rng));

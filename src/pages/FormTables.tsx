@@ -17,29 +17,29 @@ const DATA = raw as unknown as { leagues: { name: string; region: string }[]; fi
 type CatKey = 'corners' | 'goals' | 'cards' | 'btts';
 interface Cat {
   key: CatKey; label: string; unit: string; pct?: boolean;
-  lines?: string[];
+  marks?: string[];
   avg: (f: Fixture) => number;
-  over?: (f: Fixture, line: string) => number | null;
-  odds: (f: Fixture, line: string | null) => number | null;
-  value: (f: Fixture, line: string | null) => ValueCell;
+  over?: (f: Fixture, mark: string) => number | null;
+  odds: (f: Fixture, mark: string | null) => number | null;
+  value: (f: Fixture, mark: string | null) => ValueCell;
 }
 const CATS: Cat[] = [
   {
-    key: 'corners', label: 'Corners', unit: 'corners', lines: ['8.5', '9.5', '10.5'],
+    key: 'corners', label: 'Corners', unit: 'corners', marks: ['8.5', '9.5', '10.5'],
     avg: (f) => f.corners_avg,
     over: (f, l) => f.corners_over[l] ?? null,
     odds: (f, l) => (l ? f.corners_odds[l] ?? null : null),
     value: (f, l) => (l ? f.value.corners[l] ?? null : null),
   },
   {
-    key: 'goals', label: 'Goals', unit: 'goals', lines: ['2.5', '3.5', '4.5'],
+    key: 'goals', label: 'Goals', unit: 'goals', marks: ['2.5', '3.5', '4.5'],
     avg: (f) => f.goals_avg,
     over: (f, l) => f.goals_over[l] ?? null,
     odds: (f, l) => (l ? f.goals_odds[l] ?? null : null),
     value: (f, l) => (l ? f.value.goals[l] ?? null : null),
   },
   {
-    key: 'cards', label: 'Cards', unit: 'cards', lines: ['3.5', '4.5', '5.5'],
+    key: 'cards', label: 'Cards', unit: 'cards', marks: ['3.5', '4.5', '5.5'],
     avg: (f) => f.cards_avg,
     odds: (f, l) => (l ? f.cards_odds[l] ?? null : null),
     value: () => null,
@@ -69,7 +69,7 @@ function ValueBadge({ cell }: { cell: ValueCell }) {
 }
 
 /** The Gaffer's top selection for the active market — his pick, in plain terms. */
-function GafferBanner({ fixture, label, line, cell }: { fixture: Fixture | null; label: string; line: string | null; cell: ValueCell }) {
+function GafferBanner({ fixture, label, mark, cell }: { fixture: Fixture | null; label: string; mark: string | null; cell: ValueCell }) {
   if (!fixture || !cell) {
     return (
       <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white/60">
@@ -90,7 +90,7 @@ function GafferBanner({ fixture, label, line, cell }: { fixture: Fixture | null;
           </div>
         </div>
         <div className="text-right">
-          <div className="font-display text-xl text-white">Over {line} {label}</div>
+          <div className="font-display text-xl text-white">Over {mark} {label}</div>
           <div className="text-sm text-white/70">form <span className="text-emerald-400">{cell.prob}%</span> · odds <span className="text-gold">{odd(cell.odds)}</span></div>
         </div>
       </div>
@@ -103,28 +103,28 @@ const formString = (games: FormGame[]) => games.slice(0, 5).map((g) => g.res).re
 
 export default function FormTables() {
   const [cat, setCat] = useState<CatKey>('corners');
-  const [lineIdx, setLineIdx] = useState(1);
+  const [markIdx, setMarkIdx] = useState(1);
   const [league, setLeague] = useState<string>('all');
   const [selected, setSelected] = useState<Fixture | null>(null);
 
   useEffect(() => { document.title = 'Form Tables — Footy Oracle Club'; }, []);
 
   const C = CATS.find((c) => c.key === cat)!;
-  const line = C.lines?.[Math.min(lineIdx, C.lines.length - 1)] ?? null;
+  const mark = C.marks?.[Math.min(markIdx, C.marks.length - 1)] ?? null;
 
   const rows = useMemo(() => {
     const list = DATA.fixtures.filter((f) => league === 'all' || f.league === league);
     return [...list].sort((a, b) => C.avg(b) - C.avg(a));
   }, [league, C]);
 
-  // The Gaffer's pick = highest-edge flagged fixture for the active market/line.
+  // The Gaffer's pick = highest-edge flagged fixture for the active market/mark.
   const gafferPick = useMemo(() => {
     const flagged = rows
-      .map((f) => ({ f, cell: C.value(f, line) }))
+      .map((f) => ({ f, cell: C.value(f, mark) }))
       .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell?.flag);
     flagged.sort((a, b) => b.cell.edge - a.cell.edge);
     return flagged[0] ?? null;
-  }, [rows, C, line]);
+  }, [rows, C, mark]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
@@ -152,7 +152,7 @@ export default function FormTables() {
           {CATS.map((c) => (
             <button
               key={c.key}
-              onClick={() => { setCat(c.key); setLineIdx(1); }}
+              onClick={() => { setCat(c.key); setMarkIdx(1); }}
               className={`rounded-xl px-4 py-2 text-sm font-bold transition-colors ${cat === c.key ? 'bg-emerald-500 text-[#04140d]' : 'border border-white/12 bg-white/[0.05] text-white/75 hover:bg-white/[0.09]'}`}
             >
               {c.label}
@@ -162,13 +162,13 @@ export default function FormTables() {
 
         {/* Controls */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          {C.lines ? (
+          {C.marks ? (
             <div className="inline-flex overflow-hidden rounded-xl border border-white/12">
-              {C.lines.map((ln, i) => (
+              {C.marks.map((ln, i) => (
                 <button
                   key={ln}
-                  onClick={() => setLineIdx(i)}
-                  className={`px-4 py-1.5 text-sm font-bold transition-colors ${i === lineIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
+                  onClick={() => setMarkIdx(i)}
+                  className={`px-4 py-1.5 text-sm font-bold transition-colors ${i === markIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
                 >
                   Over {ln}
                 </button>
@@ -187,7 +187,7 @@ export default function FormTables() {
         </div>
 
         {/* The Gaffer's selection for this market */}
-        <GafferBanner fixture={gafferPick?.f ?? null} label={C.label} line={line} cell={gafferPick?.cell ?? null} />
+        <GafferBanner fixture={gafferPick?.f ?? null} label={C.label} mark={mark} cell={gafferPick?.cell ?? null} />
 
         {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-white/[0.03] backdrop-blur-xl">
@@ -196,7 +196,7 @@ export default function FormTables() {
             <span className="w-5 text-center">#</span>
             <span className="w-[60px]" />
             <span className="flex-1">Fixture</span>
-            {C.over && <span className="hidden w-14 text-right sm:block">Over {line}</span>}
+            {C.over && <span className="hidden w-14 text-right sm:block">Over {mark}</span>}
             <span className="w-14 text-right">Odds</span>
             <span className="w-14 text-right">Avg</span>
             <span className="w-12 text-right">KO</span>
@@ -204,8 +204,8 @@ export default function FormTables() {
           </div>
 
           {rows.map((f, i) => {
-            const overPct = C.over ? C.over(f, line!) : null;
-            const o = C.odds(f, line);
+            const overPct = C.over ? C.over(f, mark!) : null;
+            const o = C.odds(f, mark);
             return (
               <button
                 key={f.id}
@@ -329,12 +329,12 @@ function FixtureDetail({ f, cat }: { f: Fixture; cat: CatKey }) {
           </div>
         </section>
 
-        {/* Market breakdown — form % + odds + value per line */}
-        {C.lines && (
+        {/* Market breakdown — form % + odds + value per mark */}
+        {C.marks && (
           <section>
-            <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">{C.label} — lines, odds & value</h3>
+            <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">{C.label} — odds & value</h3>
             <div className="space-y-1.5">
-              {C.lines.map((ln) => {
+              {C.marks.map((ln) => {
                 const pct = C.over ? C.over(f, ln) : null;
                 const cell = C.value(f, ln);
                 return (
