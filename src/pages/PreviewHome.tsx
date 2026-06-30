@@ -12,6 +12,9 @@ import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { HomepageScene } from '@/components/homepage/HomepageScene';
+import { TodaysDouble } from '@/components/homepage/TodaysDouble';
+import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
+import { PnLSection } from '@/components/homepage/PnLSection';
 
 export default function PreviewHome() {
   useEffect(() => {
