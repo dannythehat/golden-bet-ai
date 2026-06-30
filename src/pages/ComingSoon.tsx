@@ -9,7 +9,7 @@ interface ComingSoonProps {
 
 export default function ComingSoon({ title, eyebrow, description }: ComingSoonProps) {
   const location = useLocation();
-  const derived = title ?? location.pathname.replace(/^\//, "").replace(/-/g, " ") || "New section";
+  const derived = title ?? (location.pathname.replace(/^\//, "").replace(/-/g, " ") || "New section");
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
