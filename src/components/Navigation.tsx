@@ -99,23 +99,17 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
 
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-background via-card/95 to-background border-b border-border/50">
-        <div className="flex items-center justify-between h-16 px-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full" />
-              <img 
-                src={footyOracleLogo} 
-                alt="The Footy Oracle" 
-                className="relative w-14 h-14 rounded-lg object-cover border-2 border-primary/30"
-                width={56}
-                height={56}
-              />
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-primary">The Footy Oracle</h1>
-              <p className="text-xs text-ice font-medium">✨ AI Predictions</p>
-            </div>
+        <div className="flex items-center justify-between h-20 px-4">
+          <div className="flex items-center">
+            <img 
+              src={footyOracleLogo.url} 
+              alt="The Footy Oracle" 
+              className="h-16 w-auto object-contain drop-shadow-[0_4px_14px_rgba(139,92,246,0.45)]"
+              width={160}
+              height={64}
+            />
           </div>
+
           <div className="flex items-center gap-2">
             <UserMenu />
             <Button
