@@ -30,7 +30,19 @@ export default function PreviewHome() {
         <HeroBanner />
       </HomepageScene>
 
-      <HomepageScene tone="emerald" eyebrow="01 · Form & Fantasy">
+      <HomepageScene tone="finale" eyebrow="01 · The Gaffer's Picks">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <div className="grid gap-3 lg:grid-cols-[1.05fr_0.95fr] md:gap-4">
+            <GafferPicksBox />
+            <TodaysDouble />
+          </div>
+          <div className="mt-3 md:mt-4">
+            <PnLSection />
+          </div>
+        </div>
+      </HomepageScene>
+
+      <HomepageScene tone="emerald" eyebrow="02 · Form & Fantasy">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
             <FormTablesSection />
