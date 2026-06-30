@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Facebook, Send } from 'lucide-react';
 import { ArtworkCard } from './ArtworkCard';
 import { HOMEPAGE_APPROVED_ASSETS } from './assets';
-import { NAV_LINKS } from './content';
+import { NAV_LINKS, SOCIAL_LINKS } from './content';
 import heroBannerClean from '@/assets/homepage/hero-banner-clean.png';
 import footyOracleLogo from '@/assets/footy-oracle-logo-v2.png.asset.json';
 
