@@ -10,6 +10,34 @@ what changed, why, and which docs/code it touched. Newest first.
 
 ---
 
+## 2026-06-30 — Gaffer taken LIVE: voice in the edge pipeline + daily cron
+
+- **Wired** the Gaffer's real voice into the live daily pick:
+  - Mirrored the voice into Deno — `supabase/functions/_shared/gafferVoice.ts` +
+    `gafferPhrases.ts` (kept in sync with the canonical `src/` copies).
+  - `gaffer-daily-pick` now dresses every leg in the field shape the homepage
+    reads (`home_team/away_team`, `home_logo/away_logo`, `kickoff_time`,
+    `selection`, `formProb`, `edge`) **plus `gaffer_line`** — his fresh,
+    anti-repeat read — and writes `title` + `gaffer_intro` (a full rich line).
+  - Picks are stored `status='published'` (the live board state); honest no-bet
+    days store `status='void'` with a no-bet line.
+- **Schema** (additive, migration `20260630120000`): broadened `gaffer_picks.status`
+  to allow `published/live/active`; added `title`, `gaffer_intro`, and a generated
+  `potential_returns` column (mirror of `potential_return`) — meeting the read
+  contract the homepage `GafferPicksBox` already published. Validated on PG16.
+- **Scheduled** the pipeline in `daily-orchestrator`: 02:00 UTC (03:00 London/BST)
+  `ingest-form-stats` → 02:20 `gaffer-daily-pick`; evening `settle-gaffer-picks`
+  alongside `settle-bets`. So the Gaffer runs on live fixtures every morning.
+- **Provider**: `_shared/footystats.ts` now returns team badge URLs on today's
+  fixtures (`homeLogo/awayLogo`, `cdn.footystats.org`).
+- **Settlement** now transitions `published/pending → won/lost`; scrubbed the
+  internal `line` variable → `mark` (no US slang anywhere, even in code).
+- **Lovable hand-off**: see `docs/gaffer/HANDOFF_LOVABLE.md` — env vars + contract.
+- **Why**: the Gaffer's voice was built but only lit up the local fallback; this
+  makes the live database path carry his real voice, on a daily clock.
+
+---
+
 ## 2026-06-30 — Gaffer voice engine built; core docs written
 
 - **Built** the voice engine and phrase library:

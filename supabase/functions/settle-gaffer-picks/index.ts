@@ -15,10 +15,10 @@ const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: 
 function legHit(market: string, r: MatchResult): boolean {
   const m = market.toLowerCase();
   if (m.includes("btts")) return r.btts;
-  const line = Number((market.match(/(\d+\.\d+)/) || [])[1]);
-  if (!Number.isFinite(line)) return false;
+  const mark = Number((market.match(/(\d+\.\d+)/) || [])[1]);
+  if (!Number.isFinite(mark)) return false;
   const val = m.includes("corner") ? r.corners : m.includes("card") ? r.cards : r.goals;
-  return val > line;
+  return val > mark;
 }
 
 serve(async (req) => {
@@ -29,8 +29,9 @@ serve(async (req) => {
   if (!fsKey) return json({ ok: false, error: "FOOTYSTATS_KEY not configured" }, 500);
   const admin = createClient(url, svc, { auth: { persistSession: false } });
 
+  // Settle anything still live (published) or legacy pending whose date has passed.
   const { data: pending } = await admin.from("gaffer_picks")
-    .select("*").eq("status", "pending").lte("pick_date", new Date().toISOString().slice(0, 10));
+    .select("*").in("status", ["published", "pending"]).lte("pick_date", new Date().toISOString().slice(0, 10));
 
   let settled = 0; const stillPending: string[] = [];
   for (const p of pending ?? []) {

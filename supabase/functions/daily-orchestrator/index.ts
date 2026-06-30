@@ -67,6 +67,18 @@ async function callFunction(name: string, body: Record<string, unknown> = {}, qu
 type Task = [string, Record<string, unknown>, string?];
 
 const SCHEDULE: Record<number, Record<number, Task[]>> = {
+  // 02:00 UTC = 03:00 London (BST) — THE GAFFER'S DAILY REFRESH.
+  // Pull last-10 form for every configured league, then build today's value
+  // pick(s). NOTE: keyed in UTC; in GMT (winter) this fires at 02:00 London.
+  // Switch the orchestrator to Europe/London keying if strict 3am is needed.
+  2: {
+    0: [
+      ["ingest-form-stats", { scheduled: true }],   // FootyStats form -> form_tables
+    ],
+    20: [
+      ["gaffer-daily-pick", { scheduled: true }],   // value engine + voice -> gaffer_picks
+    ],
+  },
   // 03:00 - Ingest yesterday's results
   3: {
     0: [
@@ -153,9 +165,10 @@ const SCHEDULE: Record<number, Record<number, Task[]>> = {
   },
   19: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
   20: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  21: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  22: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  23: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
+  // Evenings also settle the Gaffer's daily pick(s) once the fixtures finish.
+  21: { 0: [["settle-bets", { scheduled: true }], ["settle-gaffer-picks", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
+  22: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }], ["settle-gaffer-picks", { scheduled: true }]] },
+  23: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }], ["settle-gaffer-picks", { scheduled: true }]] },
 };
 
 // Monday only tasks

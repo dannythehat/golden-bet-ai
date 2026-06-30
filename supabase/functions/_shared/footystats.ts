@@ -29,10 +29,18 @@ export interface TodayFixture {
   kickoff: string;
   homeId: number; awayId: number;
   homeName: string; awayName: string;
+  homeLogo: string | null; awayLogo: string | null;
   odds: Record<string, number>;
 }
 
-/** Today's fixtures with normalised per-market odds. */
+const IMG_BASE = "https://cdn.footystats.org/img/";
+/** Turn a FootyStats image path into an absolute badge URL. */
+function badge(path: unknown): string | null {
+  if (typeof path !== "string" || !path) return null;
+  return /^https?:\/\//.test(path) ? path : `${IMG_BASE}${path.replace(/^\/+/, "")}`;
+}
+
+/** Today's fixtures with normalised per-market odds + team badges. */
 export async function fetchTodaysMatches(key: string): Promise<TodayFixture[]> {
   const json = await getJson(`/todays-matches?key=${key}`);
   const data: any[] = Array.isArray(json?.data) ? json.data : [];
@@ -44,6 +52,8 @@ export async function fetchTodaysMatches(key: string): Promise<TodayFixture[]> {
     awayId: m.awayID ?? m.away_id,
     homeName: m.home_name,
     awayName: m.away_name,
+    homeLogo: badge(m.home_image),
+    awayLogo: badge(m.away_image),
     odds: normalizeOdds(m),
   }));
 }

@@ -1,0 +1,355 @@
+/**
+ * THE GAFFER — phrase library (the voice's raw material).  [EDGE MIRROR]
+ *
+ * ⚠ Deno/edge mirror of src/data/gaffer/phraseLibrary.ts (the frontend holds the
+ * canonical copy). Keep the two identical so live picks and the site fallback
+ * draw from the exact same banks.
+ *
+ * The Gaffer never repeats himself. He doesn't read fixed sentences — every line
+ * is ASSEMBLED fresh from these banks (opener × flavour × verdict × aside ×
+ * sign-off), with a memory that avoids anything used recently (see
+ * src/lib/gafferVoice.ts). Modest banks combine into millions of unique lines.
+ *
+ * Placeholders the assembler fills: {team} {opp} {teamNick} {oppNick} {market}
+ * {mark} {odds} {pct} {edge} {streak}.
+ *
+ * These are SEED banks — designed to keep growing. Add entries freely; the
+ * engine scales automatically. Voice rules live in docs/gaffer/03_LANGUAGE.md
+ * and docs/gaffer/10_PHRASE_MEMORY.md.
+ */
+
+/* ── Real-team nicknames (the Gaffer never says the same name twice running) ── */
+export const TEAM_NICKNAMES: Record<string, string[]> = {
+  // Premier League
+  Arsenal: ['the Gunners', 'the Arsenal', 'Arteta’s lot', 'the North London lot'],
+  Liverpool: ['the Reds', 'the Scousers', 'the Anfield mob', 'the Kop'],
+  'Manchester City': ['City', 'the Citizens', 'Pep’s lot', 'the Sky Blues'],
+  'Manchester United': ['United', 'the Red Devils', 'the Old Trafford lot'],
+  Chelsea: ['the Blues', 'the Pensioners', 'the Stamford Bridge lot'],
+  Tottenham: ['Spurs', 'the Lilywhites', 'the Tottenham lot'],
+  Newcastle: ['the Toon', 'the Magpies', 'the Geordies'],
+  Everton: ['the Toffees', 'the Goodison lot', 'Everton'],
+  'Aston Villa': ['Villa', 'the Villans', 'the Claret and Blue'],
+  Brighton: ['the Seagulls', 'Brighton', 'the Albion'],
+  'West Ham': ['the Hammers', 'the Irons', 'the London Stadium lot'],
+  Wolves: ['Wolves', 'the Wanderers', 'the Old Gold'],
+  Leeds: ['Leeds', 'the Whites', 'the Yorkshire lot'],
+  Brentford: ['the Bees', 'Brentford'],
+  Fulham: ['the Cottagers', 'Fulham'],
+  'Crystal Palace': ['the Eagles', 'Palace', 'the Selhurst lot'],
+  'Nottingham Forest': ['Forest', 'the Tricky Trees', 'the City Ground lot'],
+  Bournemouth: ['the Cherries', 'Bournemouth'],
+  Sunderland: ['the Black Cats', 'the Mackems', 'Sunderland'],
+  Burnley: ['the Clarets', 'Burnley'],
+  // Big European
+  Barcelona: ['Barça', 'the Catalans', 'the Blaugrana'],
+  'Real Madrid': ['Madrid', 'Los Blancos', 'the Bernabéu lot'],
+  'Atletico Madrid': ['Atléti', 'the Rojiblancos'],
+  'Bayern Munich': ['Bayern', 'the Bavarians'],
+  'Borussia Dortmund': ['Dortmund', 'BVB', 'the Yellow Wall lot'],
+  'Paris Saint-Germain': ['PSG', 'the Parisians'],
+  Juventus: ['Juve', 'the Old Lady', 'the Bianconeri'],
+  'Inter Milan': ['Inter', 'the Nerazzurri'],
+  'AC Milan': ['Milan', 'the Rossoneri'],
+  Ajax: ['Ajax', 'the Amsterdam lot'],
+  // Summer-active leagues (in season now)
+  KR: ['KR', 'the Reykjavík lot'],
+  Valur: ['Valur', 'the Reykjavík reds'],
+  Breidablik: ['Breidablik', 'the Kópavogur lot'],
+  'Vikingur Reykjavik': ['Víkingur', 'the Víkings'],
+  Rosenborg: ['Rosenborg', 'the Trondheim lot'],
+  'FK Bodo - Glimt': ['Bodø/Glimt', 'the yellow lot from the Arctic'],
+  Molde: ['Molde'],
+  'Malmo FF': ['Malmö', 'the Sky Blues of Sweden'],
+  'AIK Stockholm': ['AIK', 'the Stockholm lot'],
+  Hammarby: ['Hammarby', 'Bajen'],
+};
+
+/** Resolve a varied epithet for a team (falls back to the plain name). */
+export function nickname(team: string, i: number): string {
+  const list = TEAM_NICKNAMES[team];
+  if (!list || !list.length) return team;
+  return list[i % list.length];
+}
+
+/* ── Openers — how he kicks a pick off ───────────────────────────────────── */
+export const OPENERS = [
+  'Right, {team} v {opp}.',
+  'Get this one down, lads — {team} against {opp}.',
+  'Now then. {team} hosting {opp}.',
+  'Cop a look at {team} v {opp}.',
+  'Here’s your one for today: {team} v {opp}.',
+  'I’ve had me magnifying glass on {team} v {opp}.',
+  'Don’t scroll past this — {team} v {opp}.',
+  'Listen in. {team} v {opp} is the one.',
+  'Pen out for {team} v {opp}.',
+  'Been all over {team} v {opp} this morning.',
+  'Stick the kettle on for {team} v {opp}.',
+  'Cards on the table — {team} v {opp}.',
+  'This is the standout: {team} v {opp}.',
+  'Eyes here. {team} take on {opp}.',
+  'One jumped off the page — {team} v {opp}.',
+  'Sat with me coffee studying {team} v {opp}.',
+  'Tell you where the value is: {team} v {opp}.',
+  'Trust me on {team} v {opp}.',
+  'Had a proper dig into {team} v {opp}.',
+  'Pin your ears back — {team} v {opp}.',
+  'Top of the card today: {team} v {opp}.',
+  'Forget the rest — {team} v {opp} is where it’s at.',
+  'Been waiting all week for {team} v {opp}.',
+  'You’ll want to hear this. {team} v {opp}.',
+  'Quiet a sec — {team} v {opp}.',
+  'Mark my card: {team} v {opp}.',
+  'Wrap your laughing gear round this — {team} v {opp}.',
+  'Where’s the smart money? {team} v {opp}.',
+  'I’ll keep it simple. {team} v {opp}.',
+  'Spotted a beauty: {team} v {opp}.',
+  'Gather round — {team} v {opp}.',
+  'First name on me slip: {team} v {opp}.',
+  'Done me homework on {team} v {opp}.',
+  'You ready? {team} v {opp}.',
+  'Proper interested in {team} v {opp}.',
+  'Stop what you’re doing — {team} v {opp}.',
+  'Skip the rest. {team} v {opp}.',
+  'This one’s got me grinning — {team} v {opp}.',
+  'Straight to business: {team} v {opp}.',
+  'Bang on the money here — {team} v {opp}.',
+];
+
+/* ── Market flavour — colour per market (anti-dry) ───────────────────────── */
+export const MARKET_FLAVOUR: Record<string, string[]> = {
+  Corners: [
+    'Both these mobs treat defending like an optional extra — corners flying in from everywhere.',
+    'These two get the ball wide and whip it in all day. Flag’s never still.',
+    'Wingers on both sides living in the corner — it’s a set-piece factory.',
+    'They attack like the back door’s open. Corners stack up quick.',
+    'Full-backs bombing on, crosses raining in — corner count goes through the roof.',
+    'Neither of these can keep it out for toffee — corners by the bucketload.',
+    'It’s end to end with this pair, and that means flags, flags and more flags.',
+    'These two cross it more than a zebra crossing — corners galore.',
+    'Set-piece merchants, the both of ’em. The corner flag’s in for a busy day.',
+    'Width, overlaps, deflections — every road leads to another corner here.',
+    'The linesman’s arm will ache pointing at that flag all afternoon.',
+    'Both sides force it wide and chuck bodies forward — corners pile up.',
+    'They don’t do narrow. It’s wing play and whipped balls — corners coming.',
+    'This pair turn every attack into a corner. Proper flag-fest.',
+  ],
+  Goals: [
+    'Both these lot think defending’s beneath them — goals guaranteed entertainment.',
+    'Two sides that’d rather score four than keep one out.',
+    'Leaky at the back, lively up top — the net’s going to bulge.',
+    'This pair couldn’t play a 0-0 if you paid ’em.',
+    'Open as a 24-hour garage, the both of ’em. Goals coming.',
+    'Forwards firing, defenders dozing — that’s a goal-fest brewing.',
+    'Neither keeps a clean sheet to save their life. Goals on the menu.',
+    'Cavalier stuff from both — they’ll trade goals all afternoon.',
+    'Soft centres, sharp finishing — this one’s got goals stamped on it.',
+    'Defences made of paper, strikers in form — fill yer boots.',
+    'These two go gung-ho. The scoreboard’s going to tick over.',
+    'All-out attack from both ends — keepers picking it out the net.',
+  ],
+  Cards: [
+    'A proper needle match, this — ref’ll be reaching for his pocket early.',
+    'Bad blood between these two. Bookings written all over it.',
+    'Tasty fixture, this one. Tackles flying, names going in the book.',
+    'Tempers fray when these meet — the ref won’t have a quiet afternoon.',
+    'Niggly, scrappy affair coming up — cards on the cards.',
+    'Old rivals, fresh grudges. The ref’ll be busy with that pocket.',
+    'Studs up, words exchanged — this one bubbles over every time.',
+    'Combustible, this fixture. Yellow’s the colour of the day.',
+    'Two sides that like a scrap. Bookings practically nailed on.',
+    'History between this lot — the ref might need a bigger notebook.',
+  ],
+  BTTS: [
+    'Both these score for fun and ship ’em just as easy — both teams to score is the play.',
+    'Neither keeps a clean sheet to save their life — they’ll both find the net.',
+    'Two sides that always trade goals. Both to score, no fuss.',
+    'Soft at the back, sharp up front — both ends getting busy.',
+    'These two always end up swapping goals. Both to score, easy.',
+    'Open defences, dangerous forwards — the net bulges at both ends.',
+    'Clean sheets are a foreign language to this pair. Both score.',
+    'Goals guaranteed at both ends — they can’t help themselves.',
+  ],
+};
+
+/* ── Verdicts — STRONG tier (his bankers) ────────────────────────────────── */
+export const VERDICT_STRONG = [
+  'That’s not a hope, that’s a banker.',
+  'I’m as sure as I get on this one.',
+  'This is the strongest call on the card.',
+  'If I’m having one today, it’s this.',
+  'I’d be amazed if this doesn’t come in.',
+  'Nailed on as far as I’m concerned.',
+  'This one I’m putting me name to.',
+  'Daylight robbery at the price — get on.',
+  'That’s the one I’m loading up.',
+  'Confident as you like with this.',
+  'I’ll be gobsmacked if this lets us down.',
+  'Strong as they come, this.',
+  'Bang it in the slip, no second thoughts.',
+  'This is the banker of the day, simple as.',
+  'I’d stake me reputation on this one.',
+  'Rock solid, this. Top of the pile.',
+  'No messing — this is the play of the day.',
+  'I’m all over this like a rash.',
+  'Hand on heart, this is the strongest I’ve got.',
+  'You can build your slip around this one.',
+];
+
+/* ── Verdicts — VALUE tier (worth a punt) ────────────────────────────────── */
+export const VERDICT_VALUE = [
+  'There’s proper value in there.',
+  'The price is wrong and we’re taking advantage.',
+  'That’s value, not a hope.',
+  'Bookies have slipped up on the price — pounce.',
+  'Worth a few quid, that.',
+  'Tidy little value play.',
+  'The numbers say yes and the odds say thank you.',
+  'A sneaky bit of value, this.',
+  'Edge is with us here.',
+  'That’ll do nicely for value.',
+  'Cheeky bit of value, this one.',
+  'The book’s left the door ajar — nip through.',
+  'Smart money’s on this, trust me.',
+  'A nice overlay, that. Take it.',
+  'Value’s the name of the game, and it’s right here.',
+  'They’ve mispriced it — we cash in.',
+  'Worth a small one, no doubt about it.',
+  'That price won’t last. Get in early.',
+  'A proper value angle, this.',
+  'The maths is on our side here.',
+];
+
+/* ── Edge / "bookies asleep" phrases (slot the numbers in) ─────────────────── */
+export const EDGE_PHRASES = [
+  'Form says {pct}% and the bookies are still kipping at {odds}.',
+  'My numbers have it {pct}%, they’ve priced {odds} — that gap is the value.',
+  'The book’s asleep: {pct}% on the form, {odds} on the board.',
+  '{pct}% says the form, {odds} says the bookie. We pocket the difference.',
+  'Bookies pricing it like a coin flip — form’s screaming {pct}%.',
+  '{streak} on the spin in this market and they’ve still left {odds} lying about.',
+  'They’ve under-cooked the price — {pct}% form against {odds}, all day.',
+  'Form’s at {pct}% and they’re offering {odds}? That’s a gift.',
+  'I make it {pct}%, they make it {odds}. I know who I’m trusting.',
+  'The price implies a doubt the form simply doesn’t — {pct}% v {odds}.',
+  '{pct}% the way the form reads, and {odds} on the coupon. Mad.',
+  'Bookies blinked. {pct}% form, {odds} price — that’s our edge.',
+  'They’ve priced the past, not the form. {pct}% says {odds} is too big.',
+  'Numbers don’t lie: {pct}% against a lazy {odds}.',
+  'That {odds} is an insult to a {pct}% record. We accept the insult.',
+  'Form’s flying at {pct}% and the book hasn’t caught up — still {odds}.',
+];
+
+/* ── Confidence hedges — NEVER a guarantee ───────────────────────────────── */
+export const HEDGES = [
+  'No guarantees, mind — it’s football, not magic.',
+  'Bet responsibly, eh. Even the Gaffer gets one wrong.',
+  'It’s a strong call, not a certainty — nothing ever is.',
+  'Stake what you can laugh off if it goes south.',
+  'Football does what it wants — back it sensibly.',
+  'No such thing as a sure thing, but this is close as it gets.',
+  'Keep it tidy with the stakes — long game, this.',
+  'It’s value, not a promise — bet within yourself.',
+  'Even the best calls lose sometimes. Stake smart.',
+  'I deal in edges, not certainties — never forget that.',
+  'Back it with your head, not your heart, and not your mortgage.',
+  'The form’s with us, but the ball’s round for a reason.',
+  'Sensible stakes. We’re in this for the season, not the day.',
+  'Nothing’s nailed on in this game — keep it sensible.',
+  'Win or lose, we do it tidy. Bet responsibly.',
+  'It’s a lean, not a lock. Treat it that way.',
+];
+
+/* ── No-bet phrases — when there's no value, he passes ───────────────────── */
+export const NO_BET = [
+  'Had a proper look at today’s card and… nothing. Bookies have got it bang on.',
+  'No value out there today, lads. I’m sitting on me hands.',
+  'Nada. Nowt worth a tenner. I’ll not hand the bookies free money.',
+  'Quiet one today — nothing clears the bar. Saving the powder.',
+  'Looked everywhere. The prices are all spot on. No bet from me.',
+  'Some days the value just isn’t there. This is one of ’em. Pass.',
+  'Not forcing it. No edge, no bet — back tomorrow.',
+  'Bookies have done their homework today. I’m staying out of it.',
+  'Nothing tickles me today. Empty bet slip and proud of it.',
+  'The Gaffer knows when to shut his wallet an’ all. No bet.',
+  'Card’s as dry as a bone today. I’ll keep me powder dry.',
+  'No edge anywhere I look. Pass — and that’s the right call.',
+  'Trust me, a no-bet day is a winning day in disguise. Nothing today.',
+  'I could force one, but I won’t. No value, no bet.',
+  'Bookies nailed every price today. Tip me cap and move on. No bet.',
+  'A blank slip beats a daft bet. Nothing worth it today.',
+  'Patience, lads. No value today — we wait.',
+  'Had a real good look. Not for me today. Sitting it out.',
+  'Discipline over action. No bet today, simple as.',
+  'Nothing jumps out. I’d rather miss a winner than back a loser. Pass.',
+];
+
+/* ── Sign-offs — closers ─────────────────────────────────────────────────── */
+export const SIGN_OFFS = [
+  'Tenner on it and put the kettle on.',
+  'Get it on. The Gaffer knows.',
+  'On you go. Don’t say I never give you owt.',
+  'Fill yer boots.',
+  'That’s your lot — see you tomorrow.',
+  'Back it and crack on.',
+  'Lovely. Next.',
+  'Job done. Trust the Gaffer.',
+  'In the slip it goes.',
+  'Enjoy, you lot.',
+  'Right, that’s me. Good luck.',
+  'Slip it in and let it ride.',
+  'Done and dusted. Onwards.',
+  'You know what to do.',
+  'Get involved. The Gaffer’s spoken.',
+  'That’s the one. Have a good ’un.',
+  'Bosh. Next one.',
+  'Whack it on and enjoy the game.',
+  'Simple as that. See you in the morning.',
+  'There’s your value. Don’t waste it.',
+  'Tidy. On to the next.',
+  'Trust the form. Trust the Gaffer.',
+];
+
+/* ── Banter asides — sprinkle of personality (optional) ──────────────────── */
+export const ASIDES = [
+  'I’ve seen pub teams defend better, but that suits us.',
+  'My nan could’ve spotted this one, and she hates football.',
+  'Don’t tell the missus how much I’m on it for.',
+  'I was right last week an’ all, not that anyone says ta.',
+  'Football, eh? Beautiful game, daft odds.',
+  'I’d put me last Rolo on it.',
+  'Even the cat agrees with this one.',
+  'I’ve forgotten more about form than the bookies will ever know.',
+  'The dog’s wagging his tail at this price, and he’s a Spurs fan.',
+  'I dreamt about this one, and I don’t even like dreaming about work.',
+  'Me coffee went cold studying this — worth it, mind.',
+  'If this lands, first round’s on the bookies. Metaphorically.',
+  'I’ve been doing this longer than some of you have been alive.',
+  'Don’t @ me if it loses. Actually, do — I can take it.',
+  'The numbers whispered it to me. I just listened.',
+  'Simple game, football. People just overthink it.',
+  'I’d explain the maths, but you’d only fall asleep.',
+  'Even me old man, rest him, would’ve had this.',
+  'Bookies hate this one trick: reading the form.',
+  'Call it a hunch backed by a spreadsheet.',
+];
+
+/* ── Donkey of the Week roasts ───────────────────────────────────────────── */
+export const DONKEY_ROASTS = [
+  'Step forward this week’s donkey — captained a fella who got sent off before he’d broken sweat.',
+  'This week’s donkey forgot to set his team. Forgot. The whole team. Genius.',
+  'Give it up for the donkey who benched a 19-pointer to start a bloke who didn’t leave the dugout.',
+  'Our donkey backed the same dud striker five weeks running. Loyalty’s lovely, points are better.',
+  'This week’s prize muppet scored nine when the rest of us got ninety. Take a bow, son.',
+  'Donkey of the week transferred OUT his captain an hour before he bagged a hat-trick. Ouch.',
+  'This week’s donkey triple-captained a keeper. A keeper. I’ve no words, only applause.',
+  'Hats off to the donkey who took a -8 hit to chase a player who then got injured in the warm-up.',
+  'Our donkey left 14 points on the bench and started a lad who was on holiday. Lovely stuff.',
+  'This week’s donkey played his wildcard… on a blank gameweek. Bold. Wrong. But bold.',
+  'Give it up for the donkey who captained his own player’s understudy. The understudy didn’t play.',
+  'Donkey of the week benched the highest scorer in the game. Twice. Same lad. Different week.',
+  'This week’s donkey backed a 1-0 and watched it finish 4-4. Football’s a cruel old game.',
+  'Our donkey’s been chasing last week’s points all season. Never catches ’em. Bless him.',
+  'This week’s donkey forgot it was a double gameweek. For HIS team. Only his. Magnificent.',
+  'The donkey crown goes to the lad who sold a player, re-bought him, took the hit, then benched him.',
+];
