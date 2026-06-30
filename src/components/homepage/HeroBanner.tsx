@@ -1,8 +1,15 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { ArtworkCard } from './ArtworkCard';
 import { HOMEPAGE_APPROVED_ASSETS } from './assets';
+import { NAV_LINKS } from './content';
+import heroBannerClean from '@/assets/homepage/hero-banner-clean.png';
+import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
 
 export function HeroBanner() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <section id="top" className="relative mx-auto w-full max-w-[1536px]">
       {/* Mobile hero — readable HTML composition */}
