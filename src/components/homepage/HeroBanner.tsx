@@ -15,37 +15,72 @@ export function HeroBanner() {
       {/* Mobile hero — readable HTML composition */}
       <div className="md:hidden px-3 pt-6 pb-2">
         <div className="relative overflow-hidden rounded-2xl border border-amber-300/30 bg-gradient-to-b from-[#1a0a2e] via-[#0a0414] to-[#0a0414] shadow-[0_30px_80px_-30px_rgba(245,197,66,0.45)]">
-          {/* Top bar: login / join */}
-          <div className="flex items-center justify-between px-4 pt-3">
-            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-amber-300/80">
-              Footy Oracle
-            </span>
-            <div className="flex gap-2">
+          {/* Top nav bar: real logo + menu + auth buttons */}
+          <div className="relative z-10 flex items-center justify-between gap-2 border-b border-amber-300/15 bg-[#07000f]/80 px-3 py-2 backdrop-blur">
+            <Link to="/" className="flex min-w-0 items-center gap-2">
+              <img
+                src={footyOracleLogo}
+                alt="Footy Oracle"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-md border border-amber-300/40 object-cover"
+              />
+              <span className="truncate text-[12px] font-extrabold uppercase tracking-[0.14em] text-amber-300">
+                Footy Oracle
+              </span>
+            </Link>
+            <div className="flex items-center gap-1.5">
               <Link
                 to="/auth"
-                className="rounded-full border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/90 hover:bg-white/10"
+                className="rounded-full border border-white/20 px-2.5 py-1 text-[11px] font-semibold text-white/90 hover:bg-white/10"
               >
                 Login
               </Link>
               <Link
                 to="/pricing"
-                className="rounded-full bg-amber-400 px-3 py-1 text-[11px] font-bold text-black hover:bg-amber-300"
+                className="rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-black hover:bg-amber-300"
               >
                 Join
               </Link>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={menuOpen}
+                className="grid h-8 w-8 place-items-center rounded-full border border-amber-300/40 text-amber-200 hover:bg-amber-300/10"
+              >
+                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </button>
             </div>
           </div>
 
-          {/* Gaffer image — full hero artwork fits the mobile box */}
-          <div className="relative mt-3 w-full overflow-hidden bg-[#0a0414]">
+          {/* Slide-down nav menu */}
+          {menuOpen && (
+            <div className="relative z-10 grid grid-cols-2 gap-1.5 border-b border-amber-300/15 bg-[#07000f]/90 px-3 py-3">
+              {NAV_LINKS.map((l) => (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-2 text-center text-[11px] font-bold uppercase tracking-wide text-white/85 hover:border-amber-300/50 hover:text-amber-200"
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* Gaffer image — cleaned hero artwork (nav strip removed) */}
+          <div className="relative w-full overflow-hidden bg-[#0a0414]">
             <img
-              src={HOMEPAGE_APPROVED_ASSETS.heroBanner}
+              src={heroBannerClean}
               alt="The Gaffer — Footy Oracle"
               className="block h-auto w-full object-contain"
               loading="eager"
               decoding="async"
               draggable={false}
             />
+
             <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/80 to-transparent" />
           </div>
 
