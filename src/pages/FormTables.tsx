@@ -1,0 +1,377 @@
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, ChevronRight, Flame, Info } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { HomepageNav } from '@/components/homepage/HomepageNav';
+import { FooterNavigation } from '@/components/homepage/FooterNavigation';
+import { TeamAvatar } from '@/components/TeamAvatar';
+import { FormStrip } from '@/components/FormStrip';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
+import raw from '@/data/formTablesData.json';
+import type { FormFixtureRow as Fixture, FormValueCell, FormGame } from '@/types/footy';
+
+type ValueCell = FormValueCell | null;
+const DATA = raw as unknown as { leagues: { name: string; region: string }[]; fixtures: Fixture[] };
+
+/* ── Category config ─────────────────────────────────────────────────── */
+type CatKey = 'corners' | 'goals' | 'cards' | 'btts';
+interface Cat {
+  key: CatKey; label: string; unit: string; pct?: boolean;
+  lines?: string[];
+  avg: (f: Fixture) => number;
+  over?: (f: Fixture, line: string) => number | null;
+  odds: (f: Fixture, line: string | null) => number | null;
+  value: (f: Fixture, line: string | null) => ValueCell;
+}
+const CATS: Cat[] = [
+  {
+    key: 'corners', label: 'Corners', unit: 'corners', lines: ['8.5', '9.5', '10.5'],
+    avg: (f) => f.corners_avg,
+    over: (f, l) => f.corners_over[l] ?? null,
+    odds: (f, l) => (l ? f.corners_odds[l] ?? null : null),
+    value: (f, l) => (l ? f.value.corners[l] ?? null : null),
+  },
+  {
+    key: 'goals', label: 'Goals', unit: 'goals', lines: ['2.5', '3.5', '4.5'],
+    avg: (f) => f.goals_avg,
+    over: (f, l) => f.goals_over[l] ?? null,
+    odds: (f, l) => (l ? f.goals_odds[l] ?? null : null),
+    value: (f, l) => (l ? f.value.goals[l] ?? null : null),
+  },
+  {
+    key: 'cards', label: 'Cards', unit: 'cards', lines: ['3.5', '4.5', '5.5'],
+    avg: (f) => f.cards_avg,
+    odds: (f, l) => (l ? f.cards_odds[l] ?? null : null),
+    value: () => null,
+  },
+  {
+    key: 'btts', label: 'BTTS', unit: '% BTTS', pct: true,
+    avg: (f) => f.btts_pct,
+    odds: (f) => f.btts_odds,
+    value: (f) => f.value.btts,
+  },
+];
+
+/** Fold remaining diacritics for pure-English display (names are pre-folded; leagues here). */
+const fold = (s: string) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '')
+  .replace(/Þ/g, 'Th').replace(/þ/g, 'th').replace(/Ð/g, 'D').replace(/ð/g, 'd')
+  .replace(/Ø/g, 'O').replace(/ø/g, 'o').replace(/Æ/g, 'Ae').replace(/æ/g, 'ae')
+  .replace(/Å/g, 'A').replace(/å/g, 'a');
+
+function ValueBadge({ cell }: { cell: ValueCell }) {
+  if (!cell?.flag) return null;
+  const strong = cell.flag === 'strong';
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-black uppercase tracking-wide ${strong ? 'bg-gold/20 text-gold' : 'bg-emerald-500/20 text-emerald-300'}`}>
+      {strong ? "Gaffer's banker" : "Gaffer likes"}
+    </span>
+  );
+}
+
+/** The Gaffer's top selection for the active market — his pick, in plain terms. */
+function GafferBanner({ fixture, label, line, cell }: { fixture: Fixture | null; label: string; line: string | null; cell: ValueCell }) {
+  if (!fixture || !cell) {
+    return (
+      <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white/60">
+        <span className="font-display tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} PICK</span> — nothing worth backing here today. He's sitting on his hands.
+      </div>
+    );
+  }
+  return (
+    <div className="relative mb-5 overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-r from-[#1a1003] via-[#160c04] to-[#0d0703] px-5 py-4 shadow-[0_0_40px_-16px_hsl(var(--gold))]">
+      <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gold/10 blur-2xl" />
+      <div className="relative flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Flame className="h-6 w-6 text-gold" />
+          <div>
+            <div className="font-display text-sm tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} PICK</div>
+            <div className="font-bold text-white">{fixture.home.name} <span className="text-white/40">v</span> {fixture.away.name}</div>
+            <div className="text-xs text-white/50">{fixture.region} · {fold(fixture.league)} · {fixture.time}</div>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="font-display text-xl text-white">Over {line} {label}</div>
+          <div className="text-sm text-white/70">form <span className="text-emerald-400">{cell.prob}%</span> · odds <span className="text-gold">{odd(cell.odds)}</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const odd = (o: number | null) => (o ? o.toFixed(2) : '—');
+const formString = (games: FormGame[]) => games.slice(0, 5).map((g) => g.res).reverse().join('');
+
+export default function FormTables() {
+  const [cat, setCat] = useState<CatKey>('corners');
+  const [lineIdx, setLineIdx] = useState(1);
+  const [league, setLeague] = useState<string>('all');
+  const [selected, setSelected] = useState<Fixture | null>(null);
+
+  useEffect(() => { document.title = 'Form Tables — Footy Oracle Club'; }, []);
+
+  const C = CATS.find((c) => c.key === cat)!;
+  const line = C.lines?.[Math.min(lineIdx, C.lines.length - 1)] ?? null;
+
+  const rows = useMemo(() => {
+    const list = DATA.fixtures.filter((f) => league === 'all' || f.league === league);
+    return [...list].sort((a, b) => C.avg(b) - C.avg(a));
+  }, [league, C]);
+
+  // The Gaffer's pick = highest-edge flagged fixture for the active market/line.
+  const gafferPick = useMemo(() => {
+    const flagged = rows
+      .map((f) => ({ f, cell: C.value(f, line) }))
+      .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell?.flag);
+    flagged.sort((a, b) => b.cell.edge - a.cell.edge);
+    return flagged[0] ?? null;
+  }, [rows, C, line]);
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
+      <div className="pointer-events-none fixed inset-0 opacity-70 [background:radial-gradient(circle_at_15%_-5%,rgba(88,28,135,0.35),transparent_45%),radial-gradient(circle_at_85%_10%,rgba(124,58,237,0.18),transparent_40%)]" />
+      <HomepageNav />
+
+      <main className="relative mx-auto max-w-5xl px-3 py-6 md:px-6 md:py-8">
+        <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white">
+          <ArrowLeft className="h-4 w-4" /> Back home
+        </Link>
+
+        <div className="mb-5">
+          <div className="flex items-center gap-3">
+            <Flame className="h-8 w-8 text-emerald-400" />
+            <h1 className="font-display text-4xl tracking-tight text-white md:text-5xl">FORM TABLES</h1>
+          </div>
+          <p className="mt-1 text-white/60">
+            Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top — wherever they're from.
+          </p>
+          <p className="mt-1 text-xs text-white/40">Showing real completed data for review · live "today's slate" switches on at launch (3am UK refresh).</p>
+        </div>
+
+        {/* Category tabs */}
+        <div className="mb-3 flex flex-wrap gap-2">
+          {CATS.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => { setCat(c.key); setLineIdx(1); }}
+              className={`rounded-xl px-4 py-2 text-sm font-bold transition-colors ${cat === c.key ? 'bg-emerald-500 text-[#04140d]' : 'border border-white/12 bg-white/[0.05] text-white/75 hover:bg-white/[0.09]'}`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Controls */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          {C.lines ? (
+            <div className="inline-flex overflow-hidden rounded-xl border border-white/12">
+              {C.lines.map((ln, i) => (
+                <button
+                  key={ln}
+                  onClick={() => setLineIdx(i)}
+                  className={`px-4 py-1.5 text-sm font-bold transition-colors ${i === lineIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
+                >
+                  Over {ln}
+                </button>
+              ))}
+            </div>
+          ) : <span />}
+
+          <select
+            value={league}
+            onChange={(e) => setLeague(e.target.value)}
+            className="rounded-xl border border-white/12 bg-[#140a26] px-3 py-2 text-sm font-semibold text-white outline-none"
+          >
+            <option value="all">All leagues</option>
+            {DATA.leagues.map((l) => <option key={l.region} value={l.name}>{l.region} · {l.name}</option>)}
+          </select>
+        </div>
+
+        {/* The Gaffer's selection for this market */}
+        <GafferBanner fixture={gafferPick?.f ?? null} label={C.label} line={line} cell={gafferPick?.cell ?? null} />
+
+        {/* Table */}
+        <div className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-white/[0.03] backdrop-blur-xl">
+          {/* Header */}
+          <div className="flex items-center gap-3 border-b border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white/45 md:px-4">
+            <span className="w-5 text-center">#</span>
+            <span className="w-[60px]" />
+            <span className="flex-1">Fixture</span>
+            {C.over && <span className="hidden w-14 text-right sm:block">Over {line}</span>}
+            <span className="w-14 text-right">Odds</span>
+            <span className="w-14 text-right">Avg</span>
+            <span className="w-12 text-right">KO</span>
+            <span className="w-4" />
+          </div>
+
+          {rows.map((f, i) => {
+            const overPct = C.over ? C.over(f, line!) : null;
+            const o = C.odds(f, line);
+            return (
+              <button
+                key={f.id}
+                onClick={() => setSelected(f)}
+                className="flex w-full items-center gap-3 border-b border-white/8 px-3 py-3 text-left transition-colors last:border-0 hover:bg-white/[0.05] md:px-4"
+              >
+                <span className={`w-5 shrink-0 text-center font-display text-lg ${i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
+                <div className="flex w-[60px] shrink-0 -space-x-1.5">
+                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={30} />
+                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={30} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-bold text-white">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
+                  <div className="truncate text-xs text-white/45">{f.region} · {fold(f.league)} · {f.date}</div>
+                </div>
+                {C.over && (
+                  <div className="hidden w-14 shrink-0 text-right sm:block">
+                    <div className="text-sm font-bold text-white">{overPct != null ? `${overPct}%` : '—'}</div>
+                    <div className="text-[10px] text-white/45">form</div>
+                  </div>
+                )}
+                <div className="w-14 shrink-0 text-right">
+                  <div className="text-sm font-bold text-gold">{odd(o)}</div>
+                  <div className="text-[10px] text-white/45">odds</div>
+                </div>
+                <div className="w-14 shrink-0 text-right">
+                  <div className="font-display text-2xl leading-none text-emerald-400">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
+                  <div className="text-[10px] uppercase tracking-wide text-white/40">avg</div>
+                </div>
+                <div className="w-12 shrink-0 text-right">
+                  <div className="text-sm font-semibold text-white/90">{f.time}</div>
+                  <div className="text-[10px] text-white/40">KO</div>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-white/30" />
+              </button>
+            );
+          })}
+          {rows.length === 0 && (
+            <div className="px-4 py-10 text-center text-white/50">No fixtures for this selection.</div>
+          )}
+        </div>
+
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-white/40">
+          <Info className="h-3.5 w-3.5" /> Odds are bookmaker decimals. Tap any fixture for H2H, both teams' form and the full market breakdown.
+        </p>
+
+        {/* The Gaffer's picks + reasoning, below the tables */}
+        <div className="mt-8">
+          <GafferPicksBox />
+        </div>
+      </main>
+
+      <div className="mx-auto max-w-5xl px-3 pb-8 md:px-6"><FooterNavigation /></div>
+
+      <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <SheetContent side="right" className="w-full overflow-y-auto border-l border-white/10 bg-[#0b0617] p-0 text-white sm:max-w-lg">
+          {selected && <FixtureDetail f={selected} cat={cat} />}
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+}
+
+/* ── Drill-down ──────────────────────────────────────────────────────── */
+function StatTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
+      <div className="font-display text-2xl text-emerald-400">{value}</div>
+      <div className="text-[10px] uppercase tracking-wide text-white/45">{label}</div>
+    </div>
+  );
+}
+
+function FormList({ title, games }: { title: string; games: FormGame[] }) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm font-bold text-white">{title}</span>
+        <FormStrip form={formString(games)} size="md" />
+      </div>
+      <div className="space-y-1">
+        {games.slice(0, 5).map((g, i) => (
+          <div key={i} className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs">
+            <span className={`w-4 text-center font-bold ${g.res === 'W' ? 'text-success' : g.res === 'L' ? 'text-destructive' : 'text-amber-400'}`}>{g.res}</span>
+            <span className="text-white/50">{g.ha}</span>
+            <span className="flex-1 truncate text-white/80">{g.opp}</span>
+            <span className="font-semibold text-white">{g.gf}-{g.ga}</span>
+            <span className="w-12 text-right text-white/45">{g.corners} cnr</span>
+            <span className="w-12 text-right text-white/45">{g.cards} cd</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FixtureDetail({ f, cat }: { f: Fixture; cat: CatKey }) {
+  const C = CATS.find((c) => c.key === cat)!;
+  return (
+    <div>
+      <SheetHeader className="border-b border-white/10 bg-gradient-to-br from-emerald-950/40 to-[#0b0617] p-5">
+        <SheetTitle className="text-white">
+          <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-col items-center gap-1"><TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={40} /><span className="text-xs">{f.home.short}</span></div>
+            <span className="font-display text-xl text-white/50">v</span>
+            <div className="flex flex-col items-center gap-1"><TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={40} /><span className="text-xs">{f.away.short}</span></div>
+          </div>
+          <div className="mt-2 text-center text-sm font-normal text-white/60">{f.home.name} v {f.away.name}</div>
+          <div className="text-center text-xs font-normal text-white/40">{f.region} · {fold(f.league)} · {f.date}</div>
+        </SheetTitle>
+      </SheetHeader>
+
+      <div className="space-y-6 p-5">
+        <section>
+          <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">Combined averages</h3>
+          <div className="grid grid-cols-4 gap-2">
+            <StatTile label="goals" value={f.goals_avg.toFixed(1)} />
+            <StatTile label="corners" value={f.corners_avg.toFixed(1)} />
+            <StatTile label="cards" value={f.cards_avg.toFixed(1)} />
+            <StatTile label="BTTS" value={`${f.btts_pct}%`} />
+          </div>
+        </section>
+
+        {/* Market breakdown — form % + odds + value per line */}
+        {C.lines && (
+          <section>
+            <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">{C.label} — lines, odds & value</h3>
+            <div className="space-y-1.5">
+              {C.lines.map((ln) => {
+                const pct = C.over ? C.over(f, ln) : null;
+                const cell = C.value(f, ln);
+                return (
+                  <div key={ln} className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/[0.03] px-3 py-2 text-sm">
+                    <span className="w-16 font-bold text-white">Over {ln}</span>
+                    <span className="w-14 text-emerald-400">{pct != null ? `${pct}%` : '—'}</span>
+                    <span className="w-14 font-bold text-gold">{odd(C.odds(f, ln))}</span>
+                    <span className="flex-1 text-right">{cell?.flag ? <ValueBadge cell={cell} /> : null}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {f.h2h.length > 0 && (
+          <section>
+            <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">Head to head</h3>
+            <div className="space-y-1">
+              {f.h2h.map((h, i) => (
+                <div key={i} className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs">
+                  <span className="w-16 text-white/40">{h.date}</span>
+                  <span className="flex-1 truncate text-white/80">{h.home} v {h.away}</span>
+                  <span className="font-bold text-white">{h.hg}-{h.ag}</span>
+                  <span className="w-12 text-right text-white/45">{h.corners} cnr</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="space-y-4">
+          <h3 className="text-xs font-black uppercase tracking-wider text-white/50">Recent form</h3>
+          <FormList title={f.home.name} games={f.home_form} />
+          <FormList title={f.away.name} games={f.away_form} />
+        </section>
+      </div>
+    </div>
+  );
+}

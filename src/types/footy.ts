@@ -233,3 +233,62 @@ export interface DailyTip {
   short_reason?: string;
   updated_at?: ISODateTime;
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+ * Form Tables — Claude-owned /form-tables page (additive; self-contained).
+ * Fixtures ranked by the two teams' COMBINED average per market.
+ * ════════════════════════════════════════════════════════════════════════ */
+export type FormValueFlag = 'strong' | 'value' | null;
+
+export interface FormValueCell {
+  prob: number;            // form-derived over % (0–100)
+  odds: number | null;     // UK decimal
+  implied: number | null;  // 100 / odds
+  edge: number;            // prob − implied
+  flag: FormValueFlag;
+}
+
+export interface FormGame {
+  date: string;
+  opp: string;
+  ha: 'H' | 'A';
+  gf: number; ga: number;
+  res: 'W' | 'D' | 'L';
+  corners: number; cards: number; btts: boolean;
+}
+
+export interface H2HMeeting {
+  date: string;
+  home: string; away: string;
+  hg: number; ag: number;
+  corners: number; cards: number;
+}
+
+export interface FormFixtureRow {
+  id: string;
+  league: string;
+  region: string;
+  date: string;
+  time: string;            // kick-off HH:MM
+  home: { name: string; short: string; logo: string | null };
+  away: { name: string; short: string; logo: string | null };
+  result: { hg: number; ag: number; corners: number; cards: number; btts: boolean };
+  goals_avg: number;
+  corners_avg: number;
+  cards_avg: number;
+  btts_pct: number;
+  goals_over: Record<string, number>;
+  corners_over: Record<string, number>;
+  goals_odds: Record<string, number | null>;
+  corners_odds: Record<string, number | null>;
+  cards_odds: Record<string, number | null>;
+  btts_odds: number | null;
+  value: {
+    goals: Record<string, FormValueCell | null>;
+    corners: Record<string, FormValueCell | null>;
+    btts: FormValueCell | null;
+  };
+  home_form: FormGame[];
+  away_form: FormGame[];
+  h2h: H2HMeeting[];
+}

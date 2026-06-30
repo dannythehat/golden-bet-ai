@@ -1,7 +1,11 @@
-/** Team badge. Uses a real crest URL when available, else a clean coloured
- *  initials avatar (deterministic colour per club). */
-export function TeamAvatar({ name, size = 32, logoUrl }: { name: string; size?: number; logoUrl?: string }) {
-  if (logoUrl) {
+import { useState } from "react";
+
+/** Team badge. Uses a real crest URL when available, else (or on load failure)
+ *  a clean coloured initials avatar (deterministic colour per club). */
+export function TeamAvatar({ name, size = 32, logoUrl }: { name: string; size?: number; logoUrl?: string | null }) {
+  const [failed, setFailed] = useState(false);
+
+  if (logoUrl && !failed) {
     return (
       <img
         src={logoUrl}
@@ -9,6 +13,7 @@ export function TeamAvatar({ name, size = 32, logoUrl }: { name: string; size?: 
         width={size}
         height={size}
         loading="lazy"
+        onError={() => setFailed(true)}
         className="rounded-md object-contain bg-white/5 shrink-0"
         style={{ width: size, height: size }}
       />
