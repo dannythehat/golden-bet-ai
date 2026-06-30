@@ -15,17 +15,40 @@ export function HeroBanner() {
       {/* Mobile hero — readable HTML composition */}
       <div className="md:hidden px-3 pt-6 pb-2">
         <div className="relative overflow-hidden rounded-2xl border border-amber-300/30 bg-gradient-to-b from-[#1a0a2e] via-[#0a0414] to-[#0a0414] shadow-[0_30px_80px_-30px_rgba(245,197,66,0.45)]">
-          {/* Top nav bar: big logo + menu + auth buttons */}
+          {/* Top nav bar: big logo + socials + menu + auth buttons */}
           <div className="relative z-10 flex items-center justify-between gap-2 border-b border-amber-300/15 bg-[#07000f]/80 px-3 py-3 backdrop-blur">
-            <Link to="/" className="flex min-w-0 items-center" aria-label="Footy Oracle home">
-              <img
-                src={footyOracleLogo.url}
-                alt="Footy Oracle — Tips. Stats. Success."
-                width={220}
-                height={220}
-                className="h-20 w-auto object-contain drop-shadow-[0_4px_20px_rgba(139,92,246,0.45)]"
-              />
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/" className="flex min-w-0 items-center" aria-label="Footy Oracle home">
+                <img
+                  src={footyOracleLogo.url}
+                  alt="Footy Oracle — Tips. Stats. Success."
+                  width={220}
+                  height={220}
+                  className="h-20 w-auto object-contain drop-shadow-[0_4px_20px_rgba(139,92,246,0.45)]"
+                />
+              </Link>
+
+              <div className="flex items-center gap-1">
+                <a
+                  href={SOCIAL_LINKS.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Footy Oracle on Facebook"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-amber-300/30 text-amber-200/90 hover:bg-amber-300/10 hover:text-amber-100"
+                >
+                  <Facebook className="h-3.5 w-3.5" />
+                </a>
+                <a
+                  href={SOCIAL_LINKS.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Footy Oracle on Telegram"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-amber-300/30 text-amber-200/90 hover:bg-amber-300/10 hover:text-amber-100"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
 
             <div className="flex items-center gap-1.5">
               <Link
