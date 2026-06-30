@@ -29,17 +29,17 @@ export function HeroBanner() {
             </div>
           </div>
 
-          {/* Gaffer image — focal crop */}
-          <div className="relative mt-3 aspect-[5/4] w-full overflow-hidden">
+          {/* Gaffer image — full hero artwork fits the mobile box */}
+          <div className="relative mt-3 w-full overflow-hidden bg-[#0a0414]">
             <img
               src={HOMEPAGE_APPROVED_ASSETS.heroBanner}
               alt="The Gaffer — Footy Oracle"
-              className="absolute inset-0 h-full w-full object-cover object-[center_22%]"
+              className="block h-auto w-full object-contain"
               loading="eager"
               decoding="async"
               draggable={false}
             />
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/80 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/80 to-transparent" />
           </div>
 
           {/* Headline + CTAs */}
