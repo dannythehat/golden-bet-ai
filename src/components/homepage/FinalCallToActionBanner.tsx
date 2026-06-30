@@ -12,8 +12,7 @@ export function FinalCallToActionBanner() {
           body="Daily tips, form tables, fantasy league, weekly prizes — all in one club."
           image={HOMEPAGE_APPROVED_ASSETS.finalCtaFooter}
           imageAlt="Join the Footy Oracle Club"
-          imagePosition="object-[20%_45%]"
-          imageAspect="aspect-[5/4]"
+          imagePosition="object-[center_30%]"
           tone="gold"
           ctas={[{ label: 'Join Footy Oracle Club', to: '/pricing' }]}
         />

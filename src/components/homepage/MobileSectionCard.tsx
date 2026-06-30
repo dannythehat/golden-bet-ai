@@ -102,33 +102,24 @@ export function MobileSectionCard({
   const t = TONE[tone];
   return (
     <div
-      className={`group relative overflow-hidden rounded-3xl border bg-white/[0.04] backdrop-blur-xl ${t.border} ${t.glow}`}
+      className={`relative overflow-hidden rounded-2xl border bg-[#0a0414]/90 ${t.border} ${t.glow}`}
     >
-      {/* Frosted base — layered translucent surfaces */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-black/40" />
-      <div className="pointer-events-none absolute -inset-px rounded-3xl ring-1 ring-inset ring-white/10" />
-
-      {/* Inset image frame so artwork can't bleed against the card edge */}
-      <div className="relative px-3 pt-3">
-        <div className={`relative w-full overflow-hidden rounded-2xl ring-1 ring-white/10 ${imageAspect}`}>
-          <img
-            src={image}
-            alt={imageAlt}
-            loading="lazy"
-            decoding="async"
-            className={`absolute inset-0 h-full w-full scale-[1.18] object-cover ${imagePosition}`}
-            draggable={false}
-          />
-          {/* Vignette + bottom fade for legibility */}
-          <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_30%,transparent_40%,rgba(0,0,0,0.55)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        </div>
+      <div className={`relative w-full overflow-hidden ${imageAspect}`}>
+        <img
+          src={image}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
+          className={`absolute inset-0 h-full w-full object-cover ${imagePosition}`}
+          draggable={false}
+        />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/70 to-transparent" />
       </div>
 
-      <div className="relative px-5 pb-5 pt-4">
+      <div className="relative -mt-6 px-4 pb-5">
         {eyebrow && (
           <span
-            className={`mb-2 inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] backdrop-blur ${t.chip}`}
+            className={`mb-2 inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${t.chip}`}
           >
             {eyebrow}
           </span>
