@@ -28,13 +28,13 @@ export function HeroBanner() {
                 />
               </Link>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <a
                   href={SOCIAL_LINKS.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Footy Oracle on Facebook"
-                  className="grid h-7 w-7 place-items-center rounded-full border border-amber-300/30 text-amber-200/90 hover:bg-amber-300/10 hover:text-amber-100"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-[#1877F2]/50 text-[#1877F2] hover:bg-[#1877F2]/15 hover:text-[#1877F2]"
                 >
                   <Facebook className="h-3.5 w-3.5" />
                 </a>
@@ -43,7 +43,7 @@ export function HeroBanner() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Footy Oracle on Telegram"
-                  className="grid h-7 w-7 place-items-center rounded-full border border-amber-300/30 text-amber-200/90 hover:bg-amber-300/10 hover:text-amber-100"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-[#229ED9]/50 text-[#229ED9] hover:bg-[#229ED9]/15 hover:text-[#229ED9]"
                 >
                   <Send className="h-3.5 w-3.5" />
                 </a>
