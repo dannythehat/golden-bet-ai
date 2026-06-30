@@ -12,6 +12,9 @@ import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { HomepageScene } from '@/components/homepage/HomepageScene';
+import { TodaysDouble } from '@/components/homepage/TodaysDouble';
+import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
+import { PnLSection } from '@/components/homepage/PnLSection';
 
 export default function PreviewHome() {
   useEffect(() => {
@@ -27,7 +30,19 @@ export default function PreviewHome() {
         <HeroBanner />
       </HomepageScene>
 
-      <HomepageScene tone="emerald" eyebrow="01 · Form & Fantasy">
+      <HomepageScene tone="finale" eyebrow="01 · The Gaffer's Picks">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+          <div className="grid gap-3 lg:grid-cols-[1.05fr_0.95fr] md:gap-4">
+            <GafferPicksBox />
+            <TodaysDouble />
+          </div>
+          <div className="mt-3 md:mt-4">
+            <PnLSection />
+          </div>
+        </div>
+      </HomepageScene>
+
+      <HomepageScene tone="emerald" eyebrow="02 · Form & Fantasy">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
             <FormTablesSection />
@@ -36,7 +51,7 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="editorial" eyebrow="02 · The Newsroom">
+      <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
             <LatestArticlesSection />
@@ -46,13 +61,13 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="violet" eyebrow="03 · Donkey of the Week">
+      <HomepageScene tone="violet" eyebrow="04 · Donkey of the Week">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <DonkeyOfTheWeekFeatureCard />
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="crowd" eyebrow="04 · The Community">
+      <HomepageScene tone="crowd" eyebrow="05 · The Community">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
             <CommunityFeatureCard />
@@ -61,7 +76,7 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="finale" eyebrow="05 · Join the Club">
+      <HomepageScene tone="finale" eyebrow="06 · Join the Club">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <FinalCallToActionBanner />
         </div>
