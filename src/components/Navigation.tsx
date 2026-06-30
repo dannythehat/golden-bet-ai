@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Home, Info, BookOpen, Crown, Trophy, BarChart3, TrendingUp, CalendarDays } from 'lucide-react';
-import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
+import footyOracleLogo from '@/assets/footy-oracle-logo-v2.png.asset.json';
 import { UserMenu } from '@/components/UserMenu';
 import { useSubscription } from '@/hooks/useSubscription';
 
