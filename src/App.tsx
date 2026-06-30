@@ -10,16 +10,10 @@ const Home = lazy(() => import("./pages/PreviewHome"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
-const LeaguePage = lazy(() => import("./pages/LeaguePage"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
-const WorldCupPage = lazy(() => import("./pages/WorldCupPage"));
-const SweepstakePage = lazy(() => import("./pages/SweepstakePage"));
-const FantasyLeaguePage = lazy(() => import("./pages/FantasyLeaguePage"));
-const FormTablesPreview = lazy(() => import("./pages/FormTablesPreview"));
-const PLBoard = lazy(() => import("./pages/PLBoard"));
-const TodaysFixtures = lazy(() => import("./pages/TodaysFixtures"));
+const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -51,22 +45,25 @@ const App = () => {
           <BrowserRouter>
             <Suspense fallback={<div className="min-h-screen bg-background" />}>
               <Routes>
+                {/* KEEP */}
                 <Route path="/" element={<Home />} />
-                <Route path="/index" element={<Home />} />
+                <Route path="/preview" element={<Home />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/league/:slug" element={<LeaguePage />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/members" element={<MembersDashboard />} />
-                <Route path="/world-cup" element={<WorldCupPage />} />
-                <Route path="/sweepstake" element={<SweepstakePage />} />
-                <Route path="/fantasy-league" element={<FantasyLeaguePage />} />
-                <Route path="/form-tables" element={<FormTablesPreview />} />
-                <Route path="/pnl" element={<PLBoard />} />
-                <Route path="/fixtures" element={<TodaysFixtures />} />
-                <Route path="/preview" element={<Home />} />
+
+                {/* Placeholder shells — to be rebuilt from scratch */}
+                <Route path="/fantasy-league" element={<ComingSoon title="Fantasy League" eyebrow="Coming for 2025/26" />} />
+                <Route path="/form-tables" element={<ComingSoon title="Form Tables" eyebrow="In Build" />} />
+                <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
+                <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
+                <Route path="/pnl" element={<ComingSoon title="Profit & Loss" eyebrow="In Build" />} />
+                <Route path="/the-gaffer" element={<ComingSoon title="The Gaffer" eyebrow="In Build" />} />
+                <Route path="/community" element={<ComingSoon title="Community" eyebrow="In Build" />} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
