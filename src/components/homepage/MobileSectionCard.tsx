@@ -63,10 +63,11 @@ type MobileSectionCardProps = {
   body?: string;
   image: string;
   imageAlt: string;
-  imagePosition?: string; // tailwind object-position class
+  /** @deprecated no longer used — image is shown in full (object-contain). Kept for backwards compatibility. */
+  imagePosition?: string;
   tone?: MobileTone;
   ctas: MobileCta[];
-  /** Aspect ratio of the cropped image banner (e.g. "aspect-[16/9]") */
+  /** @deprecated no longer used — frame sizes to the image's natural ratio. */
   imageAspect?: string;
   children?: ReactNode;
 };
@@ -93,10 +94,8 @@ export function MobileSectionCard({
   body,
   image,
   imageAlt,
-  imagePosition = 'object-center',
   tone = 'violet',
   ctas,
-  imageAspect = 'aspect-[16/10]',
   children,
 }: MobileSectionCardProps) {
   const t = TONE[tone];
@@ -104,19 +103,20 @@ export function MobileSectionCard({
     <div
       className={`relative overflow-hidden rounded-2xl border bg-[#0a0414]/90 ${t.border} ${t.glow}`}
     >
-      <div className={`relative w-full overflow-hidden ${imageAspect}`}>
+      {/* Full artwork — show the WHOLE image, never crop. Frame sizes to image's natural ratio. */}
+      <div className="relative w-full bg-[#07000f]">
         <img
           src={image}
           alt={imageAlt}
           loading="lazy"
           decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover ${imagePosition}`}
+          className="block h-auto w-full select-none object-contain"
           draggable={false}
         />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/70 to-transparent" />
       </div>
 
-      <div className="relative -mt-6 px-4 pb-5">
+      <div className="relative px-4 pb-5 pt-4">
+
         {eyebrow && (
           <span
             className={`mb-2 inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${t.chip}`}
