@@ -5,7 +5,7 @@ import { ArtworkCard } from './ArtworkCard';
 import { HOMEPAGE_APPROVED_ASSETS } from './assets';
 import { NAV_LINKS } from './content';
 import heroBannerClean from '@/assets/homepage/hero-banner-clean.png';
-import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
+import footyOracleLogo from '@/assets/footy-oracle-logo-v2.png.asset.json';
 
 export function HeroBanner() {
   const [menuOpen, setMenuOpen] = useState(false);
