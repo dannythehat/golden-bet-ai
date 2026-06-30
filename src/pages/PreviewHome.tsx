@@ -51,7 +51,7 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="editorial" eyebrow="02 · The Newsroom">
+      <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
             <LatestArticlesSection />
@@ -61,13 +61,13 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="violet" eyebrow="03 · Donkey of the Week">
+      <HomepageScene tone="violet" eyebrow="04 · Donkey of the Week">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <DonkeyOfTheWeekFeatureCard />
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="crowd" eyebrow="04 · The Community">
+      <HomepageScene tone="crowd" eyebrow="05 · The Community">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
             <CommunityFeatureCard />
@@ -76,7 +76,7 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="finale" eyebrow="05 · Join the Club">
+      <HomepageScene tone="finale" eyebrow="06 · Join the Club">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <FinalCallToActionBanner />
         </div>
