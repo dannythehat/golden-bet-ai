@@ -92,30 +92,44 @@ function ValueBadge({ cell }: { cell: ValueCell }) {
   );
 }
 
-/** The Gaffer's top selection for the active market — his pick, in plain terms. */
-function GafferBanner({ fixture, label, mark, cell }: { fixture: Fixture | null; label: string; mark: string | null; cell: ValueCell }) {
-  if (!fixture || !cell) {
+type GafferPick = { mode: 'value' | 'banker'; f: Fixture; cell: NonNullable<ValueCell> } | null;
+
+/** The Gaffer's call for the active market — a value pick, or (quiet days) his banker. */
+function GafferBanner({ pick, label, mark }: { pick: GafferPick; label: string; mark: string | null }) {
+  if (!pick) {
     return (
-      <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white/60">
-        <span className="font-display tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} PICK</span> — nothing worth backing here today. He's sitting on his hands.
+      <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/60 backdrop-blur-md">
+        <span className="font-display tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} CALL</span> — nothing worth backing here today. He's sitting on his hands.
       </div>
     );
   }
+  const { mode, f, cell } = pick;
+  const banker = mode === 'banker';
   return (
-    <div className="relative mb-5 overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-r from-[#1a1003] via-[#160c04] to-[#0d0703] px-5 py-4 shadow-[0_0_40px_-16px_hsl(var(--gold))]">
-      <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gold/10 blur-2xl" />
+    <div
+      className={`relative mb-4 overflow-hidden rounded-2xl border px-4 py-3.5 backdrop-blur-md ${
+        banker
+          ? 'border-violet-400/40 bg-gradient-to-r from-violet-600/20 via-fuchsia-600/10 to-transparent shadow-[0_0_40px_-18px_rgba(139,92,246,0.7)]'
+          : 'border-gold/40 bg-gradient-to-r from-[#1a1003] via-[#160c04] to-[#0d0703] shadow-[0_0_40px_-16px_hsl(var(--gold))]'
+      }`}
+    >
+      <div className={`pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl ${banker ? 'bg-violet-500/20' : 'bg-gold/10'}`} />
       <div className="relative flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Flame className="h-6 w-6 text-gold" />
-          <div>
-            <div className="font-display text-sm tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} PICK</div>
-            <div className="font-bold text-white">{fixture.home.name} <span className="text-white/40">v</span> {fixture.away.name}</div>
-            <div className="text-xs text-white/50">{fixture.region} · {fold(fixture.league)} · {fixture.time}</div>
+          <Flame className={`h-6 w-6 shrink-0 ${banker ? 'text-violet-300' : 'text-gold'}`} />
+          <div className="min-w-0">
+            <div className={`font-display text-sm tracking-wide ${banker ? 'text-violet-200' : 'text-gold'}`}>
+              {banker ? `NO VALUE TODAY · THE GAFFER'S ${label.toUpperCase()} BANKER` : `THE GAFFER'S ${label.toUpperCase()} PICK`}
+            </div>
+            <div className="font-bold leading-tight text-white">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
+            <div className="truncate text-xs text-white/50">
+              {banker ? 'Strongest form on the card' : 'The price is wrong — value'} · {f.region} · {fold(f.league)}
+            </div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="font-display text-xl text-white">Over {mark} {label}</div>
-          <div className="text-sm text-white/70">form <span className="text-emerald-400">{cell.prob}%</span> · odds <span className="text-gold">{odd(cell.odds)}</span></div>
+        <div className="shrink-0 text-right">
+          <div className={`font-display text-xl ${banker ? 'text-violet-100' : 'text-white'}`}>{label === 'BTTS' ? 'BTTS' : `Over ${mark} ${label}`}</div>
+          <div className="text-sm text-white/70">form <span className="text-emerald-400">{cell.prob}%</span> · odds <span className={banker ? 'text-violet-200' : 'text-gold'}>{odd(cell.odds)}</span></div>
         </div>
       </div>
     </div>
@@ -143,12 +157,17 @@ export default function FormTables() {
   }, [league, C, tables]);
 
   // The Gaffer's pick = highest-edge flagged fixture for the active market/mark.
+  // The Gaffer's call for the active market: a VALUE pick if the price is wrong,
+  // otherwise (quiet days) his BANKER — the strongest form on the card.
   const gafferPick = useMemo(() => {
-    const flagged = rows
+    const scored = rows
       .map((f) => ({ f, cell: C.value(f, mark) }))
-      .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell?.flag);
-    flagged.sort((a, b) => b.cell.edge - a.cell.edge);
-    return flagged[0] ?? null;
+      .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell && x.cell.odds != null);
+    const flagged = [...scored].filter((x) => x.cell.flag).sort((a, b) => b.cell.edge - a.cell.edge);
+    if (flagged[0]) return { mode: 'value' as const, f: flagged[0].f, cell: flagged[0].cell };
+    // No value: fall back to the banker — highest form %, then best odds.
+    const banker = [...scored].sort((a, b) => b.cell.prob - a.cell.prob || (b.cell.odds ?? 0) - (a.cell.odds ?? 0))[0];
+    return banker ? { mode: 'banker' as const, f: banker.f, cell: banker.cell } : null;
   }, [rows, C, mark]);
 
   return (
@@ -156,23 +175,23 @@ export default function FormTables() {
       <div className="pointer-events-none fixed inset-0 opacity-70 [background:radial-gradient(circle_at_15%_-5%,rgba(88,28,135,0.35),transparent_45%),radial-gradient(circle_at_85%_10%,rgba(124,58,237,0.18),transparent_40%)]" />
       <HomepageNav />
 
-      <main className="relative mx-auto max-w-5xl px-3 py-6 md:px-6 md:py-8">
-        <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white">
+      <main className="relative mx-auto max-w-5xl px-3 py-4 md:px-6 md:py-8">
+        <Link to="/" className="mb-3 inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white">
           <ArrowLeft className="h-4 w-4" /> Back home
         </Link>
 
-        <div className="mb-5">
-          <div className="flex items-center gap-3">
-            <Flame className="h-8 w-8 text-emerald-400" />
-            <h1 className="font-display text-4xl tracking-tight text-white md:text-5xl">FORM TABLES</h1>
+        <div className="mb-4">
+          <div className="flex items-center gap-2.5">
+            <Flame className="h-7 w-7 text-emerald-400 md:h-8 md:w-8" />
+            <h1 className="font-display text-3xl tracking-tight text-white md:text-5xl">FORM TABLES</h1>
           </div>
-          <p className="mt-1 text-white/60">
-            Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top — wherever they're from.
+          <p className="mt-1 text-sm text-white/60 md:text-base">
+            Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top.
           </p>
           <p className="mt-1 text-xs text-white/40">
             {live
               ? "Today's slate · refreshed 3am UK from live form."
-              : 'Upcoming fixtures on real form — live 3am UK auto-refresh switches on at launch.'}
+              : 'Upcoming fixtures on real form — live 3am UK auto-refresh at launch.'}
           </p>
         </div>
 
@@ -216,7 +235,7 @@ export default function FormTables() {
         </div>
 
         {/* The Gaffer's selection for this market */}
-        <GafferBanner fixture={gafferPick?.f ?? null} label={C.label} mark={mark} cell={gafferPick?.cell ?? null} />
+        <GafferBanner pick={gafferPick} label={C.label} mark={mark} />
 
         {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-white/[0.03] backdrop-blur-xl">
@@ -235,20 +254,28 @@ export default function FormTables() {
           {rows.map((f, i) => {
             const overPct = C.over ? C.over(f, mark!) : null;
             const o = C.odds(f, mark);
+            const isPick = gafferPick?.f.id === f.id;
             return (
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
-                className="flex w-full items-center gap-2 border-b border-white/8 px-3 py-3 text-left transition-colors last:border-0 hover:bg-white/[0.05] md:gap-3 md:px-4"
+                className={`flex w-full items-center gap-2 border-b border-white/8 px-3 py-2.5 text-left transition-colors last:border-0 md:gap-3 md:px-4 ${
+                  isPick
+                    ? 'bg-violet-500/[0.16] ring-1 ring-inset ring-violet-400/40 backdrop-blur-md hover:bg-violet-500/25'
+                    : 'hover:bg-white/[0.05]'
+                }`}
               >
-                <span className={`w-4 shrink-0 text-center font-display text-base md:w-5 md:text-lg ${i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
+                <span className={`w-4 shrink-0 text-center font-display text-base md:w-5 md:text-lg ${isPick ? 'text-violet-300' : i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
                 <div className="flex w-[42px] shrink-0 -space-x-2 md:w-[56px] md:-space-x-1.5">
                   <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={24} />
                   <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={24} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-bold leading-tight text-white md:text-base">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
-                  <div className="truncate text-[11px] text-white/45 md:text-xs">{f.region} · {fold(f.league)}</div>
+                  <div className="mt-0.5 flex items-center gap-1.5">
+                    {isPick && <span className="shrink-0 rounded bg-violet-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-200">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>}
+                    <span className="truncate text-[11px] text-white/45 md:text-xs">{f.region} · {fold(f.league)}</span>
+                  </div>
                 </div>
                 {C.over && (
                   <div className="hidden w-14 shrink-0 text-right sm:block">
@@ -261,14 +288,14 @@ export default function FormTables() {
                   <div className="text-[10px] text-white/45">odds</div>
                 </div>
                 <div className="w-12 shrink-0 text-right md:w-14">
-                  <div className="font-display text-lg leading-none text-emerald-400 md:text-2xl">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
+                  <div className="font-display text-base leading-none text-emerald-400 md:text-2xl">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
                   <div className="text-[10px] uppercase tracking-wide text-white/40">avg</div>
                 </div>
                 <div className="w-10 shrink-0 text-right md:w-12">
                   <div className="text-xs font-semibold text-white/90 md:text-sm">{f.time}</div>
                   <div className="text-[10px] text-white/40">KO</div>
                 </div>
-                <ChevronRight className="h-4 w-4 shrink-0 text-white/30" />
+                <ChevronRight className={`h-4 w-4 shrink-0 ${isPick ? 'text-violet-300' : 'text-white/30'}`} />
               </button>
             );
           })}
