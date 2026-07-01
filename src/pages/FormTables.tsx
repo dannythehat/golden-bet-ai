@@ -98,8 +98,8 @@ type GafferPick = { mode: 'value' | 'banker'; f: Fixture; cell: NonNullable<Valu
 function GafferBanner({ pick, label, mark }: { pick: GafferPick; label: string; mark: string | null }) {
   if (!pick) {
     return (
-      <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/60 backdrop-blur-md">
-        <span className="font-display tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} CALL</span> — nothing worth backing here today. He's sitting on his hands.
+      <div className="mb-4 rounded-2xl border border-gold/25 bg-gradient-to-r from-[#160c04] to-transparent px-4 py-3 text-sm text-white/70 backdrop-blur-md">
+        <span className="font-display tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} CALL</span> — <span className="font-bold text-white">no value today.</span> Nowt on the card worth your money, so he's keeping his hands in his pockets. Back tomorrow.
       </div>
     );
   }
