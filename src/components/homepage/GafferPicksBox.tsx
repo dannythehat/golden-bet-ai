@@ -147,7 +147,7 @@ function PickCard({ leg, index }: { leg: Leg; index: number }) {
         </div>
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-white/45">
           <span>Edge</span>
-          <span className="font-display text-lg leading-none text-emerald-300">+{leg.edge.toFixed(1)}<span className="ml-0.5 text-[10px] text-white/45">pts</span></span>
+          <span className="font-display text-lg leading-none text-emerald-300">+{leg.edge.toFixed(1)}%</span>
         </div>
       </div>
 
