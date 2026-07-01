@@ -187,12 +187,22 @@ export function GafferPicksBox() {
 
         {/* Picks */}
         {bet.type === 'none' ? (
-          <div className="rounded-2xl border border-white/10 bg-[#07000f]/70 p-6 text-center">
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl border border-[#f5c542]/30 bg-[#f5c542]/10">
-              <Target className="h-5 w-5 text-[#f5c542]" />
+          <div className="relative flex min-h-[210px] items-center overflow-hidden rounded-2xl border border-white/10 bg-[#07000f]/70 p-6">
+            <div className="pointer-events-none absolute right-4 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-[#f5c542]/12 blur-3xl" />
+            <img
+              src="/images/gaffer/gaffer-shocked.png"
+              alt="The Gaffer, no value today"
+              loading="lazy"
+              draggable={false}
+              className="pointer-events-none absolute -right-2 top-0 z-0 hidden h-full w-auto select-none object-contain object-top opacity-95 sm:block"
+            />
+            <div className="relative z-[1] max-w-[70%]">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl border border-[#f5c542]/30 bg-[#f5c542]/10">
+                <Target className="h-5 w-5 text-[#f5c542]" />
+              </div>
+              <h3 className="font-display text-2xl uppercase leading-none tracking-tight text-white">No bet today.</h3>
+              <p className="mt-1.5 text-sm text-white/55">Nowt on the card worth your money — no value, no bet. The Gaffer's keeping his hands in his pockets. Back tomorrow.</p>
             </div>
-            <h3 className="font-display text-xl text-white">No bet today.</h3>
-            <p className="mx-auto mt-1 max-w-md text-sm text-white/55">No value worth backing. Powder stays dry.</p>
           </div>
         ) : (
           <div className="space-y-3">

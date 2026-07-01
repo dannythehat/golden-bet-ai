@@ -39,5 +39,6 @@ Lovable should pull from here rather than baking text into images.
 | `gaffer-hero-portrait.png` | Hero (pointing) |
 | `gaffer/gaffer-arms-crossed.png` | Meet the Gaffer card |
 | `gaffer/gaffer-facepalm.png` | Donkey of the Week card |
+| `gaffer/gaffer-shocked.png` | Picks board — "No bet today" state |
 | `gaffer/gaffer-pointing-laugh.png` | _library — available_ |
 | `stadium-bg.jpg` | Hero + Final CTA atmosphere |
