@@ -21,10 +21,15 @@ Deploy these functions (already in the repo): `ingest-form-stats`,
 The orchestrator (driven by the existing per-minute pg_cron) now runs:
 
 - **02:00 UTC (03:00 London/BST)** → `ingest-form-stats` (form → `form_tables`)
+- **02:10 UTC** → `build-form-tables` (today's slate → `daily_form_tables`)
 - **02:20 UTC** → `gaffer-daily-pick` (value engine + voice → `gaffer_picks`)
 - **evenings** → `settle-gaffer-picks` (results → `status`, `profit_loss`)
 
-To test immediately, invoke `ingest-form-stats` then `gaffer-daily-pick` by hand.
+Also deploy the `build-form-tables` function and apply migration
+`20260701090000_daily_form_tables.sql` (public-read `daily_form_tables`). The
+`/form-tables` page reads the latest `daily_form_tables` row directly (snapshot
+fallback until the first refresh). To test immediately, invoke `ingest-form-stats`
+then `build-form-tables` then `gaffer-daily-pick` by hand.
 
 ## The contract you read (already matches)
 

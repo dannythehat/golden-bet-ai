@@ -10,6 +10,25 @@ what changed, why, and which docs/code it touched. Newest first.
 
 ---
 
+## 2026-07-01 — Form Tables wired to live data + /pnl page
+
+- **Form Tables live**: the `/form-tables` page now reads a live `daily_form_tables`
+  row (snapshot fallback), ranked by combined average, today's slate.
+  - New `_shared/formTableRows.ts` assembles per-fixture rows (combined averages,
+    per-mark over% + odds, value cells) from today's fixtures + last-10 form.
+  - New `build-form-tables` edge function writes the day's slate to
+    `daily_form_tables` (migration `20260701090000`, public-read).
+  - Scheduled at 02:10 UTC in `daily-orchestrator` (between ingest and pick).
+  - Drill-down history (home/away form, H2H) left empty for now — a follow-up
+    (needs the lastx/h2h calls); the main table is fully live.
+- **/pnl page**: replaced the Coming Soon placeholder with a live full-history
+  page (summary, cumulative sparkline, settled-bet table) reading `gaffer_picks`
+  (won/lost), sample fallback until real settlements land.
+- **Why**: the tables and P&L were built on static/sample data; this puts them on
+  the same daily-refresh, public-read pipeline as the picks.
+
+---
+
 ## 2026-06-30 — Gaffer taken LIVE: voice in the edge pipeline + daily cron
 
 - **Wired** the Gaffer's real voice into the live daily pick:

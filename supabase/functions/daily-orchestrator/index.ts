@@ -75,6 +75,9 @@ const SCHEDULE: Record<number, Record<number, Task[]>> = {
     0: [
       ["ingest-form-stats", { scheduled: true }],   // FootyStats form -> form_tables
     ],
+    10: [
+      ["build-form-tables", { scheduled: true }],   // today's slate -> daily_form_tables
+    ],
     20: [
       ["gaffer-daily-pick", { scheduled: true }],   // value engine + voice -> gaffer_picks
     ],

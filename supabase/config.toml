@@ -45,6 +45,9 @@ verify_jwt = false
 [functions.gaffer-daily-pick]
 verify_jwt = false
 
+[functions.build-form-tables]
+verify_jwt = false
+
 [functions.settle-gaffer-picks]
 verify_jwt = false
 

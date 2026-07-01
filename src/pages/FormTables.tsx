@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, ChevronRight, Flame, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
@@ -7,11 +8,34 @@ import { TeamAvatar } from '@/components/TeamAvatar';
 import { FormStrip } from '@/components/FormStrip';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
+import { supabase } from '@/integrations/supabase/client';
 import raw from '@/data/formTablesData.json';
 import type { FormFixtureRow as Fixture, FormValueCell, FormGame } from '@/types/footy';
 
 type ValueCell = FormValueCell | null;
-const DATA = raw as unknown as { leagues: { name: string; region: string }[]; fixtures: Fixture[] };
+type TablesPayload = { leagues: { name: string; region: string }[]; fixtures: Fixture[] };
+const SNAPSHOT = raw as unknown as TablesPayload;
+
+/** Live today's slate from daily_form_tables (built 3am UK); snapshot fallback. */
+function useFormTablesData(): { data: TablesPayload; live: boolean } {
+  const { data } = useQuery({
+    queryKey: ['daily_form_tables'],
+    staleTime: 1000 * 60 * 10,
+    queryFn: async (): Promise<TablesPayload | null> => {
+      // daily_form_tables isn't in the generated Supabase types yet.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
+        .from('daily_form_tables')
+        .select('leagues, fixtures, table_date')
+        .order('table_date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error || !data || !Array.isArray(data.fixtures) || data.fixtures.length === 0) return null;
+      return { leagues: Array.isArray(data.leagues) ? data.leagues : [], fixtures: data.fixtures as Fixture[] };
+    },
+  });
+  return data ? { data, live: true } : { data: SNAPSHOT, live: false };
+}
 
 /* ── Category config ─────────────────────────────────────────────────── */
 type CatKey = 'corners' | 'goals' | 'cards' | 'btts';
@@ -109,13 +133,14 @@ export default function FormTables() {
 
   useEffect(() => { document.title = 'Form Tables — Footy Oracle Club'; }, []);
 
+  const { data: tables, live } = useFormTablesData();
   const C = CATS.find((c) => c.key === cat)!;
   const mark = C.marks?.[Math.min(markIdx, C.marks.length - 1)] ?? null;
 
   const rows = useMemo(() => {
-    const list = DATA.fixtures.filter((f) => league === 'all' || f.league === league);
+    const list = tables.fixtures.filter((f) => league === 'all' || f.league === league);
     return [...list].sort((a, b) => C.avg(b) - C.avg(a));
-  }, [league, C]);
+  }, [league, C, tables]);
 
   // The Gaffer's pick = highest-edge flagged fixture for the active market/mark.
   const gafferPick = useMemo(() => {
@@ -144,7 +169,11 @@ export default function FormTables() {
           <p className="mt-1 text-white/60">
             Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top — wherever they're from.
           </p>
-          <p className="mt-1 text-xs text-white/40">Showing real completed data for review · live "today's slate" switches on at launch (3am UK refresh).</p>
+          <p className="mt-1 text-xs text-white/40">
+            {live
+              ? "Today's slate · refreshed 3am UK from live form."
+              : 'Sample slate shown until the live 3am UK refresh lands.'}
+          </p>
         </div>
 
         {/* Category tabs */}
@@ -182,7 +211,7 @@ export default function FormTables() {
             className="rounded-xl border border-white/12 bg-[#140a26] px-3 py-2 text-sm font-semibold text-white outline-none"
           >
             <option value="all">All leagues</option>
-            {DATA.leagues.map((l) => <option key={l.region} value={l.name}>{l.region} · {l.name}</option>)}
+            {tables.leagues.map((l) => <option key={`${l.region}-${l.name}`} value={l.name}>{l.region} · {l.name}</option>)}
           </select>
         </div>
 
