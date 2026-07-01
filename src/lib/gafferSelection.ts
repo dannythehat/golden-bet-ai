@@ -13,6 +13,9 @@ import { gafferReason } from '@/lib/gafferVoice';
 const DATA = raw as unknown as { fixtures: FormFixtureRow[] };
 export const STAKE = 10;
 
+/** Today's UK date (YYYY-MM-DD) — the Gaffer only picks from today's card. */
+const todayUK = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' });
+
 export interface Leg {
   fixtureId: string;
   home: { name: string; short: string; logo: string | null };
@@ -55,7 +58,9 @@ export function getGafferPicks(): Leg[] {
       ),
     });
   };
+  const today = todayUK();
   for (const f of DATA.fixtures) {
+    if (f.date !== today) continue; // today's card only — no games today → no picks
     add(f, 'Corners', 'Over 9.5 Corners', f.value.corners['9.5']);
     add(f, 'Goals', 'Over 2.5 Goals', f.value.goals['2.5']);
     add(f, 'BTTS', 'BTTS – Yes', f.value.btts);

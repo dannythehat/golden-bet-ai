@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, TrendingUp, TrendingDown, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, TrendingUp, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
@@ -180,55 +180,41 @@ export default function Pnl() {
           </div>
         </section>
 
-        {/* Full history */}
-        <section className="mt-6 overflow-hidden rounded-[1.4rem] border border-white/10 bg-[#130321]">
-          <div className="border-b border-white/10 px-5 py-4">
-            <h2 className="font-display text-2xl uppercase tracking-tight text-white">Full settled history</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-wider text-white/40">
-                  <th className="px-4 py-3 font-black">Date</th>
-                  <th className="px-4 py-3 font-black">Selection</th>
-                  <th className="px-4 py-3 font-black">Type</th>
-                  <th className="px-4 py-3 text-right font-black">Stake</th>
-                  <th className="px-4 py-3 text-right font-black">Odds</th>
-                  <th className="px-4 py-3 text-center font-black">Result</th>
-                  <th className="px-4 py-3 text-right font-black">P/L</th>
-                </tr>
-              </thead>
-              <tbody>
-                {snap.rows.map((r, i) => {
-                  const won = r.status === 'won';
-                  const pl = Number(r.profit_loss ?? 0);
-                  return (
-                    <tr key={`${r.pick_date}-${i}`} className="border-t border-white/5 align-top">
-                      <td className="whitespace-nowrap px-4 py-3 text-white/70">
-                        {new Date(r.pick_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                      </td>
-                      <td className="px-4 py-3 text-white/80">
-                        {(r.legs ?? []).length
-                          ? (r.legs ?? []).map((l, j) => <div key={j} className="leading-snug">{legLabel(l)}</div>)
-                          : <span className="text-white/40">—</span>}
-                      </td>
-                      <td className="px-4 py-3 capitalize text-white/55">{r.bet_type ?? '—'}</td>
-                      <td className="px-4 py-3 text-right text-white/70">£{Number(r.stake ?? 0)}</td>
-                      <td className="px-4 py-3 text-right text-[#f8e7a1]">{r.combined_odds ? Number(r.combined_odds).toFixed(2) : '—'}</td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${won ? 'bg-emerald-400/15 text-emerald-300' : 'bg-rose-400/15 text-rose-300'}`}>
-                          {won ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}{r.status}
-                        </span>
-                      </td>
-                      <td className={`whitespace-nowrap px-4 py-3 text-right font-bold ${pl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {pl >= 0 ? '+' : ''}£{round2(pl)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+        {/* Full history — compact frosted cards, one per settled bet */}
+        <section className="mt-6">
+          <h2 className="mb-3 font-display text-xl uppercase tracking-tight text-white md:text-2xl">Full settled history</h2>
+          <ul className="space-y-2">
+            {snap.rows.map((r, i) => {
+              const won = r.status === 'won';
+              const pl = Number(r.profit_loss ?? 0);
+              const legs = r.legs ?? [];
+              const primary = legs.length
+                ? `${legLabel(legs[0])}${legs.length > 1 ? ` +${legs.length - 1}` : ''}`
+                : (r.bet_type ?? 'Bet');
+              const d = new Date(r.pick_date + 'T12:00:00');
+              return (
+                <li
+                  key={`${r.pick_date}-${i}`}
+                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] px-3 py-2.5 backdrop-blur-md transition-colors hover:bg-white/[0.07]"
+                >
+                  <div className="w-9 shrink-0 text-center">
+                    <div className="font-display text-lg leading-none text-white/85">{d.toLocaleDateString('en-GB', { day: '2-digit' })}</div>
+                    <div className="text-[9px] uppercase tracking-wide text-white/40">{d.toLocaleDateString('en-GB', { month: 'short' })}</div>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-white">{primary}</div>
+                    <div className="truncate text-[11px] capitalize text-white/45">£{Number(r.stake ?? 0)} {r.bet_type ?? ''} · odds {r.combined_odds ? Number(r.combined_odds).toFixed(2) : '—'}</div>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wide ${won ? 'bg-emerald-400/15 text-emerald-300' : 'bg-rose-400/15 text-rose-300'}`}>
+                    {won ? 'Won' : 'Lost'}
+                  </span>
+                  <div className={`w-14 shrink-0 text-right font-display text-lg ${pl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {pl >= 0 ? '+' : ''}£{round2(pl)}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
 
         <div className="mt-10"><FooterNavigation /></div>

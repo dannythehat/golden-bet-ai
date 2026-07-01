@@ -139,6 +139,36 @@ function GafferBanner({ pick, label, mark }: { pick: GafferPick; label: string; 
 const odd = (o: number | null) => (o ? o.toFixed(2) : '—');
 const formString = (games: FormGame[]) => games.slice(0, 5).map((g) => g.res).reverse().join('');
 
+const NO_GAMES_LINES = [
+  "Nowt on today, lads. None of our leagues are out — I'm not making one up just to fill the page.",
+  "Quiet one today — no games worth the Gaffer's eye. Empty card beats a made-up one.",
+  "No football on our leagues today. I'll not have you backing thin air. Back when there's a ball rolling.",
+  "Rest day for the Gaffer. Nothing on today — the form tables fire back up the moment there's a game.",
+];
+
+/** Premium fallback when there are no fixtures today — the Gaffer, straight up. */
+function GafferNoGames({ nextDay }: { nextDay: { date: string; count: number } | null }) {
+  const line = NO_GAMES_LINES[new Date().getDate() % NO_GAMES_LINES.length];
+  const nextLabel = nextDay
+    ? new Date(nextDay.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+    : null;
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-violet-600/15 via-white/[0.04] to-transparent p-8 text-center backdrop-blur-xl shadow-[0_0_60px_-30px_rgba(139,92,246,0.6)]">
+      <div className="pointer-events-none absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-violet-500/20 blur-3xl" />
+      <div className="relative mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full border border-gold/40 bg-black/40">
+        <Flame className="h-7 w-7 text-gold" />
+      </div>
+      <h2 className="relative font-display text-2xl uppercase tracking-tight text-white md:text-3xl">No games today</h2>
+      <p className="relative mx-auto mt-2 max-w-md text-sm leading-relaxed text-white/70 md:text-base">“{line}”</p>
+      {nextLabel && (
+        <div className="relative mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm text-white/80">
+          <span className="text-gold">Next up:</span> {nextDay!.count} game{nextDay!.count === 1 ? '' : 's'} · {nextLabel}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FormTables() {
   const [cat, setCat] = useState<CatKey>('corners');
   const [markIdx, setMarkIdx] = useState(1);
@@ -147,14 +177,25 @@ export default function FormTables() {
 
   useEffect(() => { document.title = 'Form Tables — Footy Oracle Club'; }, []);
 
-  const { data: tables, live } = useFormTablesData();
+  const { data: tables } = useFormTablesData();
   const C = CATS.find((c) => c.key === cat)!;
   const mark = C.marks?.[Math.min(markIdx, C.marks.length - 1)] ?? null;
 
+  // TODAY only — UK date. No games today → the Gaffer says so (no roll-forward).
+  const today = useMemo(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), []);
+  const todaysFixtures = useMemo(() => tables.fixtures.filter((f) => f.date === today), [tables, today]);
+
   const rows = useMemo(() => {
-    const list = tables.fixtures.filter((f) => league === 'all' || f.league === league);
+    const list = todaysFixtures.filter((f) => league === 'all' || f.league === league);
     return [...list].sort((a, b) => C.avg(b) - C.avg(a));
-  }, [league, C, tables]);
+  }, [league, C, todaysFixtures]);
+
+  // If nothing's on today, hint at the next matchday (from the wider dataset).
+  const nextDay = useMemo(() => {
+    const future = tables.fixtures.filter((f) => f.date > today).map((f) => f.date).sort();
+    if (!future.length) return null;
+    return { date: future[0], count: tables.fixtures.filter((f) => f.date === future[0]).length };
+  }, [tables, today]);
 
   // The Gaffer's pick = highest-edge flagged fixture for the active market/mark.
   // The Gaffer's call for the active market: a VALUE pick if the price is wrong,
@@ -188,13 +229,13 @@ export default function FormTables() {
           <p className="mt-1 text-sm text-white/60 md:text-base">
             Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top.
           </p>
-          <p className="mt-1 text-xs text-white/40">
-            {live
-              ? "Today's slate · refreshed 3am UK from live form."
-              : 'Upcoming fixtures on real form — live 3am UK auto-refresh at launch.'}
-          </p>
+          <p className="mt-1 text-xs text-white/40">Today's games only. Nowt on? The Gaffer tells you straight.</p>
         </div>
 
+        {todaysFixtures.length === 0 ? (
+          <GafferNoGames nextDay={nextDay} />
+        ) : (
+        <>
         {/* Category tabs */}
         <div className="mb-3 flex flex-wrap gap-2">
           {CATS.map((c) => (
@@ -300,13 +341,15 @@ export default function FormTables() {
             );
           })}
           {rows.length === 0 && (
-            <div className="px-4 py-10 text-center text-white/50">No fixtures for this selection.</div>
+            <div className="px-4 py-10 text-center text-white/50">No fixtures in this league today.</div>
           )}
         </div>
 
         <p className="mt-3 flex items-center gap-1.5 text-xs text-white/40">
           <Info className="h-3.5 w-3.5" /> Odds are bookmaker decimals. Tap any fixture for H2H, both teams' form and the full market breakdown.
         </p>
+        </>
+        )}
 
         {/* The Gaffer's picks + reasoning, below the tables */}
         <div className="mt-8">

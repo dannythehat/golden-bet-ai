@@ -7,7 +7,7 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchTodaysMatches, fetchUpcomingMatches, fetchLeagueMatchesDetailed, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
+import { fetchTodaysMatches, fetchLeagueMatchesDetailed, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
 import { buildFormTables, buildHistory, type TeamFormStats } from "../_shared/formTableRows.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
@@ -45,22 +45,9 @@ serve(async (req) => {
   const today = new Date().toISOString().slice(0, 10);
   const leagueIds = Object.keys(names).map(Number).filter(Boolean);
 
-  // Prefer today's priced fixtures; roll forward to the next matchday when empty.
-  let target: TodayFixture[] = (await fetchTodaysMatches(fsKey)).filter((f) => Object.keys(f.odds).length > 0);
-  let rolledForward = false;
-  if (!target.length) {
-    rolledForward = true;
-    const up = (await Promise.all(leagueIds.map((id) => fetchUpcomingMatches(id, fsKey).catch(() => [] as TodayFixture[]))))
-      .flat()
-      .sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime());
-    const end = up.length ? new Date(up[0].kickoff).getTime() + 7 * 86400 * 1000 : 0;
-    const used = new Set<number>();
-    for (const f of up) {
-      if (new Date(f.kickoff).getTime() > end) break;
-      if (used.has(f.homeId) || used.has(f.awayId)) continue; // each team once
-      used.add(f.homeId); used.add(f.awayId); target.push(f);
-    }
-  }
+  // TODAY only — the priced fixtures on today's card. No games today → empty
+  // payload, and the page shows the Gaffer's "no games today" fallback.
+  const target: TodayFixture[] = (await fetchTodaysMatches(fsKey)).filter((f) => Object.keys(f.odds).length > 0);
 
   // Per-team form strips + head-to-head, from one league-matches call per league.
   const matchLists = await Promise.all(
@@ -76,5 +63,5 @@ serve(async (req) => {
   );
   if (error) return json({ ok: false, error: error.message }, 500);
 
-  return json({ ok: true, date: today, rolled_forward: rolledForward, leagues: payload.leagues.length, fixtures: payload.fixtures.length });
+  return json({ ok: true, date: today, leagues: payload.leagues.length, fixtures: payload.fixtures.length });
 });
