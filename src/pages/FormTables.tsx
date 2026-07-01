@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
 import { supabase } from '@/integrations/supabase/client';
 import raw from '@/data/formTablesData.json';
-import type { FormFixtureRow as Fixture, FormValueCell, FormGame } from '@/types/footy';
+import type { FormFixtureRow as Fixture, FormValueCell, FormValueFlag, FormGame } from '@/types/footy';
 
 type ValueCell = FormValueCell | null;
 type TablesPayload = { leagues: { name: string; region: string }[]; fixtures: Fixture[] };
@@ -37,44 +37,58 @@ function useFormTablesData(): { data: TablesPayload; live: boolean } {
   return data ? { data, live: true } : { data: SNAPSHOT, live: false };
 }
 
-/* ── Category config ─────────────────────────────────────────────────── */
+/* ── Category config — over + under per market ───────────────────────── */
 type CatKey = 'corners' | 'goals' | 'cards' | 'btts';
 interface Cat {
-  key: CatKey; label: string; unit: string; pct?: boolean;
-  marks?: string[];
+  key: CatKey; label: string; pct?: boolean;
+  overMarks?: string[]; underMarks?: string[];
   avg: (f: Fixture) => number;
-  over?: (f: Fixture, mark: string) => number | null;
-  odds: (f: Fixture, mark: string | null) => number | null;
-  value: (f: Fixture, mark: string | null) => ValueCell;
+  overPctAt: (f: Fixture, mark: string | null) => number | null;  // OVER % at a mark
+  overOdds: (f: Fixture, mark: string | null) => number | null;
+  underOdds: (f: Fixture, mark: string | null) => number | null;
 }
 const CATS: Cat[] = [
   {
-    key: 'corners', label: 'Corners', unit: 'corners', marks: ['8.5', '9.5', '10.5'],
+    key: 'corners', label: 'Corners',
+    overMarks: ['8.5', '9.5', '10.5'], underMarks: ['8.5', '9.5', '10.5', '11.5'],
     avg: (f) => f.corners_avg,
-    over: (f, l) => f.corners_over[l] ?? null,
-    odds: (f, l) => (l ? f.corners_odds[l] ?? null : null),
-    value: (f, l) => (l ? f.value.corners[l] ?? null : null),
+    overPctAt: (f, m) => (m ? f.corners_over[m] ?? null : null),
+    overOdds: (f, m) => (m ? f.corners_odds[m] ?? null : null),
+    underOdds: (f, m) => (m ? f.corners_under_odds?.[m] ?? null : null),
   },
   {
-    key: 'goals', label: 'Goals', unit: 'goals', marks: ['2.5', '3.5', '4.5'],
+    key: 'goals', label: 'Goals',
+    overMarks: ['2.5', '3.5', '4.5'], underMarks: ['0.5', '1.5', '2.5', '3.5'],
     avg: (f) => f.goals_avg,
-    over: (f, l) => f.goals_over[l] ?? null,
-    odds: (f, l) => (l ? f.goals_odds[l] ?? null : null),
-    value: (f, l) => (l ? f.value.goals[l] ?? null : null),
+    overPctAt: (f, m) => (m ? f.goals_over[m] ?? null : null),
+    overOdds: (f, m) => (m ? f.goals_odds[m] ?? null : null),
+    underOdds: (f, m) => (m ? f.goals_under_odds?.[m] ?? null : null),
   },
   {
-    key: 'cards', label: 'Cards', unit: 'cards', marks: ['3.5', '4.5', '5.5'],
+    key: 'cards', label: 'Cards',
+    overMarks: ['3.5', '4.5', '5.5'], underMarks: ['2.5', '3.5', '4.5'],
     avg: (f) => f.cards_avg,
-    odds: (f, l) => (l ? f.cards_odds[l] ?? null : null),
-    value: () => null,
+    overPctAt: (f, m) => (m ? f.cards_over?.[m] ?? null : null),
+    overOdds: (f, m) => (m ? f.cards_odds[m] ?? null : null),
+    underOdds: (f, m) => (m ? f.cards_under_odds?.[m] ?? null : null),
   },
   {
-    key: 'btts', label: 'BTTS', unit: '% BTTS', pct: true,
+    key: 'btts', label: 'BTTS', pct: true,
     avg: (f) => f.btts_pct,
-    odds: (f) => f.btts_odds,
-    value: (f) => f.value.btts,
+    overPctAt: (f) => f.btts_pct,
+    overOdds: (f) => f.btts_odds,
+    underOdds: (f) => f.btts_no_odds ?? null,
   },
 ];
+
+/** Value cell from a probability + odds — mirrors the edge assembler. */
+function computeValue(prob: number | null, odds: number | null): ValueCell {
+  if (prob == null || !odds || odds <= 1) return null;
+  const implied = Math.round(1000 / odds) / 10;
+  const edge = Math.round((prob - implied) * 10) / 10;
+  const flag: FormValueFlag = edge >= 20 ? 'strong' : edge >= 10 && odds >= 1.5 ? 'value' : null;
+  return { prob, odds, implied, edge, flag };
+}
 
 /** Fold remaining diacritics for pure-English display (names are pre-folded; leagues here). */
 const fold = (s: string) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '')
@@ -95,7 +109,7 @@ function ValueBadge({ cell }: { cell: ValueCell }) {
 type GafferPick = { mode: 'value' | 'banker'; f: Fixture; cell: NonNullable<ValueCell> } | null;
 
 /** The Gaffer's call for the active market — a value pick, or (quiet days) his banker. */
-function GafferBanner({ pick, label, mark }: { pick: GafferPick; label: string; mark: string | null }) {
+function GafferBanner({ pick, label, selection }: { pick: GafferPick; label: string; selection: string }) {
   if (!pick) {
     return (
       <div className="mb-4 rounded-2xl border border-gold/25 bg-gradient-to-r from-[#160c04] to-transparent px-4 py-3 text-sm text-white/70 backdrop-blur-md">
@@ -128,7 +142,7 @@ function GafferBanner({ pick, label, mark }: { pick: GafferPick; label: string; 
           </div>
         </div>
         <div className="shrink-0 text-right">
-          <div className={`font-display text-xl ${banker ? 'text-violet-100' : 'text-white'}`}>{label === 'BTTS' ? 'BTTS' : `Over ${mark} ${label}`}</div>
+          <div className={`font-display text-xl ${banker ? 'text-violet-100' : 'text-white'}`}>{selection}</div>
           <div className="text-sm text-white/70">form <span className="text-emerald-400">{cell.prob}%</span> · odds <span className={banker ? 'text-violet-200' : 'text-gold'}>{odd(cell.odds)}</span></div>
         </div>
       </div>
@@ -176,6 +190,7 @@ function GafferNoGames() {
 
 export default function FormTables() {
   const [cat, setCat] = useState<CatKey>('corners');
+  const [underMode, setUnderMode] = useState(false);
   const [markIdx, setMarkIdx] = useState(1);
   const [league, setLeague] = useState<string>('all');
   const [selected, setSelected] = useState<Fixture | null>(null);
@@ -184,40 +199,58 @@ export default function FormTables() {
 
   const { data: tables } = useFormTablesData();
   const C = CATS.find((c) => c.key === cat)!;
-  const mark = C.marks?.[Math.min(markIdx, C.marks.length - 1)] ?? null;
+  const marks = underMode ? C.underMarks : C.overMarks;
+  const mark = marks?.[Math.min(markIdx, marks.length - 1)] ?? null;
 
-  // TODAY only (UK date). The snapshot's dates are real fixture dates, so this
-  // shows a fixture only on its actual day — no games today → the Gaffer says so.
+  // Active-mode numbers per fixture: under-% = 100 − over-%; over/under odds.
+  const pctFor = (f: Fixture) => {
+    const o = C.overPctAt(f, mark);
+    return o == null ? null : underMode ? Math.round((100 - o) * 10) / 10 : o;
+  };
+  const oddsFor = (f: Fixture) => (underMode ? C.underOdds(f, mark) : C.overOdds(f, mark));
+  const overUnder = underMode ? 'Under' : 'Over';
+  const selection = C.pct ? (underMode ? 'BTTS No' : 'BTTS Yes') : `${overUnder} ${mark} ${C.label}`;
+
+  // TODAY only (UK date). Snapshot dates are real fixture dates.
   const today = useMemo(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), []);
-  // 3-day window: today, tomorrow, day after. Set at the 3am refresh; today's
-  // games are highlighted, the rest are clearly tagged Tmrw / date.
+  // 3-day window: today, tomorrow, day after — today's games highlighted.
   const windowDates = useMemo(() => [0, 1, 2].map((n) => addDays(today, n)), [today]);
 
   const rows = useMemo(() => {
     const inWindow = tables.fixtures.filter(
       (f) => windowDates.includes(f.date) && (league === 'all' || f.league === league),
     );
-    // Top 20 per league by the active market's combined average, then merged.
+    // Over: highest combined average on top. Under: lowest (tightest games) on top.
+    const dir = underMode ? 1 : -1;
     const perLeague = new Map<string, Fixture[]>();
-    for (const f of [...inWindow].sort((a, b) => C.avg(b) - C.avg(a))) {
+    for (const f of [...inWindow].sort((a, b) => dir * (C.avg(a) - C.avg(b)))) {
       const arr = perLeague.get(f.league) ?? [];
       if (arr.length < 20) { arr.push(f); perLeague.set(f.league, arr); }
     }
-    return [...perLeague.values()].flat().sort((a, b) => C.avg(b) - C.avg(a));
-  }, [league, C, tables, windowDates]);
+    return [...perLeague.values()].flat().sort((a, b) => dir * (C.avg(a) - C.avg(b)));
+  }, [league, C, tables, windowDates, underMode]);
 
-  // The Gaffer's call is on TODAY's games only (his daily selection): a VALUE
-  // pick if the price is wrong, otherwise his BANKER — strongest form of the day.
+  // The Gaffer's call is on TODAY's games only: a VALUE pick if the price is
+  // wrong, otherwise his BANKER — best form in the active market/mode.
   const gafferPick = useMemo(() => {
     const scored = rows
       .filter((f) => f.date === today)
-      .map((f) => ({ f, cell: C.value(f, mark) }))
+      .map((f) => {
+        const o = C.overPctAt(f, mark);
+        const prob = o == null ? null : underMode ? Math.round((100 - o) * 10) / 10 : o;
+        const odds = underMode ? C.underOdds(f, mark) : C.overOdds(f, mark);
+        return { f, cell: computeValue(prob, odds) };
+      })
       .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell && x.cell.odds != null);
     const flagged = [...scored].filter((x) => x.cell.flag).sort((a, b) => b.cell.edge - a.cell.edge);
     if (flagged[0]) return { mode: 'value' as const, f: flagged[0].f, cell: flagged[0].cell };
-    const banker = [...scored].sort((a, b) => b.cell.prob - a.cell.prob || (b.cell.odds ?? 0) - (a.cell.odds ?? 0))[0];
+    // Banker fallback — only when the form genuinely backs it (>=60%); otherwise
+    // no call, and the banner says "no value today".
+    const banker = [...scored]
+      .filter((x) => x.cell.prob >= 60)
+      .sort((a, b) => b.cell.prob - a.cell.prob || (b.cell.odds ?? 0) - (a.cell.odds ?? 0))[0];
     return banker ? { mode: 'banker' as const, f: banker.f, cell: banker.cell } : null;
-  }, [rows, C, mark, today]);
+  }, [rows, C, mark, today, underMode]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
@@ -257,21 +290,34 @@ export default function FormTables() {
           ))}
         </div>
 
+        {/* Overs / Unders — 50/50 */}
+        <div className="mb-3 grid grid-cols-2 overflow-hidden rounded-xl border border-white/12">
+          {[false, true].map((u) => (
+            <button
+              key={String(u)}
+              onClick={() => { setUnderMode(u); setMarkIdx(1); }}
+              className={`py-2.5 text-sm font-black uppercase tracking-wide transition-colors ${underMode === u ? 'bg-emerald-500 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
+            >
+              {u ? 'Unders' : 'Overs'}
+            </button>
+          ))}
+        </div>
+
         {/* Controls */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          {C.marks ? (
+          {marks ? (
             <div className="inline-flex overflow-hidden rounded-xl border border-white/12">
-              {C.marks.map((ln, i) => (
+              {marks.map((ln, i) => (
                 <button
                   key={ln}
                   onClick={() => setMarkIdx(i)}
-                  className={`px-4 py-1.5 text-sm font-bold transition-colors ${i === markIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
+                  className={`px-3 py-1.5 text-sm font-bold transition-colors ${i === markIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
                 >
-                  Over {ln}
+                  {overUnder} {ln}
                 </button>
               ))}
             </div>
-          ) : <span />}
+          ) : <span className="text-sm font-bold text-white/70">{selection}</span>}
 
           <select
             value={league}
@@ -284,7 +330,7 @@ export default function FormTables() {
         </div>
 
         {/* The Gaffer's selection for this market */}
-        <GafferBanner pick={gafferPick} label={C.label} mark={mark} />
+        <GafferBanner pick={gafferPick} label={C.label} selection={selection} />
 
         {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-white/[0.03] backdrop-blur-xl">
@@ -293,7 +339,7 @@ export default function FormTables() {
             <span className="w-4 text-center md:w-5">#</span>
             <span className="w-[42px] md:w-[56px]" />
             <span className="flex-1">Fixture</span>
-            {C.over && <span className="hidden w-14 text-right sm:block">Over {mark}</span>}
+            {marks && <span className="hidden w-14 text-right sm:block">{overUnder} {mark}</span>}
             <span className="w-11 text-right md:w-14">Odds</span>
             <span className="w-12 text-right md:w-14">Avg</span>
             <span className="w-14 text-right md:w-16">When</span>
@@ -301,8 +347,8 @@ export default function FormTables() {
           </div>
 
           {rows.map((f, i) => {
-            const overPct = C.over ? C.over(f, mark!) : null;
-            const o = C.odds(f, mark);
+            const formPct = marks ? pctFor(f) : null;
+            const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id;
             const isToday = f.date === today;
             return (
@@ -333,9 +379,9 @@ export default function FormTables() {
                     <span className="truncate text-[11px] text-white/45 md:text-xs">{f.region} · {fold(f.league)}</span>
                   </div>
                 </div>
-                {C.over && (
+                {marks && (
                   <div className="hidden w-14 shrink-0 text-right sm:block">
-                    <div className="text-sm font-bold text-white">{overPct != null ? `${overPct}%` : '—'}</div>
+                    <div className="text-sm font-bold text-white">{formPct != null ? `${formPct}%` : '—'}</div>
                     <div className="text-[10px] text-white/45">form</div>
                   </div>
                 )}
@@ -344,7 +390,7 @@ export default function FormTables() {
                   <div className="text-[10px] text-white/45">odds</div>
                 </div>
                 <div className="w-12 shrink-0 text-right md:w-14">
-                  <div className="font-display text-base leading-none text-emerald-400 md:text-2xl">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
+                  <div className="font-display text-base leading-none text-emerald-400 md:text-2xl">{C.pct ? `${pctFor(f) ?? '—'}%` : C.avg(f).toFixed(1)}</div>
                   <div className="text-[10px] uppercase tracking-wide text-white/40">avg</div>
                 </div>
                 <div className="w-14 shrink-0 text-right md:w-16">
@@ -440,19 +486,24 @@ function FixtureDetail({ f, cat }: { f: Fixture; cat: CatKey }) {
           </div>
         </section>
 
-        {/* Market breakdown — form % + odds + value per mark */}
-        {C.marks && (
+        {/* Market breakdown — over + under, form % + odds + value per mark */}
+        {C.overMarks && (
           <section>
             <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">{C.label} — odds & value</h3>
             <div className="space-y-1.5">
-              {C.marks.map((ln) => {
-                const pct = C.over ? C.over(f, ln) : null;
-                const cell = C.value(f, ln);
+              {[
+                ...C.overMarks.map((ln) => ({ ln, kind: 'Over' as const, pct: C.overPctAt(f, ln), o: C.overOdds(f, ln) })),
+                ...(C.underMarks ?? []).map((ln) => {
+                  const ov = C.overPctAt(f, ln);
+                  return { ln, kind: 'Under' as const, pct: ov == null ? null : Math.round((100 - ov) * 10) / 10, o: C.underOdds(f, ln) };
+                }),
+              ].map(({ ln, kind, pct, o }) => {
+                const cell = computeValue(pct, o);
                 return (
-                  <div key={ln} className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/[0.03] px-3 py-2 text-sm">
-                    <span className="w-16 font-bold text-white">Over {ln}</span>
+                  <div key={`${kind}-${ln}`} className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/[0.03] px-3 py-2 text-sm">
+                    <span className="w-20 font-bold text-white">{kind} {ln}</span>
                     <span className="w-14 text-emerald-400">{pct != null ? `${pct}%` : '—'}</span>
-                    <span className="w-14 font-bold text-gold">{odd(C.odds(f, ln))}</span>
+                    <span className="w-14 font-bold text-gold">{odd(o)}</span>
                     <span className="flex-1 text-right">{cell?.flag ? <ValueBadge cell={cell} /> : null}</span>
                   </div>
                 );

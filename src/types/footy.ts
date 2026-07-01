@@ -277,12 +277,17 @@ export interface FormFixtureRow {
   corners_avg: number;
   cards_avg: number;
   btts_pct: number;
-  goals_over: Record<string, number>;
-  corners_over: Record<string, number>;
-  goals_odds: Record<string, number | null>;
-  corners_odds: Record<string, number | null>;
-  cards_odds: Record<string, number | null>;
-  btts_odds: number | null;
+  goals_over: Record<string, number>;      // over-% (0.5,1.5,2.5,3.5,4.5)
+  corners_over: Record<string, number>;    // over-% (8.5,9.5,10.5,11.5)
+  cards_over?: Record<string, number>;     // over-% (2.5,3.5,4.5,5.5)
+  goals_odds: Record<string, number | null>;       // over odds (2.5,3.5,4.5)
+  corners_odds: Record<string, number | null>;     // over odds (8.5,9.5,10.5)
+  cards_odds: Record<string, number | null>;       // over odds (3.5,4.5,5.5)
+  goals_under_odds?: Record<string, number | null>;   // under odds (0.5,1.5,2.5,3.5)
+  corners_under_odds?: Record<string, number | null>; // under odds (8.5,9.5,10.5,11.5)
+  cards_under_odds?: Record<string, number | null>;   // under odds (2.5,3.5,4.5)
+  btts_odds: number | null;      // BTTS Yes
+  btts_no_odds?: number | null;  // BTTS No
   value: {
     goals: Record<string, FormValueCell | null>;
     corners: Record<string, FormValueCell | null>;

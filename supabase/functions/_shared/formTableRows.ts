@@ -64,9 +64,18 @@ export function buildHistory(matches: DetailedMatch[]): HistoryLookup {
 }
 
 // Marks the page exposes per category (labels match FootyStats overPct/odds keys).
+// OVER display marks:
 const CORNER_MARKS = ["8.5", "9.5", "10.5"];
 const GOAL_MARKS = ["2.5", "3.5", "4.5"];
 const CARD_MARKS = ["3.5", "4.5", "5.5"];
+// UNDER display marks (odds captured for these):
+const CORNER_UNDER_MARKS = ["8.5", "9.5", "10.5", "11.5"];
+const GOAL_UNDER_MARKS = ["0.5", "1.5", "2.5", "3.5"];
+const CARD_UNDER_MARKS = ["2.5", "3.5", "4.5"];
+// Marks we compute over-% at, so under-% = 100 − over-% is available too:
+const CORNER_PCT_MARKS = ["8.5", "9.5", "10.5", "11.5"];
+const GOAL_PCT_MARKS = ["0.5", "1.5", "2.5", "3.5", "4.5"];
+const CARD_PCT_MARKS = ["2.5", "3.5", "4.5", "5.5"];
 
 // Value guardrails — same as the Gaffer value engine.
 const STRONG_EDGE = 20;
@@ -96,6 +105,11 @@ const overMap = (h: TeamFormStats, a: TeamFormStats, marks: string[], suffix: st
 const oddsMap = (odds: Record<string, number>, marks: string[], suffix: string) => {
   const out: Record<string, number | null> = {};
   for (const m of marks) out[m] = odds[`Over ${m} ${suffix}`] ?? null;
+  return out;
+};
+const underOddsMap = (odds: Record<string, number>, marks: string[], suffix: string) => {
+  const out: Record<string, number | null> = {};
+  for (const m of marks) out[m] = odds[`Under ${m} ${suffix}`] ?? null;
   return out;
 };
 
@@ -143,14 +157,22 @@ export function buildFormTables(
     const { region, league } = splitLeague(leagueNames[f.leagueId] ?? "", f.leagueId);
     leagueSet.set(`${region}|${league}`, { name: league, region });
 
-    const goals_over = overMap(h, a, GOAL_MARKS, "Goals");
-    const corners_over = overMap(h, a, CORNER_MARKS, "Corners");
+    // Over-% at every mark (under-% = 100 − these, computed on the page).
+    const goals_over = overMap(h, a, GOAL_PCT_MARKS, "Goals");
+    const corners_over = overMap(h, a, CORNER_PCT_MARKS, "Corners");
+    const cards_over = overMap(h, a, CARD_PCT_MARKS, "Cards");
+    // Over odds (display marks) + Under odds (their marks).
     const goals_odds = oddsMap(f.odds, GOAL_MARKS, "Goals");
     const corners_odds = oddsMap(f.odds, CORNER_MARKS, "Corners");
     const cards_odds = oddsMap(f.odds, CARD_MARKS, "Cards");
+    const goals_under_odds = underOddsMap(f.odds, GOAL_UNDER_MARKS, "Goals");
+    const corners_under_odds = underOddsMap(f.odds, CORNER_UNDER_MARKS, "Corners");
+    const cards_under_odds = underOddsMap(f.odds, CARD_UNDER_MARKS, "Cards");
     const btts_pct = combined(pct(h, "BTTS"), pct(a, "BTTS"));
     const btts_odds = f.odds["BTTS"] ?? null;
+    const btts_no_odds = f.odds["BTTS No"] ?? null;
 
+    // Over value cells kept for the picks engine (gafferSelection reads these).
     const goalsValue: Record<string, ValueCell | null> = {};
     for (const m of GOAL_MARKS) goalsValue[m] = valueCell(goals_over[m], goals_odds[m]);
     const cornersValue: Record<string, ValueCell | null> = {};
@@ -166,8 +188,9 @@ export function buildFormTables(
       corners_avg: combined(h.avgCorners, a.avgCorners),
       cards_avg: combined(h.avgCards, a.avgCards),
       btts_pct,
-      goals_over, corners_over,
+      goals_over, corners_over, cards_over,
       goals_odds, corners_odds, cards_odds, btts_odds,
+      goals_under_odds, corners_under_odds, cards_under_odds, btts_no_odds,
       value: { goals: goalsValue, corners: cornersValue, btts: valueCell(btts_pct, btts_odds) },
       home_form: history?.gamesFor(f.homeId, f.homeName) ?? [],
       away_form: history?.gamesFor(f.awayId, f.awayName) ?? [],

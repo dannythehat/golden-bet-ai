@@ -87,6 +87,8 @@ export async function fetchLeagueList(key: string): Promise<FootyStatsLeague[]> 
 // ── Market <-> FootyStats field maps (verified against the API) ─────────────
 /** over-% field per market label (works on lastx + league-teams stat objects). */
 const OVER_PCT_FIELD: Record<string, string> = {
+  "Over 0.5 Goals": "seasonOver05Percentage_overall",
+  "Over 1.5 Goals": "seasonOver15Percentage_overall",
   "Over 2.5 Goals": "seasonOver25Percentage_overall",
   "Over 3.5 Goals": "seasonOver35Percentage_overall",
   "Over 4.5 Goals": "seasonOver45Percentage_overall",
@@ -97,27 +99,50 @@ const OVER_PCT_FIELD: Record<string, string> = {
   "Over 10.5 Corners": "over105CornersPercentage_overall",
   "Over 11.5 Corners": "over115CornersPercentage_overall",
   "Over 12.5 Corners": "over125CornersPercentage_overall",
+  "Over 2.5 Cards": "over25CardsPercentage_overall",
   "Over 3.5 Cards": "over35CardsPercentage_overall",
   "Over 4.5 Cards": "over45CardsPercentage_overall",
   "Over 5.5 Cards": "over55CardsPercentage_overall",
   "Over 6.5 Cards": "over65CardsPercentage_overall",
 };
-/** decimal-odds field per market label on a match object. */
+/** decimal-odds field per market label on a match object (overs + unders). */
 const ODDS_FIELD: Record<string, string> = {
+  // Goals — over
+  "Over 0.5 Goals": "odds_ft_over05",
+  "Over 1.5 Goals": "odds_ft_over15",
   "Over 2.5 Goals": "odds_ft_over25",
   "Over 3.5 Goals": "odds_ft_over35",
   "Over 4.5 Goals": "odds_ft_over45",
   "Over 5.5 Goals": "odds_ft_over55",
+  // Goals — under
+  "Under 0.5 Goals": "odds_ft_under05",
+  "Under 1.5 Goals": "odds_ft_under15",
+  "Under 2.5 Goals": "odds_ft_under25",
+  "Under 3.5 Goals": "odds_ft_under35",
+  "Under 4.5 Goals": "odds_ft_under45",
+  // BTTS
   "BTTS": "odds_btts_yes",
+  "BTTS No": "odds_btts_no",
+  // Corners — over
   "Over 8.5 Corners": "odds_corners_over_85",
   "Over 9.5 Corners": "odds_corners_over_95",
   "Over 10.5 Corners": "odds_corners_over_105",
   "Over 11.5 Corners": "odds_corners_over_115",
   "Over 12.5 Corners": "odds_corners_over_125",
+  // Corners — under
+  "Under 8.5 Corners": "odds_corners_under_85",
+  "Under 9.5 Corners": "odds_corners_under_95",
+  "Under 10.5 Corners": "odds_corners_under_105",
+  "Under 11.5 Corners": "odds_corners_under_115",
+  // Cards — over
   "Over 3.5 Cards": "odds_cards_over_35",
   "Over 4.5 Cards": "odds_cards_over_45",
   "Over 5.5 Cards": "odds_cards_over_55",
   "Over 6.5 Cards": "odds_cards_over_65",
+  // Cards — under
+  "Under 2.5 Cards": "odds_cards_under_25",
+  "Under 3.5 Cards": "odds_cards_under_35",
+  "Under 4.5 Cards": "odds_cards_under_45",
 };
 
 export interface TeamFormStats {
