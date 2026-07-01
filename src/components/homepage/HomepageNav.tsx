@@ -98,15 +98,26 @@ export function HomepageNav() {
                 {l.label}
               </a>
             ))}
-            <div className="col-span-2 mt-1 grid grid-cols-[1fr_auto] items-center gap-2 border-t border-white/10 pt-3">
-              <a href="/auth" className="rounded-full border border-[#f5c542]/40 px-4 py-3 text-center text-[12px] font-black uppercase tracking-wide text-[#f8e7a1]">
-                Login
+            <div className="col-span-2 mt-1 grid grid-cols-2 gap-2 border-t border-white/10 pt-3">
+              <a
+                href="/auth"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#f5c542]/40 px-4 py-3 text-center text-[12px] font-black uppercase tracking-wide text-[#f8e7a1]"
+              >
+                <LockKeyhole className="h-4 w-4" /> Login
               </a>
-              <div className="flex items-center gap-1.5 text-[#f8e7a1]">
-                <a href="https://facebook.com" aria-label="Facebook" className="grid h-10 w-10 place-items-center rounded-full bg-[#f5c542]/10"><Facebook className="h-4 w-4" /></a>
-                <a href="https://t.me" aria-label="Telegram" className="grid h-10 w-10 place-items-center rounded-full bg-[#f5c542]/10"><Send className="h-4 w-4" /></a>
-                <a href="https://instagram.com" aria-label="Instagram" className="grid h-10 w-10 place-items-center rounded-full bg-[#f5c542]/10"><Instagram className="h-4 w-4" /></a>
-              </div>
+              <a
+                href="/pricing"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f5c542] px-4 py-3 text-center text-[12px] font-black uppercase tracking-wide text-[#16051f] shadow-[0_12px_32px_-14px_rgba(245,197,66,1)]"
+              >
+                <Trophy className="h-4 w-4 fill-current" /> Join
+              </a>
+            </div>
+            <div className="col-span-2 mt-1 flex items-center justify-center gap-2 text-[#f8e7a1]">
+              <a href="https://facebook.com" aria-label="Facebook" className="grid h-10 w-10 place-items-center rounded-full bg-[#f5c542]/10"><Facebook className="h-4 w-4" /></a>
+              <a href="https://t.me" aria-label="Telegram" className="grid h-10 w-10 place-items-center rounded-full bg-[#f5c542]/10"><Send className="h-4 w-4" /></a>
+              <a href="https://instagram.com" aria-label="Instagram" className="grid h-10 w-10 place-items-center rounded-full bg-[#f5c542]/10"><Instagram className="h-4 w-4" /></a>
             </div>
           </div>
         </nav>

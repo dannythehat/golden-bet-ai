@@ -24,3 +24,28 @@ export const HOMEPAGE_APPROVED_ASSETS = {
   tipOfDay: withOrigin(tipOfDayAsset.url),
   finalCtaFooter: withOrigin(finalCtaFooterAsset.url),
 } as const;
+
+/**
+ * Clean, text-free imagery used as real backgrounds/characters (not baked-text
+ * mockups): a transparent Gaffer cutout + a plain stadium backdrop. These let us
+ * overlay live HTML headlines, buttons and data on top.
+ */
+export const HOMEPAGE_MEDIA = {
+  gafferPortrait: '/images/gaffer-hero-portrait.png',
+  stadiumBg: '/images/stadium-bg.jpg',
+} as const;
+
+/** Clean, text-free backdrops faded behind sections for depth. */
+export const HOMEPAGE_BACKGROUNDS = {
+  pitch: '/images/backgrounds/bg-pitch.jpg',
+  stadium: '/images/backgrounds/bg-stadium.jpg',
+  crowd: '/images/backgrounds/bg-crowd.jpg',
+  tunnel: '/images/backgrounds/bg-tunnel.jpg',
+  dressingRoom: '/images/backgrounds/bg-dressing-room.jpg',
+} as const;
+
+/** Real prize photography for the Weekly Prizes card. */
+export const HOMEPAGE_PRIZES = {
+  holiday: '/images/prizes/prize-holiday.jpg',
+  ps5: '/images/prizes/prize-ps5.jpg',
+} as const;

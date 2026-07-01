@@ -1,34 +1,28 @@
+import { FeaturePanel, Accent } from './FeaturePanel';
 import { useGafferStory } from './useHomepageData';
-import { ArtworkCard } from './ArtworkCard';
-import { MobileSectionCard } from './MobileSectionCard';
-import { HOMEPAGE_APPROVED_ASSETS } from './assets';
 
+/** The Gaffer story — native card fronted by his arms-folded cutout. */
 export function GafferStoryCard() {
   const { data: story } = useGafferStory();
   const ctaHref = story?.cta_href ?? '/blog';
+  const intro =
+    story?.intro ??
+    'The voice behind every pick — sharp, funny, and built on millions of data points. He plans, prepares, predicts, and shows his working.';
+
   return (
-    <>
-      <div className="md:hidden">
-        <MobileSectionCard
-          eyebrow="The Gaffer"
-          title="Meet The Gaffer"
-          body="The voice behind every pick — sharp, witty, and built on millions of data points."
-          image={HOMEPAGE_APPROVED_ASSETS.gafferStory}
-          imageAlt="Trust The Gaffer story"
-          imagePosition="object-[center_25%]"
-          tone="violet"
-          ctas={[{ label: story?.cta_label ?? 'Read The Story', to: ctaHref }]}
-        />
-      </div>
-      <div className="hidden md:block">
-        <ArtworkCard
-          id="gaffer-story"
-          to={ctaHref}
-          src={HOMEPAGE_APPROVED_ASSETS.gafferStory}
-          alt="Trust The Gaffer story"
-          label={story?.cta_label ?? 'Read The Gaffer story'}
-        />
-      </div>
-    </>
+    <FeaturePanel
+      id="gaffer-story"
+      tone="violet"
+      eyebrow="The Gaffer"
+      title={<>Meet <Accent tone="violet">the Gaffer.</Accent></>}
+      body={intro}
+      character={{ src: '/images/gaffer/gaffer-arms-crossed.png', alt: 'The Gaffer, arms folded', className: 'w-[66%] max-w-[230px] opacity-95' }}
+      className="min-h-[440px]"
+      ctas={[{ label: story?.cta_label ?? 'Read the Story', to: ctaHref }]}
+    >
+      <p className="max-w-[16rem] font-hand text-lg leading-snug text-white/90">
+        “Plan. Prepare. Predict. Profit. I don't do vibes — I do value.”
+      </p>
+    </FeaturePanel>
   );
 }
