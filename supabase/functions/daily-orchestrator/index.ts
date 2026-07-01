@@ -141,19 +141,10 @@ const SCHEDULE: Record<number, Record<number, Task[]>> = {
       ["acca-builder", { scheduled: true }],
     ],
   },
-  // 06:00 - Yesterday's results recap article
+  // 06:00 - Email digest only (Gaffer daily articles disabled per user request)
   6: {
-    0: [
-      ["gaffer-results-recap", { scheduled: true }],
-    ],
     30: [
       ["email-blog-digest", { scheduled: true }],
-    ],
-  },
-  // 09:30 - Today's selections article (the only other daily article)
-  9: {
-    30: [
-      ["gaffer-daily-picks-article", { scheduled: true }],
     ],
   },
   // 16:00-23:00 - Settle bets every 30 min
