@@ -44,4 +44,5 @@ Lovable should pull from here rather than baking text into images.
 | `gaffer/gaffer-smart.png` | Final CTA — "Ready to bet smarter?" |
 | `gaffer/gaffer-pointing-laugh.png` | _library — available_ |
 | `gaffer/gaffer-thinking.png` | _library — available_ |
+| `gaffer/gaffer-pointing-you.png` | _library — available (alt hero pose)_ |
 | `stadium-bg.jpg` | Hero + Final CTA atmosphere |
