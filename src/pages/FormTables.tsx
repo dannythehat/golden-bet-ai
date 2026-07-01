@@ -221,15 +221,15 @@ export default function FormTables() {
         {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-white/[0.03] backdrop-blur-xl">
           {/* Header */}
-          <div className="flex items-center gap-3 border-b border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white/45 md:px-4">
-            <span className="w-5 text-center">#</span>
-            <span className="w-[60px]" />
+          <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white/45 md:gap-3 md:px-4">
+            <span className="w-4 text-center md:w-5">#</span>
+            <span className="w-[42px] md:w-[56px]" />
             <span className="flex-1">Fixture</span>
             {C.over && <span className="hidden w-14 text-right sm:block">Over {mark}</span>}
-            <span className="w-14 text-right">Odds</span>
-            <span className="w-14 text-right">Avg</span>
-            <span className="w-12 text-right">KO</span>
-            <span className="w-4" />
+            <span className="w-11 text-right md:w-14">Odds</span>
+            <span className="w-12 text-right md:w-14">Avg</span>
+            <span className="w-10 text-right md:w-12">KO</span>
+            <span className="w-3.5 md:w-4" />
           </div>
 
           {rows.map((f, i) => {
@@ -239,16 +239,16 @@ export default function FormTables() {
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
-                className="flex w-full items-center gap-3 border-b border-white/8 px-3 py-3 text-left transition-colors last:border-0 hover:bg-white/[0.05] md:px-4"
+                className="flex w-full items-center gap-2 border-b border-white/8 px-3 py-3 text-left transition-colors last:border-0 hover:bg-white/[0.05] md:gap-3 md:px-4"
               >
-                <span className={`w-5 shrink-0 text-center font-display text-lg ${i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
-                <div className="flex w-[60px] shrink-0 -space-x-1.5">
-                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={30} />
-                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={30} />
+                <span className={`w-4 shrink-0 text-center font-display text-base md:w-5 md:text-lg ${i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
+                <div className="flex w-[42px] shrink-0 -space-x-2 md:w-[56px] md:-space-x-1.5">
+                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={24} />
+                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={24} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-bold text-white">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
-                  <div className="truncate text-xs text-white/45">{f.region} · {fold(f.league)} · {f.date}</div>
+                  <div className="text-sm font-bold leading-tight text-white md:text-base">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
+                  <div className="truncate text-[11px] text-white/45 md:text-xs">{f.region} · {fold(f.league)}</div>
                 </div>
                 {C.over && (
                   <div className="hidden w-14 shrink-0 text-right sm:block">
@@ -256,16 +256,16 @@ export default function FormTables() {
                     <div className="text-[10px] text-white/45">form</div>
                   </div>
                 )}
-                <div className="w-14 shrink-0 text-right">
+                <div className="w-11 shrink-0 text-right md:w-14">
                   <div className="text-sm font-bold text-gold">{odd(o)}</div>
                   <div className="text-[10px] text-white/45">odds</div>
                 </div>
-                <div className="w-14 shrink-0 text-right">
-                  <div className="font-display text-2xl leading-none text-emerald-400">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
+                <div className="w-12 shrink-0 text-right md:w-14">
+                  <div className="font-display text-lg leading-none text-emerald-400 md:text-2xl">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
                   <div className="text-[10px] uppercase tracking-wide text-white/40">avg</div>
                 </div>
-                <div className="w-12 shrink-0 text-right">
-                  <div className="text-sm font-semibold text-white/90">{f.time}</div>
+                <div className="w-10 shrink-0 text-right md:w-12">
+                  <div className="text-xs font-semibold text-white/90 md:text-sm">{f.time}</div>
                   <div className="text-[10px] text-white/40">KO</div>
                 </div>
                 <ChevronRight className="h-4 w-4 shrink-0 text-white/30" />
