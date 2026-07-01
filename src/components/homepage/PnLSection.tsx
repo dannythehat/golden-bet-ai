@@ -57,7 +57,7 @@ async function fetchLivePnL(): Promise<PnLSnapshot | null> {
     series.push({ date: row.pick_date, cumulative: round1(running) });
   }
 
-  const as_of = series.at(-1)?.date ?? new Date().toISOString().slice(0, 10);
+  const as_of = series[series.length - 1]?.date ?? new Date().toISOString().slice(0, 10);
   return {
     as_of,
     staked: round1(staked),
