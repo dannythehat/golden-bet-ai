@@ -15,6 +15,7 @@ const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const FormTables = lazy(() => import("./pages/FormTables"));
+const Pnl = lazy(() => import("./pages/Pnl"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -61,7 +62,7 @@ const App = () => {
                 <Route path="/form-tables" element={<FormTables />} />
                 <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
                 <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
-                <Route path="/pnl" element={<ComingSoon title="Profit & Loss" eyebrow="In Build" />} />
+                <Route path="/pnl" element={<Pnl />} />
                 <Route path="/the-gaffer" element={<ComingSoon title="The Gaffer" eyebrow="In Build" />} />
                 <Route path="/community" element={<ComingSoon title="Community" eyebrow="In Build" />} />
 
