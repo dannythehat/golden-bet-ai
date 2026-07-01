@@ -7,7 +7,7 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchTodaysMatches, fetchLeagueMatchesDetailed, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
+import { fetchUpcomingMatches, fetchLeagueMatchesDetailed, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
 import { buildFormTables, buildHistory, type TeamFormStats } from "../_shared/formTableRows.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
@@ -45,9 +45,16 @@ serve(async (req) => {
   const today = new Date().toISOString().slice(0, 10);
   const leagueIds = Object.keys(names).map(Number).filter(Boolean);
 
-  // TODAY only — the priced fixtures on today's card. No games today → empty
-  // payload, and the page shows the Gaffer's "no games today" fallback.
-  const target: TodayFixture[] = (await fetchTodaysMatches(fsKey)).filter((f) => Object.keys(f.odds).length > 0);
+  // 3-DAY WINDOW — today + next 2 days, priced fixtures across the leagues.
+  // The page ranks by combined average, caps top-20/league, tags today's games.
+  const windowEnd = new Date(new Date(today + "T12:00:00Z").getTime() + 2 * 86400000).toISOString().slice(0, 10);
+  const upcoming = (await Promise.all(
+    leagueIds.map((id) => fetchUpcomingMatches(id, fsKey).catch(() => [] as TodayFixture[])),
+  )).flat();
+  const target: TodayFixture[] = upcoming.filter((f) => {
+    const d = (f.kickoff || "").slice(0, 10);
+    return d >= today && d <= windowEnd;
+  });
 
   // Per-team form strips + head-to-head, from one league-matches call per league.
   const matchLists = await Promise.all(

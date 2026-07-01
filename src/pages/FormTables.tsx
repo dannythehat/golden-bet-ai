@@ -139,6 +139,19 @@ function GafferBanner({ pick, label, mark }: { pick: GafferPick; label: string; 
 const odd = (o: number | null) => (o ? o.toFixed(2) : '—');
 const formString = (games: FormGame[]) => games.slice(0, 5).map((g) => g.res).reverse().join('');
 
+/** YYYY-MM-DD n days after an ISO date (UTC-noon to dodge DST). */
+const addDays = (iso: string, n: number) => {
+  const d = new Date(iso + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+/** Human "when" for a fixture date, relative to today. */
+const whenLabel = (dateStr: string, todayStr: string) => {
+  if (dateStr === todayStr) return 'Today';
+  if (dateStr === addDays(todayStr, 1)) return 'Tmrw';
+  return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+};
+
 const NO_GAMES_LINES = [
   "Nowt on today, lads. None of our leagues are out — I'm not making one up just to fill the page.",
   "Quiet one today — no games worth the Gaffer's eye. Empty card beats a made-up one.",
@@ -176,26 +189,35 @@ export default function FormTables() {
   // TODAY only (UK date). The snapshot's dates are real fixture dates, so this
   // shows a fixture only on its actual day — no games today → the Gaffer says so.
   const today = useMemo(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), []);
-  const todaysFixtures = useMemo(() => tables.fixtures.filter((f) => f.date === today), [tables, today]);
+  // 3-day window: today, tomorrow, day after. Set at the 3am refresh; today's
+  // games are highlighted, the rest are clearly tagged Tmrw / date.
+  const windowDates = useMemo(() => [0, 1, 2].map((n) => addDays(today, n)), [today]);
 
   const rows = useMemo(() => {
-    const list = todaysFixtures.filter((f) => league === 'all' || f.league === league);
-    return [...list].sort((a, b) => C.avg(b) - C.avg(a));
-  }, [league, C, todaysFixtures]);
+    const inWindow = tables.fixtures.filter(
+      (f) => windowDates.includes(f.date) && (league === 'all' || f.league === league),
+    );
+    // Top 20 per league by the active market's combined average, then merged.
+    const perLeague = new Map<string, Fixture[]>();
+    for (const f of [...inWindow].sort((a, b) => C.avg(b) - C.avg(a))) {
+      const arr = perLeague.get(f.league) ?? [];
+      if (arr.length < 20) { arr.push(f); perLeague.set(f.league, arr); }
+    }
+    return [...perLeague.values()].flat().sort((a, b) => C.avg(b) - C.avg(a));
+  }, [league, C, tables, windowDates]);
 
-  // The Gaffer's pick = highest-edge flagged fixture for the active market/mark.
-  // The Gaffer's call for the active market: a VALUE pick if the price is wrong,
-  // otherwise (quiet days) his BANKER — the strongest form on the card.
+  // The Gaffer's call is on TODAY's games only (his daily selection): a VALUE
+  // pick if the price is wrong, otherwise his BANKER — strongest form of the day.
   const gafferPick = useMemo(() => {
     const scored = rows
+      .filter((f) => f.date === today)
       .map((f) => ({ f, cell: C.value(f, mark) }))
       .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell && x.cell.odds != null);
     const flagged = [...scored].filter((x) => x.cell.flag).sort((a, b) => b.cell.edge - a.cell.edge);
     if (flagged[0]) return { mode: 'value' as const, f: flagged[0].f, cell: flagged[0].cell };
-    // No value: fall back to the banker — highest form %, then best odds.
     const banker = [...scored].sort((a, b) => b.cell.prob - a.cell.prob || (b.cell.odds ?? 0) - (a.cell.odds ?? 0))[0];
     return banker ? { mode: 'banker' as const, f: banker.f, cell: banker.cell } : null;
-  }, [rows, C, mark]);
+  }, [rows, C, mark, today]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
@@ -215,10 +237,10 @@ export default function FormTables() {
           <p className="mt-1 text-sm text-white/60 md:text-base">
             Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top.
           </p>
-          <p className="mt-1 text-xs text-white/40">Today's games only. Nowt on? The Gaffer tells you straight.</p>
+          <p className="mt-1 text-xs text-white/40">Next 3 days · <span className="text-emerald-300">today's games highlighted</span> · the Gaffer's pick in purple.</p>
         </div>
 
-        {todaysFixtures.length === 0 ? (
+        {rows.length === 0 ? (
           <GafferNoGames />
         ) : (
         <>
@@ -274,7 +296,7 @@ export default function FormTables() {
             {C.over && <span className="hidden w-14 text-right sm:block">Over {mark}</span>}
             <span className="w-11 text-right md:w-14">Odds</span>
             <span className="w-12 text-right md:w-14">Avg</span>
-            <span className="w-10 text-right md:w-12">KO</span>
+            <span className="w-14 text-right md:w-16">When</span>
             <span className="w-3.5 md:w-4" />
           </div>
 
@@ -282,6 +304,7 @@ export default function FormTables() {
             const overPct = C.over ? C.over(f, mark!) : null;
             const o = C.odds(f, mark);
             const isPick = gafferPick?.f.id === f.id;
+            const isToday = f.date === today;
             return (
               <button
                 key={f.id}
@@ -289,10 +312,12 @@ export default function FormTables() {
                 className={`flex w-full items-center gap-2 border-b border-white/8 px-3 py-2.5 text-left transition-colors last:border-0 md:gap-3 md:px-4 ${
                   isPick
                     ? 'bg-violet-500/[0.16] ring-1 ring-inset ring-violet-400/40 backdrop-blur-md hover:bg-violet-500/25'
-                    : 'hover:bg-white/[0.05]'
+                    : isToday
+                      ? 'bg-emerald-500/[0.07] hover:bg-emerald-500/[0.12]'
+                      : 'hover:bg-white/[0.05]'
                 }`}
               >
-                <span className={`w-4 shrink-0 text-center font-display text-base md:w-5 md:text-lg ${isPick ? 'text-violet-300' : i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
+                <span className={`w-4 shrink-0 text-center font-display text-base md:w-5 md:text-lg ${isPick ? 'text-violet-300' : isToday ? 'text-emerald-300' : i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
                 <div className="flex w-[42px] shrink-0 -space-x-2 md:w-[56px] md:-space-x-1.5">
                   <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={24} />
                   <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={24} />
@@ -300,7 +325,11 @@ export default function FormTables() {
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-bold leading-tight text-white md:text-base">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
                   <div className="mt-0.5 flex items-center gap-1.5">
-                    {isPick && <span className="shrink-0 rounded bg-violet-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-200">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>}
+                    {isPick ? (
+                      <span className="shrink-0 rounded bg-violet-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-200">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>
+                    ) : isToday ? (
+                      <span className="shrink-0 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-300">Playing today</span>
+                    ) : null}
                     <span className="truncate text-[11px] text-white/45 md:text-xs">{f.region} · {fold(f.league)}</span>
                   </div>
                 </div>
@@ -318,17 +347,14 @@ export default function FormTables() {
                   <div className="font-display text-base leading-none text-emerald-400 md:text-2xl">{C.pct ? `${C.avg(f)}%` : C.avg(f).toFixed(1)}</div>
                   <div className="text-[10px] uppercase tracking-wide text-white/40">avg</div>
                 </div>
-                <div className="w-10 shrink-0 text-right md:w-12">
-                  <div className="text-xs font-semibold text-white/90 md:text-sm">{f.time}</div>
-                  <div className="text-[10px] text-white/40">KO</div>
+                <div className="w-14 shrink-0 text-right md:w-16">
+                  <div className={`text-xs font-bold md:text-sm ${isToday ? 'text-emerald-300' : 'text-white/90'}`}>{whenLabel(f.date, today)}</div>
+                  <div className="text-[10px] text-white/40">{f.time}</div>
                 </div>
                 <ChevronRight className={`h-4 w-4 shrink-0 ${isPick ? 'text-violet-300' : 'text-white/30'}`} />
               </button>
             );
           })}
-          {rows.length === 0 && (
-            <div className="px-4 py-10 text-center text-white/50">No fixtures in this league today.</div>
-          )}
         </div>
 
         <p className="mt-3 flex items-center gap-1.5 text-xs text-white/40">
