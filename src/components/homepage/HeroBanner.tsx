@@ -121,7 +121,7 @@ export function HeroBanner() {
                 Join the Club
               </Link>
               <Link
-                to="/predictions"
+                to="/form-tables"
                 className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
               >
                 Explore Today's Tips
@@ -151,7 +151,7 @@ export function HeroBanner() {
             { label: 'Login', to: '/auth', className: 'left-[77%] top-[2.5%] h-[5%] w-[8%]' },
             { label: 'Join the Club', to: '/pricing', className: 'left-[86%] top-[2.5%] h-[5%] w-[12%]' },
             { label: 'Join the Club', to: '/pricing', className: 'left-[3.5%] top-[70.4%] h-[7%] w-[16%]' },
-            { label: "Explore Today's Tips", to: '/predictions', className: 'left-[21%] top-[70.4%] h-[7%] w-[20%]' },
+            { label: "Explore Today's Tips", to: '/form-tables', className: 'left-[21%] top-[70.4%] h-[7%] w-[20%]' },
             { label: 'Form Tables', to: '/form-tables', className: 'left-[28%] top-[84.5%] h-[9%] w-[11%]' },
             { label: 'Fantasy League', to: '/fantasy-league', className: 'left-[56%] top-[84.5%] h-[9%] w-[12%]' },
           ]}
