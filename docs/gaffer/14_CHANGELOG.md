@@ -10,6 +10,20 @@ what changed, why, and which docs/code it touched. Newest first.
 
 ---
 
+## 2026-07-01 — Real data in the fallback + roll-forward
+
+- **Killed the stale snapshot**: regenerated `src/data/formTablesData.json` from
+  LIVE FootyStats (real upcoming fixtures, form, odds, form strips, H2H) using the
+  same assembler as the edge function. Iceland + Sweden priced fixtures; Norway
+  dropped (next round unpriced). Fallback now shows real current games, not 31-May.
+- **Roll-forward**: `build-form-tables` now falls back to the next matchday
+  (each team once, 7-day window) when today's slate is empty — via new
+  `fetchUpcomingMatches`. So the live path isn't blank on quiet days.
+- Per-row `date` now comes from each fixture (honest mixed-date slates).
+- Page copy: fallback labelled "upcoming fixtures on real form", not "sample".
+
+---
+
 ## 2026-07-01 — Form Tables wired to live data + /pnl page
 
 - **Form Tables live**: the `/form-tables` page now reads a live `daily_form_tables`

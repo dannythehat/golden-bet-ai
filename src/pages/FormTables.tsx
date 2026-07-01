@@ -172,7 +172,7 @@ export default function FormTables() {
           <p className="mt-1 text-xs text-white/40">
             {live
               ? "Today's slate · refreshed 3am UK from live form."
-              : 'Sample slate shown until the live 3am UK refresh lands.'}
+              : 'Upcoming fixtures on real form — live 3am UK auto-refresh switches on at launch.'}
           </p>
         </div>
 

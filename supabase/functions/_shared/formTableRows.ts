@@ -158,7 +158,7 @@ export function buildFormTables(
 
     rows.push({
       id: String(f.fixtureId),
-      league, region, date: dateISO, time: ukTime(f.kickoff),
+      league, region, date: f.kickoff ? f.kickoff.slice(0, 10) : dateISO, time: ukTime(f.kickoff),
       home: { name: f.homeName, short: short(f.homeName), logo: f.homeLogo },
       away: { name: f.awayName, short: short(f.awayName), logo: f.awayLogo },
       result: { hg: 0, ag: 0, corners: 0, cards: 0, btts: false }, // upcoming

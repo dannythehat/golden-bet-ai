@@ -210,6 +210,31 @@ export interface DetailedMatch {
   corners: number; cards: number; // match totals
 }
 
+/**
+ * Upcoming PRICED fixtures for a season, earliest first — the roll-forward
+ * source when today's slate is empty. leagueId is set to the season id so it
+ * resolves against the configured league-name map.
+ */
+export async function fetchUpcomingMatches(seasonId: number, key: string): Promise<TodayFixture[]> {
+  const json = await getJson(`/league-matches?key=${key}&season_id=${seasonId}`);
+  const data: any[] = Array.isArray(json?.data) ? json.data : [];
+  return data
+    .filter((m) => m.status !== "complete" && Object.keys(normalizeOdds(m)).length > 0)
+    .sort((a, b) => (a.date_unix ?? 0) - (b.date_unix ?? 0))
+    .map((m) => ({
+      fixtureId: m.id,
+      leagueId: seasonId,
+      kickoff: m.date_unix ? new Date(m.date_unix * 1000).toISOString() : "",
+      homeId: m.homeID ?? m.home_id,
+      awayId: m.awayID ?? m.away_id,
+      homeName: m.home_name,
+      awayName: m.away_name,
+      homeLogo: badge(m.home_image),
+      awayLogo: badge(m.away_image),
+      odds: normalizeOdds(m),
+    }));
+}
+
 /** All completed matches for a season, with the detail the drill-down needs. */
 export async function fetchLeagueMatchesDetailed(seasonId: number, key: string): Promise<DetailedMatch[]> {
   const json = await getJson(`/league-matches?key=${key}&season_id=${seasonId}`);
