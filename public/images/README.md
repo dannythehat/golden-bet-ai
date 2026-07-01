@@ -41,6 +41,7 @@ Lovable should pull from here rather than baking text into images.
 | `gaffer/gaffer-facepalm.png` | Donkey of the Week card |
 | `gaffer/gaffer-shocked.png` | Picks board — "No bet today" state |
 | `gaffer/gaffer-celebrating.png` | Fantasy League card |
+| `gaffer/gaffer-smart.png` | Final CTA — "Ready to bet smarter?" |
 | `gaffer/gaffer-pointing-laugh.png` | _library — available_ |
 | `gaffer/gaffer-thinking.png` | _library — available_ |
 | `stadium-bg.jpg` | Hero + Final CTA atmosphere |

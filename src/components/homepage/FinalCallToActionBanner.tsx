@@ -12,6 +12,7 @@ export function FinalCallToActionBanner() {
       title={<>Ready to bet <Accent tone="gold">smarter?</Accent></>}
       body="Daily tips, live form tables, the fantasy league, weekly prizes and the community — everything in one £20/month membership."
       bgImage={HOMEPAGE_MEDIA.stadiumBg}
+      character={{ src: '/images/gaffer/gaffer-smart.png', alt: 'The Gaffer — bet smarter', className: 'w-[34%] max-w-[260px] opacity-95' }}
       ctas={[
         { label: 'Join the Footy Oracle Club', to: '/pricing' },
         { label: "See What's Inside", to: '/pricing', variant: 'ghost' },
