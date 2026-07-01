@@ -170,7 +170,7 @@ export function FeaturePanel({
         <>
           <div
             aria-hidden
-            className={`pointer-events-none absolute -bottom-10 right-2 z-0 h-56 w-56 rounded-full blur-3xl ${t.blob}`}
+            className={`pointer-events-none absolute -bottom-10 right-2 z-0 hidden h-56 w-56 rounded-full blur-3xl sm:block ${t.blob}`}
           />
           <img
             src={character.src}
@@ -178,7 +178,7 @@ export function FeaturePanel({
             loading="lazy"
             decoding="async"
             draggable={false}
-            className={`pointer-events-none absolute bottom-0 right-0 z-0 select-none object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)] transition-transform duration-700 group-hover:-translate-y-1 ${
+            className={`pointer-events-none absolute bottom-0 right-0 z-0 hidden select-none object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)] transition-transform duration-700 group-hover:-translate-y-1 sm:block ${
               character.className ?? 'w-[52%] max-w-[240px] opacity-90'
             }`}
           />

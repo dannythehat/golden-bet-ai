@@ -33,7 +33,6 @@ export const HOMEPAGE_APPROVED_ASSETS = {
 export const HOMEPAGE_MEDIA = {
   gafferPortrait: '/images/gaffer-hero-portrait.png',
   stadiumBg: '/images/stadium-bg.jpg',
-  gafferScene: '/images/the-gaffer-2.png',
 } as const;
 
 /** Clean, text-free backdrops faded behind sections for depth. */

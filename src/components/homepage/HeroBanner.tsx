@@ -103,7 +103,7 @@ export function HeroBanner() {
           </div>
 
           {/* ── Right: clean Gaffer cutout + floating chips ── */}
-          <div className="relative mx-auto w-full max-w-[420px] lg:max-w-none">
+          <div className="relative mx-auto w-full max-w-[420px] pb-6 sm:pb-4 lg:max-w-none">
             {/* glow halo behind him */}
             <div
               aria-hidden
@@ -133,7 +133,7 @@ export function HeroBanner() {
               className="bottom-24 right-0"
               delay="1.4s"
             />
-            <div className="absolute -bottom-1 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2.5 rounded-2xl border border-[#f5c542]/40 bg-black/55 px-4 py-2.5 shadow-[0_18px_50px_-24px_rgba(245,197,66,0.9)] backdrop-blur-xl sm:flex">
+            <div className="absolute bottom-1 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2.5 rounded-2xl border border-[#f5c542]/40 bg-black/55 px-4 py-2.5 shadow-[0_18px_50px_-24px_rgba(245,197,66,0.9)] backdrop-blur-xl sm:flex">
               <span className="grid h-9 w-9 place-items-center rounded-full border border-[#f5c542]/50 bg-[#07000f] p-1">
                 <OracleCrest className="h-full w-full" />
               </span>
