@@ -5,7 +5,7 @@ import { ArtworkCard } from './ArtworkCard';
 import { HOMEPAGE_APPROVED_ASSETS } from './assets';
 import { NAV_LINKS, SOCIAL_LINKS } from './content';
 import heroBannerClean from '@/assets/homepage/hero-banner-clean.png';
-import footyOracleLogo from '@/assets/footy-oracle-logo-v2.png.asset.json';
+import { OracleCrest, OracleWordmark } from './primitives';
 
 export function HeroBanner() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,14 +18,11 @@ export function HeroBanner() {
           {/* Top nav bar: big logo + socials + menu + auth buttons */}
           <div className="relative z-10 flex items-center justify-between gap-2 border-b border-amber-300/15 bg-[#07000f]/80 px-3 py-3 backdrop-blur">
             <div className="flex items-center gap-2">
-              <Link to="/" className="flex min-w-0 items-center" aria-label="Footy Oracle home">
-                <img
-                  src={footyOracleLogo.url}
-                  alt="Footy Oracle — Tips. Stats. Success."
-                  width={220}
-                  height={220}
-                  className="h-20 w-auto object-contain drop-shadow-[0_4px_20px_rgba(139,92,246,0.45)]"
-                />
+              <Link to="/" className="flex min-w-0 items-center gap-2.5" aria-label="Footy Oracle home">
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-1 shadow-[0_0_22px_rgba(245,197,66,0.28)]">
+                  <OracleCrest className="h-full w-full" />
+                </span>
+                <OracleWordmark />
               </Link>
 
               <div className="flex items-center gap-1.5">

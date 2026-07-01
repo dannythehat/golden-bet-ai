@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Target, Flag, CreditCard, Swords, Trophy, Brain, Sparkles, Clock, TrendingUp } from 'lucide-react';
 import theGafferImage from '@/assets/the-gaffer.png';
-import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
+import { OracleCrest } from '@/components/homepage/primitives';
 
 export function AboutSection() {
   return (
@@ -27,11 +27,9 @@ export function AboutSection() {
       <div className="grid md:grid-cols-2 gap-8 items-center">
         <div className="relative">
           <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-          <img 
-            src={footyOracleLogo} 
-            alt="The Footy Oracle" 
-            className="relative w-full max-w-md mx-auto rounded-2xl border-2 border-primary/30 shadow-2xl"
-          />
+          <div className="relative mx-auto grid aspect-square w-full max-w-md place-items-center rounded-2xl border-2 border-primary/30 bg-[#07000f] p-10 shadow-2xl">
+            <OracleCrest className="h-full w-full" />
+          </div>
         </div>
         
         <div className="space-y-6">

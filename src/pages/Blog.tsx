@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
+import { OracleCrest } from '@/components/homepage/primitives';
 import { cleanTitle, cleanExcerpt } from '@/lib/cleanAiText';
 
 interface BlogPost {
@@ -69,7 +69,7 @@ export default function Blog() {
         <div className="container mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
-              <img src={footyOracleLogo} alt="The Footy Oracle" className="w-10 h-10 rounded-lg object-cover border border-primary/30" />
+              <span className="grid w-10 h-10 shrink-0 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-0.5"><OracleCrest className="h-full w-full" /></span>
               <span className="font-bold text-primary">The Footy Oracle</span>
             </Link>
             <Link to="/">

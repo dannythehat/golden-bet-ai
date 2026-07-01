@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Home, Info, BookOpen, Crown, Trophy, BarChart3, TrendingUp, CalendarDays } from 'lucide-react';
-import footyOracleLogo from '@/assets/footy-oracle-logo-v2.png.asset.json';
+import { OracleCrest } from '@/components/homepage/primitives';
 import { UserMenu } from '@/components/UserMenu';
 import { useSubscription } from '@/hooks/useSubscription';
 
@@ -56,14 +56,9 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-                <img 
-                  src={footyOracleLogo.url} 
-                  alt="The Footy Oracle logo" 
-                  className="relative h-24 w-auto object-contain drop-shadow-[0_4px_20px_rgba(139,92,246,0.5)]"
-                  id="nav-logo"
-                  width={240}
-                  height={96}
-                />
+                <span id="nav-logo" className="relative grid h-16 w-16 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-1 shadow-[0_0_22px_rgba(245,197,66,0.28)]">
+                  <OracleCrest className="h-full w-full" />
+                </span>
               </div>
             </div>
 
@@ -101,13 +96,9 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-background via-card/95 to-background border-b border-border/50">
         <div className="flex items-center justify-between h-20 px-4">
           <div className="flex items-center">
-            <img 
-              src={footyOracleLogo.url} 
-              alt="The Footy Oracle" 
-              className="h-16 w-auto object-contain drop-shadow-[0_4px_14px_rgba(139,92,246,0.45)]"
-              width={160}
-              height={64}
-            />
+            <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-1 shadow-[0_0_18px_rgba(245,197,66,0.28)]">
+              <OracleCrest className="h-full w-full" />
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

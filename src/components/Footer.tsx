@@ -1,5 +1,5 @@
 import { Mail, ExternalLink } from 'lucide-react';
-import footyOracleLogo from '@/assets/footy-oracle-logo.webp';
+import { OracleCrest } from '@/components/homepage/primitives';
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -25,12 +25,9 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img 
-                src={footyOracleLogo} 
-                alt="The Footy Oracle logo" 
-                className="w-16 h-16 rounded-xl object-cover border-2 border-primary/30"
-                id="site-logo"
-              />
+              <span id="site-logo" className="grid w-16 h-16 shrink-0 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-1 shadow-[0_0_20px_rgba(245,197,66,0.25)]">
+                <OracleCrest className="h-full w-full" />
+              </span>
               <div>
                 <h3 className="font-bold text-lg text-primary">The Footy Oracle</h3>
                 <p className="text-xs text-muted-foreground">AI-Powered Betting Intelligence</p>
