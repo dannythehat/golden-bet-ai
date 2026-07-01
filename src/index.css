@@ -137,7 +137,7 @@ input, textarea, [contenteditable] {
      rem-based Tailwind sizing (text, spacing, most widths) all shrink from this
      one lever. Dial the % down further for an even tighter layout. */
   html {
-    font-size: 87.5%;
+    font-size: 82%;
   }
 
   body {
