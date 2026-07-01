@@ -40,7 +40,7 @@ function FloatChip({
  */
 export function HeroBanner() {
   return (
-    <section id="top" className="relative mx-auto w-full max-w-[1536px] overflow-hidden">
+    <section id="top" className="relative mx-auto w-full max-w-[1536px] scroll-mt-28 overflow-hidden">
       {/* one-off keyframes for the floating chips + slow drift */}
       <style>{`
         @keyframes heroFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }

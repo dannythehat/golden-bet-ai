@@ -12,11 +12,13 @@ export function TipOfTheDayCard() {
   const away = tip?.away_team ?? TIP_OF_THE_DAY.away.name;
   const market = tip?.market ?? TIP_OF_THE_DAY.tip;
   const oddsRaw = tip?.odds ?? TIP_OF_THE_DAY.odds;
-  const odds = typeof oddsRaw === 'number' ? oddsRaw.toFixed(2) : String(oddsRaw || '—');
+  const oddsNum = typeof oddsRaw === 'number' ? oddsRaw : parseFloat(String(oddsRaw));
+  const odds = Number.isFinite(oddsNum) ? oddsNum.toFixed(2) : String(oddsRaw || '—');
   const confidence = tip?.confidence ?? 72;
 
   return (
     <FeaturePanel
+      id="tip-of-the-day"
       tone="emerald"
       eyebrow="Tip of the Day"
       title={<>The Gaffer's <Accent tone="emerald">stand-out.</Accent></>}

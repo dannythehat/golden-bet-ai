@@ -22,6 +22,7 @@ export function WeeklyPrizesFeatureCard() {
 
   return (
     <FeaturePanel
+      id="weekly-prizes"
       tone="amber"
       eyebrow="Weekly Prizes"
       title={<>Real prizes. <Accent tone="amber">Every week.</Accent></>}

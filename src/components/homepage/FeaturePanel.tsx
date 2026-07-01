@@ -144,7 +144,7 @@ export function FeaturePanel({
     <section
       id={id}
       ref={ref}
-      className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border ${t.ring} bg-[#0b0617]/80 p-5 backdrop-blur-xl transition-all duration-700 ease-out md:rounded-[1.9rem] md:p-7 ${
+      className={`group relative flex h-full scroll-mt-28 flex-col overflow-hidden rounded-[1.5rem] border ${t.ring} bg-[#0b0617]/80 p-5 backdrop-blur-xl transition-all duration-700 ease-out md:rounded-[1.9rem] md:p-7 ${
         shown ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       } ${className}`}
       style={{ boxShadow: t.glow }}
