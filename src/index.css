@@ -133,6 +133,13 @@ input, textarea, [contenteditable] {
     @apply border-border;
   }
 
+  /* Global scale-down for a denser, Flashscore-like feel on every page.
+     rem-based Tailwind sizing (text, spacing, most widths) all shrink from this
+     one lever. Dial the % down further for an even tighter layout. */
+  html {
+    font-size: 87.5%;
+  }
+
   body {
     @apply bg-background text-foreground font-outfit antialiased;
   }

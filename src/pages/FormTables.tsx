@@ -147,11 +147,8 @@ const NO_GAMES_LINES = [
 ];
 
 /** Premium fallback when there are no fixtures today — the Gaffer, straight up. */
-function GafferNoGames({ nextDay }: { nextDay: { date: string; count: number } | null }) {
+function GafferNoGames() {
   const line = NO_GAMES_LINES[new Date().getDate() % NO_GAMES_LINES.length];
-  const nextLabel = nextDay
-    ? new Date(nextDay.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
-    : null;
   return (
     <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-violet-600/15 via-white/[0.04] to-transparent p-8 text-center backdrop-blur-xl shadow-[0_0_60px_-30px_rgba(139,92,246,0.6)]">
       <div className="pointer-events-none absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-violet-500/20 blur-3xl" />
@@ -160,11 +157,6 @@ function GafferNoGames({ nextDay }: { nextDay: { date: string; count: number } |
       </div>
       <h2 className="relative font-display text-2xl uppercase tracking-tight text-white md:text-3xl">No games today</h2>
       <p className="relative mx-auto mt-2 max-w-md text-sm leading-relaxed text-white/70 md:text-base">“{line}”</p>
-      {nextLabel && (
-        <div className="relative mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm text-white/80">
-          <span className="text-gold">Next up:</span> {nextDay!.count} game{nextDay!.count === 1 ? '' : 's'} · {nextLabel}
-        </div>
-      )}
     </div>
   );
 }
@@ -181,7 +173,8 @@ export default function FormTables() {
   const C = CATS.find((c) => c.key === cat)!;
   const mark = C.marks?.[Math.min(markIdx, C.marks.length - 1)] ?? null;
 
-  // TODAY only — UK date. No games today → the Gaffer says so (no roll-forward).
+  // TODAY only (UK date). The snapshot's dates are real fixture dates, so this
+  // shows a fixture only on its actual day — no games today → the Gaffer says so.
   const today = useMemo(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), []);
   const todaysFixtures = useMemo(() => tables.fixtures.filter((f) => f.date === today), [tables, today]);
 
@@ -189,13 +182,6 @@ export default function FormTables() {
     const list = todaysFixtures.filter((f) => league === 'all' || f.league === league);
     return [...list].sort((a, b) => C.avg(b) - C.avg(a));
   }, [league, C, todaysFixtures]);
-
-  // If nothing's on today, hint at the next matchday (from the wider dataset).
-  const nextDay = useMemo(() => {
-    const future = tables.fixtures.filter((f) => f.date > today).map((f) => f.date).sort();
-    if (!future.length) return null;
-    return { date: future[0], count: tables.fixtures.filter((f) => f.date === future[0]).length };
-  }, [tables, today]);
 
   // The Gaffer's pick = highest-edge flagged fixture for the active market/mark.
   // The Gaffer's call for the active market: a VALUE pick if the price is wrong,
@@ -233,7 +219,7 @@ export default function FormTables() {
         </div>
 
         {todaysFixtures.length === 0 ? (
-          <GafferNoGames nextDay={nextDay} />
+          <GafferNoGames />
         ) : (
         <>
         {/* Category tabs */}
