@@ -46,3 +46,10 @@ Lovable should pull from here rather than baking text into images.
 | `gaffer/gaffer-thinking.png` | _library — available_ |
 | `gaffer/gaffer-pointing-you.png` | _library — available (alt hero pose)_ |
 | `stadium-bg.jpg` | Hero + Final CTA atmosphere |
+| `backgrounds/bg-pitch.jpg` | Form Tables card atmosphere |
+| `backgrounds/bg-crowd.jpg` | Community card atmosphere |
+| `backgrounds/bg-stadium.jpg` | _library — available_ |
+| `backgrounds/bg-tunnel.jpg` | _library — available_ |
+| `backgrounds/bg-dressing-room.jpg` | _library — available_ |
+| `prizes/prize-holiday.jpg` | Weekly Prizes thumbnail |
+| `prizes/prize-ps5.jpg` | Weekly Prizes thumbnail |

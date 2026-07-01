@@ -1,5 +1,6 @@
 import { Check, Facebook, Send } from 'lucide-react';
 import { FeaturePanel, Accent } from './FeaturePanel';
+import { HOMEPAGE_BACKGROUNDS } from './assets';
 import { COMMUNITY_CARDS, COMMUNITY_STRIP, SOCIAL_LINKS } from './content';
 
 const NET: Record<string, { icon: typeof Facebook; href: string; label: string }> = {
@@ -16,6 +17,7 @@ export function CommunityFeatureCard() {
       eyebrow="The Community"
       title={<>Join the <Accent tone="sky">conversation.</Accent></>}
       body="Live tip drops, team news and daily banter with real football fans — pick your channel."
+      bgImage={HOMEPAGE_BACKGROUNDS.crowd}
       ctas={COMMUNITY_CARDS.map((c) => ({ label: NET[c.network].label, href: NET[c.network].href }))}
     >
       <div className="flex flex-col gap-3">

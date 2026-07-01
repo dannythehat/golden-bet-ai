@@ -35,3 +35,18 @@ export const HOMEPAGE_MEDIA = {
   stadiumBg: '/images/stadium-bg.jpg',
   gafferScene: '/images/the-gaffer-2.png',
 } as const;
+
+/** Clean, text-free backdrops faded behind sections for depth. */
+export const HOMEPAGE_BACKGROUNDS = {
+  pitch: '/images/backgrounds/bg-pitch.jpg',
+  stadium: '/images/backgrounds/bg-stadium.jpg',
+  crowd: '/images/backgrounds/bg-crowd.jpg',
+  tunnel: '/images/backgrounds/bg-tunnel.jpg',
+  dressingRoom: '/images/backgrounds/bg-dressing-room.jpg',
+} as const;
+
+/** Real prize photography for the Weekly Prizes card. */
+export const HOMEPAGE_PRIZES = {
+  holiday: '/images/prizes/prize-holiday.jpg',
+  ps5: '/images/prizes/prize-ps5.jpg',
+} as const;

@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import { FeaturePanel, Accent } from './FeaturePanel';
 import { FORM_MARKETS } from './content';
+import { HOMEPAGE_BACKGROUNDS } from './assets';
 import { Icon } from './icons';
 
 const ACCENT: Record<string, string> = {
@@ -19,6 +20,7 @@ export function FormTablesSection() {
       eyebrow="Form Tables"
       title={<>See who's <Accent tone="emerald">hot</Accent>, who's not.</>}
       body="Live-weighted form ranked by real numbers — goals, corners, cards and BTTS — with the Gaffer's value flagged against the price."
+      bgImage={HOMEPAGE_BACKGROUNDS.pitch}
       ctas={[{ label: 'Open Form Tables', to: '/form-tables' }]}
     >
       <div className="grid grid-cols-2 gap-2">
