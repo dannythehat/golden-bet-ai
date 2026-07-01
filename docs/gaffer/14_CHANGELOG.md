@@ -19,8 +19,8 @@ what changed, why, and which docs/code it touched. Newest first.
   - New `build-form-tables` edge function writes the day's slate to
     `daily_form_tables` (migration `20260701090000`, public-read).
   - Scheduled at 02:10 UTC in `daily-orchestrator` (between ingest and pick).
-  - Drill-down history (home/away form, H2H) left empty for now — a follow-up
-    (needs the lastx/h2h calls); the main table is fully live.
+  - Drill-down is live too: `buildHistory` derives each team's last-8 form strip
+    + head-to-head from one `league-matches` call per league (`fetchLeagueMatchesDetailed`).
 - **/pnl page**: replaced the Coming Soon placeholder with a live full-history
   page (summary, cumulative sparkline, settled-bet table) reading `gaffer_picks`
   (won/lost), sample fallback until real settlements land.

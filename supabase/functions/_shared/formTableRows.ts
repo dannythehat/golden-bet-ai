@@ -5,13 +5,62 @@
 // Ranking (by combined average) + filtering happen on the client; here we just
 // compute every fixture's numbers. Mirrors src/types/footy.ts FormFixtureRow.
 // ============================================================================
-import type { TodayFixture } from "./footystats.ts";
+import type { TodayFixture, DetailedMatch } from "./footystats.ts";
 
 export interface TeamFormStats {
   overPct: Record<string, number>;
   avgGoals: number;
   avgCorners: number;
   avgCards: number;
+}
+
+// Drill-down shapes (mirror src/types/footy.ts).
+interface FormGame { date: string; opp: string; ha: "H" | "A"; gf: number; ga: number; res: "W" | "D" | "L"; corners: number; cards: number; btts: boolean; }
+interface H2HMeeting { date: string; home: string; away: string; hg: number; ag: number; corners: number; cards: number; }
+
+export interface HistoryLookup {
+  gamesFor: (id: number, name: string) => FormGame[];
+  h2hFor: (aId: number, aName: string, bId: number, bName: string) => H2HMeeting[];
+}
+
+const dstr = (u: number) => new Date(u * 1000).toISOString().slice(0, 10);
+const pairKey = (a: string, b: string) => [a, b].sort().join("|");
+
+/**
+ * Turn a season's completed matches into per-team form strips + head-to-head.
+ * Keyed by both id and name so today's fixtures resolve either way.
+ */
+export function buildHistory(matches: DetailedMatch[]): HistoryLookup {
+  const byId = new Map<number, FormGame[]>();
+  const byName = new Map<string, FormGame[]>();
+  const h2h = new Map<string, H2HMeeting[]>();
+  const add = (m: Map<string | number, FormGame[]>, k: string | number, g: FormGame) => {
+    const arr = (m as Map<string | number, FormGame[]>).get(k) ?? []; arr.push(g); m.set(k, arr);
+  };
+
+  for (const m of [...matches].sort((a, b) => b.dateUnix - a.dateUnix)) { // newest first
+    const date = dstr(m.dateUnix);
+    const btts = m.hg > 0 && m.ag > 0;
+    const homeRes: FormGame["res"] = m.hg > m.ag ? "W" : m.hg < m.ag ? "L" : "D";
+    const awayRes: FormGame["res"] = m.ag > m.hg ? "W" : m.ag < m.hg ? "L" : "D";
+    const homeGame: FormGame = { date, opp: m.awayName, ha: "H", gf: m.hg, ga: m.ag, res: homeRes, corners: m.corners, cards: m.cards, btts };
+    const awayGame: FormGame = { date, opp: m.homeName, ha: "A", gf: m.ag, ga: m.hg, res: awayRes, corners: m.corners, cards: m.cards, btts };
+    add(byId as Map<string | number, FormGame[]>, m.homeId, homeGame);
+    add(byId as Map<string | number, FormGame[]>, m.awayId, awayGame);
+    add(byName as Map<string | number, FormGame[]>, m.homeName, homeGame);
+    add(byName as Map<string | number, FormGame[]>, m.awayName, awayGame);
+
+    const meeting: H2HMeeting = { date, home: m.homeName, away: m.awayName, hg: m.hg, ag: m.ag, corners: m.corners, cards: m.cards };
+    const kId = pairKey(String(m.homeId), String(m.awayId));
+    const kNm = pairKey(m.homeName, m.awayName);
+    for (const k of new Set([kId, kNm])) { const a = h2h.get(k) ?? []; a.push(meeting); h2h.set(k, a); }
+  }
+
+  return {
+    gamesFor: (id, name) => (byId.get(id) ?? byName.get(name) ?? []).slice(0, 8),
+    h2hFor: (aId, aName, bId, bName) =>
+      (h2h.get(pairKey(String(aId), String(bId))) ?? h2h.get(pairKey(aName, bName)) ?? []).slice(0, 6),
+  };
 }
 
 // Marks the page exposes per category (labels match FootyStats overPct/odds keys).
@@ -81,6 +130,7 @@ export function buildFormTables(
   formFor: (id: number, name: string) => TeamFormStats | null,
   leagueNames: Record<number, string>,
   dateISO: string,
+  history?: HistoryLookup,
 ): FormTablesPayload {
   const rows: Record<string, unknown>[] = [];
   const leagueSet = new Map<string, { name: string; region: string }>();
@@ -119,7 +169,9 @@ export function buildFormTables(
       goals_over, corners_over,
       goals_odds, corners_odds, cards_odds, btts_odds,
       value: { goals: goalsValue, corners: cornersValue, btts: valueCell(btts_pct, btts_odds) },
-      home_form: [], away_form: [], h2h: [], // drill-down history: follow-up (needs lastx/h2h calls)
+      home_form: history?.gamesFor(f.homeId, f.homeName) ?? [],
+      away_form: history?.gamesFor(f.awayId, f.awayName) ?? [],
+      h2h: history?.h2hFor(f.homeId, f.homeName, f.awayId, f.awayName) ?? [],
     });
   }
 

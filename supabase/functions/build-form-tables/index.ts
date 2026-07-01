@@ -7,8 +7,8 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchTodaysMatches } from "../_shared/footystats.ts";
-import { buildFormTables, type TeamFormStats } from "../_shared/formTableRows.ts";
+import { fetchTodaysMatches, fetchLeagueMatchesDetailed, type DetailedMatch } from "../_shared/footystats.ts";
+import { buildFormTables, buildHistory, type TeamFormStats } from "../_shared/formTableRows.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -41,9 +41,18 @@ serve(async (req) => {
   }
   const formFor = (id: number, name: string) => byId.get(id) ?? byName.get(name) ?? null;
 
+  const names = leagueNames();
   const today = new Date().toISOString().slice(0, 10);
   const fixtures = await fetchTodaysMatches(fsKey);
-  const payload = buildFormTables(fixtures, formFor, leagueNames(), today);
+
+  // Per-team form strips + head-to-head, from one league-matches call per league.
+  const leagueIds = Object.keys(names).map(Number).filter(Boolean);
+  const matchLists = await Promise.all(
+    leagueIds.map((id) => fetchLeagueMatchesDetailed(id, fsKey).catch(() => [] as DetailedMatch[])),
+  );
+  const history = buildHistory(matchLists.flat());
+
+  const payload = buildFormTables(fixtures, formFor, names, today, history);
 
   const { error } = await admin.from("daily_form_tables").upsert(
     { table_date: today, leagues: payload.leagues, fixtures: payload.fixtures, updated_at: new Date().toISOString() },

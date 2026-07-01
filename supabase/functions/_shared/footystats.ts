@@ -200,3 +200,32 @@ export async function fetchLeagueMatches(seasonId: number, key: string): Promise
     })
     .filter((m) => m.home && m.away && Number.isFinite(m.dateUnix));
 }
+
+/** A completed match with per-side detail — for form strips + head-to-head. */
+export interface DetailedMatch {
+  dateUnix: number;
+  homeId: number; awayId: number;
+  homeName: string; awayName: string;
+  hg: number; ag: number;      // home / away goals
+  corners: number; cards: number; // match totals
+}
+
+/** All completed matches for a season, with the detail the drill-down needs. */
+export async function fetchLeagueMatchesDetailed(seasonId: number, key: string): Promise<DetailedMatch[]> {
+  const json = await getJson(`/league-matches?key=${key}&season_id=${seasonId}`);
+  const data: any[] = Array.isArray(json?.data) ? json.data : [];
+  return data
+    .filter((m) => m.status === "complete")
+    .map((m) => ({
+      dateUnix: m.date_unix,
+      homeId: m.homeID ?? m.home_id,
+      awayId: m.awayID ?? m.away_id,
+      homeName: m.home_name,
+      awayName: m.away_name,
+      hg: num(m.homeGoalCount),
+      ag: num(m.awayGoalCount),
+      corners: m.totalCornerCount ?? (num(m.team_a_corners) + num(m.team_b_corners)),
+      cards: num(m.team_a_cards_num) + num(m.team_b_cards_num),
+    }))
+    .filter((m) => m.homeName && m.awayName && Number.isFinite(m.dateUnix));
+}
