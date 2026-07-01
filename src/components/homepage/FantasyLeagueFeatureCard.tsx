@@ -11,6 +11,7 @@ export function FantasyLeagueFeatureCard() {
       eyebrow="Fantasy League"
       title={<>Pick your XI. <Accent tone="violet">Beat the Gaffer.</Accent></>}
       body="The club's flagship fantasy league — weekly prizes, live leaderboards and Gaffer-powered insight. All in with your membership."
+      character={{ src: '/images/gaffer/gaffer-celebrating.png', alt: 'The Gaffer celebrating', className: 'w-[38%] max-w-[210px] opacity-90' }}
       ctas={[{ label: 'Play Fantasy', to: '/fantasy-league' }]}
     >
       <div className="flex flex-col gap-2.5">
