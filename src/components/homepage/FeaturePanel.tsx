@@ -108,6 +108,8 @@ type FeaturePanelProps = {
   children?: ReactNode;
   /** Optional atmospheric background image (sits behind, heavily faded). */
   bgImage?: string;
+  /** Optional foreground character cutout, bleeds from the bottom-right corner. */
+  character?: { src: string; alt: string; className?: string };
   className?: string;
 };
 
@@ -120,6 +122,7 @@ export function FeaturePanel({
   ctas = [],
   children,
   bgImage,
+  character,
   className = '',
 }: FeaturePanelProps) {
   const t = TONE[tone];
@@ -162,23 +165,45 @@ export function FeaturePanel({
         className={`pointer-events-none absolute -right-16 -top-16 -z-10 h-52 w-52 rounded-full blur-3xl transition-transform duration-700 group-hover:translate-x-4 group-hover:translate-y-2 ${t.blob}`}
       />
 
-      <span className={`inline-flex w-fit items-center rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${t.chip}`}>
-        {eyebrow}
-      </span>
-      <h3 className="mt-3 font-display text-2xl uppercase leading-[0.95] tracking-tight text-white sm:text-3xl">
-        {title}
-      </h3>
-      {body && <p className="mt-2 max-w-md text-sm leading-relaxed text-white/60">{body}</p>}
-
-      {children && <div className="mt-4">{children}</div>}
-
-      {ctas.length > 0 && (
-        <div className="mt-auto flex flex-wrap gap-2 pt-5">
-          {ctas.map((c) => (
-            <Cta key={c.label} cta={c} tone={tone} />
-          ))}
-        </div>
+      {/* foreground character cutout (optional) + a glow so a dark cutout separates */}
+      {character && (
+        <>
+          <div
+            aria-hidden
+            className={`pointer-events-none absolute -bottom-10 right-2 z-0 h-56 w-56 rounded-full blur-3xl ${t.blob}`}
+          />
+          <img
+            src={character.src}
+            alt={character.alt}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className={`pointer-events-none absolute bottom-0 right-0 z-0 select-none object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)] transition-transform duration-700 group-hover:-translate-y-1 ${
+              character.className ?? 'w-[52%] max-w-[240px] opacity-90'
+            }`}
+          />
+        </>
       )}
+
+      <div className={`relative z-[1] flex h-full flex-col ${character ? 'sm:pr-[42%]' : ''}`}>
+        <span className={`inline-flex w-fit items-center rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${t.chip}`}>
+          {eyebrow}
+        </span>
+        <h3 className="mt-3 font-display text-2xl uppercase leading-[0.95] tracking-tight text-white sm:text-3xl">
+          {title}
+        </h3>
+        {body && <p className="mt-2 max-w-md text-sm leading-relaxed text-white/60">{body}</p>}
+
+        {children && <div className="mt-4">{children}</div>}
+
+        {ctas.length > 0 && (
+          <div className="mt-auto flex flex-wrap gap-2 pt-5">
+            {ctas.map((c) => (
+              <Cta key={c.label} cta={c} tone={tone} />
+            ))}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
