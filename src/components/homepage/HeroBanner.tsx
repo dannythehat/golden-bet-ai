@@ -1,161 +1,149 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Facebook, Send } from 'lucide-react';
-import { ArtworkCard } from './ArtworkCard';
-import { HOMEPAGE_APPROVED_ASSETS } from './assets';
-import { NAV_LINKS, SOCIAL_LINKS } from './content';
-import heroBannerClean from '@/assets/homepage/hero-banner-clean.png';
-import { OracleCrest, OracleWordmark } from './primitives';
+import { BarChart3, Flame, Sparkles, Trophy } from 'lucide-react';
+import { HOMEPAGE_MEDIA } from './assets';
+import { OracleCrest } from './primitives';
 
-export function HeroBanner() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
+/** A floating frosted feature chip that hovers over the hero artwork. */
+function FloatChip({
+  icon,
+  label,
+  sub,
+  className,
+  delay,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  sub: string;
+  className: string;
+  delay: string;
+}) {
   return (
-    <section id="top" className="relative mx-auto w-full max-w-[1536px]">
-      {/* Mobile hero — readable HTML composition */}
-      <div className="md:hidden px-3 pt-6 pb-2">
-        <div className="relative overflow-hidden rounded-2xl border border-amber-300/30 bg-gradient-to-b from-[#1a0a2e] via-[#0a0414] to-[#0a0414] shadow-[0_30px_80px_-30px_rgba(245,197,66,0.45)]">
-          {/* Top nav bar: big logo + socials + menu + auth buttons */}
-          <div className="relative z-10 flex items-center justify-between gap-2 border-b border-amber-300/15 bg-[#07000f]/80 px-3 py-3 backdrop-blur">
-            <div className="flex items-center gap-2">
-              <Link to="/" className="flex min-w-0 items-center gap-2.5" aria-label="Footy Oracle home">
-                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-1 shadow-[0_0_22px_rgba(245,197,66,0.28)]">
-                  <OracleCrest className="h-full w-full" />
-                </span>
-                <OracleWordmark />
-              </Link>
+    <div
+      className={`absolute z-20 hidden animate-[heroFloat_5s_ease-in-out_infinite] items-center gap-2.5 rounded-2xl border border-white/15 bg-black/50 px-3.5 py-2.5 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.9)] backdrop-blur-xl lg:flex ${className}`}
+      style={{ animationDelay: delay }}
+    >
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.06] text-[#f5c542]">
+        {icon}
+      </span>
+      <span className="leading-tight">
+        <span className="block text-sm font-black text-white">{label}</span>
+        <span className="block text-[11px] text-white/55">{sub}</span>
+      </span>
+    </div>
+  );
+}
 
-              <div className="flex items-center gap-1.5">
-                <a
-                  href={SOCIAL_LINKS.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Footy Oracle on Facebook"
-                  className="grid h-7 w-7 place-items-center rounded-full border border-[#1877F2]/50 text-[#1877F2] hover:bg-[#1877F2]/15 hover:text-[#1877F2]"
-                >
-                  <Facebook className="h-3.5 w-3.5" />
-                </a>
-                <a
-                  href={SOCIAL_LINKS.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Footy Oracle on Telegram"
-                  className="grid h-7 w-7 place-items-center rounded-full border border-[#229ED9]/50 text-[#229ED9] hover:bg-[#229ED9]/15 hover:text-[#229ED9]"
-                >
-                  <Send className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            </div>
+/**
+ * Hero — a real, native composition. A clean (text-free) Gaffer cutout anchors
+ * the right; the headline, live badge, feature chips and CTAs are all live HTML
+ * overlaid on a stadium-lit gradient. No baked-text images.
+ */
+export function HeroBanner() {
+  return (
+    <section id="top" className="relative mx-auto w-full max-w-[1536px] overflow-hidden">
+      {/* one-off keyframes for the floating chips + slow drift */}
+      <style>{`
+        @keyframes heroFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+        @keyframes heroGlow { 0%,100% { opacity:.55; } 50% { opacity:.9; } }
+      `}</style>
 
-            <div className="flex items-center gap-1.5">
-              <Link
-                to="/auth"
-                className="rounded-full border border-white/20 px-2.5 py-1 text-[11px] font-semibold text-white/90 hover:bg-white/10"
-              >
-                Login
-              </Link>
+      <div className="relative overflow-hidden border-b border-[#f5c542]/20 md:rounded-b-[1.6rem]">
+        {/* stadium atmosphere */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-20 bg-cover bg-center opacity-30"
+          style={{ backgroundImage: `url(${HOMEPAGE_MEDIA.stadiumBg})` }}
+        />
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_90%_at_20%_10%,rgba(88,28,135,0.55),transparent_55%),radial-gradient(90%_80%_at_95%_20%,rgba(245,197,66,0.18),transparent_55%),linear-gradient(180deg,rgba(5,2,11,0.55),#05020b_92%)]" />
+
+        <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-4 px-4 pb-10 pt-10 md:gap-6 md:px-6 md:pb-12 md:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pt-16">
+          {/* ── Left: live HTML copy ── */}
+          <div className="relative z-10 text-center lg:text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-emerald-200">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              The Gaffer is live
+            </span>
+
+            <h1 className="mt-4 font-display text-[2.6rem] uppercase leading-[0.9] tracking-tight text-white sm:text-6xl lg:text-[4.4rem]">
+              The Gaffer
+              <span className="mt-1 block bg-gradient-to-r from-amber-200 via-[#f5c542] to-amber-200 bg-clip-text text-transparent">
+                Knows.
+              </span>
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-white/70 lg:mx-0">
+              AI-powered football tips, live form tables and a fantasy league — witty, sharp and
+              tracked in the open. All in one £20/month club.
+            </p>
+
+            <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center lg:justify-start">
               <Link
                 to="/pricing"
-                className="rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-black hover:bg-amber-300"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 px-7 py-3.5 text-sm font-black uppercase tracking-wide text-[#16051f] shadow-[0_16px_40px_-16px_rgba(245,197,66,1)] transition-all hover:-translate-y-0.5 hover:from-amber-200 hover:to-amber-400"
               >
-                Join
+                <Trophy className="h-4 w-4 fill-current" /> Join the Club
               </Link>
-              <button
-                type="button"
-                onClick={() => setMenuOpen((v) => !v)}
-                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-                aria-expanded={menuOpen}
-                className="grid h-8 w-8 place-items-center rounded-full border border-amber-300/40 text-amber-200 hover:bg-amber-300/10"
+              <Link
+                to="/form-tables"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.04] px-7 py-3.5 text-sm font-black uppercase tracking-wide text-white transition-all hover:border-[#f5c542]/50 hover:bg-white/[0.08] hover:text-[#f8e7a1]"
               >
-                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </button>
+                <BarChart3 className="h-4 w-4" /> Explore Today's Tips
+              </Link>
+            </div>
+
+            {/* trust strip */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] font-semibold text-white/55 lg:justify-start">
+              <span className="inline-flex items-center gap-1.5"><Flame className="h-3.5 w-3.5 text-[#f5c542]" /> Daily value picks</span>
+              <span className="inline-flex items-center gap-1.5"><BarChart3 className="h-3.5 w-3.5 text-emerald-300" /> Live form tables</span>
+              <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-violet-300" /> P&amp;L tracked in the open</span>
             </div>
           </div>
 
-          {/* Slide-down nav menu */}
-          {menuOpen && (
-            <div className="relative z-10 grid grid-cols-2 gap-1.5 border-b border-amber-300/15 bg-[#07000f]/90 px-3 py-3">
-              {NAV_LINKS.map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-2 text-center text-[11px] font-bold uppercase tracking-wide text-white/85 hover:border-amber-300/50 hover:text-amber-200"
-                >
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          )}
-
-          {/* Gaffer image — cleaned hero artwork (nav strip removed) */}
-          <div className="relative w-full overflow-hidden bg-[#0a0414]">
+          {/* ── Right: clean Gaffer cutout + floating chips ── */}
+          <div className="relative mx-auto w-full max-w-[420px] lg:max-w-none">
+            {/* glow halo behind him */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.55),transparent_68%)] blur-2xl"
+              style={{ animation: 'heroGlow 6s ease-in-out infinite' }}
+            />
             <img
-              src={heroBannerClean}
+              src={HOMEPAGE_MEDIA.gafferPortrait}
               alt="The Gaffer — Footy Oracle"
-              className="block h-auto w-full object-contain"
+              className="relative z-10 mx-auto block h-auto w-full max-w-[460px] select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.6)] lg:max-w-[560px]"
               loading="eager"
               decoding="async"
               draggable={false}
             />
 
-            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/80 to-transparent" />
-          </div>
-
-          {/* Headline + CTAs */}
-          <div className="relative -mt-12 px-4 pb-5 text-center">
-            <h1 className="text-2xl font-extrabold leading-tight text-white">
-              The Gaffer{' '}
-              <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">
-                Knows
+            <FloatChip
+              icon={<Flame className="h-4 w-4" />}
+              label="Value board"
+              sub="Fresh picks at 3am"
+              className="left-0 top-6"
+              delay="0s"
+            />
+            <FloatChip
+              icon={<Trophy className="h-4 w-4" />}
+              label="Fantasy League"
+              sub="Beat the Gaffer"
+              className="bottom-24 right-0"
+              delay="1.4s"
+            />
+            <div className="absolute -bottom-1 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2.5 rounded-2xl border border-[#f5c542]/40 bg-black/55 px-4 py-2.5 shadow-[0_18px_50px_-24px_rgba(245,197,66,0.9)] backdrop-blur-xl sm:flex">
+              <span className="grid h-9 w-9 place-items-center rounded-full border border-[#f5c542]/50 bg-[#07000f] p-1">
+                <OracleCrest className="h-full w-full" />
               </span>
-            </h1>
-            <p className="mt-2 text-sm leading-snug text-white/75">
-              AI-powered football tips, form tables and fantasy — all in one club.
-            </p>
-            <div className="mt-4 flex flex-col gap-2">
-              <Link
-                to="/pricing"
-                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-300 to-amber-500 px-5 py-3 text-sm font-bold text-black shadow-lg shadow-amber-500/30"
-              >
-                Join the Club
-              </Link>
-              <Link
-                to="/form-tables"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                Explore Today's Tips
-              </Link>
-            </div>
-            <div className="mt-3 flex justify-center gap-4 text-[12px]">
-              <Link to="/form-tables" className="text-emerald-300 underline-offset-4 hover:underline">
-                Form Tables
-              </Link>
-              <span className="text-white/30">·</span>
-              <Link to="/fantasy-league" className="text-violet-300 underline-offset-4 hover:underline">
-                Fantasy League
-              </Link>
+              <span className="leading-tight">
+                <span className="block text-sm font-black text-white">Trust the Gaffer</span>
+                <span className="block text-[11px] text-white/55">Witty. Fun. Football.</span>
+              </span>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Desktop hero — original artwork with hotspots */}
-      <div className="hidden md:block">
-        <ArtworkCard
-          src={HOMEPAGE_APPROVED_ASSETS.heroBanner}
-          alt="Footy Oracle homepage hero with The Gaffer"
-          priority
-          className="rounded-none border-x-0 border-t-0 md:rounded-b-[14px]"
-          overlayLinks={[
-            { label: 'Login', to: '/auth', className: 'left-[77%] top-[2.5%] h-[5%] w-[8%]' },
-            { label: 'Join the Club', to: '/pricing', className: 'left-[86%] top-[2.5%] h-[5%] w-[12%]' },
-            { label: 'Join the Club', to: '/pricing', className: 'left-[3.5%] top-[70.4%] h-[7%] w-[16%]' },
-            { label: "Explore Today's Tips", to: '/form-tables', className: 'left-[21%] top-[70.4%] h-[7%] w-[20%]' },
-            { label: 'Form Tables', to: '/form-tables', className: 'left-[28%] top-[84.5%] h-[9%] w-[11%]' },
-            { label: 'Fantasy League', to: '/fantasy-league', className: 'left-[56%] top-[84.5%] h-[9%] w-[12%]' },
-          ]}
-        />
       </div>
     </section>
   );

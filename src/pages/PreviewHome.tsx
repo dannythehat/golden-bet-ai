@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
 
 import { FormTablesSection } from '@/components/homepage/FormTablesSection';
@@ -25,6 +26,8 @@ export default function PreviewHome() {
     <div className="min-h-screen overflow-x-hidden bg-[#05020b] text-white">
       {/* Very faint global grain — page-wide radial removed so per-scene tints can breathe */}
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:46px_46px] opacity-20" />
+
+      <HomepageNav />
 
       <HomepageScene tone="hero" flushTop flushBottom>
         <HeroBanner />

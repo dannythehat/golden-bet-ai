@@ -24,3 +24,14 @@ export const HOMEPAGE_APPROVED_ASSETS = {
   tipOfDay: withOrigin(tipOfDayAsset.url),
   finalCtaFooter: withOrigin(finalCtaFooterAsset.url),
 } as const;
+
+/**
+ * Clean, text-free imagery used as real backgrounds/characters (not baked-text
+ * mockups): a transparent Gaffer cutout + a plain stadium backdrop. These let us
+ * overlay live HTML headlines, buttons and data on top.
+ */
+export const HOMEPAGE_MEDIA = {
+  gafferPortrait: '/images/gaffer-hero-portrait.png',
+  stadiumBg: '/images/stadium-bg.jpg',
+  gafferScene: '/images/the-gaffer-2.png',
+} as const;
