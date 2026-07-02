@@ -40,6 +40,14 @@ export function HeroBanner() {
         />
         <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent md:block" />
 
+        {/* DESKTOP — The Gaffer's signature across the scene */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute right-[7%] top-[54%] z-[1] hidden -rotate-[7deg] font-['Caveat'] text-7xl font-bold text-[#f8e7a1] [text-shadow:0_3px_22px_rgba(245,197,66,0.5),0_1px_2px_rgba(0,0,0,0.7)] md:block lg:text-8xl"
+        >
+          The Gaffer
+        </span>
+
         <div className="relative flex flex-col md:min-h-[660px] md:justify-between md:gap-8">
           {/* MOBILE scene banner — the Gaffer shown clearly up top, fading into the copy */}
           <div
@@ -48,6 +56,13 @@ export function HeroBanner() {
             style={{ backgroundImage: `url(${HERO_SCENE})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/25 to-transparent" />
+            {/* MOBILE — The Gaffer's signature across the scene */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute bottom-3 left-4 -rotate-[7deg] font-['Caveat'] text-5xl font-bold text-[#f8e7a1] [text-shadow:0_3px_18px_rgba(245,197,66,0.5),0_1px_2px_rgba(0,0,0,0.7)] sm:text-6xl"
+            >
+              The Gaffer
+            </span>
           </div>
 
           {/* copy */}
