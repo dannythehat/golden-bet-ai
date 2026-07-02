@@ -29,7 +29,7 @@ export function FormTablesSection() {
     >
       {/* neon-green stadium header band — spans the full width, headline sits on top */}
       <div className="absolute inset-x-0 top-0 h-[300px] sm:h-[340px]">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${HOMEPAGE_BACKGROUNDS.pitchGreen})` }} />
+        <div className="absolute inset-0 bg-cover bg-[position:70%_center]" style={{ backgroundImage: `url(${HOMEPAGE_BACKGROUNDS.formTables})` }} />
         {/* darken the left so the headline reads, keep the right vivid */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#040a06] via-[#040a06]/70 to-transparent" />
         {/* fade the band into the tiles below */}
