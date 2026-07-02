@@ -63,7 +63,7 @@ interface Cat {
 const CATS: Cat[] = [
   {
     key: 'corners', label: 'Corners',
-    overMarks: ['8.5', '9.5', '10.5'], underMarks: ['8.5', '9.5', '10.5', '11.5'],
+    overMarks: ['8.5', '9.5', '10.5', '11.5'], underMarks: ['8.5', '9.5', '10.5', '11.5'],
     avg: (f) => f.corners_avg,
     overPctAt: (f, m) => (m ? f.corners_over[m] ?? null : null),
     overOdds: (f, m) => (m ? f.corners_odds[m] ?? null : null),
@@ -119,44 +119,76 @@ function ValueBadge({ cell }: { cell: ValueCell }) {
   );
 }
 
-type GafferPick = { mode: 'value' | 'banker'; f: Fixture; cell: NonNullable<ValueCell> } | null;
+type GafferDaily = {
+  mode: 'value' | 'banker'; f: Fixture; catKey: CatKey;
+  label: string; selection: string; prob: number; odds: number; edge: number;
+} | null;
 
-/** The Gaffer's call for the active market — a value pick, or (quiet days) his banker. */
-function GafferBanner({ pick, label, selection }: { pick: GafferPick; label: string; selection: string }) {
+/**
+ * The Gaffer's ONE pick of the day — computed once across every market on
+ * today's card, not per-tab. A genuine value pick if the price is wrong,
+ * else his strongest-form banker at a fair price. The same single call shows
+ * regardless of which table you're viewing (it never re-picks per market).
+ */
+function pickGafferDaily(fixtures: Fixture[], today: string): GafferDaily {
+  type Cand = { f: Fixture; catKey: CatKey; label: string; selection: string; line: number; prob: number; odds: number; edge: number; flag: FormValueFlag };
+  const cands: Cand[] = [];
+  for (const f of fixtures) {
+    if (f.date !== today) continue;
+    for (const C of CATS) {
+      for (const mk of C.overMarks ?? [null]) {
+        const cell = computeValue(C.overPctAt(f, mk), C.overOdds(f, mk));
+        if (!cell || cell.odds == null) continue;
+        cands.push({
+          f, catKey: C.key, label: C.label,
+          selection: C.pct ? 'BTTS – Yes' : `Over ${mk} ${C.label}`,
+          line: mk ? Number(mk) : 0, prob: cell.prob, odds: cell.odds, edge: cell.edge, flag: cell.flag,
+        });
+      }
+    }
+  }
+  const pick = (c: Cand, mode: 'value' | 'banker'): GafferDaily =>
+    ({ mode, f: c.f, catKey: c.catKey, label: c.label, selection: c.selection, prob: c.prob, odds: c.odds, edge: c.edge });
+  const flagged = cands.filter((c) => c.flag).sort((a, b) => b.edge - a.edge);
+  if (flagged[0]) return pick(flagged[0], 'value');
+  // No edge today → strongest form at a fair price; highest line preferred so
+  // it reads as a real call (e.g. Over 11.5 Corners), not a 1.05 near-certainty.
+  const banker = cands
+    .filter((c) => c.prob >= 65 && c.odds >= 1.4)
+    .sort((a, b) => b.prob - a.prob || b.line - a.line || b.odds - a.odds)[0];
+  return banker ? pick(banker, 'banker') : null;
+}
+
+/** One clean "Gaffer's Pick of the Day" strip — the same call on every tab. */
+function GafferPickCard({ pick }: { pick: GafferDaily }) {
   if (!pick) {
     return (
-      <div className="mb-4 rounded-2xl border border-gold/25 bg-gradient-to-r from-[#160c04] to-transparent px-4 py-3 text-sm text-white/70 backdrop-blur-md">
-        <span className="font-display tracking-wide text-gold">THE GAFFER'S {label.toUpperCase()} CALL</span> — <span className="font-bold text-white">no value today.</span> Nowt on the card worth your money, so he's keeping his hands in his pockets. Back tomorrow.
+      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-white/12 bg-white/[0.03] px-4 py-3.5 text-sm text-white/75">
+        <Flame className="h-5 w-5 shrink-0 text-white/40" />
+        <span><span className="font-bold text-white">No bet today.</span> Nowt on the card worth your money — the Gaffer sits it out. Back tomorrow.</span>
       </div>
     );
   }
-  const { mode, f, cell } = pick;
-  const banker = mode === 'banker';
+  const { f, selection, prob, odds, mode } = pick;
   return (
-    <div
-      className={`relative mb-4 overflow-hidden rounded-2xl border px-4 py-3.5 backdrop-blur-md ${
-        banker
-          ? 'border-violet-400/40 bg-gradient-to-r from-violet-600/20 via-fuchsia-600/10 to-transparent shadow-[0_0_40px_-18px_rgba(139,92,246,0.7)]'
-          : 'border-gold/40 bg-gradient-to-r from-[#1a1003] via-[#160c04] to-[#0d0703] shadow-[0_0_40px_-16px_hsl(var(--gold))]'
-      }`}
-    >
-      <div className={`pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl ${banker ? 'bg-violet-500/20' : 'bg-gold/10'}`} />
+    <div className="relative mb-4 overflow-hidden rounded-2xl border border-violet-400/40 bg-gradient-to-r from-violet-600/25 via-violet-600/10 to-transparent px-4 py-4 shadow-[0_20px_50px_-24px_rgba(139,92,246,0.9)]">
+      <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-violet-500/20 blur-3xl" />
       <div className="relative flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Flame className={`h-6 w-6 shrink-0 ${banker ? 'text-violet-300' : 'text-gold'}`} />
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-500/20 ring-1 ring-inset ring-violet-400/40">
+            <Flame className="h-5 w-5 text-violet-200" />
+          </span>
           <div className="min-w-0">
-            <div className={`font-display text-sm tracking-wide ${banker ? 'text-violet-200' : 'text-gold'}`}>
-              {banker ? `NO VALUE TODAY · THE GAFFER'S ${label.toUpperCase()} BANKER` : `THE GAFFER'S ${label.toUpperCase()} PICK`}
+            <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-200">
+              The Gaffer's pick of the day · {mode === 'banker' ? 'banker' : 'value'}
             </div>
-            <div className="font-bold leading-tight text-white">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
-            <div className="truncate text-xs text-white/50">
-              {banker ? 'Strongest form on the card' : 'The price is wrong — value'} · {f.region} · {fold(f.league)}
-            </div>
+            <div className="text-base font-bold leading-tight text-white">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
+            <div className="truncate text-xs text-white/60">{f.region} · {fold(f.league)}</div>
           </div>
         </div>
         <div className="shrink-0 text-right">
-          <div className={`font-display text-xl ${banker ? 'text-violet-100' : 'text-white'}`}>{selection}</div>
-          <div className="text-sm text-white/70">form <span className="text-emerald-400">{cell.prob}%</span> · odds <span className={banker ? 'text-violet-200' : 'text-gold'}>{odd(cell.odds)}</span></div>
+          <div className="font-display text-lg text-white md:text-xl">{selection}</div>
+          <div className="text-sm text-white/70">form <span className="font-bold text-emerald-300">{prob}%</span> · odds <span className="font-bold text-[#f8e7a1]">{odd(odds)}</span></div>
         </div>
       </div>
     </div>
@@ -256,27 +288,9 @@ export default function FormTables() {
     return [...perLeague.values()].flat().sort((a, b) => dir * (C.avg(a) - C.avg(b)));
   }, [league, C, tables, windowDates, underMode]);
 
-  // The Gaffer's call is on TODAY's games only: a VALUE pick if the price is
-  // wrong, otherwise his BANKER — best form in the active market/mode.
-  const gafferPick = useMemo(() => {
-    const scored = rows
-      .filter((f) => f.date === today)
-      .map((f) => {
-        const o = C.overPctAt(f, mark);
-        const prob = o == null ? null : underMode ? Math.round((100 - o) * 10) / 10 : o;
-        const odds = underMode ? C.underOdds(f, mark) : C.overOdds(f, mark);
-        return { f, cell: computeValue(prob, odds) };
-      })
-      .filter((x): x is { f: Fixture; cell: NonNullable<ValueCell> } => !!x.cell && x.cell.odds != null);
-    const flagged = [...scored].filter((x) => x.cell.flag).sort((a, b) => b.cell.edge - a.cell.edge);
-    if (flagged[0]) return { mode: 'value' as const, f: flagged[0].f, cell: flagged[0].cell };
-    // Banker fallback — only when the form genuinely backs it (>=60%); otherwise
-    // no call, and the banner says "no value today".
-    const banker = [...scored]
-      .filter((x) => x.cell.prob >= 60)
-      .sort((a, b) => b.cell.prob - a.cell.prob || (b.cell.odds ?? 0) - (a.cell.odds ?? 0))[0];
-    return banker ? { mode: 'banker' as const, f: banker.f, cell: banker.cell } : null;
-  }, [rows, C, mark, today, underMode]);
+  // The Gaffer's ONE pick of the day — computed once across every market on
+  // today's card (not per-tab). Highlighted in the table only within its market.
+  const gafferPick = useMemo(() => pickGafferDaily(tables.fixtures, today), [tables, today]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
@@ -296,7 +310,7 @@ export default function FormTables() {
           <p className="mt-1 text-sm text-white/60 md:text-base">
             Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top.
           </p>
-          <p className="mt-1 text-xs text-white/40">Next 3 days · <span className="text-emerald-300">today's games highlighted</span> · the Gaffer's pick in purple.</p>
+          <p className="mt-1 text-[13px] text-white/55">Next 3 days · <span className="font-semibold text-emerald-300">today's games highlighted</span> · the Gaffer's pick in <span className="font-semibold text-violet-300">purple</span>.</p>
         </div>
 
         {rows.length === 0 ? (
@@ -358,81 +372,69 @@ export default function FormTables() {
           </div>
         </div>
 
-        {/* The Gaffer's selection for this market */}
-        <GafferBanner pick={gafferPick} label={C.label} selection={selection} />
+        {/* The Gaffer's one pick of the day — same call on every tab */}
+        <GafferPickCard pick={gafferPick} />
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.015]">
           {/* Header */}
-          <div className="flex items-center gap-2.5 border-b border-white/10 bg-white/[0.03] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/40 md:gap-3 md:px-4">
+          <div className="flex items-center gap-3 border-b border-white/10 px-3 py-3 text-[11px] font-black uppercase tracking-[0.12em] text-white/45 md:px-4">
             <span className="w-6 text-center md:w-7">#</span>
-            <span className="w-[46px] md:w-[58px]" />
+            <span className="w-[46px] md:w-[56px]" />
             <span className="flex-1">Fixture</span>
-            {marks && <span className="hidden w-14 text-right sm:block">{overUnder} {mark}</span>}
+            {marks && <span className="hidden w-12 text-right sm:block">Form</span>}
             <span className="w-12 text-right md:w-14">Odds</span>
             <span className="w-12 text-right md:w-14">Avg</span>
-            <span className="w-14 text-right md:w-16">When</span>
+            <span className="w-[52px] text-right md:w-16">When</span>
             <span className="w-4" />
           </div>
 
-          <div className="divide-y divide-white/[0.05]">
+          <div className="divide-y divide-white/[0.06]">
           {rows.map((f, i) => {
             const formPct = marks ? pctFor(f) : null;
             const o = oddsFor(f);
-            const isPick = gafferPick?.f.id === f.id;
+            const isPick = gafferPick?.f.id === f.id && gafferPick?.catKey === cat;
             const isToday = f.date === today;
-            const rankTone = isPick
-              ? 'bg-violet-500/20 text-violet-200 ring-1 ring-inset ring-violet-400/30'
-              : isToday
-                ? 'bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-400/25'
-                : i < 3 ? 'bg-[#f5c542]/15 text-[#f8e7a1] ring-1 ring-inset ring-[#f5c542]/25' : 'bg-white/[0.05] text-white/45';
+            const rankColor = isPick ? 'text-violet-300' : isToday ? 'text-emerald-300' : i < 3 ? 'text-[#f8e7a1]' : 'text-white/45';
             return (
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
-                className={`group relative flex w-full items-center gap-2.5 px-3 py-3 text-left transition-colors md:gap-3 md:px-4 ${
+                className={`group relative flex w-full items-center gap-3 px-3 py-3.5 text-left transition-colors md:px-4 ${
                   isPick
-                    ? 'bg-violet-500/[0.10] hover:bg-violet-500/[0.16]'
+                    ? 'bg-violet-500/[0.10] hover:bg-violet-500/[0.15]'
                     : isToday
-                      ? 'bg-emerald-500/[0.045] hover:bg-emerald-500/[0.09]'
-                      : 'hover:bg-white/[0.04]'
+                      ? 'bg-emerald-500/[0.05] hover:bg-emerald-500/[0.09]'
+                      : 'hover:bg-white/[0.035]'
                 }`}
               >
                 {(isPick || isToday) && (
-                  <span aria-hidden className={`absolute inset-y-2 left-0 w-[3px] rounded-full ${isPick ? 'bg-violet-400' : 'bg-emerald-400/70'}`} />
+                  <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${isPick ? 'bg-violet-400' : 'bg-emerald-400/80'}`} />
                 )}
-                <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg font-display text-xs md:h-7 md:w-7 md:text-sm ${rankTone}`}>{i + 1}</span>
-                <div className="flex w-[46px] shrink-0 -space-x-2.5 md:w-[58px]">
+                <span className={`w-6 shrink-0 text-center font-display text-sm md:w-7 md:text-base ${rankColor}`}>{i + 1}</span>
+                <div className="flex w-[46px] shrink-0 -space-x-2.5 md:w-[56px]">
                   <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={28} className="ring-2 ring-[#0b0617]" />
                   <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={28} className="ring-2 ring-[#0b0617]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-bold leading-tight text-white md:text-[15px]">{f.home.name} <span className="text-white/30">v</span> {f.away.name}</div>
+                  <div className="truncate text-[15px] font-semibold leading-tight text-white">{f.home.name} <span className="text-white/35">v</span> {f.away.name}</div>
                   <div className="mt-1 flex items-center gap-1.5">
                     {isPick ? (
-                      <span className="shrink-0 rounded-md bg-violet-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-200 ring-1 ring-inset ring-violet-400/30">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>
+                      <span className="shrink-0 rounded-md bg-violet-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-100 ring-1 ring-inset ring-violet-400/40">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>
                     ) : isToday ? (
-                      <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-inset ring-emerald-400/25"><span className="h-1 w-1 rounded-full bg-emerald-400" />Today</span>
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-200 ring-1 ring-inset ring-emerald-400/30"><span className="h-1 w-1 rounded-full bg-emerald-400" />Today</span>
                     ) : null}
-                    <span className="truncate text-[11px] text-white/40 md:text-xs">{f.region} · {fold(f.league)}</span>
+                    <span className="truncate text-xs text-white/55">{f.region} · {fold(f.league)}</span>
                   </div>
                 </div>
                 {marks && (
-                  <div className="hidden w-14 shrink-0 text-right sm:block">
-                    <div className="text-sm font-bold text-white">{formPct != null ? `${formPct}%` : '—'}</div>
-                    <div className="text-[9px] uppercase tracking-[0.14em] text-white/35">form</div>
-                  </div>
+                  <span className="hidden w-12 shrink-0 text-right text-sm font-semibold text-white/90 sm:block">{formPct != null ? `${formPct}%` : '—'}</span>
                 )}
-                <div className="w-12 shrink-0 text-right md:w-14">
-                  <span className="inline-flex items-center justify-center rounded-lg border border-[#f5c542]/25 bg-[#f5c542]/[0.08] px-2 py-1 font-display text-sm text-[#f8e7a1]">{odd(o)}</span>
-                </div>
-                <div className="w-12 shrink-0 text-right md:w-14">
-                  <div className="font-display text-lg leading-none text-emerald-300 md:text-2xl">{C.pct ? `${pctFor(f) ?? '—'}%` : C.avg(f).toFixed(1)}</div>
-                  <div className="text-[9px] uppercase tracking-[0.16em] text-white/35">avg</div>
-                </div>
-                <div className="w-14 shrink-0 text-right md:w-16">
-                  <div className={`text-xs font-bold md:text-sm ${isToday ? 'text-emerald-300' : 'text-white/85'}`}>{whenLabel(f.date, today)}</div>
-                  <div className="text-[10px] text-white/40">{f.time}</div>
+                <span className="w-12 shrink-0 text-right text-sm font-bold text-[#f8e7a1] md:w-14">{odd(o)}</span>
+                <span className="w-12 shrink-0 text-right font-display text-lg leading-none text-emerald-300 md:w-14 md:text-xl">{C.pct ? `${pctFor(f) ?? '—'}%` : C.avg(f).toFixed(1)}</span>
+                <div className="w-[52px] shrink-0 text-right md:w-16">
+                  <div className={`text-[13px] font-semibold leading-tight ${isToday ? 'text-emerald-300' : 'text-white'}`}>{whenLabel(f.date, today)}</div>
+                  <div className="text-[11px] text-white/50">{f.time}</div>
                 </div>
                 <ChevronRight className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 ${isPick ? 'text-violet-300' : 'text-white/30'}`} />
               </button>
@@ -441,7 +443,7 @@ export default function FormTables() {
           </div>
         </div>
 
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-white/40">
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-white/45">
           <Info className="h-3.5 w-3.5" /> Odds are bookmaker decimals. Tap any fixture for H2H, both teams' form and the full market breakdown.
         </p>
         </>
