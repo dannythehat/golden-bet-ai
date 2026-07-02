@@ -7,7 +7,7 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchUpcomingMatches, fetchLeagueMatchesDetailed, fetchChosenLeagues, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
+import { fetchUpcomingMatches, fetchLeagueMatchesDetailed, fetchActiveLeagues, fetchSeasonNames, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
 import { buildFormTables, buildHistory, type TeamFormStats } from "../_shared/formTableRows.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
@@ -42,15 +42,18 @@ serve(async (req) => {
   const formFor = (id: number, name: string) => byId.get(id) ?? byName.get(name) ?? null;
 
   const names = leagueNames();
-  // Fallback: no FOOTYSTATS_SEASON_IDS -> discover the account's chosen leagues from the key.
-  if (!Object.keys(names).length) {
-    for (const lg of await fetchChosenLeagues(fsKey)) names[lg.id] = lg.name;
-  }
-  const today = new Date().toISOString().slice(0, 10);
-  const leagueIds = Object.keys(names).map(Number).filter(Boolean);
+  // No FOOTYSTATS_SEASON_IDS -> resolve every season id to its league label from
+  // the key (fixes "League 16696" showing instead of "Iceland Úrvalsdeild").
+  if (!Object.keys(names).length) Object.assign(names, await fetchSeasonNames(fsKey));
 
-  // 3-DAY WINDOW — today + next 2 days, priced fixtures across the leagues.
-  // The page ranks by combined average, caps top-20/league, tags today's games.
+  const today = new Date().toISOString().slice(0, 10);
+  // Only the leagues actually playing in the next 3 days (auto-discovered daily).
+  const active = await fetchActiveLeagues(fsKey, 3);
+  const leagueIds = active.map((l) => l.id);
+  for (const l of active) if (!names[l.id]) names[l.id] = l.name;
+
+  // 3-DAY WINDOW — today + next 2 days across the active leagues (priced or not;
+  // the page ranks by combined average, caps top-20/league, tags today's games).
   const windowEnd = new Date(new Date(today + "T12:00:00Z").getTime() + 2 * 86400000).toISOString().slice(0, 10);
   const upcoming = (await Promise.all(
     leagueIds.map((id) => fetchUpcomingMatches(id, fsKey).catch(() => [] as TodayFixture[])),

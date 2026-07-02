@@ -1,12 +1,12 @@
 // ============================================================================
 // Footy Oracle — ingest-form-stats
-// Pulls last-10 form for every team in the configured leagues from FootyStats
-// and upserts it into form_tables (powers the form tables + the Gaffer engine).
-// Schedule daily. Needs FOOTYSTATS_KEY + the league season_ids configured.
+// Pulls last-10 form for every team in the leagues that actually have fixtures in
+// the next 3 days (auto-discovered) and upserts it into form_tables (powers the
+// form tables + the Gaffer engine). Schedule daily. Needs FOOTYSTATS_KEY.
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchLeagueTeams, fetchLast10, fetchChosenLeagues } from "../_shared/footystats.ts";
+import { fetchLeagueTeams, fetchLast10, fetchActiveLeagues } from "../_shared/footystats.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -28,9 +28,10 @@ serve(async (req) => {
   let body: { leagues?: { id: number; name: string }[] } = {};
   try { body = await req.json(); } catch { /* no body */ }
   let leagues = body.leagues?.length ? body.leagues : configuredLeagues();
-  // Fallback: no FOOTYSTATS_SEASON_IDS configured -> discover the account's chosen leagues from the key.
-  if (!leagues.length) leagues = await fetchChosenLeagues(fsKey);
-  if (!leagues.length) return json({ ok: false, error: "no leagues configured" }, 400);
+  // Default: only the leagues with fixtures in the next 3 days (auto-discovered,
+  // so the daily run stays fast and always matches what's actually on).
+  if (!leagues.length) leagues = await fetchActiveLeagues(fsKey, 3);
+  if (!leagues.length) return json({ ok: false, error: "no active leagues in the next 3 days" }, 200);
 
   let upserts = 0; const errors: string[] = [];
   for (const lg of leagues) {
