@@ -10,14 +10,14 @@ import { MarketArt, type Market } from './MarketArt';
  * its own bet-type artwork. Not a baked image; reflows on mobile.
  */
 const TILES: { market: Market; title: string; desc: string; to: string }[] = [
-  { market: 'goals', title: 'Over 2.5 Goals', desc: 'Top teams for goals.', to: '/form-tables?cat=goals&mode=over&mark=2.5' },
+  { market: 'goals', title: 'Over Goals', desc: 'Top teams for goals.', to: '/form-tables?cat=goals&mode=over' },
+  { market: 'corners', title: 'Over Corners', desc: 'High-corner matchups.', to: '/form-tables?cat=corners&mode=over' },
+  { market: 'cards', title: 'Over Cards', desc: 'Cards flying in.', to: '/form-tables?cat=cards&mode=over' },
   { market: 'btts', title: 'BTTS – Yes', desc: 'Both teams to score.', to: '/form-tables?cat=btts&mode=over' },
-  { market: 'corners', title: 'Over 9.5 Corners', desc: 'High-corner matchups.', to: '/form-tables?cat=corners&mode=over&mark=9.5' },
-  { market: 'cards', title: 'Over 3.5 Cards', desc: 'Cards flying in.', to: '/form-tables?cat=cards&mode=over&mark=3.5' },
-  { market: 'goals', title: 'Under 2.5 Goals', desc: 'Tight, low-scoring games.', to: '/form-tables?cat=goals&mode=under&mark=2.5' },
+  { market: 'goals', title: 'Under Goals', desc: 'Tight, low-scoring games.', to: '/form-tables?cat=goals&mode=under' },
+  { market: 'corners', title: 'Under Corners', desc: 'Low corner counts.', to: '/form-tables?cat=corners&mode=under' },
+  { market: 'cards', title: 'Under Cards', desc: 'Calmer, cleaner games.', to: '/form-tables?cat=cards&mode=under' },
   { market: 'btts', title: 'BTTS – No', desc: 'Clean-sheet leans.', to: '/form-tables?cat=btts&mode=under' },
-  { market: 'corners', title: 'Under 9.5 Corners', desc: 'Low corner counts.', to: '/form-tables?cat=corners&mode=under&mark=9.5' },
-  { market: 'cards', title: 'Under 3.5 Cards', desc: 'Calmer referees.', to: '/form-tables?cat=cards&mode=under&mark=3.5' },
 ];
 
 export function FormTablesSection() {
