@@ -21,7 +21,7 @@ export function LatestArticlesSection() {
   return (
     <SectionShell
       id="latest-articles"
-      glow={{ border: 'rgba(168,85,247,0.35)', glow: 'rgba(147,51,234,0.4)' }}
+      glow={{ border: 'rgba(16,185,129,0.55)', glow: 'rgba(16,185,129,0.55)' }}
       className="bg-gradient-to-br from-[#140a26] to-[#0c0618] p-5 md:p-7"
     >
       <div className="mb-4 flex items-center justify-between">

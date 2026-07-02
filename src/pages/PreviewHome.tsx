@@ -47,8 +47,8 @@ export default function PreviewHome() {
 
       <HomepageScene tone="emerald" eyebrow="02 · Form & Fantasy">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <div className="grid gap-3 lg:grid-cols-[1.12fr_0.98fr] md:gap-4">
-            <FormTablesSection />
+          <FormTablesSection />
+          <div className="mt-3 md:mt-4">
             <FantasyLeagueFeatureCard />
           </div>
         </div>

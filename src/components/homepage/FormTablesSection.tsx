@@ -1,40 +1,88 @@
-import { ArrowUpRight } from 'lucide-react';
-import { FeaturePanel, Accent } from './FeaturePanel';
-import { FORM_MARKETS } from './content';
+import { Link } from 'react-router-dom';
+import { ChevronRight, Grid3x3, LineChart } from 'lucide-react';
 import { HOMEPAGE_BACKGROUNDS } from './assets';
-import { Icon } from './icons';
+import { MarketArt, type Market } from './MarketArt';
 
-const ACCENT: Record<string, string> = {
-  violet: 'text-violet-300',
-  green: 'text-emerald-300',
-  red: 'text-rose-300',
-  white: 'text-white/80',
-};
+/**
+ * Form Tables — coded 1:1 to the Canva design (neon-green stadium header + market
+ * tiles + explore bar). Every tile is a real deep-link into the actual markets the
+ * /form-tables page supports (Corners, Goals, Cards, BTTS — over/under), each with
+ * its own bet-type artwork. Not a baked image; reflows on mobile.
+ */
+const TILES: { market: Market; title: string; desc: string; to: string }[] = [
+  { market: 'goals', title: 'Over Goals', desc: 'Top teams for goals.', to: '/form-tables?cat=goals&mode=over' },
+  { market: 'corners', title: 'Over Corners', desc: 'High-corner matchups.', to: '/form-tables?cat=corners&mode=over' },
+  { market: 'cards', title: 'Over Cards', desc: 'Cards flying in.', to: '/form-tables?cat=cards&mode=over' },
+  { market: 'btts', title: 'BTTS – Yes', desc: 'Both teams to score.', to: '/form-tables?cat=btts&mode=over' },
+  { market: 'goals', title: 'Under Goals', desc: 'Tight, low-scoring games.', to: '/form-tables?cat=goals&mode=under' },
+  { market: 'corners', title: 'Under Corners', desc: 'Low corner counts.', to: '/form-tables?cat=corners&mode=under' },
+  { market: 'cards', title: 'Under Cards', desc: 'Calmer, cleaner games.', to: '/form-tables?cat=cards&mode=under' },
+  { market: 'btts', title: 'BTTS – No', desc: 'Clean-sheet leans.', to: '/form-tables?cat=btts&mode=under' },
+];
 
-/** Form Tables — native card previewing the live markets, links to /form-tables. */
 export function FormTablesSection() {
   return (
-    <FeaturePanel
+    <section
       id="form-tables"
-      tone="emerald"
-      eyebrow="Form Tables"
-      title={<>See who's <Accent tone="emerald">hot</Accent>, who's not.</>}
-      body="Live-weighted form ranked by real numbers — goals, corners, cards and BTTS — with the Gaffer's value flagged against the price."
-      bgImage={HOMEPAGE_BACKGROUNDS.pitch}
-      ctas={[{ label: 'Open Form Tables', to: '/form-tables' }]}
+      className="relative scroll-mt-28 overflow-hidden rounded-[1.6rem] border-2 border-emerald-400/60 bg-[#040a06] antialiased shadow-[0_0_60px_-12px_rgba(16,185,129,0.6),inset_0_0_40px_-20px_rgba(16,185,129,0.5)]"
     >
-      <div className="grid grid-cols-2 gap-2">
-        {FORM_MARKETS.slice(0, 6).map((m) => (
-          <div
-            key={m.title}
-            className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 transition-colors hover:border-emerald-400/30 hover:bg-emerald-400/[0.06]"
-          >
-            <Icon name={m.icon} className={`h-4 w-4 shrink-0 ${ACCENT[m.accent] ?? 'text-white/80'}`} />
-            <span className="truncate text-[12px] font-bold text-white/85">{m.title}</span>
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 shrink-0 text-white/25" />
-          </div>
-        ))}
+      {/* neon-green stadium header band — spans the full width, headline sits on top */}
+      <div className="absolute inset-x-0 top-0 h-[300px] sm:h-[340px]">
+        <div className="absolute inset-0 bg-cover bg-[position:70%_center]" style={{ backgroundImage: `url(${HOMEPAGE_BACKGROUNDS.formTables})` }} />
+        {/* darken the left so the headline reads, keep the right vivid */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#040a06] via-[#040a06]/70 to-transparent" />
+        {/* fade the band into the tiles below */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#040a06] to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(90%_120%_at_75%_-10%,rgba(16,185,129,0.35),transparent_55%)]" />
       </div>
-    </FeaturePanel>
+
+      <div className="relative z-10 p-5 md:p-8">
+        {/* header */}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <span className="text-[12px] font-black uppercase tracking-[0.34em] text-emerald-300/90">Footy Oracle</span>
+            <h2 className="mt-1 font-display text-5xl uppercase italic leading-[0.8] tracking-tight [text-shadow:0_2px_8px_rgba(0,0,0,0.85)] sm:text-6xl lg:text-7xl">
+              <span className="block text-white">Form</span>
+              <span className="block text-violet-400 [text-shadow:0_2px_10px_rgba(124,58,237,0.55)]">Tables</span>
+            </h2>
+            <p className="mt-3 text-base font-semibold text-white/70">Real form. Key trends. Better decisions.</p>
+          </div>
+          <Link
+            to="/form-tables"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#f5c542]/60 bg-[#0a0f0a]/60 px-3.5 py-2.5 text-[12px] font-black uppercase tracking-wide text-[#f8e7a1] shadow-[0_0_20px_-6px_rgba(245,197,66,0.7)] backdrop-blur transition-colors hover:bg-[#f5c542]/15"
+          >
+            <Grid3x3 className="h-4 w-4" /> <span className="hidden sm:inline">View All Tables</span><span className="sm:hidden">All</span>
+            <ChevronRight className="hidden h-4 w-4 sm:block" />
+          </Link>
+        </div>
+
+        {/* market tiles */}
+        <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {TILES.map((t) => (
+            <Link
+              key={t.title}
+              to={t.to}
+              className="group flex flex-col rounded-2xl border border-emerald-400/20 bg-white/[0.03] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all hover:-translate-y-0.5 hover:border-emerald-400/50 hover:bg-white/[0.06] hover:shadow-[0_0_24px_-8px_rgba(16,185,129,0.6)] sm:p-5"
+            >
+              <MarketArt market={t.market} className="h-12 w-12 transition-transform duration-300 group-hover:scale-110" />
+              <span className="mt-2.5 text-base font-black leading-tight text-white">{t.title}</span>
+              <span className="mt-1 text-[13px] leading-snug text-white/55">{t.desc}</span>
+              <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-violet-300">
+                View Table <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        {/* explore bar — purple neon */}
+        <Link
+          to="/form-tables"
+          className="group mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-violet-500/60 bg-gradient-to-r from-violet-600/25 via-violet-500/15 to-violet-600/25 py-4 text-base font-black uppercase tracking-wide text-white shadow-[0_0_34px_-8px_rgba(139,92,246,0.8)] transition-all hover:from-violet-600/40 hover:to-violet-600/40"
+        >
+          <LineChart className="h-5 w-5 text-violet-300" /> Explore Today's Form Tables
+          <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </div>
+    </section>
   );
 }

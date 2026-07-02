@@ -38,6 +38,8 @@ export const HOMEPAGE_MEDIA = {
 /** Clean, text-free backdrops faded behind sections for depth. */
 export const HOMEPAGE_BACKGROUNDS = {
   pitch: '/images/backgrounds/bg-pitch.jpg',
+  pitchGreen: '/images/backgrounds/bg-pitch-green.jpg',
+  formTables: '/images/backgrounds/bg-formtables.jpg',
   stadium: '/images/backgrounds/bg-stadium.jpg',
   crowd: '/images/backgrounds/bg-crowd.jpg',
   tunnel: '/images/backgrounds/bg-tunnel.jpg',

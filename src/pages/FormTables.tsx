@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, ChevronRight, Flame, Info } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { TeamAvatar } from '@/components/TeamAvatar';
@@ -189,9 +189,22 @@ function GafferNoGames() {
 }
 
 export default function FormTables() {
-  const [cat, setCat] = useState<CatKey>('corners');
-  const [underMode, setUnderMode] = useState(false);
-  const [markIdx, setMarkIdx] = useState(1);
+  const [params] = useSearchParams();
+  // Deep-link support: /form-tables?cat=goals&mode=under&mark=2.5 (from the homepage tiles)
+  const spCat = params.get('cat');
+  const initCat: CatKey = (['corners', 'goals', 'cards', 'btts'].includes(spCat ?? '') ? spCat : 'corners') as CatKey;
+  const initUnder = params.get('mode') === 'under';
+  const initMarkIdx = (() => {
+    const c = CATS.find((x) => x.key === initCat);
+    if (!c || c.pct) return 1;
+    const arr = (initUnder ? c.underMarks : c.overMarks) ?? [];
+    const i = arr.indexOf(params.get('mark') ?? '');
+    return i >= 0 ? i : Math.min(1, arr.length - 1);
+  })();
+
+  const [cat, setCat] = useState<CatKey>(initCat);
+  const [underMode, setUnderMode] = useState(initUnder);
+  const [markIdx, setMarkIdx] = useState(initMarkIdx);
   const [league, setLeague] = useState<string>('all');
   const [selected, setSelected] = useState<Fixture | null>(null);
 
