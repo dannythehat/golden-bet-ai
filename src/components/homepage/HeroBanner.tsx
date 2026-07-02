@@ -1,18 +1,16 @@
 import { Link } from 'react-router-dom';
-import {
-  Newspaper, Star, BarChart3, Trophy, Shirt, Users, ChevronRight,
-} from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 const HERO_SCENE = '/images/hero-gaffer-scene.jpg';
 
-/** The six pillars of the club — real cards, each links into the site. */
-const FEATURES: { icon: typeof Newspaper; title: string; sub: string; to: string }[] = [
-  { icon: Newspaper, title: 'Daily Articles', sub: 'Fresh reads, bold takes and in-depth analysis every single day.', to: '/blog' },
-  { icon: Star, title: 'Top Tips', sub: 'Sharp picks from The Gaffer to give you the winning edge.', to: '/form-tables' },
-  { icon: BarChart3, title: 'Form Tables', sub: 'Live form, stats and trends to track every big move.', to: '/form-tables' },
-  { icon: Trophy, title: 'Weekly Prizes', sub: 'Climb the leaderboard and win exclusive weekly prizes.', to: '/pricing' },
-  { icon: Shirt, title: 'Fantasy League', sub: 'Build your squad, compete with mates and own the bragging rights.', to: '/fantasy-league' },
-  { icon: Users, title: 'Community', sub: 'Join a passionate community that lives for football.', to: '/community' },
+/** The six pillars of the club — designed thumbnails, each links into the site. */
+const FEATURES: { img: string; title: string; to: string }[] = [
+  { img: '/images/hero-features/daily-articles.jpg', title: 'Daily Articles', to: '/blog' },
+  { img: '/images/hero-features/tips-form.jpg', title: 'Tips Based on Form', to: '/form-tables' },
+  { img: '/images/hero-features/form-tables.jpg', title: 'Form Tables', to: '/form-tables' },
+  { img: '/images/hero-features/weekly-prizes.jpg', title: 'Weekly Prizes', to: '/pricing' },
+  { img: '/images/hero-features/fantasy-football.jpg', title: 'Fantasy Football', to: '/fantasy-league' },
+  { img: '/images/hero-features/community.jpg', title: 'Community & More', to: '/community' },
 ];
 
 /**
@@ -107,19 +105,23 @@ export function HeroBanner() {
             </div>
           </div>
 
-          {/* feature cards — the six pillars, real links */}
-          <div className="grid grid-cols-2 gap-2.5 px-5 pb-5 pt-6 sm:grid-cols-3 sm:px-8 sm:pb-8 md:grid-cols-6 md:px-10 md:pb-10 md:pt-0">
+          {/* feature thumbnails — designed cards, each links into the site */}
+          <div className="grid grid-cols-2 gap-2.5 px-5 pb-5 pt-6 sm:grid-cols-3 sm:gap-3 sm:px-8 sm:pb-8 md:grid-cols-6 md:px-10 md:pb-10 md:pt-0">
             {FEATURES.map((f) => (
               <Link
                 key={f.title}
                 to={f.to}
-                className="group rounded-2xl border border-white/10 bg-[#0b0518]/70 p-3.5 backdrop-blur transition-all hover:-translate-y-0.5 hover:border-violet-400/40 hover:bg-[#0b0518]/90"
+                aria-label={f.title}
+                className="group relative overflow-hidden rounded-2xl border border-violet-400/20 shadow-[0_12px_30px_-16px_rgba(0,0,0,0.9)] transition-all hover:-translate-y-1 hover:border-violet-400/60 hover:shadow-[0_0_38px_-10px_rgba(139,92,246,0.75)]"
               >
-                <span className="grid h-9 w-9 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/15 text-violet-200 transition-colors group-hover:text-[#f8e7a1]">
-                  <f.icon className="h-4 w-4" />
-                </span>
-                <div className="mt-2.5 text-sm font-black text-white">{f.title}</div>
-                <p className="mt-1 text-[11px] leading-snug text-white/55">{f.sub}</p>
+                <img
+                  src={f.img}
+                  alt={f.title}
+                  loading="lazy"
+                  draggable={false}
+                  className="aspect-square w-full select-none object-cover transition-transform duration-300 group-hover:scale-[1.05]"
+                />
+                <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5" />
               </Link>
             ))}
           </div>
