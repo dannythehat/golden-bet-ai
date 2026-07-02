@@ -73,6 +73,35 @@ export function getGafferPicks(): Leg[] {
   return [...bestPerFixture.values()].sort((a, b) => b.edge - a.edge);
 }
 
+/**
+ * Best-value fixtures for today, one leg per fixture, best edge first —
+ * regardless of whether they cleared the value flag. Used as the board's
+ * fallback "value watch" (shown but NOT tips) when there's no official pick.
+ */
+export function getValueFixtures(): Leg[] {
+  const makeLeg = (f: FormFixtureRow, market: Leg['market'], selection: string, cell: FormValueCell): Leg => ({
+    fixtureId: f.id, home: f.home, away: f.away, region: f.region, league: f.league, time: f.time,
+    market, selection, odds: cell.odds!, prob: cell.prob, edge: cell.edge, flag: cell.flag ?? 'value',
+    placeholderReason: gafferReason(
+      { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value' },
+      f.id,
+    ),
+  });
+  const today = todayUK();
+  const best: Leg[] = [];
+  for (const f of DATA.fixtures) {
+    if (f.date !== today) continue;
+    const cands: Leg[] = [];
+    for (const [mk, cell] of Object.entries(f.value.corners ?? {})) if (cell?.odds) cands.push(makeLeg(f, 'Corners', `Over ${mk} Corners`, cell));
+    for (const [mk, cell] of Object.entries(f.value.goals ?? {})) if (cell?.odds) cands.push(makeLeg(f, 'Goals', `Over ${mk} Goals`, cell));
+    if (f.value.btts?.odds) cands.push(makeLeg(f, 'BTTS', 'BTTS – Yes', f.value.btts));
+    // Best sensible value on this fixture — decent price, form behind it.
+    const pick = cands.filter((c) => c.odds >= 1.4 && c.prob >= 60).sort((a, b) => b.edge - a.edge)[0];
+    if (pick) best.push(pick);
+  }
+  return best.sort((a, b) => b.edge - a.edge);
+}
+
 /** The day's bet: £10 double if 2 qualify, else £10 single, else none. */
 export function getDailyBet(picks: Leg[] = getGafferPicks()): DailyBet {
   if (picks.length >= 2) {
