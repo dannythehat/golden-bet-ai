@@ -433,6 +433,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_form_tables: {
+        Row: {
+          created_at: string
+          fixtures: Json
+          id: string
+          leagues: Json
+          table_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fixtures?: Json
+          id?: string
+          leagues?: Json
+          table_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fixtures?: Json
+          id?: string
+          leagues?: Json
+          table_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dim_referee: {
         Row: {
           cards_per_match: number | null
@@ -496,6 +523,42 @@ export type Database = {
           settlement_enabled?: boolean
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      form_tables: {
+        Row: {
+          created_at: string
+          id: string
+          league_id: number
+          league_name: string
+          stats: Json
+          team: string
+          team_id: number | null
+          updated_at: string
+          window_size: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          league_id: number
+          league_name: string
+          stats?: Json
+          team: string
+          team_id?: number | null
+          updated_at?: string
+          window_size?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          league_id?: number
+          league_name?: string
+          stats?: Json
+          team?: string
+          team_id?: number | null
+          updated_at?: string
+          window_size?: number
         }
         Relationships: []
       }
@@ -634,6 +697,63 @@ export type Database = {
           source?: string
           value_edge?: number | null
           venue_pct?: number | null
+        }
+        Relationships: []
+      }
+      gaffer_picks: {
+        Row: {
+          bet_type: string
+          combined_odds: number
+          created_at: string
+          gaffer_intro: string | null
+          id: string
+          legs: Json
+          pick_date: string
+          potential_return: number
+          potential_returns: number | null
+          profit_loss: number | null
+          reasoning: string | null
+          settled_at: string | null
+          stake: number
+          status: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          bet_type?: string
+          combined_odds?: number
+          created_at?: string
+          gaffer_intro?: string | null
+          id?: string
+          legs?: Json
+          pick_date: string
+          potential_return?: number
+          potential_returns?: number | null
+          profit_loss?: number | null
+          reasoning?: string | null
+          settled_at?: string | null
+          stake?: number
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bet_type?: string
+          combined_odds?: number
+          created_at?: string
+          gaffer_intro?: string | null
+          id?: string
+          legs?: Json
+          pick_date?: string
+          potential_return?: number
+          potential_returns?: number | null
+          profit_loss?: number | null
+          reasoning?: string | null
+          settled_at?: string | null
+          stake?: number
+          status?: string
+          title?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
