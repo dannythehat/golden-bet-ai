@@ -10,7 +10,7 @@ import { TeamAvatar } from '@/components/TeamAvatar';
 // ── endpoint contract: GET /api/gaffer/pnl-summary ──────────────────────────
 type Settlement = {
   fixture: string; league: string; market: string; odds: number; stake: number;
-  return: number; result: 'WIN' | 'LOSS'; homeLogo?: string | null; awayLogo?: string | null;
+  return: number; result: 'WIN' | 'LOSS'; legs?: number; homeLogo?: string | null; awayLogo?: string | null;
 };
 type PnLSummary = {
   status: 'live' | 'sample' | 'empty';
@@ -62,14 +62,17 @@ async function fetchPnLSummary(): Promise<PnLSummary> {
     if (row.status === 'won') wins += 1; else losses += 1;
     if (row.updated_at) lastUpdated = row.updated_at;
     chart.push({ date: row.pick_date, profit: round2(running) });
-    const leg = Array.isArray(row.legs) ? row.legs[0] : undefined;
+    const legsArr = Array.isArray(row.legs) ? row.legs : [];
+    const leg = legsArr[0];
+    const isDouble = legsArr.length > 1;
     settlements.push({
       fixture: leg ? `${leg.home_team ?? ''} v ${leg.away_team ?? ''}`.trim() : (row.title ?? 'Pick'),
       league: leg?.league ?? leg?.region ?? '',
-      market: leg?.selection ?? leg?.market ?? leg?.label ?? row.title ?? 'Pick',
+      market: isDouble ? legsArr.map((l) => l.selection ?? l.market ?? l.label).filter(Boolean).join(' + ') : (leg?.selection ?? leg?.market ?? leg?.label ?? row.title ?? 'Pick'),
       odds: Number(row.combined_odds ?? 0) || 0,
       stake: s, return: row.status === 'won' ? (Number(row.potential_returns ?? s + pl) || s + pl) : 0,
       result: row.status === 'won' ? 'WIN' : 'LOSS',
+      legs: legsArr.length || 1,
       homeLogo: leg?.home_logo ?? null, awayLogo: leg?.away_logo ?? null,
     });
   }
@@ -197,15 +200,20 @@ export function GafferPnLTrustSection() {
             </span>
           </div>
 
-          {/* Gaffer + quote */}
-          <div className="relative min-h-[210px]">
-            <img src="/images/gaffer/gaffer-pnl.jpg" alt="The Gaffer" loading="lazy" draggable={false}
-              className="pointer-events-none absolute right-0 top-0 z-0 h-full w-auto max-w-[62%] rounded-2xl object-cover object-top opacity-90 md:opacity-100" />
-            <div className="relative z-[1] max-w-[64%] rounded-2xl border border-violet-400/25 bg-[#0b0518]/85 p-4 backdrop-blur-md">
+          {/* Gaffer + quote — side by side so his face is never covered */}
+          <div className="flex items-stretch gap-3 sm:gap-4">
+            <div className="flex min-w-0 flex-1 flex-col justify-center rounded-2xl border border-violet-400/25 bg-[#0b0518]/85 p-4 backdrop-blur-md">
               <span className="font-display text-3xl leading-none text-violet-400">“</span>
-              <p className="-mt-3 text-[15px] font-semibold leading-relaxed text-white/90">I don't sell dreams. I track numbers. This is my record. You decide.</p>
+              <p className="-mt-3 text-[14px] font-semibold leading-relaxed text-white/90 sm:text-[15px]">I don't sell dreams. I track numbers. This is my record. You decide.</p>
               <div className="mt-1.5 text-right font-['Dancing_Script'] text-2xl font-semibold text-[#f8e7a1]">The Gaffer</div>
             </div>
+            <img
+              src="/images/gaffer/gaffer-pnl.jpg"
+              alt="The Gaffer"
+              loading="lazy"
+              draggable={false}
+              className="h-auto w-28 shrink-0 self-stretch rounded-2xl border border-white/10 object-cover object-[50%_18%] shadow-[0_16px_40px_-18px_rgba(0,0,0,0.9)] sm:w-36"
+            />
           </div>
         </div>
 
@@ -307,6 +315,7 @@ export function GafferPnLTrustSection() {
                             <TeamAvatar name={home} logoUrl={st.homeLogo} size={18} />
                             <span className="truncate text-[13px] font-bold text-white">{home}{away ? ` v ${away}` : ''}</span>
                             {away && <TeamAvatar name={away} logoUrl={st.awayLogo} size={18} />}
+                            {(st.legs ?? 1) > 1 && <span className="shrink-0 rounded bg-violet-500/25 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-violet-200 ring-1 ring-inset ring-violet-400/30">Double</span>}
                           </div>
                           <div className="truncate text-[11px] text-white/45">{[st.league, st.market, st.odds ? st.odds.toFixed(2) : null, money(st.stake)].filter(Boolean).join(' · ')}</div>
                         </div>
