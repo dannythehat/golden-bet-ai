@@ -14,7 +14,7 @@ import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToAction
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { HomepageScene } from '@/components/homepage/HomepageScene';
 import { GafferValueBoardSection } from '@/components/homepage/GafferValueBoardSection';
-import { PnLSection } from '@/components/homepage/PnLSection';
+import { GafferPnLTrustSection } from '@/components/homepage/GafferPnLTrustSection';
 
 export default function PreviewHome() {
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function PreviewHome() {
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <GafferValueBoardSection />
           <div className="mt-3 md:mt-4">
-            <PnLSection />
+            <GafferPnLTrustSection />
           </div>
         </div>
       </HomepageScene>
