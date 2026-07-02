@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
+import { FeatureStrip } from '@/components/homepage/FeatureStrip';
 
 import { FormTablesSection } from '@/components/homepage/FormTablesSection';
 import { FantasyLeagueFeatureCard } from '@/components/homepage/FantasyLeagueFeatureCard';
