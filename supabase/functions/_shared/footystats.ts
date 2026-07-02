@@ -84,6 +84,28 @@ export async function fetchLeagueList(key: string): Promise<FootyStatsLeague[]> 
   return Array.isArray(json?.data) ? json.data : [];
 }
 
+/**
+ * The leagues chosen on the FootyStats account, each mapped to its latest season
+ * id. Used as a fallback when FOOTYSTATS_SEASON_IDS isn't configured, so the whole
+ * pipeline runs on FOOTYSTATS_KEY alone.
+ */
+export async function fetchChosenLeagues(key: string): Promise<{ id: number; name: string }[]> {
+  // deno-lint-ignore no-explicit-any
+  const json = await getJson(`/league-list?key=${key}&chosen_leagues_only=true`);
+  // deno-lint-ignore no-explicit-any
+  const rows: any[] = Array.isArray(json?.data) ? json.data : [];
+  const out: { id: number; name: string }[] = [];
+  for (const lg of rows) {
+    const name = String(lg?.league_name ?? lg?.name ?? "").trim();
+    // deno-lint-ignore no-explicit-any
+    const seasons: any[] = Array.isArray(lg?.season) ? lg.season : [];
+    if (!seasons.length) continue;
+    const latest = seasons.reduce((a, b) => (Number(b?.year) > Number(a?.year) ? b : a));
+    if (latest?.id) out.push({ id: Number(latest.id), name: name || `League ${latest.id}` });
+  }
+  return out;
+}
+
 // ── Market <-> FootyStats field maps (verified against the API) ─────────────
 /** over-% field per market label (works on lastx + league-teams stat objects). */
 const OVER_PCT_FIELD: Record<string, string> = {

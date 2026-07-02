@@ -7,7 +7,7 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchTodaysMatches, type TodayFixture } from "../_shared/footystats.ts";
+import { fetchTodaysMatches, fetchChosenLeagues, type TodayFixture } from "../_shared/footystats.ts";
 import { selectDailyPicks, type Fixture, type TeamForm, type Candidate } from "../_shared/gafferEngine.ts";
 import { gafferReason, gafferPickLine, gafferNoBetLine, type Market, type PickSignals } from "../_shared/gafferVoice.ts";
 
@@ -87,6 +87,10 @@ serve(async (req) => {
   }
 
   const names = leagueNames();
+  // Fallback: no FOOTYSTATS_SEASON_IDS -> discover the account's chosen leagues from the key (for labels).
+  if (!Object.keys(names).length) {
+    for (const lg of await fetchChosenLeagues(fsKey)) names[lg.id] = lg.name;
+  }
   const fixtures = await fetchTodaysMatches(fsKey);
   const fxById = new Map<number | string, TodayFixture>();
   const engineFixtures: Fixture[] = [];

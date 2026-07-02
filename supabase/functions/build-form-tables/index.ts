@@ -7,7 +7,7 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchUpcomingMatches, fetchLeagueMatchesDetailed, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
+import { fetchUpcomingMatches, fetchLeagueMatchesDetailed, fetchChosenLeagues, type TodayFixture, type DetailedMatch } from "../_shared/footystats.ts";
 import { buildFormTables, buildHistory, type TeamFormStats } from "../_shared/formTableRows.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
@@ -42,6 +42,10 @@ serve(async (req) => {
   const formFor = (id: number, name: string) => byId.get(id) ?? byName.get(name) ?? null;
 
   const names = leagueNames();
+  // Fallback: no FOOTYSTATS_SEASON_IDS -> discover the account's chosen leagues from the key.
+  if (!Object.keys(names).length) {
+    for (const lg of await fetchChosenLeagues(fsKey)) names[lg.id] = lg.name;
+  }
   const today = new Date().toISOString().slice(0, 10);
   const leagueIds = Object.keys(names).map(Number).filter(Boolean);
 
