@@ -14,7 +14,7 @@ export function TodaysDouble() {
   return (
     <section
       id="todays-double"
-      className="relative overflow-hidden rounded-[1.4rem] border border-[#f5c542]/35 bg-[#130321] shadow-[0_22px_70px_-30px_rgba(245,197,66,0.7)] md:rounded-[1.9rem]"
+      className="relative overflow-hidden rounded-[1.4rem] border-2 border-emerald-400/55 bg-[#130321] shadow-[0_0_46px_-14px_rgba(16,185,129,0.6)] md:rounded-[1.9rem]"
     >
       {/* gold accent bar (matches the header) */}
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />

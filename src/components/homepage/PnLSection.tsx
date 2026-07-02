@@ -93,7 +93,7 @@ export function PnLSection() {
   return (
     <section
       id="pnl"
-      className="relative overflow-hidden rounded-[1.6rem] border border-[#f5c542]/35 bg-[#080011] p-3 shadow-[0_30px_90px_-40px_rgba(245,197,66,0.55)] md:rounded-[2rem] md:p-4"
+      className="relative overflow-hidden rounded-[1.6rem] border-2 border-emerald-400/55 bg-[#080011] p-3 shadow-[0_0_46px_-14px_rgba(16,185,129,0.6)] md:rounded-[2rem] md:p-4"
     >
       {/* atmosphere */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(245,197,66,0.16),transparent_34%),radial-gradient(circle_at_88%_8%,rgba(124,58,237,0.20),transparent_36%),radial-gradient(circle_at_50%_120%,rgba(16,185,129,0.14),transparent_40%)]" />

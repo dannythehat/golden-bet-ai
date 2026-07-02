@@ -24,7 +24,7 @@ export function FormTablesSection() {
   return (
     <section
       id="form-tables"
-      className="relative scroll-mt-28 overflow-hidden rounded-[1.6rem] border-2 border-emerald-400/60 bg-[#040a06] shadow-[0_0_60px_-12px_rgba(16,185,129,0.6),inset_0_0_40px_-20px_rgba(16,185,129,0.5)]"
+      className="relative scroll-mt-28 overflow-hidden rounded-[1.6rem] border-2 border-emerald-400/60 bg-[#040a06] antialiased shadow-[0_0_60px_-12px_rgba(16,185,129,0.6),inset_0_0_40px_-20px_rgba(16,185,129,0.5)]"
     >
       {/* neon-green stadium header band — spans the full width, headline sits on top */}
       <div className="absolute inset-x-0 top-0 h-[300px] sm:h-[340px]">
@@ -41,9 +41,9 @@ export function FormTablesSection() {
         <div className="flex items-start justify-between gap-3">
           <div>
             <span className="text-[12px] font-black uppercase tracking-[0.34em] text-emerald-300/90">Footy Oracle</span>
-            <h2 className="mt-1 font-display text-5xl uppercase italic leading-[0.8] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)] sm:text-6xl lg:text-7xl">
+            <h2 className="mt-1 font-display text-5xl uppercase italic leading-[0.8] tracking-tight [text-shadow:0_2px_8px_rgba(0,0,0,0.85)] sm:text-6xl lg:text-7xl">
               <span className="block text-white">Form</span>
-              <span className="block bg-gradient-to-r from-violet-300 via-violet-400 to-violet-600 bg-clip-text text-transparent">Tables</span>
+              <span className="block text-violet-400 [text-shadow:0_2px_10px_rgba(124,58,237,0.55)]">Tables</span>
             </h2>
             <p className="mt-3 text-base font-semibold text-white/70">Real form. Key trends. Better decisions.</p>
           </div>
