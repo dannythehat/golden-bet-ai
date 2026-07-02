@@ -6,7 +6,7 @@
 // ============================================================================
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { fetchLeagueTeams, fetchLast10 } from "../_shared/footystats.ts";
+import { fetchLeagueTeams, fetchLast10, fetchChosenLeagues } from "../_shared/footystats.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type" };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -27,7 +27,9 @@ serve(async (req) => {
 
   let body: { leagues?: { id: number; name: string }[] } = {};
   try { body = await req.json(); } catch { /* no body */ }
-  const leagues = body.leagues?.length ? body.leagues : configuredLeagues();
+  let leagues = body.leagues?.length ? body.leagues : configuredLeagues();
+  // Fallback: no FOOTYSTATS_SEASON_IDS configured -> discover the account's chosen leagues from the key.
+  if (!leagues.length) leagues = await fetchChosenLeagues(fsKey);
   if (!leagues.length) return json({ ok: false, error: "no leagues configured" }, 400);
 
   let upserts = 0; const errors: string[] = [];
