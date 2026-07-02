@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, ChevronRight, Flame, Info } from 'lucide-react';
+import { ArrowLeft, ChevronRight, ChevronDown, Flame, Info } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
@@ -303,130 +303,142 @@ export default function FormTables() {
           <GafferNoGames />
         ) : (
         <>
-        {/* Category tabs */}
-        <div className="mb-3 flex flex-wrap gap-2">
-          {CATS.map((c) => (
-            <button
-              key={c.key}
-              onClick={() => { setCat(c.key); setMarkIdx(1); }}
-              className={`rounded-xl px-4 py-2 text-sm font-bold transition-colors ${cat === c.key ? 'bg-emerald-500 text-[#04140d]' : 'border border-white/12 bg-white/[0.05] text-white/75 hover:bg-white/[0.09]'}`}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Overs / Unders — 50/50 */}
-        <div className="mb-3 grid grid-cols-2 overflow-hidden rounded-xl border border-white/12">
-          {[false, true].map((u) => (
-            <button
-              key={String(u)}
-              onClick={() => { setUnderMode(u); setMarkIdx(1); }}
-              className={`py-2.5 text-sm font-black uppercase tracking-wide transition-colors ${underMode === u ? 'bg-emerald-500 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
-            >
-              {u ? 'Unders' : 'Overs'}
-            </button>
-          ))}
-        </div>
-
-        {/* Controls */}
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          {marks ? (
-            <div className="inline-flex overflow-hidden rounded-xl border border-white/12">
-              {marks.map((ln, i) => (
+        {/* Market controls — category + league, then overs/unders + line */}
+        <div className="mb-4 space-y-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex rounded-2xl border border-white/10 bg-white/[0.03] p-1">
+              {CATS.map((c) => (
                 <button
-                  key={ln}
-                  onClick={() => setMarkIdx(i)}
-                  className={`px-3 py-1.5 text-sm font-bold transition-colors ${i === markIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'}`}
+                  key={c.key}
+                  onClick={() => { setCat(c.key); setMarkIdx(1); }}
+                  className={`rounded-xl px-3.5 py-1.5 text-sm font-bold transition-all md:px-4 ${cat === c.key ? 'bg-emerald-500 text-[#04140d] shadow-[0_6px_18px_-8px_rgba(16,185,129,0.9)]' : 'text-white/55 hover:text-white'}`}
                 >
-                  {overUnder} {ln}
+                  {c.label}
                 </button>
               ))}
             </div>
-          ) : <span className="text-sm font-bold text-white/70">{selection}</span>}
+            <div className="relative ml-auto">
+              <select
+                value={league}
+                onChange={(e) => setLeague(e.target.value)}
+                className="appearance-none rounded-xl border border-white/12 bg-[#140a26] py-2 pl-3 pr-9 text-sm font-semibold text-white outline-none transition-colors hover:border-white/25"
+              >
+                <option value="all">All leagues</option>
+                {tables.leagues.map((l) => <option key={`${l.region}-${l.name}`} value={l.name}>{l.region} · {l.name}</option>)}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+            </div>
+          </div>
 
-          <select
-            value={league}
-            onChange={(e) => setLeague(e.target.value)}
-            className="rounded-xl border border-white/12 bg-[#140a26] px-3 py-2 text-sm font-semibold text-white outline-none"
-          >
-            <option value="all">All leagues</option>
-            {tables.leagues.map((l) => <option key={`${l.region}-${l.name}`} value={l.name}>{l.region} · {l.name}</option>)}
-          </select>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex rounded-2xl border border-white/10 bg-white/[0.03] p-1">
+              {[false, true].map((u) => (
+                <button
+                  key={String(u)}
+                  onClick={() => { setUnderMode(u); setMarkIdx(1); }}
+                  className={`rounded-xl px-4 py-1.5 text-sm font-black uppercase tracking-wide transition-all ${underMode === u ? 'bg-emerald-500 text-[#04140d] shadow-[0_6px_18px_-8px_rgba(16,185,129,0.9)]' : 'text-white/55 hover:text-white'}`}
+                >
+                  {u ? 'Unders' : 'Overs'}
+                </button>
+              ))}
+            </div>
+            {marks ? (
+              <div className="inline-flex rounded-2xl border border-white/10 bg-white/[0.03] p-1">
+                {marks.map((ln, i) => (
+                  <button
+                    key={ln}
+                    onClick={() => setMarkIdx(i)}
+                    className={`rounded-xl px-3 py-1.5 text-sm font-bold transition-all ${i === markIdx ? 'bg-emerald-500/90 text-[#04140d]' : 'text-white/55 hover:text-white'}`}
+                  >
+                    {overUnder} {ln}
+                  </button>
+                ))}
+              </div>
+            ) : <span className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-1.5 text-sm font-bold text-white/70">{selection}</span>}
+          </div>
         </div>
 
         {/* The Gaffer's selection for this market */}
         <GafferBanner pick={gafferPick} label={C.label} selection={selection} />
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-white/[0.03] backdrop-blur-xl">
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl">
           {/* Header */}
-          <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white/45 md:gap-3 md:px-4">
-            <span className="w-4 text-center md:w-5">#</span>
-            <span className="w-[42px] md:w-[56px]" />
+          <div className="flex items-center gap-2.5 border-b border-white/10 bg-white/[0.03] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/40 md:gap-3 md:px-4">
+            <span className="w-6 text-center md:w-7">#</span>
+            <span className="w-[46px] md:w-[58px]" />
             <span className="flex-1">Fixture</span>
             {marks && <span className="hidden w-14 text-right sm:block">{overUnder} {mark}</span>}
-            <span className="w-11 text-right md:w-14">Odds</span>
+            <span className="w-12 text-right md:w-14">Odds</span>
             <span className="w-12 text-right md:w-14">Avg</span>
             <span className="w-14 text-right md:w-16">When</span>
-            <span className="w-3.5 md:w-4" />
+            <span className="w-4" />
           </div>
 
+          <div className="divide-y divide-white/[0.05]">
           {rows.map((f, i) => {
             const formPct = marks ? pctFor(f) : null;
             const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id;
             const isToday = f.date === today;
+            const rankTone = isPick
+              ? 'bg-violet-500/20 text-violet-200 ring-1 ring-inset ring-violet-400/30'
+              : isToday
+                ? 'bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-400/25'
+                : i < 3 ? 'bg-[#f5c542]/15 text-[#f8e7a1] ring-1 ring-inset ring-[#f5c542]/25' : 'bg-white/[0.05] text-white/45';
             return (
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
-                className={`flex w-full items-center gap-2 border-b border-white/8 px-3 py-2.5 text-left transition-colors last:border-0 md:gap-3 md:px-4 ${
+                className={`group relative flex w-full items-center gap-2.5 px-3 py-3 text-left transition-colors md:gap-3 md:px-4 ${
                   isPick
-                    ? 'bg-violet-500/[0.16] ring-1 ring-inset ring-violet-400/40 backdrop-blur-md hover:bg-violet-500/25'
+                    ? 'bg-violet-500/[0.10] hover:bg-violet-500/[0.16]'
                     : isToday
-                      ? 'bg-emerald-500/[0.07] hover:bg-emerald-500/[0.12]'
-                      : 'hover:bg-white/[0.05]'
+                      ? 'bg-emerald-500/[0.045] hover:bg-emerald-500/[0.09]'
+                      : 'hover:bg-white/[0.04]'
                 }`}
               >
-                <span className={`w-4 shrink-0 text-center font-display text-base md:w-5 md:text-lg ${isPick ? 'text-violet-300' : isToday ? 'text-emerald-300' : i < 3 ? 'text-gold' : 'text-white/40'}`}>{i + 1}</span>
-                <div className="flex w-[42px] shrink-0 -space-x-2 md:w-[56px] md:-space-x-1.5">
-                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={24} />
-                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={24} />
+                {(isPick || isToday) && (
+                  <span aria-hidden className={`absolute inset-y-2 left-0 w-[3px] rounded-full ${isPick ? 'bg-violet-400' : 'bg-emerald-400/70'}`} />
+                )}
+                <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg font-display text-xs md:h-7 md:w-7 md:text-sm ${rankTone}`}>{i + 1}</span>
+                <div className="flex w-[46px] shrink-0 -space-x-2.5 md:w-[58px]">
+                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={28} className="ring-2 ring-[#0b0617]" />
+                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={28} className="ring-2 ring-[#0b0617]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-bold leading-tight text-white md:text-base">{f.home.name} <span className="text-white/40">v</span> {f.away.name}</div>
-                  <div className="mt-0.5 flex items-center gap-1.5">
+                  <div className="truncate text-sm font-bold leading-tight text-white md:text-[15px]">{f.home.name} <span className="text-white/30">v</span> {f.away.name}</div>
+                  <div className="mt-1 flex items-center gap-1.5">
                     {isPick ? (
-                      <span className="shrink-0 rounded bg-violet-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-200">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>
+                      <span className="shrink-0 rounded-md bg-violet-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-200 ring-1 ring-inset ring-violet-400/30">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>
                     ) : isToday ? (
-                      <span className="shrink-0 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-300">Playing today</span>
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-inset ring-emerald-400/25"><span className="h-1 w-1 rounded-full bg-emerald-400" />Today</span>
                     ) : null}
-                    <span className="truncate text-[11px] text-white/45 md:text-xs">{f.region} · {fold(f.league)}</span>
+                    <span className="truncate text-[11px] text-white/40 md:text-xs">{f.region} · {fold(f.league)}</span>
                   </div>
                 </div>
                 {marks && (
                   <div className="hidden w-14 shrink-0 text-right sm:block">
                     <div className="text-sm font-bold text-white">{formPct != null ? `${formPct}%` : '—'}</div>
-                    <div className="text-[10px] text-white/45">form</div>
+                    <div className="text-[9px] uppercase tracking-[0.14em] text-white/35">form</div>
                   </div>
                 )}
-                <div className="w-11 shrink-0 text-right md:w-14">
-                  <div className="text-sm font-bold text-gold">{odd(o)}</div>
-                  <div className="text-[10px] text-white/45">odds</div>
+                <div className="w-12 shrink-0 text-right md:w-14">
+                  <span className="inline-flex items-center justify-center rounded-lg border border-[#f5c542]/25 bg-[#f5c542]/[0.08] px-2 py-1 font-display text-sm text-[#f8e7a1]">{odd(o)}</span>
                 </div>
                 <div className="w-12 shrink-0 text-right md:w-14">
-                  <div className="font-display text-base leading-none text-emerald-400 md:text-2xl">{C.pct ? `${pctFor(f) ?? '—'}%` : C.avg(f).toFixed(1)}</div>
-                  <div className="text-[10px] uppercase tracking-wide text-white/40">avg</div>
+                  <div className="font-display text-lg leading-none text-emerald-300 md:text-2xl">{C.pct ? `${pctFor(f) ?? '—'}%` : C.avg(f).toFixed(1)}</div>
+                  <div className="text-[9px] uppercase tracking-[0.16em] text-white/35">avg</div>
                 </div>
                 <div className="w-14 shrink-0 text-right md:w-16">
-                  <div className={`text-xs font-bold md:text-sm ${isToday ? 'text-emerald-300' : 'text-white/90'}`}>{whenLabel(f.date, today)}</div>
+                  <div className={`text-xs font-bold md:text-sm ${isToday ? 'text-emerald-300' : 'text-white/85'}`}>{whenLabel(f.date, today)}</div>
                   <div className="text-[10px] text-white/40">{f.time}</div>
                 </div>
-                <ChevronRight className={`h-4 w-4 shrink-0 ${isPick ? 'text-violet-300' : 'text-white/30'}`} />
+                <ChevronRight className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 ${isPick ? 'text-violet-300' : 'text-white/30'}`} />
               </button>
             );
           })}
+          </div>
         </div>
 
         <p className="mt-3 flex items-center gap-1.5 text-xs text-white/40">
