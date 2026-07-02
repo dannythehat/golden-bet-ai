@@ -1,24 +1,23 @@
 import { Link } from 'react-router-dom';
-import {
-  ChevronRight, Grid3x3, LineChart, Goal, Swords, Flag, FlagTriangleRight,
-  RectangleVertical, House, Plane, BarChart3,
-} from 'lucide-react';
+import { ChevronRight, Grid3x3, LineChart } from 'lucide-react';
 import { HOMEPAGE_BACKGROUNDS } from './assets';
+import { MarketArt, type Market } from './MarketArt';
 
 /**
- * Form Tables — coded 1:1 to the Canva design (neon-green stadium header + 8
- * market tiles + explore bar). Looks like the mockup, but every tile is a real
- * link and the grid reflows on mobile. Not a baked image.
+ * Form Tables — coded 1:1 to the Canva design (neon-green stadium header + market
+ * tiles + explore bar). Every tile is a real deep-link into the actual markets the
+ * /form-tables page supports (Corners, Goals, Cards, BTTS — over/under), each with
+ * its own bet-type artwork. Not a baked image; reflows on mobile.
  */
-const TILES = [
-  { icon: Goal, title: 'Over 2.5 Goals', desc: 'See which teams score big.', to: '/form-tables?cat=goals' },
-  { icon: Swords, title: 'BTTS', desc: 'Track both teams to score.', to: '/form-tables?cat=btts' },
-  { icon: Flag, title: 'Over 9.5 Corners', desc: 'Find high corner matchups.', to: '/form-tables?cat=corners' },
-  { icon: FlagTriangleRight, title: 'Team Corners', desc: 'Compare team corner stats.', to: '/form-tables?cat=corners' },
-  { icon: RectangleVertical, title: 'Cards', desc: 'Spot high card games.', to: '/form-tables?cat=cards' },
-  { icon: House, title: 'Home Form', desc: 'See how teams perform at home.', to: '/form-tables' },
-  { icon: Plane, title: 'Away Form', desc: 'Track away performance.', to: '/form-tables' },
-  { icon: BarChart3, title: 'Last 5/10 Matches', desc: 'Form over the last 5 or 10.', to: '/form-tables' },
+const TILES: { market: Market; title: string; desc: string; to: string }[] = [
+  { market: 'goals', title: 'Over 2.5 Goals', desc: 'Top teams for goals.', to: '/form-tables?cat=goals&mode=over&mark=2.5' },
+  { market: 'btts', title: 'BTTS – Yes', desc: 'Both teams to score.', to: '/form-tables?cat=btts&mode=over' },
+  { market: 'corners', title: 'Over 9.5 Corners', desc: 'High-corner matchups.', to: '/form-tables?cat=corners&mode=over&mark=9.5' },
+  { market: 'cards', title: 'Over 3.5 Cards', desc: 'Cards flying in.', to: '/form-tables?cat=cards&mode=over&mark=3.5' },
+  { market: 'goals', title: 'Under 2.5 Goals', desc: 'Tight, low-scoring games.', to: '/form-tables?cat=goals&mode=under&mark=2.5' },
+  { market: 'btts', title: 'BTTS – No', desc: 'Clean-sheet leans.', to: '/form-tables?cat=btts&mode=under' },
+  { market: 'corners', title: 'Under 9.5 Corners', desc: 'Low corner counts.', to: '/form-tables?cat=corners&mode=under&mark=9.5' },
+  { market: 'cards', title: 'Under 3.5 Cards', desc: 'Calmer referees.', to: '/form-tables?cat=cards&mode=under&mark=3.5' },
 ];
 
 export function FormTablesSection() {
@@ -59,25 +58,20 @@ export function FormTablesSection() {
 
         {/* market tiles */}
         <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {TILES.map((t) => {
-            const Icon = t.icon;
-            return (
-              <Link
-                key={t.title}
-                to={t.to}
-                className="group flex flex-col rounded-2xl border border-emerald-400/20 bg-white/[0.03] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all hover:-translate-y-0.5 hover:border-emerald-400/50 hover:bg-white/[0.06] hover:shadow-[0_0_24px_-8px_rgba(16,185,129,0.6)] sm:p-5"
-              >
-                <span className="grid h-11 w-11 place-items-center rounded-xl border border-violet-400/30 bg-violet-500/12 text-violet-300">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <span className="mt-3 text-base font-black leading-tight text-white">{t.title}</span>
-                <span className="mt-1 text-[13px] leading-snug text-white/55">{t.desc}</span>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-violet-300">
-                  View Table <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            );
-          })}
+          {TILES.map((t) => (
+            <Link
+              key={t.title}
+              to={t.to}
+              className="group flex flex-col rounded-2xl border border-emerald-400/20 bg-white/[0.03] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all hover:-translate-y-0.5 hover:border-emerald-400/50 hover:bg-white/[0.06] hover:shadow-[0_0_24px_-8px_rgba(16,185,129,0.6)] sm:p-5"
+            >
+              <MarketArt market={t.market} className="h-12 w-12 transition-transform duration-300 group-hover:scale-110" />
+              <span className="mt-2.5 text-base font-black leading-tight text-white">{t.title}</span>
+              <span className="mt-1 text-[13px] leading-snug text-white/55">{t.desc}</span>
+              <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-violet-300">
+                View Table <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
         </div>
 
         {/* explore bar — purple neon */}
