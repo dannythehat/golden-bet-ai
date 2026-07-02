@@ -96,7 +96,9 @@ export async function fetchChosenLeagues(key: string): Promise<{ id: number; nam
   const rows: any[] = Array.isArray(json?.data) ? json.data : [];
   const out: { id: number; name: string }[] = [];
   for (const lg of rows) {
-    const name = String(lg?.league_name ?? lg?.name ?? "").trim();
+    // NB: `league_name` comes back as "" for chosen leagues; the real label is `name`
+    // ("Iceland Úrvalsdeild"). Use || (not ??) so an empty string falls through.
+    const name = String(lg?.name || lg?.league_name || "").trim();
     // deno-lint-ignore no-explicit-any
     const seasons: any[] = Array.isArray(lg?.season) ? lg.season : [];
     if (!seasons.length) continue;
@@ -104,6 +106,59 @@ export async function fetchChosenLeagues(key: string): Promise<{ id: number; nam
     if (latest?.id) out.push({ id: Number(latest.id), name: name || `League ${latest.id}` });
   }
   return out;
+}
+
+/**
+ * Every season id → its league label ("Iceland Úrvalsdeild"), across all the
+ * account's chosen leagues. Used to resolve a fixture's league name from any
+ * season/competition id the API hands back — no per-league season guessing.
+ */
+export async function fetchSeasonNames(key: string): Promise<Record<number, string>> {
+  const json = await getJson(`/league-list?key=${key}&chosen_leagues_only=true`);
+  // deno-lint-ignore no-explicit-any
+  const rows: any[] = Array.isArray(json?.data) ? json.data : [];
+  const out: Record<number, string> = {};
+  for (const lg of rows) {
+    const name = String(lg?.name || lg?.league_name || "").trim();
+    if (!name) continue;
+    // deno-lint-ignore no-explicit-any
+    for (const s of (Array.isArray(lg?.season) ? lg.season : []) as any[]) {
+      if (s?.id != null) out[Number(s.id)] = name;
+    }
+  }
+  return out;
+}
+
+/** Matches scheduled on a given date (YYYY-MM-DD), across the chosen leagues. */
+export async function fetchMatchesOnDate(key: string, date: string): Promise<Record<string, unknown>[]> {
+  const json = await getJson(`/todays-matches?key=${key}&date=${date}`);
+  return Array.isArray(json?.data) ? json.data : [];
+}
+
+/** YYYY-MM-DD, n days from now (UTC). */
+function isoDatePlus(n: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * The leagues (season/competition ids) that actually have fixtures in the next
+ * `days` days — auto-discovered each run from today's-matches, so the pipeline
+ * only touches leagues in play (fast, and always current as seasons come/go).
+ */
+export async function fetchActiveLeagues(key: string, days = 3): Promise<{ id: number; name: string }[]> {
+  const names = await fetchSeasonNames(key);
+  const ids = new Set<number>();
+  for (let n = 0; n < days; n++) {
+    try {
+      for (const m of await fetchMatchesOnDate(key, isoDatePlus(n))) {
+        const id = Number((m as Record<string, unknown>).competition_id ?? (m as Record<string, unknown>).season_id);
+        if (Number.isFinite(id) && id > 0) ids.add(id);
+      }
+    } catch { /* skip a bad date, keep the rest */ }
+  }
+  return [...ids].map((id) => ({ id, name: names[id] ?? `League ${id}` }));
 }
 
 // ── Market <-> FootyStats field maps (verified against the API) ─────────────
@@ -265,8 +320,12 @@ export interface DetailedMatch {
 export async function fetchUpcomingMatches(seasonId: number, key: string): Promise<TodayFixture[]> {
   const json = await getJson(`/league-matches?key=${key}&season_id=${seasonId}`);
   const data: any[] = Array.isArray(json?.data) ? json.data : [];
+  // Upcoming fixtures — priced OR not. FootyStats usually only prices imminent
+  // games, so requiring odds would hide the next 2 days. Form tables rank by the
+  // teams' combined average (not odds), so unpriced games still belong; their
+  // odds columns simply render "—" until the book prices them.
   return data
-    .filter((m) => m.status !== "complete" && Object.keys(normalizeOdds(m)).length > 0)
+    .filter((m) => m.status !== "complete")
     .sort((a, b) => (a.date_unix ?? 0) - (b.date_unix ?? 0))
     .map((m) => ({
       fixtureId: m.id,
