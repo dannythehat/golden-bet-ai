@@ -40,10 +40,10 @@ export function HeroBanner() {
         />
         <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent md:block" />
 
-        {/* DESKTOP — The Gaffer's signature across the scene */}
+        {/* DESKTOP — The Gaffer's handwritten signature across the scene */}
         <span
           aria-hidden
-          className="pointer-events-none absolute right-[7%] top-[54%] z-[1] hidden -rotate-[7deg] font-['Caveat'] text-7xl font-bold text-[#f8e7a1] [text-shadow:0_3px_22px_rgba(245,197,66,0.5),0_1px_2px_rgba(0,0,0,0.7)] md:block lg:text-8xl"
+          className="pointer-events-none absolute right-[6%] top-[56%] z-[1] hidden -rotate-[8deg] font-['Dancing_Script'] text-[5.5rem] font-semibold leading-none text-white/95 [text-shadow:0_2px_10px_rgba(0,0,0,0.55)] md:block lg:text-[7rem]"
         >
           The Gaffer
         </span>
@@ -56,10 +56,10 @@ export function HeroBanner() {
             style={{ backgroundImage: `url(${HERO_SCENE})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/25 to-transparent" />
-            {/* MOBILE — The Gaffer's signature across the scene */}
+            {/* MOBILE — The Gaffer's handwritten signature across the scene */}
             <span
               aria-hidden
-              className="pointer-events-none absolute bottom-3 left-4 -rotate-[7deg] font-['Caveat'] text-5xl font-bold text-[#f8e7a1] [text-shadow:0_3px_18px_rgba(245,197,66,0.5),0_1px_2px_rgba(0,0,0,0.7)] sm:text-6xl"
+              className="pointer-events-none absolute bottom-3 left-4 -rotate-[8deg] font-['Dancing_Script'] text-6xl font-semibold leading-none text-white/95 [text-shadow:0_2px_10px_rgba(0,0,0,0.6)] sm:text-7xl"
             >
               The Gaffer
             </span>
