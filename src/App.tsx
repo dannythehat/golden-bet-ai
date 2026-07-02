@@ -15,6 +15,7 @@ const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const FormTables = lazy(() => import("./pages/FormTables"));
+const FantasyLeague = lazy(() => import("./pages/FantasyLeague"));
 const Pnl = lazy(() => import("./pages/Pnl"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -58,7 +59,7 @@ const App = () => {
                 <Route path="/members" element={<MembersDashboard />} />
 
                 {/* Placeholder shells — to be rebuilt from scratch */}
-                <Route path="/fantasy-league" element={<ComingSoon title="Fantasy League" eyebrow="Coming for 2025/26" />} />
+                <Route path="/fantasy-league" element={<FantasyLeague />} />
                 <Route path="/form-tables" element={<FormTables />} />
                 <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
                 <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
