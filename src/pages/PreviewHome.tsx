@@ -3,7 +3,7 @@ import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
 
 import { FormTablesSection } from '@/components/homepage/FormTablesSection';
-import { FantasyLeagueFeatureCard } from '@/components/homepage/FantasyLeagueFeatureCard';
+import { FantasyLeagueSellItSection } from '@/components/homepage/FantasyLeagueSellItSection';
 import { LatestArticlesSection } from '@/components/homepage/LatestArticlesSection';
 import { TipOfTheDayCard } from '@/components/homepage/TipOfTheDayCard';
 import { WeeklyPrizesFeatureCard } from '@/components/homepage/WeeklyPrizesFeatureCard';
@@ -45,7 +45,7 @@ export default function PreviewHome() {
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           <FormTablesSection />
           <div className="mt-3 md:mt-4">
-            <FantasyLeagueFeatureCard />
+            <FantasyLeagueSellItSection />
           </div>
         </div>
       </HomepageScene>
