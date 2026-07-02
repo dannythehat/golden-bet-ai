@@ -53,7 +53,11 @@ export function HeroBanner() {
           {/* copy */}
           <div className="max-w-xl px-5 pt-2 sm:px-8 md:p-10 md:pt-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
-              Coming Soon — 2025/26
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f5c542] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#f5c542]" />
+              </span>
+              The Footy Oracle Club
             </span>
 
             <h1 className="mt-4 font-display text-5xl uppercase italic leading-[0.86] tracking-tight text-white antialiased sm:text-6xl lg:text-7xl">
