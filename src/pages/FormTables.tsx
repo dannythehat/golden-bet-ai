@@ -16,6 +16,18 @@ type ValueCell = FormValueCell | null;
 type TablesPayload = { leagues: { name: string; region: string }[]; fixtures: Fixture[] };
 const SNAPSHOT = raw as unknown as TablesPayload;
 
+/**
+ * Is a live payload healthy enough to trust? A stale/broken build shows up as
+ * unresolved league labels ("League 16696"). If most fixtures lack a real league
+ * name we fall back to the bundled slate rather than render the broken feed.
+ */
+function isHealthy(p: TablesPayload | null): p is TablesPayload {
+  const fx = p?.fixtures ?? [];
+  if (fx.length === 0) return false;
+  const named = fx.filter((f) => f.league && !/^League\s*\d+$/i.test(String(f.league))).length;
+  return named / fx.length >= 0.6;
+}
+
 /** Live today's slate from daily_form_tables (built 3am UK); snapshot fallback. */
 function useFormTablesData(): { data: TablesPayload; live: boolean } {
   const { data } = useQuery({
@@ -34,7 +46,8 @@ function useFormTablesData(): { data: TablesPayload; live: boolean } {
       return { leagues: Array.isArray(data.leagues) ? data.leagues : [], fixtures: data.fixtures as Fixture[] };
     },
   });
-  return data ? { data, live: true } : { data: SNAPSHOT, live: false };
+  // Use the live feed only when it's healthy; otherwise the bundled slate.
+  return isHealthy(data ?? null) ? { data: data!, live: true } : { data: SNAPSHOT, live: false };
 }
 
 /* ── Category config — over + under per market ───────────────────────── */
