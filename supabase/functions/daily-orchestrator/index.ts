@@ -68,9 +68,8 @@ type Task = [string, Record<string, unknown>, string?];
 
 const SCHEDULE: Record<number, Record<number, Task[]>> = {
   // 02:00 UTC = 03:00 London (BST) — THE GAFFER'S DAILY REFRESH.
-  // Pull last-10 form for every configured league, then build today's value
-  // pick(s). NOTE: keyed in UTC; in GMT (winter) this fires at 02:00 London.
-  // Switch the orchestrator to Europe/London keying if strict 3am is needed.
+  // Pull last-10 form (FootyStats), build today's slate, then the value pick(s).
+  // NOTE: keyed in UTC; in GMT (winter) this fires at 02:00 London.
   2: {
     0: [
       ["ingest-form-stats", { scheduled: true }],   // FootyStats form -> form_tables
@@ -82,87 +81,16 @@ const SCHEDULE: Record<number, Record<number, Task[]>> = {
       ["gaffer-daily-pick", { scheduled: true }],   // value engine + voice -> gaffer_picks
     ],
   },
-  // 03:00 - Ingest yesterday's results
-  3: {
-    0: [
-      ["ml-ingest-results", { source: "cron" }],
-      ["ml-daily-learn", { scheduled: true }],
-    ],
-    30: [
-      ["sportmonks-compute-features", { scheduled: true }],
-    ],
-  },
-  // 04:00 - Stats + ML training
-  4: {
-    0: [
-      ["populate-stats", { triggered_by: "cron" }],
-      ["populate-stats", {}, "?region=uk"],
-      ["ml-train-engine", { scheduled: true }],
-    ],
-    5: [
-      ["populate-stats", {}, "?region=european_1"],
-    ],
-    10: [
-      ["populate-stats", {}, "?region=european_2"],
-    ],
-    15: [
-      ["populate-stats", {}, "?region=european_3"],
-    ],
-    20: [
-      ["populate-stats", {}, "?region=asia"],
-    ],
-    25: [
-      ["populate-stats", {}, "?region=americas"],
-    ],
-    30: [
-      ["compute-rolling-stats", { scheduled: true }],
-    ],
-    33: [
-      ["compute-league-stats", { scheduled: true }],
-    ],
-    35: [
-      ["match-intelligence", { scheduled: true }],
-    ],
-    40: [
-      ["match-power-scores", { scheduled: true }],
-      ["ml-value-engine", { scheduled: true }],
-      ["gaffer-alerts", { scheduled: true }],
-    ],
-  },
-  // 05:00 - Pick generation
-  5: {
-    0: [
-      ["golden-bets", { scheduled: true }],
-    ],
-    5: [
-      ["bet-builder", { scheduled: true }],
-    ],
-    15: [
-      ["acca-builder", { scheduled: true }],
-    ],
-  },
-  // 06:00 - Email digest only (Gaffer daily articles disabled per user request)
+  // 06:30 - Email digest
   6: {
     30: [
       ["email-blog-digest", { scheduled: true }],
     ],
   },
-  // 16:00-23:00 - Settle bets every 30 min
-  16: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  17: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  18: { 
-    0: [
-      ["settle-bets", { scheduled: true }],
-      ["compute-rolling-stats", { scheduled: true }], // evening refresh
-    ], 
-    30: [["settle-bets", { scheduled: true }]] 
-  },
-  19: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  20: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  // Evenings also settle the Gaffer's daily pick(s) once the fixtures finish.
-  21: { 0: [["settle-bets", { scheduled: true }], ["settle-gaffer-picks", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }]] },
-  22: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }], ["settle-gaffer-picks", { scheduled: true }]] },
-  23: { 0: [["settle-bets", { scheduled: true }]], 30: [["settle-bets", { scheduled: true }], ["settle-gaffer-picks", { scheduled: true }]] },
+  // Evenings - settle the Gaffer's daily pick(s) once the fixtures finish.
+  21: { 0: [["settle-gaffer-picks", { scheduled: true }]] },
+  22: { 30: [["settle-gaffer-picks", { scheduled: true }]] },
+  23: { 30: [["settle-gaffer-picks", { scheduled: true }]] },
 };
 
 // Monday only tasks
