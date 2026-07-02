@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Menu, X, Facebook, Instagram, Youtube, Send, LockKeyhole, Trophy, Zap } from 'lucide-react';
-import { OracleCrest, OracleWordmark } from './primitives';
+import { OracleWordmark } from './primitives';
 import { NAV_LINKS } from './content';
 
 /** Sticky top navigation — production club header. */
@@ -30,8 +30,12 @@ export function HomepageNav() {
       <div className="border-b border-[#f5c542]/25 bg-[#130321]">
         <div className="mx-auto grid min-h-[82px] w-full max-w-[1480px] grid-cols-[auto_1fr_auto] items-center gap-3 px-3 py-2.5 md:min-h-[104px] md:px-6 md:py-4">
           <a href="#top" aria-label="Footy Oracle home" className="group flex min-w-0 items-center gap-2.5 md:gap-4">
-            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border-2 border-[#f5c542] bg-[#07000f] p-1 shadow-[0_0_28px_rgba(245,197,66,0.22)] md:h-20 md:w-20">
-              <OracleCrest className="h-full w-full transition-transform duration-300 group-hover:scale-105" />
+            <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-[#f5c542] bg-[#07000f] shadow-[0_0_28px_rgba(245,197,66,0.22)] md:h-20 md:w-20">
+              <img
+                src="/images/brand/footy-oracle-mark.png"
+                alt="Footy Oracle"
+                className="h-full w-full rounded-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
             </span>
             <span className="hidden min-w-0 sm:block">
               <OracleWordmark />
