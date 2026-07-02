@@ -13,8 +13,7 @@ import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { HomepageScene } from '@/components/homepage/HomepageScene';
-import { TodaysDouble } from '@/components/homepage/TodaysDouble';
-import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
+import { GafferValueBoardSection } from '@/components/homepage/GafferValueBoardSection';
 import { PnLSection } from '@/components/homepage/PnLSection';
 
 export default function PreviewHome() {
@@ -35,10 +34,7 @@ export default function PreviewHome() {
 
       <HomepageScene tone="finale" eyebrow="01 · The Gaffer's Picks">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <div className="grid gap-3 lg:grid-cols-[1.05fr_0.95fr] md:gap-4">
-            <GafferPicksBox />
-            <TodaysDouble />
-          </div>
+          <GafferValueBoardSection />
           <div className="mt-3 md:mt-4">
             <PnLSection />
           </div>
