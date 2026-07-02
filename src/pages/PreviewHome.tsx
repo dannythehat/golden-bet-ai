@@ -19,7 +19,7 @@ import { PnLSection } from '@/components/homepage/PnLSection';
 
 export default function PreviewHome() {
   useEffect(() => {
-    document.title = 'Footy Oracle Club — The Gaffer Knows';
+    document.title = 'Footy Oracle Club - The Gaffer Knows';
   }, []);
 
   return (
