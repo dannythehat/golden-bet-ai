@@ -17,30 +17,41 @@ const FEATURES: { icon: typeof Newspaper; title: string; sub: string; to: string
 
 /**
  * Hero — the club's front door. A real, interactive section (not a screenshot):
- * the cinematic Gaffer scene is the backdrop, and the badge, headline, copy,
- * buttons and the six feature cards are all live HTML/links overlaid on top.
+ * the cinematic Gaffer scene is the artwork, and the badge, headline, copy,
+ * buttons and the six feature cards are all live HTML/links.
+ *
+ * Desktop: scene sits right, copy overlays left, cards along the foot.
+ * Mobile: scene is a clean banner up top, then copy, then cards — so the
+ * Gaffer is always the hero and never a dark, cropped strip behind the text.
  */
 export function HeroBanner() {
   return (
     <section id="top" className="relative mx-auto w-full max-w-[1536px] scroll-mt-28">
       <div className="relative overflow-hidden rounded-2xl border border-violet-400/20 shadow-[0_0_60px_-26px_rgba(139,92,246,0.85)]">
-        {/* cinematic scene — right-anchored so the Gaffer sits on the right */}
+        {/* DESKTOP scene — right-anchored backdrop with the Gaffer bright on the right */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-[position:72%_center] md:bg-right"
+          className="absolute inset-0 hidden bg-cover bg-right md:block"
           style={{ backgroundImage: `url(${HERO_SCENE})` }}
         />
-        {/* legibility blends — dark on the left where the copy sits, but the Gaffer stays bright */}
         <div
           aria-hidden
-          className="absolute inset-0 md:bg-[linear-gradient(to_right,#0a0414_0%,rgba(10,4,20,0.92)_20%,rgba(10,4,20,0.45)_44%,rgba(10,4,20,0.05)_62%,transparent_80%)] bg-[linear-gradient(to_right,rgba(10,4,20,0.94)_0%,rgba(10,4,20,0.8)_55%,rgba(10,4,20,0.35)_100%)]"
+          className="absolute inset-0 hidden md:block md:bg-[linear-gradient(to_right,#0a0414_0%,rgba(10,4,20,0.92)_20%,rgba(10,4,20,0.45)_44%,rgba(10,4,20,0.05)_62%,transparent_80%)]"
         />
-        {/* foot fade to seat the feature cards; barely touch the top so the Gaffer isn't dimmed */}
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent md:block" />
 
-        <div className="relative flex min-h-[560px] flex-col justify-between gap-8 p-5 sm:p-8 md:min-h-[660px] md:p-10">
-          {/* copy column */}
-          <div className="max-w-xl">
+        <div className="relative flex flex-col md:min-h-[660px] md:justify-between md:gap-8">
+          {/* MOBILE scene banner — the Gaffer shown clearly up top, fading into the copy */}
+          <div
+            aria-hidden
+            className="relative h-[280px] w-full bg-cover bg-[position:44%_28%] sm:h-[360px] md:hidden"
+            style={{ backgroundImage: `url(${HERO_SCENE})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/25 to-transparent" />
+          </div>
+
+          {/* copy */}
+          <div className="max-w-xl px-5 pt-2 sm:px-8 md:p-10 md:pt-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
               Coming Soon — 2025/26
             </span>
@@ -78,7 +89,7 @@ export function HeroBanner() {
           </div>
 
           {/* feature cards — the six pillars, real links */}
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2.5 px-5 pb-5 pt-6 sm:grid-cols-3 sm:px-8 sm:pb-8 md:grid-cols-6 md:px-10 md:pb-10 md:pt-0">
             {FEATURES.map((f) => (
               <Link
                 key={f.title}
