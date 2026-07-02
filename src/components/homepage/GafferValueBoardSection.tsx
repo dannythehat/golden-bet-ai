@@ -23,6 +23,18 @@ function findFixture(leg: Leg): FormFixtureRow | undefined {
     return (fh === h && fa === a) || (fh === a && fa === h);
   });
 }
+/** Backfill missing crest URLs from the matching slate fixture. */
+function withLogos(leg: Leg): Leg {
+  if (leg.home.logo && leg.away.logo) return leg;
+  const f = findFixture(leg);
+  if (!f) return leg;
+  return {
+    ...leg,
+    home: { ...leg.home, logo: leg.home.logo ?? f.home.logo ?? null },
+    away: { ...leg.away, logo: leg.away.logo ?? f.away.logo ?? null },
+  };
+}
+
 type Enriched = { formScore: number | null; leagueAverage: number | null; headToHead: string | null };
 function enrich(leg: Leg): Enriched {
   const f = findFixture(leg);
@@ -284,14 +296,15 @@ export function GafferValueBoardSection() {
   // Value watch (NOT tips) — best-value fixtures for the fallback/rail.
   const valueWatch = getValueFixtures().filter((p) => !tipIds.has(p.fixtureId));
 
-  const featured: Leg | null = tips[0] ?? valueWatch[0] ?? null;
+  const featuredRaw: Leg | null = tips[0] ?? valueWatch[0] ?? null;
+  const featured = featuredRaw ? withLogos(featuredRaw) : null;
   const featuredIsTip = tips.length > 0;
 
   // Rail: remaining tips first, then value-watch — up to 2 pick cards.
-  const usedIds = new Set<string>([featured?.fixtureId].filter(Boolean) as string[]);
+  const usedIds = new Set<string>([featuredRaw?.fixtureId].filter(Boolean) as string[]);
   const rail: { leg: Leg; isTip: boolean }[] = [];
-  for (const l of tips) { if (!usedIds.has(l.fixtureId)) { rail.push({ leg: l, isTip: true }); usedIds.add(l.fixtureId); } }
-  for (const l of valueWatch) { if (rail.length >= 2) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: l, isTip: false }); usedIds.add(l.fixtureId); } }
+  for (const l of tips) { if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: true }); usedIds.add(l.fixtureId); } }
+  for (const l of valueWatch) { if (rail.length >= 2) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
 
   const activeCount = tips.length || valueWatch.length;
   const profit = monthProfit ?? 48; // sample until first settlements
