@@ -1,0 +1,1 @@
+SELECT cron.unschedule(jobid) FROM cron.job WHERE command ILIKE '%auto-daily-picks%' OR command ILIKE '%ml-referee-ingest%' OR command ILIKE '%ml-backfill-stats%';
