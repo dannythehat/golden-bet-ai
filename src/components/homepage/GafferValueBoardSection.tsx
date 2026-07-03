@@ -156,13 +156,13 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
               </div>
               <div className="shrink-0 text-right">
                 <div className="font-display text-4xl leading-none text-[#f5c542] md:text-5xl">{leg.odds.toFixed(2)}</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">Odds</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/65">Odds</div>
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <div className="rounded-xl border border-white/10 bg-black/30 px-3 py-2.5">
-                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/45">
+                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
                   <span>Confidence</span><span className="font-display text-base text-white">{leg.prob}%</span>
                 </div>
                 <div className="mt-2"><ConfidenceBar pct={leg.prob} /></div>
@@ -211,7 +211,7 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
 function SecondaryCard({ leg, isTip }: { leg: Leg; isTip: boolean }) {
   return (
     <div className="relative flex flex-col rounded-2xl border border-white/10 bg-[#0b0518]/80 p-4">
-      <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/45">
+      <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
         <span>Today · {leg.time} KO</span>
         {isTip ? <Star className="h-4 w-4 fill-current text-[#f5c542]" /> : <span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] text-white/60">Value watch</span>}
       </div>
@@ -225,12 +225,12 @@ function SecondaryCard({ leg, isTip }: { leg: Leg; isTip: boolean }) {
       <div className="mt-2.5 flex items-end justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate font-display text-base uppercase tracking-tight text-white">{leg.selection}</div>
-          <div className="truncate text-[11px] text-white/45">{leg.home.name} v {leg.away.name}</div>
+          <div className="truncate text-[11px] text-white/65">{leg.home.name} v {leg.away.name}</div>
         </div>
         <div className="shrink-0 font-display text-2xl leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
       </div>
       <div className="mt-3">
-        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/45">
+        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
           <span>Confidence</span><span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
@@ -255,11 +255,11 @@ function SlipCard({ bet }: { bet: DailyBet }) {
           <div className="text-lg font-black text-violet-200">{count} Selection{count === 1 ? '' : 's'} · {bet.type === 'double' ? 'Double' : 'Single'}</div>
           <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/45">Combined odds</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65">Combined odds</div>
               <div className="font-display text-2xl leading-none text-[#f5c542]">{bet.combinedOdds.toFixed(2)}</div>
             </div>
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/45">Confidence</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65">Confidence</div>
               <div className="font-display text-xl leading-none text-emerald-300">{conf}</div>
             </div>
           </div>
@@ -370,7 +370,7 @@ export function GafferValueBoardSection() {
               <div key={leg.fixtureId} className="w-[82%] shrink-0 snap-start md:w-auto"><SecondaryCard leg={leg} isTip={isTip} /></div>
             ))}
             {rail.length === 0 && (
-              <div className="grid place-items-center rounded-2xl border border-white/10 bg-[#0b0518]/60 p-6 text-center text-xs text-white/40 md:col-span-2">
+              <div className="grid place-items-center rounded-2xl border border-white/10 bg-[#0b0518]/60 p-6 text-center text-xs text-white/60 md:col-span-2">
                 No secondary value on the card right now.
               </div>
             )}
