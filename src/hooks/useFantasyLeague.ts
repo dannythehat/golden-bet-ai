@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type {
   ApiResponse,
+  ApiFailure,
   FantasyPlayer,
   FantasyPlayersResponse,
   FantasyPlayersFilters,
@@ -286,9 +287,9 @@ export function useFantasyGameweekResults(teamId?: string, gameweek?: number) {
 async function mutateFantasy<T>(name: string, body: unknown): Promise<T> {
   const { data, error } = await supabase.functions.invoke(name, { body: body as Record<string, unknown> });
   if (error) throw new Error(error.message ?? 'Request failed');
-  const env = data as ApiResponse<T>;
-  if (!env || env.ok !== true) throw new Error(env?.error?.message ?? 'Something went wrong. Give it another go.');
-  return env.data;
+  const env = data as ApiResponse<T> | null;
+  if (env && env.ok) return env.data;
+  throw new Error((env as ApiFailure | null)?.error?.message ?? 'Something went wrong. Give it another go.');
 }
 
 /** Invalidate the team + standings queries after a squad-changing mutation. */
