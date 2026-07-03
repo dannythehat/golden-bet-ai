@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Crown, TrendingUp, TrendingDown, Minus, Trophy, ChevronRight, Award } from 'lucide-react';
-import { useFantasyStandings } from '@/hooks/useFantasyLeague';
+import { useFantasyStandings, useFantasyRealtimeStandings } from '@/hooks/useFantasyLeague';
 import type { FantasyStandingRow } from '@/types/footy';
 
 const GAFFER = '/images/gaffer/gaffer-arms-crossed.png';
@@ -31,6 +31,7 @@ const RANK_TONE = (rank: number) => rank === 1 ? 'bg-[#f5c542] text-[#16051f]' :
  */
 export function LeagueStandings() {
   const { data, isLoading } = useFantasyStandings();
+  useFantasyRealtimeStandings(); // live re-rank on the standings channel
   if (isLoading && !data) return <div className="h-[520px] animate-pulse rounded-[1.6rem] border border-white/10 bg-white/[0.03]" />;
 
   const rows = data?.rows ?? [];
