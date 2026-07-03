@@ -93,11 +93,11 @@ function Stat({ icon: Icon, label, value, sub, tone }: { icon: typeof Trophy; la
   const grad = tone === 'up' ? 'from-emerald-300 to-emerald-500' : tone === 'gold' ? 'from-[#ffe487] to-[#f5c542]' : tone === 'violet' ? 'from-violet-300 to-fuchsia-400' : 'from-white to-white/70';
   const ic = tone === 'up' ? 'text-emerald-300' : tone === 'gold' ? 'text-[#f5c542]' : tone === 'violet' ? 'text-violet-300' : 'text-white/70';
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl">
+    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] ">
       <div className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/5 blur-2xl" />
       <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/55"><Icon className={`h-4 w-4 ${ic}`} /> {label}</div>
       <div className={`mt-2 bg-gradient-to-br ${grad} bg-clip-text font-display text-3xl leading-none text-transparent md:text-4xl`}>{value}</div>
-      <div className="mt-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/40">{sub}</div>
+      <div className="mt-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">{sub}</div>
     </div>
   );
 }
@@ -196,13 +196,13 @@ export function GafferPnLTrustSection() {
             </p>
             <span className={`mt-4 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] ${sampleMode ? 'border-white/15 bg-white/[0.05] text-white/60' : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200'}`}>
               <ShieldCheck className="h-4 w-4" /> {sampleMode ? 'Sample data' : 'Live · settled results'}
-              {sampleMode && <span className="font-bold text-white/45">First results appear once our selections settle</span>}
+              {sampleMode && <span className="font-bold text-white/65">First results appear once our selections settle</span>}
             </span>
           </div>
 
           {/* Gaffer + quote — side by side so his face is never covered */}
           <div className="flex items-stretch gap-3 sm:gap-4">
-            <div className="flex min-w-0 flex-1 flex-col justify-center rounded-2xl border border-violet-400/25 bg-[#0b0518]/85 p-4 backdrop-blur-md">
+            <div className="flex min-w-0 flex-1 flex-col justify-center rounded-2xl border border-violet-400/25 bg-[#0b0518]/85 p-4 ">
               <span className="font-display text-3xl leading-none text-violet-400">“</span>
               <p className="-mt-3 text-[14px] font-semibold leading-relaxed text-white/90 sm:text-[15px]">I don't sell dreams. I track numbers. This is my record. You decide.</p>
               <div className="mt-1.5 text-right font-['Dancing_Script'] text-2xl font-semibold text-[#f8e7a1]">The Gaffer</div>
@@ -223,7 +223,7 @@ export function GafferPnLTrustSection() {
           <Stat icon={Percent} label="ROI" value={`${s.roi}%`} sub="Return on investment" tone="gold" />
           <Stat icon={Trophy} label="W-L Record" value={`${s.wins}-${s.losses}`} sub="Wins - losses" tone="white" />
           <Stat icon={Target} label="Strike Rate" value={`${s.strikeRate}%`} sub="Win percentage" tone="violet" />
-          <div className="col-span-2 flex flex-col justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl md:col-span-1">
+          <div className="col-span-2 flex flex-col justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4  md:col-span-1">
             <div className="flex items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white/55"><Coins className="h-3.5 w-3.5 text-[#f5c542]" /> Total staked</span>
               <span className="font-display text-xl text-white">{money(s.staked)}</span>
@@ -239,14 +239,14 @@ export function GafferPnLTrustSection() {
         {/* Chart + settlements */}
         <div className="mt-4 grid gap-3 lg:grid-cols-2">
           {/* Cumulative profit */}
-          <div className="rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-xl md:p-5">
+          <div className="rounded-2xl border border-white/10 bg-black/30 p-4  md:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.16em] text-white/50">Cumulative profit <Info className="h-3.5 w-3.5 text-white/35" /></span>
               <span className="text-xs text-white/55">{money(s.staked)} staked → <b className="text-[#f8e7a1]">{money(s.returned)}</b> returned</span>
             </div>
             <div className="mt-3 inline-flex rounded-xl border border-white/10 bg-white/[0.03] p-1">
               {RANGES.map((r) => (
-                <button key={r} onClick={() => setRange(r)} className={`rounded-lg px-3 py-1 text-xs font-black uppercase tracking-wide transition-all ${range === r ? 'bg-white/15 text-white' : 'text-white/45 hover:text-white'}`}>{r}</button>
+                <button key={r} onClick={() => setRange(r)} className={`rounded-lg px-3 py-1 text-xs font-black uppercase tracking-wide transition-all ${range === r ? 'bg-white/15 text-white' : 'text-white/65 hover:text-white'}`}>{r}</button>
               ))}
             </div>
             <div ref={chartRef} className="relative mt-3" onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
@@ -280,7 +280,7 @@ export function GafferPnLTrustSection() {
               {hv ? (
                 <div className="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded-lg border border-white/15 bg-black/80 px-2.5 py-1 text-center backdrop-blur" style={{ left: `${(x(hover!) / W) * 100}%`, top: `${(y(hv.profit) / H) * 100}%` }}>
                   <span className={`block font-display text-sm leading-none ${hv.profit >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{hv.profit >= 0 ? '+' : ''}{money(hv.profit)}</span>
-                  <span className="block text-[9px] uppercase tracking-wide text-white/45">{dateLbl(hv.date)}</span>
+                  <span className="block text-[9px] uppercase tracking-wide text-white/65">{dateLbl(hv.date)}</span>
                 </div>
               ) : (
                 <div className="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded-lg border border-emerald-400/40 bg-emerald-500/15 px-2 py-1 text-center" style={{ left: `${(x(chart.length - 1) / W) * 100}%`, top: `${(y(last.profit) / H) * 100}%` }}>
@@ -294,7 +294,7 @@ export function GafferPnLTrustSection() {
           </div>
 
           {/* Recent settlements */}
-          <div className="rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-xl md:p-5">
+          <div className="rounded-2xl border border-white/10 bg-black/30 p-4  md:p-5">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-[0.16em] text-white/50">Recent settlements</span>
               <a href="/pnl" className="rounded-full border border-[#f5c542]/40 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:bg-[#f5c542] hover:text-[#16051f]">View all</a>
@@ -317,15 +317,15 @@ export function GafferPnLTrustSection() {
                             {away && <TeamAvatar name={away} logoUrl={st.awayLogo} size={18} />}
                             {(st.legs ?? 1) > 1 && <span className="shrink-0 rounded bg-violet-500/25 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-violet-200 ring-1 ring-inset ring-violet-400/30">Double</span>}
                           </div>
-                          <div className="truncate text-[11px] text-white/45">{[st.league, st.market, st.odds ? st.odds.toFixed(2) : null, money(st.stake)].filter(Boolean).join(' · ')}</div>
+                          <div className="truncate text-[11px] text-white/65">{[st.league, st.market, st.odds ? st.odds.toFixed(2) : null, money(st.stake)].filter(Boolean).join(' · ')}</div>
                         </div>
-                        <span className="text-right text-[13px] font-bold sm:min-w-[3.5rem]">{st.result === 'WIN' ? <span className="text-[#f8e7a1]">{money(st.return)}</span> : <span className="text-white/40">£0.00</span>}</span>
+                        <span className="text-right text-[13px] font-bold sm:min-w-[3.5rem]">{st.result === 'WIN' ? <span className="text-[#f8e7a1]">{money(st.return)}</span> : <span className="text-white/60">£0.00</span>}</span>
                         <span className={`text-right font-display text-sm sm:min-w-[3rem] ${st.result === 'WIN' ? 'text-emerald-300' : 'text-rose-400'}`}>{st.result}</span>
                       </div>
                     );
                   })}
                 </div>
-                <p className="mt-2 flex items-center gap-1.5 text-[11px] text-white/40"><Info className="h-3 w-3" /> Settled bets only. Prices may vary from tip time.</p>
+                <p className="mt-2 flex items-center gap-1.5 text-[11px] text-white/60"><Info className="h-3 w-3" /> Settled bets only. Prices may vary from tip time.</p>
               </>
             )}
           </div>

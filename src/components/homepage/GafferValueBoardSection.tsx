@@ -112,8 +112,11 @@ function CrestPair({ leg, size = 64 }: { leg: Leg; size?: number }) {
 
 function ConfidenceBar({ pct }: { pct: number }) {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-      <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-[#f5c542]" style={{ width: `${Math.max(4, Math.min(100, pct))}%` }} />
+    <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/10 ring-1 ring-inset ring-white/5">
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-[#f5c542] shadow-[0_0_10px_rgba(245,197,66,0.55)]"
+        style={{ width: `${Math.max(4, Math.min(100, pct))}%` }}
+      />
     </div>
   );
 }
@@ -156,13 +159,13 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
               </div>
               <div className="shrink-0 text-right">
                 <div className="font-display text-4xl leading-none text-[#f5c542] md:text-5xl">{leg.odds.toFixed(2)}</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">Odds</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/65">Odds</div>
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <div className="rounded-xl border border-white/10 bg-black/30 px-3 py-2.5">
-                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/45">
+                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
                   <span>Confidence</span><span className="font-display text-base text-white">{leg.prob}%</span>
                 </div>
                 <div className="mt-2"><ConfidenceBar pct={leg.prob} /></div>
@@ -211,7 +214,7 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
 function SecondaryCard({ leg, isTip }: { leg: Leg; isTip: boolean }) {
   return (
     <div className="relative flex flex-col rounded-2xl border border-white/10 bg-[#0b0518]/80 p-4">
-      <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/45">
+      <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
         <span>Today · {leg.time} KO</span>
         {isTip ? <Star className="h-4 w-4 fill-current text-[#f5c542]" /> : <span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] text-white/60">Value watch</span>}
       </div>
@@ -225,12 +228,12 @@ function SecondaryCard({ leg, isTip }: { leg: Leg; isTip: boolean }) {
       <div className="mt-2.5 flex items-end justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate font-display text-base uppercase tracking-tight text-white">{leg.selection}</div>
-          <div className="truncate text-[11px] text-white/45">{leg.home.name} v {leg.away.name}</div>
+          <div className="truncate text-[11px] text-white/65">{leg.home.name} v {leg.away.name}</div>
         </div>
         <div className="shrink-0 font-display text-2xl leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
       </div>
       <div className="mt-3">
-        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/45">
+        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
           <span>Confidence</span><span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
@@ -255,11 +258,11 @@ function SlipCard({ bet }: { bet: DailyBet }) {
           <div className="text-lg font-black text-violet-200">{count} Selection{count === 1 ? '' : 's'} · {bet.type === 'double' ? 'Double' : 'Single'}</div>
           <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/45">Combined odds</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65">Combined odds</div>
               <div className="font-display text-2xl leading-none text-[#f5c542]">{bet.combinedOdds.toFixed(2)}</div>
             </div>
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/45">Confidence</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65">Confidence</div>
               <div className="font-display text-xl leading-none text-emerald-300">{conf}</div>
             </div>
           </div>
@@ -320,16 +323,16 @@ export function GafferValueBoardSection() {
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:34px_34px] opacity-40" />
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
 
-      {/* Gaffer image — top-right visual layer */}
+      {/* Gaffer image — desktop only, kept off mobile to preserve header contrast */}
       <img
         src={GAFFER_IMG}
         alt="The Gaffer"
         loading="lazy"
         draggable={false}
-        className="pointer-events-none absolute right-0 top-0 z-0 w-[165px] select-none opacity-30 sm:w-[260px] sm:opacity-60 md:w-[380px] md:opacity-100"
+        className="pointer-events-none absolute right-0 top-0 z-0 hidden select-none md:block md:w-[380px] md:opacity-100"
       />
-      {/* scrim — keeps the copy legible over the Gaffer, brighter on desktop */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#070312] via-[#070312]/85 to-[#070312]/40 md:via-[#070312]/45 md:to-transparent" />
+      {/* scrim — desktop only, keeps copy legible over the Gaffer */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] hidden md:block md:bg-gradient-to-r md:from-[#070312] md:via-[#070312]/45 md:to-transparent" />
       <span aria-hidden className="pointer-events-none absolute right-[7%] top-[11%] z-[1] hidden -rotate-6 text-right font-['Caveat'] text-xl font-bold leading-tight text-violet-300/90 [text-shadow:0_2px_10px_rgba(139,92,246,0.6)] lg:block">
         Stats don't lie.<br />Edges do. <span className="text-violet-200">– Gaffer</span>
       </span>
@@ -370,7 +373,7 @@ export function GafferValueBoardSection() {
               <div key={leg.fixtureId} className="w-[82%] shrink-0 snap-start md:w-auto"><SecondaryCard leg={leg} isTip={isTip} /></div>
             ))}
             {rail.length === 0 && (
-              <div className="grid place-items-center rounded-2xl border border-white/10 bg-[#0b0518]/60 p-6 text-center text-xs text-white/40 md:col-span-2">
+              <div className="grid place-items-center rounded-2xl border border-white/10 bg-[#0b0518]/60 p-6 text-center text-xs text-white/60 md:col-span-2">
                 No secondary value on the card right now.
               </div>
             )}
