@@ -287,7 +287,10 @@ async function mutateFantasy<T>(name: string, body: unknown): Promise<T> {
   const { data, error } = await supabase.functions.invoke(name, { body: body as Record<string, unknown> });
   if (error) throw new Error(error.message ?? 'Request failed');
   const env = data as ApiResponse<T>;
-  if (!env || env.ok !== true) throw new Error(env?.error?.message ?? 'Something went wrong. Give it another go.');
+  if (!env || env.ok !== true) {
+    const msg = env && env.ok === false ? env.error?.message : undefined;
+    throw new Error(msg ?? 'Something went wrong. Give it another go.');
+  }
   return env.data;
 }
 
