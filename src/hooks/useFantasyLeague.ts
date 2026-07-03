@@ -1,216 +1,261 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type {
+  ApiResponse,
+  FantasyPlayer,
+  FantasyPlayersResponse,
+  FantasyPlayersFilters,
+  FantasyTeam,
+  FantasyStandingsResponse,
+  FantasyGameweekResponse,
+  FantasyPrizesResponse,
+  FantasyPosition,
+} from '@/types/footy';
 
 /* ───────────────────────────────────────────────────────────────────────────
- * Fantasy League page — data contracts.
+ * Fantasy data layer — Footy Oracle wrappers over the FPL proxy edge functions.
  *
- * Every hook tries its Footy Oracle wrapper edge function, then falls back to
- * typed sample data (raced against a short timeout) so the page always renders
- * with real HTML/React — never a baked image. Player data, standings, prices,
- * prizes and rules are all live-driven by these shapes.
+ * Every hook calls `supabase.functions.invoke(name, { body })`, unwraps the
+ * ApiResponse envelope, and falls back to typed sample data that matches the
+ * LOCKED contracts in src/types/footy.ts exactly (so the UI works before the
+ * edge functions are synced live). Nothing here redefines a payload interface —
+ * shapes are imported from @/types/footy only.
  * ─────────────────────────────────────────────────────────────────────────── */
 
-export type FantasyPosition = 'GK' | 'DEF' | 'MID' | 'FWD';
+/** Locked squad rules (constants — not a payload interface). */
+export const FANTASY_RULES = {
+  budget: 100,
+  squadSize: 15,
+  starters: 11,
+  bench: 4,
+  perPosition: { GK: 2, DEF: 5, MID: 5, FWD: 3 } as Record<FantasyPosition, number>,
+  maxPerClub: 3,
+  formations: ['4-4-2', '4-3-3', '3-5-2', '3-4-3', '4-5-1', '5-3-2', '5-4-1'],
+  defaultFormation: '4-4-2',
+  registrationOpen: true,
+  seasonStart: '2026-08-01T00:00:00Z',
+} as const;
 
-export type FantasyPlayer = {
-  id: string;
-  name: string;
-  team: string;
-  teamShort: string;
-  position: FantasyPosition;
-  price: number; // £m
-  rating: number; // FUT-style overall
-  points: number; // season fantasy points
-  form: number; // last-5 avg
-};
-
-export type FantasyRules = {
-  budget: number; // £m
-  squadSize: number; // starting XI
-  benchSize: number;
-  formations: string[];
-  defaultFormation: string;
-  maxPerClub: number;
-};
-
-export type FantasyStandingRow = {
-  rank: number;
-  team: string;
-  manager: string;
-  gwPoints: number;
-  total: number;
-  movement: 'up' | 'down' | 'same';
-  isYou?: boolean;
-  isGaffer?: boolean;
-};
-
-export type FantasyPrizeTier = { rank: number; label: string; value: string };
-
-export type FantasyPrize = {
-  id: string;
-  kind: 'grand' | 'standard' | 'fun';
-  title: string;
-  subtitle: string;
-  image: string;
-  tag: string;
-};
-
-export type FantasyLeagueMeta = {
-  season: { name: string; status: string; registrationOpen: boolean; joinUrl: string; deadline: string | null };
-  gameweek: { number: number; label: string; deadline: string | null };
-  entries: number;
-};
-
-/* ── timeout race so a missing/slow edge function never hangs the UI ── */
-async function withFallback<T>(fn: string, fallback: T, valid: (d: unknown) => boolean): Promise<T> {
+/** Race the edge function against a short timeout, unwrap the envelope, else fall back. */
+async function invokeFantasy<T>(name: string, body: unknown, fallback: T, valid: (d: unknown) => boolean): Promise<T> {
   try {
     const timeout = new Promise<null>((r) => setTimeout(() => r(null), 3500));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const invoke = (supabase as any).functions.invoke(fn);
-    const res = await Promise.race([invoke, timeout]);
-    if (!res || res.error || !res.data || !valid(res.data)) return fallback;
-    return res.data as T;
+    const call = supabase.functions.invoke(name, { body: body as Record<string, unknown> });
+    const res = (await Promise.race([call, timeout])) as { data?: ApiResponse<T>; error?: unknown } | null;
+    if (!res || res.error) return fallback;
+    const env = res.data;
+    if (!env || env.ok !== true || !valid(env.data)) return fallback;
+    return env.data;
   } catch {
     return fallback;
   }
 }
 
-/* ───────────────────────────── fallbacks ───────────────────────────── */
+/* ════════════════════════════ fallback data ════════════════════════════ */
 
-export const FANTASY_RULES: FantasyRules = {
-  budget: 95,
-  squadSize: 11,
-  benchSize: 4,
-  formations: ['4-3-3', '4-4-2', '3-5-2', '3-4-3', '5-3-2', '4-2-3-1'],
-  defaultFormation: '4-3-3',
-  maxPerClub: 3,
-};
+const club = (id: string, name: string, short: string) => ({ id, name, short_name: short });
 
-// A believable Premier League–flavoured player pool. Prices/ratings are sample
-// data; the live wrapper replaces these wholesale.
+const P = (
+  id: string, name: string, position: FantasyPosition, c: ReturnType<typeof club>,
+  price: number, total_points: number, form: number, selected_by_percent: number,
+  status: FantasyPlayer['status'] = 'available', next_fixture?: string, news?: string,
+): FantasyPlayer => ({ id, external_id: `fpl_${id}`, name, position, club: c, price, status, selected_by_percent, total_points, gameweek_points: 0, form, next_fixture, news });
+
+const LIV = club('liverpool', 'Liverpool', 'LIV');
+const MCI = club('manchester-city', 'Manchester City', 'MCI');
+const ARS = club('arsenal', 'Arsenal', 'ARS');
+const MUN = club('manchester-united', 'Manchester United', 'MUN');
+const CHE = club('chelsea', 'Chelsea', 'CHE');
+const NEW = club('newcastle-united', 'Newcastle United', 'NEW');
+const AVL = club('aston-villa', 'Aston Villa', 'AVL');
+const TOT = club('tottenham-hotspur', 'Tottenham Hotspur', 'TOT');
+const EVE = club('everton', 'Everton', 'EVE');
+const BHA = club('brighton', 'Brighton', 'BHA');
+
+/** A pool deep enough to build a legal 15-man squad (2·5·5·3) under the club cap. */
 export const FANTASY_PLAYERS: FantasyPlayer[] = [
   // GK
-  { id: 'gk1', name: 'Alisson', team: 'Liverpool', teamShort: 'LIV', position: 'GK', price: 6.0, rating: 90, points: 138, form: 5.2 },
-  { id: 'gk2', name: 'Ederson', team: 'Man City', teamShort: 'MCI', position: 'GK', price: 5.8, rating: 89, points: 132, form: 4.8 },
-  { id: 'gk3', name: 'Raya', team: 'Arsenal', teamShort: 'ARS', position: 'GK', price: 5.6, rating: 87, points: 141, form: 5.5 },
-  { id: 'gk4', name: 'Pickford', team: 'Everton', teamShort: 'EVE', position: 'GK', price: 5.0, rating: 85, points: 119, form: 4.3 },
+  P('gk_alisson', 'Alisson Becker', 'GK', LIV, 6.0, 138, 5.2, 22.1, 'available', 'Wolves (A)'),
+  P('gk_raya', 'David Raya', 'GK', ARS, 5.6, 141, 5.5, 18.4, 'available', 'Spurs (H)'),
+  P('gk_ederson', 'Ederson', 'GK', MCI, 5.5, 132, 4.8, 14.0),
+  P('gk_pickford', 'Jordan Pickford', 'GK', EVE, 5.0, 119, 4.3, 9.2),
+  P('gk_sanchez', 'Robert Sánchez', 'GK', CHE, 4.6, 104, 3.9, 6.1, 'doubtful', 'Villa (A)', 'Knock — assessed'),
   // DEF
-  { id: 'df1', name: 'Van Dijk', team: 'Liverpool', teamShort: 'LIV', position: 'DEF', price: 6.4, rating: 92, points: 152, form: 5.9 },
-  { id: 'df2', name: 'Alexander-Arnold', team: 'Liverpool', teamShort: 'LIV', position: 'DEF', price: 7.2, rating: 90, points: 168, form: 6.4 },
-  { id: 'df3', name: 'Rúben Dias', team: 'Man City', teamShort: 'MCI', position: 'DEF', price: 6.0, rating: 92, points: 144, form: 5.6 },
-  { id: 'df4', name: 'Robertson', team: 'Liverpool', teamShort: 'LIV', position: 'DEF', price: 6.0, rating: 88, points: 149, form: 5.7 },
-  { id: 'df5', name: 'Saliba', team: 'Arsenal', teamShort: 'ARS', position: 'DEF', price: 6.2, rating: 89, points: 156, form: 6.0 },
-  { id: 'df6', name: 'Gvardiol', team: 'Man City', teamShort: 'MCI', position: 'DEF', price: 6.0, rating: 87, points: 147, form: 6.1 },
-  { id: 'df7', name: 'Trippier', team: 'Newcastle', teamShort: 'NEW', position: 'DEF', price: 6.2, rating: 86, points: 151, form: 5.4 },
-  { id: 'df8', name: 'Gabriel', team: 'Arsenal', teamShort: 'ARS', position: 'DEF', price: 6.0, rating: 87, points: 158, form: 6.2 },
+  P('df_vvd', 'Virgil van Dijk', 'DEF', LIV, 6.4, 152, 5.9, 28.3, 'available', 'Wolves (A)'),
+  P('df_saliba', 'William Saliba', 'DEF', ARS, 6.2, 156, 6.0, 24.7),
+  P('df_gabriel', 'Gabriel Magalhães', 'DEF', ARS, 6.0, 158, 6.2, 26.1),
+  P('df_gvardiol', 'Joško Gvardiol', 'DEF', MCI, 6.0, 147, 6.1, 19.8),
+  P('df_trippier', 'Kieran Trippier', 'DEF', NEW, 6.2, 151, 5.4, 12.5),
+  P('df_robertson', 'Andrew Robertson', 'DEF', LIV, 6.0, 149, 5.7, 15.2),
+  P('df_dias', 'Rúben Dias', 'DEF', MCI, 5.6, 144, 5.6, 11.1),
+  P('df_cucurella', 'Marc Cucurella', 'DEF', CHE, 5.2, 133, 5.1, 9.8),
+  P('df_konsa', 'Ezri Konsa', 'DEF', AVL, 4.6, 121, 4.7, 6.3),
+  P('df_burn', 'Dan Burn', 'DEF', NEW, 4.5, 118, 4.5, 5.2),
+  P('df_vanhecke', 'Lewis Dunk', 'DEF', BHA, 4.6, 116, 4.4, 4.9),
   // MID
-  { id: 'md1', name: 'De Bruyne', team: 'Man City', teamShort: 'MCI', position: 'MID', price: 9.6, rating: 96, points: 189, form: 7.1 },
-  { id: 'md2', name: 'Bellingham', team: 'Real Madrid', teamShort: 'RMA', position: 'MID', price: 9.3, rating: 93, points: 184, form: 6.9 },
-  { id: 'md3', name: 'Ødegaard', team: 'Arsenal', teamShort: 'ARS', position: 'MID', price: 8.4, rating: 90, points: 171, form: 6.5 },
-  { id: 'md4', name: 'B. Fernandes', team: 'Man United', teamShort: 'MUN', position: 'MID', price: 8.5, rating: 92, points: 178, form: 6.6 },
-  { id: 'md5', name: 'Saka', team: 'Arsenal', teamShort: 'ARS', position: 'MID', price: 9.8, rating: 90, points: 192, form: 7.0 },
-  { id: 'md6', name: 'Foden', team: 'Man City', teamShort: 'MCI', position: 'MID', price: 8.9, rating: 89, points: 181, form: 6.8 },
-  { id: 'md7', name: 'Palmer', team: 'Chelsea', teamShort: 'CHE', position: 'MID', price: 10.5, rating: 89, points: 204, form: 7.4 },
-  { id: 'md8', name: 'Rice', team: 'Arsenal', teamShort: 'ARS', position: 'MID', price: 6.4, rating: 88, points: 146, form: 5.8 },
+  P('md_saka', 'Bukayo Saka', 'MID', ARS, 10.0, 192, 7.0, 41.2, 'available', 'Spurs (H)'),
+  P('md_palmer', 'Cole Palmer', 'MID', CHE, 10.6, 204, 7.4, 46.8),
+  P('md_foden', 'Phil Foden', 'MID', MCI, 9.0, 181, 6.8, 22.4),
+  P('md_odegaard', 'Martin Ødegaard', 'MID', ARS, 8.4, 171, 6.5, 19.9),
+  P('md_bruno', 'Bruno Fernandes', 'MID', MUN, 8.5, 178, 6.6, 24.1),
+  P('md_son', 'Son Heung-min', 'MID', TOT, 9.8, 186, 6.9, 27.7),
+  P('md_rice', 'Declan Rice', 'MID', ARS, 6.4, 146, 5.8, 12.0),
+  P('md_gordon', 'Anthony Gordon', 'MID', NEW, 7.4, 162, 6.1, 14.3),
+  P('md_mbeumo', 'Bryan Mbeumo', 'MID', MUN, 7.6, 168, 6.4, 17.8),
+  P('md_rogers', 'Morgan Rogers', 'MID', AVL, 5.4, 138, 5.5, 8.1),
+  // MID — budget enablers
+  P('md_mcneil', 'Dwight McNeil', 'MID', EVE, 5.2, 128, 4.8, 4.2),
+  P('md_murphy', 'Jacob Murphy', 'MID', NEW, 5.0, 120, 4.5, 5.0),
+  P('md_sarr', 'Pape Matar Sarr', 'MID', TOT, 5.0, 115, 4.4, 3.5),
+  P('md_baleba', 'Carlos Baleba', 'MID', BHA, 4.8, 108, 4.1, 2.9),
   // FWD
-  { id: 'fw1', name: 'Haaland', team: 'Man City', teamShort: 'MCI', position: 'FWD', price: 14.2, rating: 97, points: 232, form: 8.2 },
-  { id: 'fw2', name: 'Kane', team: 'Bayern', teamShort: 'BAY', position: 'FWD', price: 12.8, rating: 96, points: 221, form: 7.9 },
-  { id: 'fw3', name: 'Salah', team: 'Liverpool', teamShort: 'LIV', position: 'FWD', price: 12.9, rating: 94, points: 226, form: 8.0 },
-  { id: 'fw4', name: 'Watkins', team: 'Aston Villa', teamShort: 'AVL', position: 'FWD', price: 9.0, rating: 86, points: 187, form: 6.9 },
-  { id: 'fw5', name: 'Isak', team: 'Newcastle', teamShort: 'NEW', position: 'FWD', price: 8.7, rating: 87, points: 179, form: 6.7 },
-  { id: 'fw6', name: 'Solanke', team: 'Tottenham', teamShort: 'TOT', position: 'FWD', price: 7.5, rating: 84, points: 162, form: 6.1 },
+  P('fw_haaland', 'Erling Haaland', 'FWD', MCI, 14.2, 232, 8.2, 62.4, 'available', 'Wolves (A)'),
+  P('fw_isak', 'Alexander Isak', 'FWD', NEW, 8.7, 179, 6.7, 21.0),
+  P('fw_watkins', 'Ollie Watkins', 'FWD', AVL, 9.0, 187, 6.9, 23.6),
+  P('fw_jackson', 'Nicolas Jackson', 'FWD', CHE, 7.5, 162, 6.1, 13.4),
+  P('fw_solanke', 'Dominic Solanke', 'FWD', TOT, 7.5, 158, 6.0, 11.2, 'doubtful', 'Arsenal (A)', 'Late fitness test'),
+  P('fw_wood', 'Chris Wood', 'FWD', NEW, 6.6, 151, 5.7, 9.9),
+  P('fw_beto', 'Beto', 'FWD', EVE, 5.4, 118, 4.6, 4.0),
+  P('fw_welbeck', 'Danny Welbeck', 'FWD', BHA, 5.6, 132, 5.0, 5.5),
+  // DEF — budget enablers
+  P('df_mykolenko', 'Vitalii Mykolenko', 'DEF', EVE, 4.4, 98, 3.8, 3.1),
+  P('df_estupinan', 'Pervis Estupiñán', 'DEF', BHA, 4.7, 110, 4.2, 4.0),
 ];
 
-export const FANTASY_STANDINGS: { gameweek: string; rows: FantasyStandingRow[]; champion: string; tiers: FantasyPrizeTier[] } = {
-  gameweek: 'Gameweek 24',
-  champion: '£10,000 Cash',
-  tiers: [
-    { rank: 1, label: '1st', value: '£10,000' },
-    { rank: 2, label: '2nd', value: '£3,000' },
-    { rank: 3, label: '3rd', value: '£1,000' },
+const slot = (id: string, is_starter: boolean, opts: { c?: boolean; v?: boolean; bench?: number } = {}) => {
+  const player = FANTASY_PLAYERS.find((p) => p.id === id)!;
+  return { player: { ...player, gameweek_points: is_starter ? Math.round(player.form * (opts.c ? 2 : 1)) : 0 }, is_starter, is_captain: !!opts.c, is_vice_captain: !!opts.v, bench_order: opts.bench };
+};
+
+/** A full legal fallback squad: 2·5·5·3, XI in a 4-4-2, captain + vice + bench order. */
+export const FANTASY_TEAM: FantasyTeam = {
+  id: 'team_demo', member_id: 'member_demo', league_id: 'main-2025-26', name: 'No Kane No Gain',
+  budget_total: 100, budget_remaining: 1.5, squad_value: 98.5, free_transfers: 1, transfer_hits: 0,
+  updated_at: new Date().toISOString(),
+  slots: [
+    slot('gk_alisson', true),
+    slot('df_vvd', true), slot('df_saliba', true), slot('df_gvardiol', true), slot('df_trippier', true),
+    slot('md_saka', true), slot('md_palmer', true, { v: true }), slot('md_bruno', true), slot('md_gordon', true),
+    slot('fw_haaland', true, { c: true }), slot('fw_isak', true),
+    slot('gk_raya', false, { bench: 1 }), slot('df_robertson', false, { bench: 2 }),
+    slot('md_rice', false, { bench: 3 }), slot('fw_watkins', false, { bench: 4 }),
   ],
+};
+
+const daysAdd = (d: number) => new Date(Date.now() + d * 86400000).toISOString();
+
+export const FANTASY_GAMEWEEK: FantasyGameweekResponse = {
+  season: '2025/26', gameweek: 24, status: 'open', deadline_at: daysAdd(2.35),
+  bonus_rules: [{ key: 'manual_bonus', label: 'Gaffer Bonus', description: 'Optional 0–3 bonus points, awarded by The Gaffer for standout performances.' }],
+  fixtures: [
+    { id: 'fx_1', kickoff_time: daysAdd(2.4), home_team: LIV, away_team: NEW, status: 'scheduled' },
+    { id: 'fx_2', kickoff_time: daysAdd(2.5), home_team: ARS, away_team: TOT, status: 'scheduled' },
+    { id: 'fx_3', kickoff_time: daysAdd(2.6), home_team: MCI, away_team: CHE, status: 'scheduled' },
+    { id: 'fx_4', kickoff_time: daysAdd(3.0), home_team: AVL, away_team: MUN, status: 'scheduled' },
+  ],
+  updated_at: new Date().toISOString(),
+};
+
+export const FANTASY_STANDINGS: FantasyStandingsResponse = {
+  league_id: 'main-2025-26', season: '2025/26', gameweek: 24, status: 'open', updated_at: new Date().toISOString(),
   rows: [
-    { rank: 1, team: 'Net Busters', manager: 'J. Okafor', gwPoints: 78, total: 2685, movement: 'up' },
-    { rank: 2, team: 'Pitch Predators', manager: 'S. Ahmed', gwPoints: 71, total: 2514, movement: 'up' },
-    { rank: 3, team: 'Golden Boot Gang', manager: 'L. Rossi', gwPoints: 69, total: 2431, movement: 'down' },
-    { rank: 4, team: 'Beat the Gaffer', manager: 'The Gaffer', gwPoints: 64, total: 2315, movement: 'same', isGaffer: true },
-    { rank: 5, team: 'Tiki Taka Titans', manager: 'M. Nowak', gwPoints: 62, total: 2198, movement: 'up' },
-    { rank: 6, team: 'Expected Goals', manager: 'D. Byrne', gwPoints: 58, total: 2074, movement: 'down' },
-    { rank: 7, team: 'Grass Cutters FC', manager: 'A. Silva', gwPoints: 55, total: 1958, movement: 'same' },
-    { rank: 8, team: 'Last Min Winners', manager: 'K. Walsh', gwPoints: 51, total: 1842, movement: 'up' },
-    { rank: 9, team: 'Offside Masters', manager: 'P. Novak', gwPoints: 47, total: 1698, movement: 'down' },
-    { rank: 10, team: 'Transfer Twisters', manager: 'R. Hughes', gwPoints: 43, total: 1542, movement: 'down' },
+    { rank: 1, previous_rank: 4, movement: 3, team_id: 'team_001', team_name: 'Net Busters', manager_name: 'J. Okafor', gameweek_points: 78, total_points: 2685, transfers_made: 1, transfer_hits: 0, awards_count: 2 },
+    { rank: 2, previous_rank: 1, movement: -1, team_id: 'team_002', team_name: 'Pitch Predators', manager_name: 'S. Ahmed', gameweek_points: 71, total_points: 2514, transfers_made: 1, transfer_hits: 0 },
+    { rank: 3, previous_rank: 3, movement: 0, team_id: 'team_003', team_name: 'Golden Boot Gang', manager_name: 'L. Rossi', gameweek_points: 69, total_points: 2431, transfers_made: 2, transfer_hits: 4 },
+    { rank: 4, previous_rank: 4, movement: 0, team_id: 'team_gaffer', team_name: 'The Gaffer’s XI', manager_name: 'The Gaffer', gameweek_points: 64, total_points: 2315, transfers_made: 0, transfer_hits: 0 },
+    { rank: 5, previous_rank: 7, movement: 2, team_id: 'team_005', team_name: 'Tiki Taka Titans', manager_name: 'M. Nowak', gameweek_points: 62, total_points: 2198, transfers_made: 1, transfer_hits: 0 },
+    { rank: 6, previous_rank: 5, movement: -1, team_id: 'team_006', team_name: 'Expected Goals', manager_name: 'D. Byrne', gameweek_points: 58, total_points: 2074, transfers_made: 1, transfer_hits: 0 },
+    { rank: 7, previous_rank: 9, movement: 2, team_id: 'team_you', team_name: 'No Kane No Gain', manager_name: 'You', gameweek_points: 55, total_points: 1958, transfers_made: 1, transfer_hits: 0 },
+    { rank: 8, previous_rank: 6, movement: -2, team_id: 'team_008', team_name: 'Last Min Winners', manager_name: 'K. Walsh', gameweek_points: 51, total_points: 1842, transfers_made: 2, transfer_hits: 4 },
+    { rank: 9, previous_rank: 8, movement: -1, team_id: 'team_009', team_name: 'Offside Masters', manager_name: 'P. Novak', gameweek_points: 47, total_points: 1698, transfers_made: 1, transfer_hits: 0 },
+    { rank: 10, previous_rank: 10, movement: 0, team_id: 'team_010', team_name: 'Transfer Twisters', manager_name: 'R. Hughes', gameweek_points: 43, total_points: 1542, transfers_made: 3, transfer_hits: 8 },
   ],
 };
 
-export const FANTASY_PRIZES: { headline: string; sub: string; grand: FantasyPrize; prizes: FantasyPrize[] } = {
-  headline: 'Prizes & Glory',
-  sub: 'Win big. Laugh harder.',
-  grand: {
-    id: 'grand',
-    kind: 'grand',
-    title: 'Tropical Escape',
-    subtitle: 'The ultimate footy getaway for our season champion.',
-    image: '/images/fantasy/prizes/prize-tropical.jpg',
-    tag: 'Grand Prize',
-  },
+export const FANTASY_PRIZES: FantasyPrizesResponse = {
+  season: '2025/26', updated_at: new Date().toISOString(),
   prizes: [
-    { id: 'voucher', kind: 'standard', title: 'Premium Vouchers', subtitle: 'Spend it your way, every month.', image: '/images/fantasy/prizes/prize-voucher.jpg', tag: 'Monthly' },
-    { id: 'villa', kind: 'standard', title: 'Luxury Weekend Away', subtitle: 'Escape in style on the club.', image: '/images/fantasy/prizes/prize-villa.jpg', tag: 'Seasonal' },
-    { id: 'experiences', kind: 'standard', title: 'Football Experiences', subtitle: 'Matchday tickets & money-can’t-buy days.', image: '/images/fantasy/prizes/prize-experiences.jpg', tag: 'Live' },
-    { id: 'donkey', kind: 'fun', title: 'Donkey of the Week', subtitle: 'Finish bottom, wear the ears with pride.', image: '/images/fantasy/prizes/prize-donkey.jpg', tag: 'Wooden Spoon' },
+    { id: 'prize_tropical_holiday', season: '2025/26', title: 'Tropical Escape', description: 'The season headline — a dream holiday for the overall Fantasy League champion.', category: 'seasonal', image_url: '/images/fantasy/prizes/prize-tropical.jpg', enabled: true },
+    { id: 'prize_weekly_cash', season: '2025/26', title: 'Weekly Cash Prize', description: 'Top the gameweek and take home cold, hard cash. Every single week.', category: 'weekly', image_url: '/images/fantasy/prizes/prize-voucher.jpg', enabled: true },
+    { id: 'prize_luxury_weekend', season: '2025/26', title: 'Luxury Weekend Away', description: 'A monthly escape in style, on the club.', category: 'themed', image_url: '/images/fantasy/prizes/prize-villa.jpg', enabled: true },
+    { id: 'prize_football_experiences', season: '2025/26', title: 'Football Experiences', description: "Matchday tickets and money-can't-buy days out.", category: 'themed', image_url: '/images/fantasy/prizes/prize-experiences.jpg', enabled: true },
+    { id: 'prize_xmas_hamper', season: '2025/26', title: '£1,000 Christmas Hamper', description: 'A themed festive giveaway during the Christmas fixture rush.', category: 'themed', starts_at: '2025-11-20T00:00:00Z', ends_at: '2025-12-26T23:59:59Z', enabled: true },
+    { id: 'prize_donkey', season: '2025/26', title: 'Donkey of the Week', description: 'Finish bottom and wear the ears with pride. Fame — of a sort.', category: 'random', image_url: '/images/fantasy/prizes/prize-donkey.jpg', enabled: true },
   ],
 };
 
-const daysAdd = (days: number) => new Date(Date.now() + days * 86400000).toISOString();
+/* ════════════════════════════════ hooks ════════════════════════════════ */
 
-export const FANTASY_META: FantasyLeagueMeta = {
-  season: { name: '2025/26 Season', status: 'live', registrationOpen: true, joinUrl: '/pricing', deadline: daysAdd(30) },
-  gameweek: { number: 24, label: 'Gameweek 24', deadline: daysAdd(2.35) },
-  entries: 4821,
-};
-
-/* ───────────────────────────── hooks ───────────────────────────── */
-
-const PLAYERS_FALLBACK = { players: FANTASY_PLAYERS, rules: FANTASY_RULES };
-
-export function useFantasyPlayers() {
+export function useFantasyGameweek(gameweek?: number) {
   return useQuery({
-    queryKey: ['fantasy_players'],
+    queryKey: ['fantasy_gameweek', gameweek ?? 'current'],
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+    placeholderData: FANTASY_GAMEWEEK,
+    queryFn: () => invokeFantasy<FantasyGameweekResponse>('get-fantasy-gameweek', { gameweek }, FANTASY_GAMEWEEK, (d) => !!(d as FantasyGameweekResponse)?.deadline_at),
+  });
+}
+
+export function useFantasyPlayers(filters?: FantasyPlayersFilters) {
+  return useQuery({
+    queryKey: ['fantasy_players', filters ?? {}],
     staleTime: 1000 * 60 * 10,
     retry: false,
-    // Render fallback instantly, upgrade in-place if a real endpoint responds.
-    placeholderData: PLAYERS_FALLBACK,
-    queryFn: () => withFallback('fantasy-players', PLAYERS_FALLBACK, (d) => !!(d as { players?: unknown[] }).players?.length),
+    placeholderData: { players: FANTASY_PLAYERS, total: FANTASY_PLAYERS.length, filters: filters ?? {}, updated_at: FANTASY_GAMEWEEK.updated_at } as FantasyPlayersResponse,
+    queryFn: () => invokeFantasy<FantasyPlayersResponse>('get-fantasy-players', { filters }, { players: FANTASY_PLAYERS, total: FANTASY_PLAYERS.length, filters: filters ?? {}, updated_at: new Date().toISOString() }, (d) => Array.isArray((d as FantasyPlayersResponse)?.players)),
   });
 }
 
-export function useFantasyStandings() {
+export function useFantasyTeam(teamId?: string, gameweek?: number) {
   return useQuery({
-    queryKey: ['fantasy_standings'],
-    staleTime: 1000 * 60 * 5,
+    queryKey: ['fantasy_team', teamId ?? 'demo', gameweek ?? 'current'],
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+    placeholderData: FANTASY_TEAM,
+    queryFn: () => invokeFantasy<FantasyTeam>('get-fantasy-team', { teamId, gameweek }, FANTASY_TEAM, (d) => Array.isArray((d as FantasyTeam)?.slots)),
+  });
+}
+
+export function useFantasyStandings(leagueId = 'main-2025-26', gameweek?: number) {
+  return useQuery({
+    queryKey: ['fantasy_standings', leagueId, gameweek ?? 'current'],
+    staleTime: 1000 * 60 * 2,
     retry: false,
     placeholderData: FANTASY_STANDINGS,
-    queryFn: () => withFallback('fantasy-standings', FANTASY_STANDINGS, (d) => !!(d as { rows?: unknown[] }).rows?.length),
+    queryFn: () => invokeFantasy<FantasyStandingsResponse>('get-fantasy-standings', { leagueId, gameweek }, FANTASY_STANDINGS, (d) => Array.isArray((d as FantasyStandingsResponse)?.rows)),
   });
 }
 
-export function useFantasyPrizes() {
+export function useFantasyPrizes(season = '2025/26') {
   return useQuery({
-    queryKey: ['fantasy_prizes'],
+    queryKey: ['fantasy_prizes', season],
     staleTime: 1000 * 60 * 30,
     retry: false,
     placeholderData: FANTASY_PRIZES,
-    queryFn: () => withFallback('fantasy-prizes', FANTASY_PRIZES, (d) => !!(d as { grand?: unknown }).grand),
+    queryFn: () => invokeFantasy<FantasyPrizesResponse>('get-fantasy-prizes', { season }, FANTASY_PRIZES, (d) => Array.isArray((d as FantasyPrizesResponse)?.prizes)),
   });
 }
 
-export function useFantasyMeta() {
-  return useQuery({
-    queryKey: ['fantasy_meta'],
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-    placeholderData: FANTASY_META,
-    queryFn: () => withFallback('fantasy-meta', FANTASY_META, (d) => !!(d as { season?: unknown }).season),
-  });
+/**
+ * Derived Gameweek Results — combines the team + gameweek (and, once wired, the
+ * fantasy-scores realtime channel). Per the work order, there is NO
+ * get-fantasy-results endpoint; this is a client-side selector over existing
+ * reads. Captain ×2, bench points and Gaffer Bonus are presentation only.
+ */
+export function useFantasyGameweekResults(teamId?: string, gameweek?: number) {
+  const team = useFantasyTeam(teamId, gameweek);
+  const gw = useFantasyGameweek(gameweek);
+  const slots = team.data?.slots ?? [];
+  const starters = slots.filter((s) => s.is_starter);
+  const captainMultiplier = (s: (typeof slots)[number]) => (s.is_captain ? 2 : 1);
+  const total = starters.reduce((sum, s) => sum + (s.player.gameweek_points ?? 0) * captainMultiplier(s), 0);
+  return {
+    isLoading: team.isLoading || gw.isLoading,
+    team: team.data,
+    gameweek: gw.data,
+    starters,
+    bench: slots.filter((s) => !s.is_starter).sort((a, b) => (a.bench_order ?? 9) - (b.bench_order ?? 9)),
+    total,
+    status: gw.data?.status ?? 'open',
+  };
 }

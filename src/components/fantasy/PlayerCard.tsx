@@ -1,5 +1,5 @@
-import { Plus, X } from 'lucide-react';
-import type { FantasyPlayer, FantasyPosition } from '@/hooks/useFantasyLeague';
+import { Plus, X, AlertTriangle } from 'lucide-react';
+import type { FantasyPlayer, FantasyPosition } from '@/types/footy';
 
 const POS_TONE: Record<FantasyPosition, { ring: string; chip: string; glow: string }> = {
   GK: { ring: 'ring-emerald-400/50', chip: 'bg-emerald-400/20 text-emerald-200', glow: 'shadow-[0_0_28px_-10px_rgba(16,185,129,0.7)]' },
@@ -8,32 +8,49 @@ const POS_TONE: Record<FantasyPosition, { ring: string; chip: string; glow: stri
   FWD: { ring: 'ring-[#f5c542]/60', chip: 'bg-[#f5c542]/20 text-[#f8e7a1]', glow: 'shadow-[0_0_30px_-10px_rgba(245,197,66,0.85)]' },
 };
 
-/** Initials for the "player portrait" placeholder (no external headshots). */
+const STATUS_TONE: Record<FantasyPlayer['status'], string | null> = {
+  available: null,
+  doubtful: 'text-amber-400',
+  injured: 'text-red-400',
+  suspended: 'text-red-400',
+  unavailable: 'text-red-400',
+};
+
+/** Last name for the "portrait" placeholder (no external headshots). */
 function initials(name: string) {
   const parts = name.replace(/[^A-Za-z\s.'-]/g, '').split(/\s+/).filter(Boolean);
-  const last = parts[parts.length - 1] ?? '';
-  return last.slice(0, 2).toUpperCase();
+  return (parts[parts.length - 1] ?? '').slice(0, 2).toUpperCase();
+}
+function lastName(name: string) {
+  const parts = name.split(/\s+/).filter(Boolean);
+  return parts[parts.length - 1] ?? name;
 }
 
 type Props = {
   player: FantasyPlayer;
   size?: 'sm' | 'md' | 'lg';
+  /** What the big number shows: season total (default) or this GW's points. */
+  metric?: 'total' | 'gameweek';
   onClick?: () => void;
   onRemove?: () => void;
   selected?: boolean;
   affordable?: boolean;
+  captain?: boolean;
+  vice?: boolean;
 };
 
 /**
- * FUT-style player card — gold/purple foil, rating + position corner, name,
- * club and price. Used in the hero showcase, the pitch slots and the picker.
- * Purely presentational; all data comes from the fantasy players contract.
+ * FUT-style player card, bound to the FantasyPlayer contract. Headlines the real
+ * fantasy points (no fabricated rating), with position, club, price, an armband
+ * for (C)/(V) and an availability flag for injured/doubtful players.
  */
-export function PlayerCard({ player, size = 'md', onClick, onRemove, selected, affordable = true }: Props) {
+export function PlayerCard({ player, size = 'md', metric = 'total', onClick, onRemove, selected, affordable = true, captain, vice }: Props) {
   const tone = POS_TONE[player.position];
-  const dims =
-    size === 'lg' ? 'w-[132px] p-3' : size === 'sm' ? 'w-[92px] p-2' : 'w-[112px] p-2.5';
+  const dims = size === 'lg' ? 'w-[132px] p-3' : size === 'sm' ? 'w-[92px] p-2' : 'w-[112px] p-2.5';
   const nameSize = size === 'lg' ? 'text-[13px]' : 'text-[11px]';
+  const bigNum = metric === 'gameweek' ? (player.gameweek_points ?? 0) : player.total_points;
+  const bigLabel = metric === 'gameweek' ? 'GW' : 'PTS';
+  const statusTone = STATUS_TONE[player.status];
 
   return (
     <button
@@ -45,21 +62,18 @@ export function PlayerCard({ player, size = 'md', onClick, onRemove, selected, a
         affordable ? '' : 'opacity-45 saturate-50'
       } ${onClick ? 'hover:-translate-y-0.5 active:translate-y-0' : ''}`}
     >
-      {/* foil sheen */}
       <span aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_-10%,rgba(245,197,66,0.16),transparent_55%)]" />
 
-      {/* rating + position */}
       <div className="relative flex items-start justify-between">
         <div className="leading-none">
-          <div className="font-display text-2xl text-[#f8e7a1]">{player.rating}</div>
-          <div className={`mt-0.5 inline-block rounded px-1 py-px text-[9px] font-black tracking-wide ${tone.chip}`}>{player.position}</div>
+          <div className="font-display text-2xl text-[#f8e7a1]">{bigNum}</div>
+          <div className="mt-0.5 flex items-center gap-1">
+            <span className={`inline-block rounded px-1 py-px text-[9px] font-black tracking-wide ${tone.chip}`}>{player.position}</span>
+            <span className="text-[8px] font-black uppercase tracking-wider text-white/35">{bigLabel}</span>
+          </div>
         </div>
         {onRemove ? (
-          <span
-            onClick={(e) => { e.stopPropagation(); onRemove(); }}
-            className="grid h-5 w-5 place-items-center rounded-full bg-black/50 text-white/70 transition-colors hover:bg-red-500/80 hover:text-white"
-            aria-label={`Remove ${player.name}`}
-          >
+          <span onClick={(e) => { e.stopPropagation(); onRemove(); }} className="grid h-5 w-5 place-items-center rounded-full bg-black/50 text-white/70 transition-colors hover:bg-red-500/80 hover:text-white" aria-label={`Remove ${player.name}`}>
             <X className="h-3 w-3" />
           </span>
         ) : onClick ? (
@@ -69,18 +83,17 @@ export function PlayerCard({ player, size = 'md', onClick, onRemove, selected, a
         ) : null}
       </div>
 
-      {/* portrait medallion */}
       <div className={`relative mx-auto mt-1.5 grid ${size === 'sm' ? 'h-11 w-11' : 'h-14 w-14'} place-items-center rounded-full bg-black/40 ring-2 ${tone.ring}`}>
         <span className="font-display text-lg text-white/85">{initials(player.name)}</span>
+        {(captain || vice) && <span className={`absolute -left-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full text-[10px] font-black ring-2 ring-[#0b0518] ${captain ? 'bg-[#f5c542] text-[#16051f]' : 'bg-white/85 text-[#16051f]'}`}>{captain ? 'C' : 'V'}</span>}
+        {statusTone && <span className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full bg-[#0b0518]"><AlertTriangle className={`h-3 w-3 ${statusTone}`} /></span>}
       </div>
 
-      {/* name + club */}
       <div className="relative mt-1.5 text-center">
-        <div className={`truncate font-black uppercase tracking-wide text-white ${nameSize}`}>{player.name}</div>
-        <div className="truncate text-[9px] font-semibold uppercase tracking-wider text-white/45">{player.teamShort}</div>
+        <div className={`truncate font-black uppercase tracking-wide text-white ${nameSize}`}>{lastName(player.name)}</div>
+        <div className="truncate text-[9px] font-semibold uppercase tracking-wider text-white/45">{player.club.short_name ?? player.club.name}</div>
       </div>
 
-      {/* price */}
       <div className="relative mt-1.5 flex items-center justify-center gap-1 rounded-lg bg-black/35 py-1">
         <span className="text-[11px] font-black text-emerald-300">£{player.price.toFixed(1)}m</span>
       </div>
@@ -88,20 +101,14 @@ export function PlayerCard({ player, size = 'md', onClick, onRemove, selected, a
   );
 }
 
-/** Empty pitch slot — tap to add a player of the given position. */
+/** Empty pitch/squad slot — tap to add a player of the given position. */
 export function EmptySlot({ position, onClick, size = 'md' }: { position: FantasyPosition; onClick?: () => void; size?: 'sm' | 'md' }) {
   const tone = POS_TONE[position];
   const dims = size === 'sm' ? 'w-[92px] h-[128px]' : 'w-[112px] h-[152px]';
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group relative shrink-0 rounded-2xl border-2 border-dashed border-white/20 bg-white/[0.03] transition-all hover:-translate-y-0.5 hover:border-[#f5c542]/60 hover:bg-white/[0.06] ${dims}`}
-    >
+    <button type="button" onClick={onClick} className={`group relative shrink-0 rounded-2xl border-2 border-dashed border-white/20 bg-white/[0.03] transition-all hover:-translate-y-0.5 hover:border-[#f5c542]/60 hover:bg-white/[0.06] ${dims}`}>
       <span className="flex h-full flex-col items-center justify-center gap-2">
-        <span className={`grid h-9 w-9 place-items-center rounded-full ${tone.chip}`}>
-          <Plus className="h-4 w-4" />
-        </span>
+        <span className={`grid h-9 w-9 place-items-center rounded-full ${tone.chip}`}><Plus className="h-4 w-4" /></span>
         <span className="text-[10px] font-black uppercase tracking-widest text-white/50 group-hover:text-white/75">{position}</span>
       </span>
     </button>
