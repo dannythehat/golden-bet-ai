@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, LineChart, MessagesSquare, Trophy } from 'lucide-react';
+import { ChevronRight, Clock3, Gift, LineChart, MessagesSquare, ShieldCheck, Trophy } from 'lucide-react';
 
 /** The three pillars — what The Footy Oracle is about, said in one glance. */
 const PILLARS: { icon: typeof Trophy; title: string; body: string }[] = [
@@ -20,6 +21,12 @@ const FEATURES: { img: string; title: string; to: string }[] = [
   { img: '/images/hero-features/community.jpg', title: 'Community & More', to: '/community' },
 ];
 
+const FANTASY_TABS: { icon: typeof Trophy; label: string; value: string; detail: string }[] = [
+  { icon: Trophy, label: 'League', value: 'Private mini-league', detail: 'A Footy Oracle table with bragging rights every gameweek.' },
+  { icon: Gift, label: 'Prizes', value: 'Weekly rewards', detail: 'Winners, streaks and cheeky side-quests all get a look-in.' },
+  { icon: ShieldCheck, label: 'Gaffer', value: 'Live picks', detail: 'The Gaffer will call the swings, form men and danger fixtures.' },
+];
+
 /**
  * Hero — the club's front door. A real, interactive section (not a screenshot):
  * the cinematic Gaffer scene is the artwork, and the badge, headline, copy,
@@ -30,6 +37,8 @@ const FEATURES: { img: string; title: string; to: string }[] = [
  * Gaffer is always the hero and never a dark, cropped strip behind the text.
  */
 export function HeroBanner() {
+  const [activeFantasyTab, setActiveFantasyTab] = useState(FANTASY_TABS[0]);
+
   return (
     <section id="top" className="relative mx-auto w-full max-w-[1536px] scroll-mt-28">
       <div className="relative overflow-hidden rounded-2xl border border-violet-400/20 shadow-[0_0_60px_-26px_rgba(139,92,246,0.85)]">
@@ -86,6 +95,50 @@ export function HeroBanner() {
                 Football.
               </span>
             </h1>
+
+            <div className="frost-panel frost-sheen mt-5 overflow-hidden rounded-2xl border-[#f5c542]/35 bg-[#f5c542]/10 p-3 shadow-[0_22px_70px_-34px_rgba(245,197,66,0.95)] sm:p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
+                    <Clock3 className="h-3.5 w-3.5" /> Coming Soon
+                  </div>
+                  <h2 className="mt-2 font-display text-[1.72rem] uppercase italic leading-[0.9] tracking-tight text-white sm:text-4xl">
+                    The Footy Oracle
+                    <span className="block text-[#f8e7a1]">Football Fantasy</span>
+                    <span className="block bg-gradient-to-r from-violet-300 via-fuchsia-300 to-[#f8e7a1] bg-clip-text text-transparent">
+                      Coming Soon
+                    </span>
+                  </h2>
+                </div>
+                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-[#f5c542]/40 bg-[#f5c542]/15 text-[#f8e7a1] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
+                  <Trophy className="h-7 w-7" />
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-1.5">
+                {FANTASY_TABS.map((tab) => (
+                  <button
+                    key={tab.label}
+                    type="button"
+                    onClick={() => setActiveFantasyTab(tab)}
+                    className={`min-h-[64px] rounded-xl border px-2 py-2 text-left transition-all ${
+                      activeFantasyTab.label === tab.label
+                        ? 'border-[#f5c542]/70 bg-[#f5c542]/18 text-white shadow-[0_12px_35px_-24px_rgba(245,197,66,1)]'
+                        : 'border-white/10 bg-white/[0.04] text-white/70 hover:border-[#f5c542]/35 hover:bg-white/[0.07]'
+                    }`}
+                    aria-pressed={activeFantasyTab.label === tab.label}
+                  >
+                    <tab.icon className="mb-1 h-4 w-4 text-[#f8e7a1]" />
+                    <span className="block text-[10px] font-black uppercase tracking-[0.12em]">{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-2 rounded-xl border border-white/10 bg-[#05020b]/35 p-3">
+                <div className="text-xs font-black uppercase tracking-[0.13em] text-[#f8e7a1]">{activeFantasyTab.value}</div>
+                <p className="mt-1 text-[12px] leading-snug text-white/75">{activeFantasyTab.detail}</p>
+              </div>
+            </div>
 
             <p className="mt-5 text-base font-bold text-white/90 sm:text-lg">
               Daily articles. Sharp picks. Fantasy league. Weekly prizes.
