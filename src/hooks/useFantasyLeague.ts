@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type {
   ApiResponse,
@@ -10,6 +11,17 @@ import type {
   FantasyGameweekResponse,
   FantasyPrizesResponse,
   FantasyPosition,
+  SaveSquadRequest,
+  SaveSquadResponse,
+  SubmitTransfersRequest,
+  SubmitTransfersResponse,
+  SetCaptainRequest,
+  SetViceRequest,
+  CaptainMutationResponse,
+  PlayChipRequest,
+  PlayChipResponse,
+  FantasyScoreRealtimePayload,
+  FantasyStandingsRealtimePayload,
 } from '@/types/footy';
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -258,4 +270,105 @@ export function useFantasyGameweekResults(teamId?: string, gameweek?: number) {
     total,
     status: gw.data?.status ?? 'open',
   };
+}
+
+/* ════════════════════════════════ mutations ════════════════════════════════ */
+
+/** Invoke a mutation wrapper, unwrap the envelope, throw the typed error on failure. */
+async function mutateFantasy<T>(name: string, body: unknown): Promise<T> {
+  const { data, error } = await supabase.functions.invoke(name, { body: body as Record<string, unknown> });
+  if (error) throw new Error(error.message ?? 'Request failed');
+  const env = data as ApiResponse<T>;
+  if (!env || env.ok !== true) throw new Error(env?.error?.message ?? 'Something went wrong. Give it another go.');
+  return env.data;
+}
+
+/** Invalidate the team + standings queries after a squad-changing mutation. */
+function useFantasyInvalidate() {
+  const qc = useQueryClient();
+  return () => {
+    qc.invalidateQueries({ queryKey: ['fantasy_team'] });
+    qc.invalidateQueries({ queryKey: ['fantasy_standings'] });
+  };
+}
+
+export function useSaveSquad() {
+  const invalidate = useFantasyInvalidate();
+  return useMutation({
+    mutationFn: (req: SaveSquadRequest) => mutateFantasy<SaveSquadResponse>('save-squad', req),
+    onSuccess: invalidate,
+  });
+}
+
+export function useSubmitTransfers() {
+  const invalidate = useFantasyInvalidate();
+  return useMutation({
+    mutationFn: (req: SubmitTransfersRequest) => mutateFantasy<SubmitTransfersResponse>('submit-transfers', req),
+    onSuccess: invalidate,
+  });
+}
+
+export function useSetCaptain() {
+  const invalidate = useFantasyInvalidate();
+  return useMutation({
+    mutationFn: (req: SetCaptainRequest) => mutateFantasy<CaptainMutationResponse>('set-captain', req),
+    onSuccess: invalidate,
+  });
+}
+
+export function useSetVice() {
+  const invalidate = useFantasyInvalidate();
+  return useMutation({
+    mutationFn: (req: SetViceRequest) => mutateFantasy<CaptainMutationResponse>('set-vice', req),
+    onSuccess: invalidate,
+  });
+}
+
+export function usePlayChip() {
+  const invalidate = useFantasyInvalidate();
+  return useMutation({
+    mutationFn: (req: PlayChipRequest) => mutateFantasy<PlayChipResponse>('play-chip', req),
+    onSuccess: invalidate,
+  });
+}
+
+/* ════════════════════════════════ realtime ════════════════════════════════ */
+
+/**
+ * Subscribe to the `fantasy-scores` channel. Fires `onScore` with each typed
+ * payload and refreshes the team query so live points flow into the UI. No-op
+ * until the channel is broadcasting.
+ */
+export function useFantasyRealtimeScores(onScore?: (p: FantasyScoreRealtimePayload) => void) {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const channel = supabase
+      .channel('fantasy-scores')
+      .on('broadcast', { event: 'fantasy-score-updated' }, ({ payload }) => {
+        onScore?.(payload as FantasyScoreRealtimePayload);
+        qc.invalidateQueries({ queryKey: ['fantasy_team'] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+}
+
+/**
+ * Subscribe to the `standings` channel. Fires `onStanding` with each typed
+ * payload and refreshes the standings query so the leaderboard re-ranks live.
+ */
+export function useFantasyRealtimeStandings(onStanding?: (p: FantasyStandingsRealtimePayload) => void) {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const channel = supabase
+      .channel('standings')
+      .on('broadcast', { event: 'standings-updated' }, ({ payload }) => {
+        onStanding?.(payload as FantasyStandingsRealtimePayload);
+        qc.invalidateQueries({ queryKey: ['fantasy_standings'] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }
