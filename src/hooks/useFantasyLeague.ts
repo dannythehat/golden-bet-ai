@@ -184,15 +184,23 @@ export const FANTASY_STANDINGS: FantasyStandingsResponse = {
   ],
 };
 
+// Prizes are admin-driven and NON-CASH only. This is illustrative fallback
+// config (matches the contract) until the fantasy_prizes table is populated —
+// never hard-code cash or fixed reward logic in the UI.
 export const FANTASY_PRIZES: FantasyPrizesResponse = {
   season: '2025/26', updated_at: new Date().toISOString(),
   prizes: [
-    { id: 'prize_tropical_holiday', season: '2025/26', title: 'Tropical Escape', description: 'The season headline — a dream holiday for the overall Fantasy League champion.', category: 'seasonal', image_url: '/images/fantasy/prizes/prize-tropical.jpg', enabled: true },
-    { id: 'prize_weekly_cash', season: '2025/26', title: 'Weekly Cash Prize', description: 'Top the gameweek and take home cold, hard cash. Every single week.', category: 'weekly', image_url: '/images/fantasy/prizes/prize-voucher.jpg', enabled: true },
-    { id: 'prize_luxury_weekend', season: '2025/26', title: 'Luxury Weekend Away', description: 'A monthly escape in style, on the club.', category: 'themed', image_url: '/images/fantasy/prizes/prize-villa.jpg', enabled: true },
-    { id: 'prize_football_experiences', season: '2025/26', title: 'Football Experiences', description: "Matchday tickets and money-can't-buy days out.", category: 'themed', image_url: '/images/fantasy/prizes/prize-experiences.jpg', enabled: true },
-    { id: 'prize_xmas_hamper', season: '2025/26', title: '£1,000 Christmas Hamper', description: 'A themed festive giveaway during the Christmas fixture rush.', category: 'themed', starts_at: '2025-11-20T00:00:00Z', ends_at: '2025-12-26T23:59:59Z', enabled: true },
-    { id: 'prize_donkey', season: '2025/26', title: 'Donkey of the Week', description: 'Finish bottom and wear the ears with pride. Fame — of a sort.', category: 'random', image_url: '/images/fantasy/prizes/prize-donkey.jpg', enabled: true },
+    // serious leaderboard rewards
+    { id: 'prize_season_trip', season: '2025/26', title: 'Tropical Escape', description: "The season champion's grand reward — a dream footy getaway.", category: 'seasonal', trigger: 'season_top', tone: 'serious', reward_type: 'trip', image_url: '/images/fantasy/prizes/prize-tropical.jpg', enabled: true },
+    { id: 'prize_monthly_trip', season: '2025/26', title: 'Luxury Weekend Away', description: 'Top the monthly standings for an escape in style.', category: 'monthly', trigger: 'monthly_top', tone: 'serious', reward_type: 'trip', image_url: '/images/fantasy/prizes/prize-villa.jpg', enabled: true },
+    { id: 'prize_gw_experience', season: '2025/26', title: 'Matchday Experience', description: "Highest scorer of the gameweek bags an exclusive day out.", category: 'weekly', trigger: 'gameweek_top', tone: 'serious', reward_type: 'experience', image_url: '/images/fantasy/prizes/prize-experiences.jpg', enabled: true },
+    { id: 'prize_climber_voucher', season: '2025/26', title: "Climber's Reward", description: 'The biggest rank climber of the week earns a Footy Oracle voucher.', category: 'weekly', trigger: 'rank_climber', tone: 'serious', reward_type: 'voucher', image_url: '/images/fantasy/prizes/prize-voucher.jpg', enabled: true },
+    { id: 'prize_best_bench', season: '2025/26', title: 'Super Sub Special', description: 'Best bench points of the week — reward for the ones you left out.', category: 'weekly', trigger: 'best_bench', tone: 'serious', reward_type: 'merch', enabled: true },
+    // funny engagement rewards (for managers having a nightmare)
+    { id: 'prize_worst_captain', season: '2025/26', title: 'Captain Calamity', description: "Pick the week's worst captain and claim a consolation special. Ouch.", category: 'random', trigger: 'worst_captain', tone: 'fun', reward_type: 'special', enabled: true },
+    { id: 'prize_donkey', season: '2025/26', title: 'Donkey of the Week', description: 'Finish bottom and claim the ears — a badge of dishonour and a little something.', category: 'random', trigger: 'wooden_spoon', tone: 'fun', reward_type: 'merch', image_url: '/images/fantasy/prizes/prize-donkey.jpg', enabled: true },
+    // themed calendar special
+    { id: 'prize_festive_hamper', season: '2025/26', title: 'Festive Hamper Special', description: 'A themed hamper giveaway during the Christmas fixture rush.', category: 'themed', trigger: 'themed', tone: 'serious', reward_type: 'special', starts_at: '2025-11-20T00:00:00Z', ends_at: '2025-12-26T23:59:59Z', enabled: true },
   ],
 };
 

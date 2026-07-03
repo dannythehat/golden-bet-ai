@@ -53,7 +53,7 @@ export function FantasyPageHero() {
 
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/70 md:text-base">
             Build your dream squad on a <span className="font-bold text-[#f8e7a1]">£{FANTASY_RULES.budget}m</span> budget —
-            {' '}<span className="font-bold text-white">{FANTASY_RULES.squadSize} players</span>, climb the leaderboard and chase real cash. Outscore The Gaffer and the bragging rights are yours.
+            {' '}<span className="font-bold text-white">{FANTASY_RULES.squadSize} players</span>, climb the leaderboard and chase real rewards. Outscore The Gaffer and the bragging rights are yours.
           </p>
 
           <div className="mt-6 inline-flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0b0518]/70 p-4 backdrop-blur sm:flex-row sm:items-center sm:gap-5">

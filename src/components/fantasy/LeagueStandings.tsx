@@ -1,17 +1,24 @@
 import { Link } from 'react-router-dom';
-import { Crown, TrendingUp, TrendingDown, Minus, Trophy, ChevronRight, Award } from 'lucide-react';
-import { useFantasyStandings, useFantasyRealtimeStandings } from '@/hooks/useFantasyLeague';
-import type { FantasyStandingRow } from '@/types/footy';
+import { Crown, TrendingUp, TrendingDown, Minus, Trophy, ChevronRight, Award, Gift, Plane, Ticket, Sparkles } from 'lucide-react';
+import { useFantasyStandings, useFantasyRealtimeStandings, useFantasyPrizes } from '@/hooks/useFantasyLeague';
+import type { FantasyStandingRow, FantasyPrize, FantasyPrizeTrigger, FantasyRewardType } from '@/types/footy';
 
 const GAFFER = '/images/gaffer/gaffer-arms-crossed.png';
 
-// Cash rail is product/marketing copy (admin-set), not an FPL field.
-const CHAMPION = '£10,000 Cash';
-const TIERS = [
-  { rank: 1, label: '1st', value: '£10,000' },
-  { rank: 2, label: '2nd', value: '£3,000' },
-  { rank: 3, label: '3rd', value: '£1,000' },
-];
+// How each trigger reads on the leaderboard (admin-driven — never a cash value).
+const TRIGGER_LABEL: Partial<Record<FantasyPrizeTrigger, string>> = {
+  season_top: 'Season winner',
+  monthly_top: 'Monthly winner',
+  gameweek_top: 'Weekly top scorer',
+  rank_climber: 'Biggest climber',
+  best_bench: 'Best bench',
+  worst_captain: 'Worst captain',
+  wooden_spoon: 'Donkey of the week',
+};
+const REWARD_ICON = (t?: FantasyRewardType) =>
+  t === 'trip' ? Plane : t === 'experience' ? Ticket : t === 'voucher' ? Gift : Sparkles;
+// Leaderboard rewards shown on the standings rail, in priority order.
+const RAIL_TRIGGERS: FantasyPrizeTrigger[] = ['season_top', 'monthly_top', 'gameweek_top', 'rank_climber', 'best_bench'];
 
 const isGaffer = (r: FantasyStandingRow) => /gaffer/i.test(r.manager_name) || /gaffer/i.test(r.team_name);
 const isYou = (r: FantasyStandingRow) => /^you$/i.test(r.manager_name);
@@ -27,14 +34,19 @@ const RANK_TONE = (rank: number) => rank === 1 ? 'bg-[#f5c542] text-[#16051f]' :
 /**
  * LeagueStandings — the live "Beat the Gaffer" leaderboard from the standings
  * contract. Rank movement, GW + total points, the Gaffer and your own row
- * highlighted, plus the cash prize rail.
+ * highlighted, plus the admin-driven (non-cash) reward rail.
  */
 export function LeagueStandings() {
   const { data, isLoading } = useFantasyStandings();
+  const { data: prizeData } = useFantasyPrizes();
   useFantasyRealtimeStandings(); // live re-rank on the standings channel
   if (isLoading && !data) return <div className="h-[520px] animate-pulse rounded-[1.6rem] border border-white/10 bg-white/[0.03]" />;
 
   const rows = data?.rows ?? [];
+  const prizes = prizeData?.prizes.filter((p) => p.enabled) ?? [];
+  const seasonPrize = prizes.find((p) => p.trigger === 'season_top') ?? prizes.find((p) => p.category === 'seasonal');
+  const railPrizes = RAIL_TRIGGERS.map((t) => prizes.find((p) => p.trigger === t)).filter(Boolean) as FantasyPrize[];
+  const funPrizes = prizes.filter((p) => p.tone === 'fun');
 
   return (
     <section id="standings" className="relative overflow-hidden rounded-[1.6rem] border border-[#f5c542]/25 bg-[#070312] shadow-[0_0_60px_-24px_rgba(245,197,66,0.6)] md:rounded-[2rem]">
@@ -49,13 +61,15 @@ export function LeagueStandings() {
             <h2 className="mt-3 font-display text-4xl uppercase leading-none text-white md:text-5xl">League <span className="text-[#f5c542]">Standings</span></h2>
             <p className="mt-2 text-sm text-white/55">The table doesn’t lie. Climb it, hold it, or get bragged at.</p>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl border border-[#f5c542]/30 bg-[#f5c542]/10 px-4 py-3">
-            <Trophy className="h-8 w-8 fill-[#f5c542] text-[#f5c542]" />
-            <div className="leading-tight">
-              <div className="text-[10px] font-black uppercase tracking-widest text-[#f8e7a1]">Champion’s Prize</div>
-              <div className="font-display text-2xl text-white">{CHAMPION}</div>
+          {seasonPrize && (
+            <div className="flex items-center gap-3 rounded-2xl border border-[#f5c542]/30 bg-[#f5c542]/10 px-4 py-3">
+              <Trophy className="h-8 w-8 fill-[#f5c542] text-[#f5c542]" />
+              <div className="leading-tight">
+                <div className="text-[10px] font-black uppercase tracking-widest text-[#f8e7a1]">Season Winner’s Reward</div>
+                <div className="font-display text-2xl text-white">{seasonPrize.title}</div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_240px]">
@@ -91,16 +105,26 @@ export function LeagueStandings() {
 
           <div className="flex flex-col gap-3">
             <div className="rounded-2xl border border-white/10 bg-[#0b0518]/60 p-4">
-              <div className="text-[10px] font-black uppercase tracking-widest text-white/45">Top 3 Prizes</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-white/45">Rewards on offer</div>
               <ul className="mt-2 space-y-2">
-                {TIERS.map((t) => (
-                  <li key={t.rank} className="flex items-center gap-3">
-                    <span className={`grid h-8 w-8 place-items-center rounded-lg text-[12px] font-black ${RANK_TONE(t.rank)}`}>{t.rank}</span>
-                    <span className="flex-1 text-[12px] font-bold uppercase tracking-wide text-white/60">{t.label}</span>
-                    <span className="font-display text-lg text-white">{t.value}</span>
-                  </li>
-                ))}
+                {railPrizes.map((p) => {
+                  const Icon = REWARD_ICON(p.reward_type);
+                  return (
+                    <li key={p.id} className="flex items-center gap-2.5">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[#f5c542]/25 bg-[#f5c542]/10 text-[#f5c542]"><Icon className="h-4 w-4" /></span>
+                      <span className="min-w-0 leading-tight">
+                        <span className="block truncate text-[12px] font-bold text-white">{p.title}</span>
+                        <span className="block text-[10px] font-semibold uppercase tracking-wide text-white/40">{p.trigger ? TRIGGER_LABEL[p.trigger] : 'Reward'}</span>
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
+              {funPrizes.length > 0 && (
+                <p className="mt-3 border-t border-white/10 pt-2.5 text-[11px] leading-snug text-white/45">
+                  Having a nightmare? There’s something in it even for the strugglers — {funPrizes.map((p) => p.title).join(' & ')}.
+                </p>
+              )}
             </div>
             <Link to="/pricing" className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-amber-500 px-5 py-3.5 text-sm font-black uppercase tracking-wide text-[#16051f] transition-transform hover:-translate-y-0.5">Join &amp; Climb <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></Link>
           </div>

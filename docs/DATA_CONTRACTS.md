@@ -303,6 +303,29 @@ Sample response:
 
 Purpose: fantasy prize page / hub prize tiles.
 
+**Prizes are admin-driven and NON-CASH only.** The UI never hard-codes a reward or a
+fixed value — it renders exactly what this endpoint returns. Use the language of
+prizes, rewards, vouchers, trips, experiences and specials; never cash, payout,
+winnings or money.
+
+Each prize carries an optional `trigger` (how it's won) and `tone`
+(`serious` leaderboard reward vs `fun` engagement reward), so the model supports
+both serious rewards and funny rewards for managers who aren't doing well:
+
+- `gameweek_top` — highest scorer of the week
+- `monthly_top` — monthly winner
+- `season_top` — season winner
+- `rank_climber` — biggest rank climber
+- `best_bench` — best bench points
+- `worst_captain` — worst captain pick (fun)
+- `wooden_spoon` — Donkey of the Week (fun)
+- `themed` — holiday / calendar special
+- `manual` — admin-defined, any criteria
+
+`category` (`weekly | monthly | seasonal | themed | random`) groups prizes for
+display; `reward_type` (`voucher | trip | experience | merch | special | other`)
+is the non-cash reward kind.
+
 Request:
 
 ```json
@@ -327,23 +350,39 @@ Sample response:
     "updated_at": "2025-08-01T09:00:00Z",
     "prizes": [
       {
-        "id": "prize_dream_holiday",
+        "id": "prize_season_trip",
         "season": "2025/26",
-        "title": "Dream Holiday",
-        "description": "Season headline prize for the overall Fantasy League Champion.",
-        "image_url": "/assets/homepage/prize-dream-holiday.png",
+        "title": "Tropical Escape",
+        "description": "The season champion's grand reward — a dream footy getaway.",
+        "image_url": "/images/fantasy/prizes/prize-tropical.jpg",
         "category": "seasonal",
+        "trigger": "season_top",
+        "tone": "serious",
+        "reward_type": "trip",
         "enabled": true
       },
       {
-        "id": "prize_christmas_hamper",
+        "id": "prize_gw_experience",
         "season": "2025/26",
-        "title": "£1,000 Christmas Hamper Giveaway",
-        "description": "A themed festive prize event during the Christmas football rush.",
-        "image_url": "/assets/homepage/prize-christmas-hamper.png",
-        "category": "themed",
-        "starts_at": "2025-11-20T00:00:00Z",
-        "ends_at": "2025-12-20T23:59:59Z",
+        "title": "Matchday Experience",
+        "description": "Highest scorer of the gameweek bags an exclusive day out.",
+        "image_url": "/images/fantasy/prizes/prize-experiences.jpg",
+        "category": "weekly",
+        "trigger": "gameweek_top",
+        "tone": "serious",
+        "reward_type": "experience",
+        "enabled": true
+      },
+      {
+        "id": "prize_donkey",
+        "season": "2025/26",
+        "title": "Donkey of the Week",
+        "description": "Finish bottom and claim the ears — a badge of dishonour and a little something.",
+        "image_url": "/images/fantasy/prizes/prize-donkey.jpg",
+        "category": "random",
+        "trigger": "wooden_spoon",
+        "tone": "fun",
+        "reward_type": "merch",
         "enabled": true
       }
     ]
