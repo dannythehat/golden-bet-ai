@@ -134,13 +134,43 @@ export interface FantasyGameweekResponse {
   updated_at: ISODateTime;
 }
 
+/**
+ * Prizes are admin-driven and NON-CASH only. Never hard-code a reward in the UI
+ * — render exactly what get-fantasy-prizes returns.
+ *
+ * `category` groups prizes for display; `trigger` describes how a prize is won
+ * (serious leaderboard rewards and funny engagement rewards alike); `tone`
+ * separates the two for styling; `reward_type` is the kind of non-cash reward.
+ */
+export type FantasyPrizeCategory = 'weekly' | 'monthly' | 'seasonal' | 'themed' | 'random';
+
+export type FantasyPrizeTrigger =
+  | 'gameweek_top'    // highest scorer of the week
+  | 'monthly_top'     // monthly winner
+  | 'season_top'      // season winner
+  | 'rank_climber'    // biggest rank climber
+  | 'best_bench'      // best bench points
+  | 'worst_captain'   // worst captain pick (fun)
+  | 'wooden_spoon'    // Donkey of the Week (fun)
+  | 'themed'          // holiday / calendar special
+  | 'manual';         // admin-defined, any criteria
+
+/** Non-cash reward kinds only — never money. */
+export type FantasyRewardType = 'voucher' | 'trip' | 'experience' | 'merch' | 'special' | 'other';
+
 export interface FantasyPrize {
   id: string;
   season: string;
   title: string;
   description: string;
   image_url?: string;
-  category: 'weekly' | 'random' | 'themed' | 'seasonal';
+  category: FantasyPrizeCategory;
+  /** How the prize is won. Omit for purely decorative/manual specials. */
+  trigger?: FantasyPrizeTrigger;
+  /** Serious leaderboard reward vs funny engagement reward. */
+  tone?: 'serious' | 'fun';
+  /** Non-cash reward kind. */
+  reward_type?: FantasyRewardType;
   starts_at?: ISODateTime;
   ends_at?: ISODateTime;
   enabled: boolean;
