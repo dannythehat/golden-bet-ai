@@ -1,5 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, LineChart, MessagesSquare, Trophy } from 'lucide-react';
+
+/** The three pillars — what The Footy Oracle is about, said in one glance. */
+const PILLARS: { icon: typeof Trophy; title: string; body: string }[] = [
+  { icon: LineChart, title: 'Real Edges', body: 'Form-first picks, tracked and settled. No fluff.' },
+  { icon: Trophy,    title: 'Honest P&L', body: 'Every £10 bet logged — wins, losses, all of it.' },
+  { icon: MessagesSquare, title: "The Gaffer's Voice", body: 'Witty, sharp, no jargon. Football how it should sound.' },
+];
 
 const HERO_SCENE = '/images/hero-gaffer-scene.jpg';
 
@@ -102,6 +109,24 @@ export function HeroBanner() {
               >
                 Explore Today's Tips <ChevronRight className="h-4 w-4" />
               </Link>
+            </div>
+
+            {/* Pillars — what The Footy Oracle is about */}
+            <div className="mt-7 grid gap-2.5 sm:grid-cols-3">
+              {PILLARS.map((p) => (
+                <div
+                  key={p.title}
+                  className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-[#f5c542]/35 bg-[#f5c542]/10 text-[#f5c542]">
+                    <p.icon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black uppercase tracking-[0.14em] text-white">{p.title}</div>
+                    <div className="mt-0.5 text-[12px] leading-snug text-white/65">{p.body}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

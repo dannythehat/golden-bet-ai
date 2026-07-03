@@ -320,16 +320,16 @@ export function GafferValueBoardSection() {
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:34px_34px] opacity-40" />
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
 
-      {/* Gaffer image — top-right visual layer */}
+      {/* Gaffer image — desktop only, kept off mobile to preserve header contrast */}
       <img
         src={GAFFER_IMG}
         alt="The Gaffer"
         loading="lazy"
         draggable={false}
-        className="pointer-events-none absolute right-0 top-0 z-0 w-[165px] select-none opacity-30 sm:w-[260px] sm:opacity-60 md:w-[380px] md:opacity-100"
+        className="pointer-events-none absolute right-0 top-0 z-0 hidden select-none md:block md:w-[380px] md:opacity-100"
       />
-      {/* scrim — keeps the copy legible over the Gaffer, brighter on desktop */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#070312] via-[#070312]/85 to-[#070312]/40 md:via-[#070312]/45 md:to-transparent" />
+      {/* scrim — desktop only, keeps copy legible over the Gaffer */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] hidden md:block md:bg-gradient-to-r md:from-[#070312] md:via-[#070312]/45 md:to-transparent" />
       <span aria-hidden className="pointer-events-none absolute right-[7%] top-[11%] z-[1] hidden -rotate-6 text-right font-['Caveat'] text-xl font-bold leading-tight text-violet-300/90 [text-shadow:0_2px_10px_rgba(139,92,246,0.6)] lg:block">
         Stats don't lie.<br />Edges do. <span className="text-violet-200">– Gaffer</span>
       </span>
