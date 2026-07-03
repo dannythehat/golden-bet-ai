@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
+import { FantasyComingSoonHero } from '@/components/homepage/FantasyComingSoonHero';
 
 import { FormTablesSection } from '@/components/homepage/FormTablesSection';
 import { FantasyLeagueSellItSection } from '@/components/homepage/FantasyLeagueSellItSection';
@@ -30,6 +31,9 @@ export default function PreviewHome() {
 
       <HomepageScene tone="hero" flushTop flushBottom>
         <HeroBanner />
+        <div className="mx-auto mt-6 max-w-[1536px] px-3 sm:mt-8 sm:px-0">
+          <FantasyComingSoonHero />
+        </div>
       </HomepageScene>
 
       <HomepageScene tone="finale" eyebrow="01 · The Gaffer's Picks">
