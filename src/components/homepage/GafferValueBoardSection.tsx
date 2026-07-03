@@ -127,7 +127,7 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
   const singleReturn = leg.odds * stake;
   return (
     <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#f5c542_0%,#7c3aed_38%,#22d3ee_66%,#f5c542_100%)] shadow-[0_30px_80px_-30px_rgba(124,58,237,0.8)]">
-      <div className="relative overflow-hidden rounded-[1.33rem] bg-[#0b0518]/95 p-5 md:p-6">
+      <div className="frost-panel frost-sheen relative overflow-hidden rounded-[1.33rem] p-5 md:p-6">
         <div className="grid gap-5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-6">
           {/* left — crests */}
           <div className="flex flex-col gap-4">
@@ -164,7 +164,7 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2.5">
-              <div className="rounded-xl border border-white/10 bg-black/30 px-3 py-2.5">
+              <div className="frost-tile relative overflow-hidden rounded-xl border border-white/12 px-3 py-2.5">
                 <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
                   <span>Confidence</span><span className="font-display text-base text-white">{leg.prob}%</span>
                 </div>
@@ -213,7 +213,7 @@ function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: 
 // ── secondary pick card (tip or value-watch) ────────────────────────────────
 function SecondaryCard({ leg, isTip }: { leg: Leg; isTip: boolean }) {
   return (
-    <div className="relative flex flex-col rounded-2xl border border-white/10 bg-[#0b0518]/80 p-4">
+    <div className="frost-tile relative flex flex-col overflow-hidden rounded-2xl border border-white/12 p-4">
       <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
         <span>Today · {leg.time} KO</span>
         {isTip ? <Star className="h-4 w-4 fill-current text-[#f5c542]" /> : <span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] text-white/60">Value watch</span>}
