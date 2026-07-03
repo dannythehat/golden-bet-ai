@@ -112,8 +112,11 @@ function CrestPair({ leg, size = 64 }: { leg: Leg; size?: number }) {
 
 function ConfidenceBar({ pct }: { pct: number }) {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-      <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-[#f5c542]" style={{ width: `${Math.max(4, Math.min(100, pct))}%` }} />
+    <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/10 ring-1 ring-inset ring-white/5">
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-[#f5c542] shadow-[0_0_10px_rgba(245,197,66,0.55)]"
+        style={{ width: `${Math.max(4, Math.min(100, pct))}%` }}
+      />
     </div>
   );
 }
