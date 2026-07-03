@@ -17,7 +17,7 @@ export function GafferStoryCard() {
       title={<>Meet <Accent tone="violet">the Gaffer.</Accent></>}
       body={intro}
       character={{ src: '/images/gaffer/gaffer-arms-crossed.png', alt: 'The Gaffer, arms folded', className: 'w-[66%] max-w-[230px] opacity-95' }}
-      className="min-h-[440px]"
+      className="sm:min-h-[440px]"
       ctas={[{ label: story?.cta_label ?? 'Read the Story', to: ctaHref }]}
     >
       <p className="max-w-[16rem] font-hand text-lg leading-snug text-white/90">
