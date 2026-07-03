@@ -110,7 +110,7 @@ export function FantasyLeagueSellItSection() {
 
           {/* mobile visual — Gaffer + prizes collage with the quote (desktop uses the right layer) */}
           <div className="relative mt-5 overflow-hidden rounded-2xl border border-violet-400/25 lg:hidden">
-            <img src={COLLAGE} alt="The Gaffer and the Fantasy League prizes" loading="lazy" draggable={false} className="h-52 w-full select-none object-cover object-[18%_28%] sm:h-64" />
+            <img src={COLLAGE} alt="The Gaffer and the Fantasy League prizes" loading="lazy" draggable={false} className="h-64 w-full select-none object-cover object-[32%_25%] sm:h-72" />
             <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070312] via-[#070312]/20 to-transparent" />
             <div className="absolute inset-x-3 bottom-3 rounded-xl border border-violet-400/30 bg-[#0b0518]/85 p-3 backdrop-blur-md">
               <p className="text-[13px] font-semibold leading-snug text-white/90">“{d.gafferQuote.text}”</p>
