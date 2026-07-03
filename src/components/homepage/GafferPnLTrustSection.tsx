@@ -93,11 +93,11 @@ function Stat({ icon: Icon, label, value, sub, tone }: { icon: typeof Trophy; la
   const grad = tone === 'up' ? 'from-emerald-300 to-emerald-500' : tone === 'gold' ? 'from-[#ffe487] to-[#f5c542]' : tone === 'violet' ? 'from-violet-300 to-fuchsia-400' : 'from-white to-white/70';
   const ic = tone === 'up' ? 'text-emerald-300' : tone === 'gold' ? 'text-[#f5c542]' : tone === 'violet' ? 'text-violet-300' : 'text-white/70';
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] ">
-      <div className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/5 blur-2xl" />
-      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/55"><Icon className={`h-4 w-4 ${ic}`} /> {label}</div>
+    <div className="frost-tile frost-sheen relative overflow-hidden rounded-2xl border border-white/12 p-4">
+      <div className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/10 blur-2xl" />
+      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/70"><Icon className={`h-4 w-4 ${ic}`} /> {label}</div>
       <div className={`mt-2 bg-gradient-to-br ${grad} bg-clip-text font-display text-3xl leading-none text-transparent md:text-4xl`}>{value}</div>
-      <div className="mt-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">{sub}</div>
+      <div className="mt-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">{sub}</div>
     </div>
   );
 }
@@ -202,7 +202,7 @@ export function GafferPnLTrustSection() {
 
           {/* Gaffer + quote — side by side so his face is never covered */}
           <div className="flex items-stretch gap-3 sm:gap-4">
-            <div className="flex min-w-0 flex-1 flex-col justify-center rounded-2xl border border-violet-400/25 bg-[#0b0518]/85 p-4 ">
+            <div className="frost-panel relative flex min-w-0 flex-1 flex-col justify-center overflow-hidden rounded-2xl border border-violet-400/30 p-4">
               <span className="font-display text-3xl leading-none text-violet-400">“</span>
               <p className="-mt-3 text-[14px] font-semibold leading-relaxed text-white/90 sm:text-[15px]">I don't sell dreams. I track numbers. This is my record. You decide.</p>
               <div className="mt-1.5 text-right font-['Dancing_Script'] text-2xl font-semibold text-[#f8e7a1]">The Gaffer</div>
@@ -223,7 +223,7 @@ export function GafferPnLTrustSection() {
           <Stat icon={Percent} label="ROI" value={`${s.roi}%`} sub="Return on investment" tone="gold" />
           <Stat icon={Trophy} label="W-L Record" value={`${s.wins}-${s.losses}`} sub="Wins - losses" tone="white" />
           <Stat icon={Target} label="Strike Rate" value={`${s.strikeRate}%`} sub="Win percentage" tone="violet" />
-          <div className="col-span-2 flex flex-col justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4  md:col-span-1">
+          <div className="frost-tile relative col-span-2 flex flex-col justify-center gap-2 overflow-hidden rounded-2xl border border-white/12 p-4 md:col-span-1">
             <div className="flex items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white/55"><Coins className="h-3.5 w-3.5 text-[#f5c542]" /> Total staked</span>
               <span className="font-display text-xl text-white">{money(s.staked)}</span>
@@ -239,7 +239,7 @@ export function GafferPnLTrustSection() {
         {/* Chart + settlements */}
         <div className="mt-4 grid gap-3 lg:grid-cols-2">
           {/* Cumulative profit */}
-          <div className="rounded-2xl border border-white/10 bg-black/30 p-4  md:p-5">
+          <div className="frost-panel relative overflow-hidden rounded-2xl border border-white/12 p-4 md:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.16em] text-white/50">Cumulative profit <Info className="h-3.5 w-3.5 text-white/35" /></span>
               <span className="text-xs text-white/55">{money(s.staked)} staked → <b className="text-[#f8e7a1]">{money(s.returned)}</b> returned</span>
