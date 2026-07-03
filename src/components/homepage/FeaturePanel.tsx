@@ -144,10 +144,9 @@ export function FeaturePanel({
     <section
       id={id}
       ref={ref}
-      className={`group relative flex h-full scroll-mt-28 flex-col overflow-hidden rounded-[1.5rem] border-2 border-emerald-400/55 bg-[#0b0617]/80 p-5 antialiased backdrop-blur-xl transition-all duration-700 ease-out md:rounded-[1.9rem] md:p-7 ${
+      className={`frost-panel frost-sheen group relative flex h-full scroll-mt-28 flex-col overflow-hidden rounded-[1.5rem] border border-white/12 p-5 antialiased transition-all duration-700 ease-out md:rounded-[1.9rem] md:p-7 ${
         shown ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       } ${className}`}
-      style={{ boxShadow: '0 0 46px -14px rgba(16,185,129,0.6), inset 0 0 30px -22px rgba(16,185,129,0.5)' }}
     >
       {/* atmospheric background image (optional) */}
       {bgImage && (

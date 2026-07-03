@@ -407,4 +407,44 @@ input, textarea, [contenteditable] {
   }
 }
 
+/* ─── Premium frosted-glass utilities (luxe-5 finish) ──────────────────────
+ * .frost-panel   — big card surface (Meet the Gaffer, Donkey, feature panels)
+ * .frost-tile    — small stat tile (P&L, Value Board)
+ * .frost-sheen   — decorative top highlight line (add to children)
+ * Uses layered gradients + inset ring + shadow so it reads as glass even
+ * when the page bg beneath is solid dark. Kept crisp — no blur on mobile
+ * (already handled globally above via the media query).
+ * ──────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .frost-panel {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 42%, rgba(255,255,255,0.012) 100%),
+      radial-gradient(120% 80% at 0% 0%, rgba(255,255,255,0.06), transparent 55%),
+      rgba(11, 6, 23, 0.72);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.14),
+      inset 0 0 0 1px rgba(255,255,255,0.05),
+      0 30px 80px -40px rgba(0,0,0,0.9),
+      0 2px 0 rgba(255,255,255,0.02);
+  }
+  .frost-tile {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.025) 55%, rgba(255,255,255,0.01) 100%),
+      rgba(11, 6, 23, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      inset 0 0 0 1px rgba(255,255,255,0.06),
+      0 14px 36px -20px rgba(0,0,0,0.9);
+  }
+  .frost-sheen::before {
+    content: '';
+    position: absolute;
+    inset: 0 12% auto 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    pointer-events: none;
+  }
+}
+
 /* Blog article styles moved to src/styles/blog-article.css for lazy loading */
+
