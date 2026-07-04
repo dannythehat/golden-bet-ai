@@ -176,8 +176,9 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
   const label =
     !isTip ? 'Top Value · not a tip'
     : bet.type === 'double' ? "Today's Double · Gaffer's Slip"
-    : bet.type === 'treble' ? "Today's Treble · Gaffer's Slip"
+    : legs.length > 2 ? `Today's ${legs.length}-fold · Gaffer's Slip`
     : "Gaffer's Top Pick";
+
 
   return (
     <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#f5c542_0%,#7c3aed_38%,#22d3ee_66%,#f5c542_100%)] shadow-[0_30px_80px_-30px_rgba(124,58,237,0.8)]">
