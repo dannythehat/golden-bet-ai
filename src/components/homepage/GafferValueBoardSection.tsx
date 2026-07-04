@@ -396,7 +396,7 @@ function SecondaryRow({ leg, ip }: { leg: Leg; ip?: InPlayState }) {
           {li
             ? <span className={`inline-flex shrink-0 items-center gap-1 font-black uppercase tracking-wide ${li.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${li.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{li.text}</span>
             : <span className="inline-flex shrink-0 items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
-          {!li && <span className="truncate">{leg.home.name} v {leg.away.name}</span>}
+          <span className="truncate text-white/45">{leg.home.name} v {leg.away.name}</span>
         </div>
       </div>
       {/* odds + edge */}
