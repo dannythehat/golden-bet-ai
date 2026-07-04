@@ -38,24 +38,17 @@ export function FantasyLeagueSellItSection() {
       {/* thin gold accent bar */}
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
 
-      {/* ── cinematic poster (cropped to hide baked CTA strip) ── */}
-      <div
-        className="relative w-full overflow-hidden"
-        style={{ aspectRatio: '2.2 / 1' }}
-      >
+      {/* ── cinematic poster (natural 16:9, full artwork visible) ── */}
+      <div className="relative w-full overflow-hidden">
         <img
           src={POSTER}
           alt="Footy Oracle Fantasy Premier League — crest, Gaffer and top prizes"
           loading="lazy"
           draggable={false}
-          className="absolute inset-0 h-full w-full select-none object-cover"
-          // Anchor to the top so we keep crest → headline → Gaffer → TOP PRIZES
-          // panel, and the bottom "JOIN NOW / COMPETE / WIN / COMING SOON"
-          // strip falls out of frame.
-          style={{ objectPosition: '50% 0%' }}
+          className="block h-auto w-full select-none"
         />
         {/* fade the poster into the sign-up panel */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/85 to-transparent" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/70 to-transparent" />
       </div>
 
       {/* ── live registration panel ── */}
