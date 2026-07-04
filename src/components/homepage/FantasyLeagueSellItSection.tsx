@@ -8,10 +8,16 @@ const POSTER = '/images/fantasy/fantasy-coming-soon.jpg';
 const REG_OPEN = '2026-08-01T18:00:00Z';
 
 /**
- * FantasyLeagueSellItSection — the homepage "coming soon" feature for the Footy
- * Oracle Fantasy Premier League. The cinematic poster is the hero; below it a
- * live registration countdown and an email capture (real interactive HTML).
- * Links through to the full /fantasy-league preview.
+ * FantasyLeagueSellItSection — homepage "coming soon" feature.
+ *
+ * The poster is the hero. We deliberately crop the bottom band of the artwork
+ * (which contains the baked "JOIN NOW / COMPETE / WIN / COMING SOON" text)
+ * using a fixed aspect-ratio window + object-position, so the crest, headline,
+ * Gaffer and "TOP PRIZES" panel all remain visible while the redundant CTA
+ * strip is hidden. A dark gradient fades the poster into the panel below,
+ * where the live registration UI lives.
+ *
+ * No cash / £ language anywhere — prizes are trips, tech and experiences.
  */
 export function FantasyLeagueSellItSection() {
   const [email, setEmail] = useState('');
@@ -29,23 +35,24 @@ export function FantasyLeagueSellItSection() {
       id="fantasy-league"
       className="relative overflow-hidden rounded-[1.6rem] border border-violet-400/30 bg-[#0a0414] shadow-[0_0_70px_-26px_rgba(124,58,237,0.85)] md:rounded-[2rem]"
     >
+      {/* thin gold accent bar */}
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
 
-      {/* ── cinematic poster ── */}
-      <div className="relative">
+      {/* ── cinematic poster (natural 16:9, full artwork visible) ── */}
+      <div className="relative w-full overflow-hidden">
         <img
           src={POSTER}
-          alt="Footy Oracle Fantasy Premier League — coming soon"
+          alt="Footy Oracle Fantasy Premier League — crest, Gaffer and top prizes"
           loading="lazy"
           draggable={false}
-          className="w-full select-none object-cover"
+          className="block h-auto w-full select-none"
         />
         {/* fade the poster into the sign-up panel */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0a0414] to-transparent" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/70 to-transparent" />
       </div>
 
       {/* ── live registration panel ── */}
-      <div className="relative px-5 pb-7 pt-5 md:px-9 md:pb-10 md:pt-6">
+      <div className="relative px-5 pb-8 pt-3 md:px-9 md:pb-10 md:pt-4">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-violet-400/40 bg-violet-500/15 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-200 backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400 [animation:pulse_2s_ease-in-out_infinite]" /> Registration opening soon
@@ -54,7 +61,7 @@ export function FantasyLeagueSellItSection() {
           <h3 className="mt-4 font-display text-3xl uppercase leading-none text-white md:text-4xl">
             Be first through the door
           </h3>
-          <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-white/60">
+          <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-white/65">
             Draft your XI, climb the table each gameweek and play for real prizes. Drop your email and we’ll tell you the
             moment the league opens — no spam, Gaffer’s word.
           </p>
