@@ -6,7 +6,6 @@ import { FormTablesSection } from '@/components/homepage/FormTablesSection';
 import { FantasyLeagueSellItSection } from '@/components/homepage/FantasyLeagueSellItSection';
 import { LatestArticlesSection } from '@/components/homepage/LatestArticlesSection';
 import { TipOfTheDayCard } from '@/components/homepage/TipOfTheDayCard';
-import { WeeklyPrizesFeatureCard } from '@/components/homepage/WeeklyPrizesFeatureCard';
 import { GafferStoryCard } from '@/components/homepage/GafferStoryCard';
 import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard';
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
@@ -46,9 +45,8 @@ export default function PreviewHome() {
       </HomepageScene>
 
       <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
-        <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
+        <div className="grid gap-3 lg:grid-cols-2 md:gap-4">
           <LatestArticlesSection />
-          <WeeklyPrizesFeatureCard />
           <GafferStoryCard />
         </div>
       </HomepageScene>
