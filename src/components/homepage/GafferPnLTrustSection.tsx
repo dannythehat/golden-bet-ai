@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   TrendingUp, ArrowRight, ShieldCheck, Info, Trophy, Target, Coins,
@@ -23,6 +23,23 @@ type PnLSummary = {
 const round2 = (n: number) => Math.round(n * 100) / 100;
 const money = (n: number) => `£${n.toFixed(n % 1 === 0 ? 0 : 2)}`;
 const splitFix = (f: string) => { const p = f.split(/\s+v\s+/i); return { home: p[0]?.trim() ?? f, away: p[1]?.trim() ?? '' }; };
+
+// Ease a number 0 → target on mount, so the stat band animates into place.
+function useCountUp(target: number, decimals = 0, dur = 950) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / dur);
+      setV(target * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) raf = requestAnimationFrame(tick); else setV(target);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, dur, decimals]);
+  return v;
+}
 
 // ── sample until first settlements ──────────────────────────────────────────
 const SAMPLE_VALS = [0, -6, -10, -8, -15, -12, -20, -24, -30, -26, -22, -14, -8, -2, 3, 8, 6, 12, 10, 16, 14, 20, 24, 22, 28, 32, 30, 38, 36, 44, 48];
@@ -88,20 +105,6 @@ const RANGES = ['30D', '3M', '6M', 'ALL'] as const;
 type Range = typeof RANGES[number];
 const RANGE_DAYS: Record<Range, number> = { '30D': 30, '3M': 92, '6M': 183, ALL: 1e6 };
 
-// ── stat tile ────────────────────────────────────────────────────────────────
-function Stat({ icon: Icon, label, value, sub, tone }: { icon: typeof Trophy; label: string; value: string; sub: string; tone: 'up' | 'gold' | 'white' | 'violet' }) {
-  const grad = tone === 'up' ? 'from-emerald-300 to-emerald-500' : tone === 'gold' ? 'from-[#ffe487] to-[#f5c542]' : tone === 'violet' ? 'from-violet-300 to-fuchsia-400' : 'from-white to-white/70';
-  const ic = tone === 'up' ? 'text-emerald-300' : tone === 'gold' ? 'text-[#f5c542]' : tone === 'violet' ? 'text-violet-300' : 'text-white/70';
-  return (
-    <div className="frost-tile frost-sheen relative overflow-hidden rounded-2xl border border-white/12 p-4">
-      <div className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/10 blur-2xl" />
-      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/70"><Icon className={`h-4 w-4 ${ic}`} /> {label}</div>
-      <div className={`mt-2 bg-gradient-to-br ${grad} bg-clip-text font-display text-3xl leading-none text-transparent md:text-4xl`}>{value}</div>
-      <div className="mt-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">{sub}</div>
-    </div>
-  );
-}
-
 function SkeletonBoard() {
   return (
     <div className="animate-pulse p-5 md:p-8">
@@ -133,6 +136,13 @@ export function GafferPnLTrustSection() {
   const s = p.summary;
   const up = s.profit >= 0;
   const sampleMode = p.status !== 'live';
+  const games = s.wins + s.losses;
+
+  // Animated headline figures (magnitudes; sign applied in the JSX).
+  const profitDec = s.profit % 1 === 0 ? 0 : 2;
+  const aProfit = useCountUp(Math.abs(s.profit), profitDec);
+  const aRoi = useCountUp(Math.abs(s.roi), 1);
+  const aStrike = useCountUp(s.strikeRate, 0);
 
   const chart = useMemo(() => {
     if (p.chart.length === 0) return p.chart;
@@ -200,39 +210,80 @@ export function GafferPnLTrustSection() {
             </span>
           </div>
 
-          {/* Gaffer + quote — side by side so his face is never covered */}
-          <div className="flex items-stretch gap-3 sm:gap-4">
-            <div className="frost-panel relative flex min-w-0 flex-1 flex-col justify-center overflow-hidden rounded-2xl border border-violet-400/30 p-4">
-              <span className="font-display text-3xl leading-none text-violet-400">“</span>
-              <p className="-mt-3 text-[14px] font-semibold leading-relaxed text-white/90 sm:text-[15px]">I don't sell dreams. I track numbers. This is my record. You decide.</p>
-              <div className="mt-1.5 text-right font-['Dancing_Script'] text-2xl font-semibold text-[#f8e7a1]">The Gaffer</div>
-            </div>
+          {/* Gaffer — cinematic banner, quote along the bottom so his face stays clear */}
+          <div className="relative min-h-[230px] overflow-hidden rounded-2xl border border-violet-400/30 shadow-[0_22px_55px_-26px_rgba(0,0,0,0.95)]">
             <img
               src="/images/gaffer/gaffer-pnl.jpg"
               alt="The Gaffer"
               loading="lazy"
               draggable={false}
-              className="h-auto w-28 shrink-0 self-stretch rounded-2xl border border-white/10 object-cover object-[35%_35%] shadow-[0_16px_40px_-18px_rgba(0,0,0,0.9)] sm:w-36"
+              className="absolute inset-0 h-full w-full object-cover object-[50%_18%]"
             />
+            <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070312] via-[#070312]/75 to-transparent" />
+            <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(124,58,237,0.35),transparent_55%)]" />
+            <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+              <span className="font-display text-3xl leading-none text-violet-300/80">“</span>
+              <p className="-mt-2 max-w-sm text-[14px] font-semibold leading-snug text-white sm:text-[15px]">I don't sell dreams. I track numbers. This is my record. You decide.</p>
+              <div className="mt-1 text-right font-['Dancing_Script'] text-2xl font-semibold text-[#f8e7a1]">The Gaffer</div>
+            </div>
           </div>
         </div>
 
-        {/* Stat tiles */}
-        <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-          <Stat icon={TrendingUp} label="Profit" value={`${up ? '+' : ''}${money(s.profit)}`} sub="To date" tone={up ? 'up' : 'white'} />
-          <Stat icon={Percent} label="ROI" value={`${s.roi}%`} sub="Return on investment" tone="gold" />
-          <Stat icon={Trophy} label="W-L Record" value={`${s.wins}-${s.losses}`} sub="Wins - losses" tone="white" />
-          <Stat icon={Target} label="Strike Rate" value={`${s.strikeRate}%`} sub="Win percentage" tone="violet" />
-          <div className="frost-tile relative col-span-2 flex flex-col justify-center gap-2 overflow-hidden rounded-2xl border border-white/12 p-4 md:col-span-1">
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white/55"><Coins className="h-3.5 w-3.5 text-[#f5c542]" /> Total staked</span>
-              <span className="font-display text-xl text-white">{money(s.staked)}</span>
+        {/* ── Hero metric band — bold, animated, colour-reactive ── */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Profit — the headline number */}
+          <div className={`frost-tile frost-sheen relative flex flex-col justify-between overflow-hidden rounded-2xl border p-5 ${up ? 'border-emerald-400/35' : 'border-rose-400/35'}`}>
+            <div aria-hidden className={`pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full blur-3xl ${up ? 'bg-emerald-400/20' : 'bg-rose-500/20'}`} />
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/70">
+              <TrendingUp className={`h-4 w-4 ${up ? 'text-emerald-300' : 'text-rose-300'}`} /> Profit to date
             </div>
-            <div className="h-px bg-white/10" />
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white/55"><Coins className="h-3.5 w-3.5 text-emerald-300" /> Total returned</span>
-              <span className="font-display text-xl text-[#f8e7a1]">{money(s.returned)}</span>
+            <div className={`mt-3 font-display text-5xl leading-none md:text-6xl ${up ? 'bg-gradient-to-br from-emerald-200 to-emerald-500' : 'bg-gradient-to-br from-rose-200 to-rose-500'} bg-clip-text text-transparent`}>
+              {up ? '+' : '−'}£{aProfit.toFixed(profitDec)}
             </div>
+            <div className="mt-2.5 text-[11px] font-bold text-white/60">{games} bet{games === 1 ? '' : 's'} settled · {money(s.staked)} staked → <span className="text-[#f8e7a1]">{money(s.returned)}</span> back</div>
+          </div>
+
+          {/* ROI */}
+          <div className="frost-tile relative overflow-hidden rounded-2xl border border-white/12 p-5">
+            <div aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-[#f5c542]/10 blur-2xl" />
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/70">
+              <Percent className={`h-4 w-4 ${s.roi >= 0 ? 'text-[#f5c542]' : 'text-rose-300'}`} /> ROI
+            </div>
+            <div className={`mt-3 font-display text-4xl leading-none md:text-5xl ${s.roi >= 0 ? 'bg-gradient-to-br from-[#ffe487] to-[#f5c542]' : 'bg-gradient-to-br from-rose-200 to-rose-500'} bg-clip-text text-transparent`}>
+              {s.roi >= 0 ? '+' : '−'}{aRoi.toFixed(1)}%
+            </div>
+            <div className="mt-2.5 text-[11px] font-bold text-white/60">Return on every £1 staked</div>
+          </div>
+
+          {/* Strike rate */}
+          <div className="frost-tile relative overflow-hidden rounded-2xl border border-white/12 p-5">
+            <div aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-violet-400/12 blur-2xl" />
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white/70">
+              <Target className="h-4 w-4 text-violet-300" /> Strike rate
+            </div>
+            <div className="mt-3 bg-gradient-to-br from-violet-300 to-fuchsia-400 bg-clip-text font-display text-4xl leading-none text-transparent md:text-5xl">
+              {Math.round(aStrike)}%
+            </div>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-400 transition-[width] duration-700" style={{ width: `${s.strikeRate}%` }} />
+            </div>
+            <div className="mt-1.5 text-[11px] font-bold text-white/60">{s.wins}W · {s.losses}L settled</div>
+          </div>
+        </div>
+
+        {/* secondary strip */}
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="frost-tile flex items-center justify-between gap-2 rounded-2xl border border-white/12 px-4 py-3">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/60"><Trophy className="h-3.5 w-3.5 text-white/70" /> W-L</span>
+            <span className="font-display text-xl text-white">{s.wins}-{s.losses}</span>
+          </div>
+          <div className="frost-tile flex items-center justify-between gap-2 rounded-2xl border border-white/12 px-4 py-3">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/60"><Coins className="h-3.5 w-3.5 text-[#f5c542]" /> Staked</span>
+            <span className="font-display text-xl text-white">{money(s.staked)}</span>
+          </div>
+          <div className="frost-tile col-span-2 flex items-center justify-between gap-2 rounded-2xl border border-white/12 px-4 py-3 sm:col-span-1">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/60"><Coins className="h-3.5 w-3.5 text-emerald-300" /> Returned</span>
+            <span className="font-display text-xl text-[#f8e7a1]">{money(s.returned)}</span>
           </div>
         </div>
 
