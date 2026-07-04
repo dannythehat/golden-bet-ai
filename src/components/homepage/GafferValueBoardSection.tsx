@@ -138,22 +138,18 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
         <Star className="h-3.5 w-3.5 fill-current text-[#f5c542]" />
       </div>
 
-      {/* teams — framed matchup box: bigger crests + FULL names, home / away */}
-      <div className="mt-3 flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/30 p-2.5 ring-1 ring-inset ring-white/[0.04]">
-        <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={46} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
-          <div className="min-w-0">
-            <div className="text-[15px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.home.name}</div>
-            <div className="mt-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/40">Home</div>
-          </div>
+      {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
+      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl border border-white/10 bg-black/30 p-3 ring-1 ring-inset ring-white/[0.04]">
+        <div className="flex flex-col items-center gap-1.5 text-center">
+          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
+          <div className="text-[13px] font-bold leading-tight text-white">{leg.home.name}</div>
+          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40">Home</div>
         </div>
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.06] text-[10px] font-black text-white/55">VS</span>
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2.5 text-right">
-          <div className="min-w-0">
-            <div className="text-[15px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.away.name}</div>
-            <div className="mt-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/40">Away</div>
-          </div>
-          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={46} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
+        <span className="mt-3 grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.06] text-[10px] font-black text-white/55">VS</span>
+        <div className="flex flex-col items-center gap-1.5 text-center">
+          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
+          <div className="text-[13px] font-bold leading-tight text-white">{leg.away.name}</div>
+          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40">Away</div>
         </div>
       </div>
 
