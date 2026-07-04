@@ -7,7 +7,7 @@ import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { FormStrip } from '@/components/FormStrip';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { GafferPicksBox } from '@/components/homepage/GafferPicksBox';
+import { useInPlay, type InPlayState } from '@/components/homepage/useInPlay';
 import { supabase } from '@/integrations/supabase/client';
 import raw from '@/data/formTablesData.json';
 import type { FormFixtureRow as Fixture, FormValueCell, FormValueFlag, FormGame } from '@/types/footy';
@@ -233,6 +233,151 @@ function GafferNoGames() {
   );
 }
 
+/* ── Value board — best value per bet type, below the tables ───────────── */
+type ValueSel = {
+  f: Fixture; catKey: CatKey; label: string; selection: string;
+  line: number | null; prob: number; odds: number; edge: number; flag: FormValueFlag;
+};
+
+/** Best flagged over-selection per fixture, per bet type. */
+function computeValueBoard(fixtures: Fixture[]): Record<CatKey, ValueSel[]> {
+  const byCat: Record<CatKey, ValueSel[]> = { corners: [], goals: [], cards: [], btts: [] };
+  for (const f of fixtures) {
+    for (const C of CATS) {
+      let best: ValueSel | null = null;
+      for (const mk of C.overMarks ?? [null]) {
+        const cell = computeValue(C.overPctAt(f, mk), C.overOdds(f, mk));
+        if (!cell || !cell.flag) continue;
+        const sel: ValueSel = {
+          f, catKey: C.key, label: C.label,
+          selection: C.pct ? 'BTTS – Yes' : `Over ${mk} ${C.label}`,
+          line: mk ? Number(mk) : null, prob: cell.prob, odds: cell.odds, edge: cell.edge, flag: cell.flag,
+        };
+        if (!best || sel.edge > best.edge) best = sel;
+      }
+      if (best) byCat[C.key].push(best);
+    }
+  }
+  for (const k of Object.keys(byCat) as CatKey[]) byCat[k].sort((a, b) => b.edge - a.edge);
+  return byCat;
+}
+
+const lineFromSelection = (s: string): number | null => {
+  const m = /(\d+(?:\.\d+)?)/.exec(s);
+  return m ? Number(m[1]) : null;
+};
+
+type Live = { landed: boolean; text: string };
+function liveLabel(catKey: CatKey, line: number | null, ip?: InPlayState): Live | null {
+  if (!ip?.live) return null;
+  const over = (n: number | null | undefined, unit: string): Live => {
+    if (n == null) return { landed: false, text: 'In Play' };
+    const landed = line != null && n > line;
+    return { landed, text: landed ? `In Play · ${n} ${unit} ✓` : `In Play · ${n} ${unit}` };
+  };
+  if (catKey === 'corners') return over(ip.corners, 'corners');
+  if (catKey === 'goals') return over(ip.goals, 'goals');
+  if (catKey === 'cards') return over(ip.cards, 'cards');
+  const both = ip.homeGoals > 0 && ip.awayGoals > 0;
+  return { landed: both, text: both ? 'In Play · BTTS ✓' : `In Play · ${ip.homeGoals}–${ip.awayGoals}` };
+}
+
+function ValueSelBox({ sel, ip, today, gaffer }: { sel: ValueSel; ip?: InPlayState; today: string; gaffer?: boolean }) {
+  const live = liveLabel(sel.catKey, sel.line, ip);
+  return (
+    <div className={`card-3d rounded-2xl p-3.5 ${gaffer ? 'ring-1 ring-inset ring-violet-400/45' : ''}`}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex shrink-0 -space-x-1.5">
+            <TeamAvatar name={sel.f.home.name} logoUrl={sel.f.home.logo} size={26} className="rounded-md ring-1 ring-black/50" />
+            <TeamAvatar name={sel.f.away.name} logoUrl={sel.f.away.logo} size={26} className="rounded-md ring-1 ring-black/50" />
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[13px] font-bold leading-tight text-white text-emboss">{sel.f.home.name} <span className="text-white/30">v</span> {sel.f.away.name}</div>
+            <div className="truncate text-[10px] text-white/45">{gaffer ? "The Gaffer's pick · " : ''}{sel.f.region} · {fold(sel.f.league)}</div>
+          </div>
+        </div>
+        {live ? (
+          <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${live.landed ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/55 bg-rose-500/15 text-rose-200'}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${live.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />
+            {live.text}
+          </span>
+        ) : (
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/12 bg-white/[0.04] px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-white/60">
+            {whenLabel(sel.f.date, today)} · {sel.f.time}
+          </span>
+        )}
+      </div>
+      <div className="inset-3d mt-2.5 flex items-center justify-between gap-2 rounded-xl px-3 py-2">
+        <div className="min-w-0">
+          <div className={`text-[9px] font-black uppercase tracking-[0.16em] ${gaffer ? 'text-violet-300' : 'text-emerald-300/85'}`}>{gaffer ? 'Gaffer value pick' : 'Value pick'}</div>
+          <div className="truncate font-display text-base uppercase tracking-tight text-white text-extrude">{sel.selection}</div>
+        </div>
+        <div className="shrink-0 text-right">
+          <div className="font-display text-xl leading-none text-[#f5c542] text-extrude">{odd(sel.odds)}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Odds</div>
+        </div>
+      </div>
+      <div className="mt-2 flex items-center gap-2 text-[11px] text-white/65">
+        <span className="inline-flex items-center gap-1">Form <b className="text-white">{sel.prob}%</b></span>
+        <span className={`ml-auto inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-black uppercase ${sel.flag === 'strong' ? 'bg-[#f5c542]/15 text-[#f8e7a1] ring-1 ring-inset ring-[#f5c542]/30' : 'bg-emerald-500/12 text-emerald-300 ring-1 ring-inset ring-emerald-400/25'}`}>+{sel.edge.toFixed(1)}% edge</span>
+      </div>
+    </div>
+  );
+}
+
+function ValueBoard({ fixtures, gafferPick, today }: { fixtures: Fixture[]; gafferPick: GafferDaily; today: string }) {
+  const board = useMemo(() => computeValueBoard(fixtures), [fixtures]);
+  const ids = useMemo(() => {
+    const s = new Set<string>();
+    (Object.values(board) as ValueSel[][]).forEach((arr) => arr.forEach((v) => s.add(String(v.f.id))));
+    if (gafferPick) s.add(String(gafferPick.f.id));
+    return [...s];
+  }, [board, gafferPick]);
+  const { data: inplay } = useInPlay(ids);
+
+  const gafferSel: ValueSel | null = gafferPick ? {
+    f: gafferPick.f, catKey: gafferPick.catKey, label: gafferPick.label, selection: gafferPick.selection,
+    line: lineFromSelection(gafferPick.selection), prob: gafferPick.prob, odds: gafferPick.odds, edge: gafferPick.edge, flag: 'strong',
+  } : null;
+
+  const hasAny = (Object.values(board) as ValueSel[][]).some((a) => a.length) || !!gafferSel;
+  if (!hasAny) return null;
+
+  return (
+    <section className="mt-8">
+      <div className="mb-4">
+        <h2 className="font-display text-2xl uppercase tracking-tight text-white md:text-3xl">Best Value <span className="text-emerald-400">by bet type</span></h2>
+        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-white/60">
+          The Gaffer's crunched every fixture so you don't have to — here are the biggest-value selections in each market, juiciest edge first. These are <span className="text-white/80">his numbers, not a calculator's</span>. Live games tick over as they play.
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {CATS.map((C) => {
+          const isGafferCat = !!gafferSel && gafferSel.catKey === C.key;
+          const list = board[C.key].filter((v) => !(isGafferCat && v.f.id === gafferSel!.f.id));
+          if (!list.length && !isGafferCat) return null;
+          const count = list.length + (isGafferCat ? 1 : 0);
+          return (
+            <div key={C.key}>
+              <div className="mb-2.5 flex items-center gap-2">
+                <span className="font-display text-lg uppercase tracking-tight text-white">{C.label}</span>
+                <span className="h-px flex-1 bg-white/10" />
+                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-white/40">{count} value{count === 1 ? '' : 's'}</span>
+              </div>
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                {isGafferCat && gafferSel && <ValueSelBox sel={gafferSel} ip={inplay?.[String(gafferSel.f.id)]} today={today} gaffer />}
+                {list.map((v) => <ValueSelBox key={`${v.catKey}-${v.f.id}`} sel={v} ip={inplay?.[String(v.f.id)]} today={today} />)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export default function FormTables() {
   const [params] = useSearchParams();
   // Deep-link support: /form-tables?cat=goals&mode=under&mark=2.5 (from the homepage tiles)
@@ -293,6 +438,12 @@ export default function FormTables() {
   // The Gaffer's ONE pick of the day — computed once across every market on
   // today's card (not per-tab). Highlighted in the table only within its market.
   const gafferPick = useMemo(() => pickGafferDaily(tables.fixtures, today), [tables, today]);
+
+  // Fixtures the value board considers — same window + league filter as the table.
+  const valueFixtures = useMemo(
+    () => tables.fixtures.filter((f) => windowDates.includes(f.date) && (league === 'all' || f.league === league)),
+    [tables, windowDates, league],
+  );
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#070310] text-white">
@@ -442,10 +593,8 @@ export default function FormTables() {
         </>
         )}
 
-        {/* The Gaffer's picks + reasoning, below the tables */}
-        <div className="mt-8">
-          <GafferPicksBox />
-        </div>
+        {/* Best value per bet type — the Gaffer's numbers, biggest edge first */}
+        <ValueBoard fixtures={valueFixtures} gafferPick={gafferPick} today={today} />
       </main>
 
       <div className="mx-auto max-w-5xl px-3 pb-8 md:px-6"><FooterNavigation /></div>
