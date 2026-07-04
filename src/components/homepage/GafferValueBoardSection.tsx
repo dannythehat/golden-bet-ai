@@ -121,126 +121,195 @@ function ConfidenceBar({ pct }: { pct: number }) {
   );
 }
 
-// ── the featured "Gaffer's Top Pick" card ───────────────────────────────────
-function FeaturedCard({ leg, isTip, stake }: { leg: Leg; isTip: boolean; stake: number }) {
+// ── a compact leg block used inside the multi-leg featured card ─────────────
+function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: number }) {
   const e = enrich(leg);
-  const singleReturn = leg.odds * stake;
   return (
-    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#f5c542_0%,#7c3aed_38%,#22d3ee_66%,#f5c542_100%)] shadow-[0_30px_80px_-30px_rgba(124,58,237,0.8)]">
-      <div className="frost-panel frost-sheen relative overflow-hidden rounded-[1.33rem] p-5 md:p-6">
-        <div className="grid gap-5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-6">
-          {/* left — crests */}
-          <div className="flex flex-col gap-4">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]">
-              <Star className="h-3.5 w-3.5 fill-current" /> {isTip ? "Gaffer's Top Pick" : 'Top Value · not a tip'}
-            </span>
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex flex-col items-center gap-2 text-center">
-                <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={62} className="rounded-xl bg-black/30 p-1" />
-                <span className="max-w-[7rem] text-sm font-bold leading-tight text-white">{leg.home.name}</span>
-              </div>
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.04] text-[10px] font-black text-white/50">VS</span>
-              <div className="flex flex-col items-center gap-2 text-center">
-                <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={62} className="rounded-xl bg-black/30 p-1" />
-                <span className="max-w-[7rem] text-sm font-bold leading-tight text-white">{leg.away.name}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* right — market, odds, confidence, edge, mini stats */}
-          <div className="min-w-0">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">
-                  Today · {leg.time} KO
-                </div>
-                <div className="mt-1 truncate font-display text-2xl uppercase tracking-tight text-white md:text-3xl">{leg.selection}</div>
-                <div className="text-xs text-white/50">{leg.region} · {leg.league}</div>
-              </div>
-              <div className="shrink-0 text-right">
-                <div className="font-display text-4xl leading-none text-[#f5c542] md:text-5xl">{leg.odds.toFixed(2)}</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/65">Odds</div>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-2.5">
-              <div className="frost-tile relative overflow-hidden rounded-xl border border-white/12 px-3 py-2.5">
-                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
-                  <span>Confidence</span><span className="font-display text-base text-white">{leg.prob}%</span>
-                </div>
-                <div className="mt-2"><ConfidenceBar pct={leg.prob} /></div>
-              </div>
-              <div className="flex flex-col justify-center rounded-xl border border-emerald-400/25 bg-emerald-500/[0.08] px-3 py-2.5">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-200/80">Edge / Value</div>
-                <div className="font-display text-2xl leading-none text-emerald-300">+{leg.edge.toFixed(1)}%</div>
-              </div>
-            </div>
-
-            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-[13px]">
-              <span className="inline-flex items-center gap-1.5 text-white/70"><Activity className="h-3.5 w-3.5 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
-              <span className="inline-flex items-center gap-1.5 text-white/70"><BarChart3 className="h-3.5 w-3.5 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
-              {e.headToHead && <span className="inline-flex items-center gap-1.5 text-white/70"><Swords className="h-3.5 w-3.5 text-violet-300" /> H2H <b className="text-white">{e.headToHead}</b></span>}
-              {isTip && (
-                <span className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-[#f5c542]/25 bg-[#f5c542]/[0.08] px-2.5 py-1 text-[12px] text-white/75">
-                  <Coins className="h-3.5 w-3.5 text-[#f5c542]" /> {money(stake)} returns <b className="text-[#f8e7a1]">{money(singleReturn)}</b>
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* verdict */}
-        <div className="relative mt-4 overflow-hidden rounded-2xl border border-violet-400/25 bg-violet-500/[0.06] p-4">
-          <div className="flex items-start gap-3">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-violet-400/40 bg-violet-500/15 font-display text-lg text-violet-200">“</span>
-            <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">The Gaffer's Verdict</div>
-              <p className="mt-1 pr-24 text-sm italic leading-relaxed text-white/85 md:pr-28">{leg.placeholderReason}</p>
-            </div>
-            <div className="pointer-events-none absolute bottom-3 right-4 hidden items-center gap-3 sm:flex">
-              <span className="font-['Dancing_Script'] text-3xl font-semibold text-violet-300/80 [text-shadow:0_2px_10px_rgba(139,92,246,0.5)]">Gaffer</span>
-              <span className="grid h-12 w-12 place-items-center rounded-full border border-[#f5c542]/40 text-[7px] font-black uppercase leading-[1.1] tracking-wide text-[#f8e7a1]">
-                <Check className="h-3 w-3" />Gaffer<br />Approved
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="frost-tile relative overflow-hidden rounded-2xl border border-white/12 p-3.5 md:p-4">
+      <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
+          Leg {index + 1} of {total} · {leg.time} KO
+        </span>
+        <Star className="h-3.5 w-3.5 fill-current text-[#f5c542]" />
       </div>
-    </div>
-  );
-}
-
-// ── secondary pick card (tip or value-watch) ────────────────────────────────
-function SecondaryCard({ leg, isTip }: { leg: Leg; isTip: boolean }) {
-  return (
-    <div className="frost-tile relative flex flex-col overflow-hidden rounded-2xl border border-white/12 p-4">
-      <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
-        <span>Today · {leg.time} KO</span>
-        {isTip ? <Star className="h-4 w-4 fill-current text-[#f5c542]" /> : <span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] text-white/60">Value watch</span>}
-      </div>
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={30} className="rounded-lg bg-black/30 p-0.5" />
-          <span className="text-[10px] font-black text-white/50">VS</span>
-          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/30 p-0.5" />
+      <div className="mt-2.5 flex items-center gap-2.5">
+        <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={36} className="rounded-lg bg-black/30 p-0.5" />
+        <span className="grid h-5 w-5 place-items-center rounded-md border border-white/15 bg-white/[0.04] text-[9px] font-black text-white/50">VS</span>
+        <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={36} className="rounded-lg bg-black/30 p-0.5" />
+        <div className="ml-auto text-right">
+          <div className="font-display text-2xl leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Odds</div>
         </div>
       </div>
       <div className="mt-2.5 flex items-end justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate font-display text-base uppercase tracking-tight text-white">{leg.selection}</div>
-          <div className="truncate text-[11px] text-white/65">{leg.home.name} v {leg.away.name}</div>
+          <div className="truncate text-[11px] text-white/60">{leg.home.name} v {leg.away.name}</div>
         </div>
-        <div className="shrink-0 font-display text-2xl leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
       </div>
-      <div className="mt-3">
+      <div className="mt-2.5">
         <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
-          <span>Confidence</span><span className="text-white">{leg.prob}%</span>
+          <span>Confidence</span>
+          <span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/65">
+        <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
+        <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
+        <span className="ml-auto inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-black uppercase text-emerald-300">+{leg.edge.toFixed(1)}%</span>
       </div>
     </div>
   );
 }
+
+// ── the featured "Gaffer's Top Pick" card — single leg OR full multi-leg ─────
+function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: DailyBet }) {
+  const single = legs.length <= 1;
+  const primary = legs[0];
+  const e = enrich(primary);
+  const stake = bet.type === 'none' ? 10 : bet.stake;
+  const singleReturn = primary.odds * stake;
+  const combined = bet.type === 'none' ? primary.odds : bet.combinedOdds;
+  const returns = bet.type === 'none' ? singleReturn : bet.returns;
+  const label =
+    !isTip ? 'Top Value · not a tip'
+    : bet.type === 'double' ? "Today's Double · Gaffer's Slip"
+    : legs.length > 2 ? `Today's ${legs.length}-fold · Gaffer's Slip`
+    : "Gaffer's Top Pick";
+
+
+  return (
+    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#f5c542_0%,#7c3aed_38%,#22d3ee_66%,#f5c542_100%)] shadow-[0_30px_80px_-30px_rgba(124,58,237,0.8)]">
+      <div className="frost-panel frost-sheen relative overflow-hidden rounded-[1.33rem] p-4 md:p-6">
+        {/* eyebrow chip */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]">
+            <Star className="h-3.5 w-3.5 fill-current" /> {label}
+          </span>
+          {!single && (
+            <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-violet-400/40 bg-violet-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 sm:inline-flex">
+              <Ticket className="h-3.5 w-3.5" /> {legs.length} legs
+            </span>
+          )}
+        </div>
+
+        {single ? (
+          // ── single-leg featured (original layout, tightened for mobile) ──
+          <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-6">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <TeamAvatar name={primary.home.name} logoUrl={primary.home.logo} size={56} className="rounded-xl bg-black/30 p-1" />
+                  <span className="max-w-[7rem] text-sm font-bold leading-tight text-white">{primary.home.name}</span>
+                </div>
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.04] text-[10px] font-black text-white/50">VS</span>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <TeamAvatar name={primary.away.name} logoUrl={primary.away.logo} size={56} className="rounded-xl bg-black/30 p-1" />
+                  <span className="max-w-[7rem] text-sm font-bold leading-tight text-white">{primary.away.name}</span>
+                </div>
+              </div>
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">Today · {primary.time} KO</div>
+                  <div className="mt-1 truncate font-display text-2xl uppercase tracking-tight text-white md:text-3xl">{primary.selection}</div>
+                  <div className="text-xs text-white/50">{primary.region} · {primary.league}</div>
+                </div>
+                <div className="shrink-0 text-right">
+                  <div className="font-display text-4xl leading-none text-[#f5c542] md:text-5xl">{primary.odds.toFixed(2)}</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/65">Odds</div>
+                </div>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2.5">
+                <div className="frost-tile relative overflow-hidden rounded-xl border border-white/12 px-3 py-2.5">
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
+                    <span>Confidence</span><span className="font-display text-base text-white">{primary.prob}%</span>
+                  </div>
+                  <div className="mt-2"><ConfidenceBar pct={primary.prob} /></div>
+                </div>
+                <div className="flex flex-col justify-center rounded-xl border border-emerald-400/25 bg-emerald-500/[0.08] px-3 py-2.5">
+                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-200/80">Edge / Value</div>
+                  <div className="font-display text-2xl leading-none text-emerald-300">+{primary.edge.toFixed(1)}%</div>
+                </div>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-[12px]">
+                <span className="inline-flex items-center gap-1 text-white/70"><Activity className="h-3.5 w-3.5 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
+                <span className="inline-flex items-center gap-1 text-white/70"><BarChart3 className="h-3.5 w-3.5 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
+                {e.headToHead && <span className="inline-flex items-center gap-1 text-white/70"><Swords className="h-3.5 w-3.5 text-violet-300" /> H2H <b className="text-white">{e.headToHead}</b></span>}
+              </div>
+            </div>
+          </div>
+        ) : (
+          // ── multi-leg featured: every leg visible in the big box ──
+          <div className="mt-3 grid gap-2.5 md:grid-cols-2">
+            {legs.map((l, i) => <LegBlock key={l.fixtureId} leg={l} index={i} total={legs.length} />)}
+          </div>
+        )}
+
+        {/* combined slip strip — visible for singles AND multis */}
+        {isTip && (
+          <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#f5c542]/25 bg-gradient-to-r from-[#1a1003]/70 to-[#0b0518]/60 p-3">
+            <div>
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">{single ? 'Odds' : 'Combined odds'}</div>
+              <div className="font-display text-xl leading-none text-[#f5c542]">{combined.toFixed(2)}</div>
+            </div>
+            <div>
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Stake</div>
+              <div className="font-display text-xl leading-none text-white">{money(stake)}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Returns</div>
+              <div className="font-display text-xl leading-none text-emerald-300">{money(returns)}</div>
+            </div>
+          </div>
+        )}
+
+        {/* verdict */}
+        <div className="relative mt-3 overflow-hidden rounded-2xl border border-violet-400/25 bg-violet-500/[0.06] p-3.5">
+          <div className="flex items-start gap-3">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-violet-400/40 bg-violet-500/15 font-display text-lg text-violet-200">“</span>
+            <div className="min-w-0 flex-1">
+              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">The Gaffer's Verdict</div>
+              <p className="mt-1 text-sm italic leading-relaxed text-white/85">{primary.placeholderReason}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── secondary pick row — full-width, list-style, no horizontal scroll ────────
+function SecondaryRow({ leg, isTip }: { leg: Leg; isTip: boolean }) {
+  return (
+    <div className="frost-tile relative flex items-center gap-3 overflow-hidden rounded-2xl border border-white/12 px-3 py-2.5">
+      <div className="flex shrink-0 items-center gap-1.5">
+        <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={28} className="rounded-md bg-black/30 p-0.5" />
+        <span className="text-[9px] font-black text-white/45">VS</span>
+        <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={28} className="rounded-md bg-black/30 p-0.5" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5">
+          <span className="truncate text-[13px] font-bold text-white">{leg.selection}</span>
+          {isTip ? (
+            <Star className="h-3 w-3 shrink-0 fill-current text-[#f5c542]" />
+          ) : (
+            <span className="shrink-0 rounded bg-white/10 px-1 py-px text-[8px] font-black uppercase tracking-wide text-white/55">Value</span>
+          )}
+        </div>
+        <div className="truncate text-[11px] text-white/50">{leg.time} · {leg.home.name} v {leg.away.name} · {leg.prob}%</div>
+      </div>
+      <div className="shrink-0 text-right">
+        <div className="font-display text-lg leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
+        <div className="text-[9px] font-black uppercase tracking-[0.14em] text-emerald-300">+{leg.edge.toFixed(1)}%</div>
+      </div>
+    </div>
+  );
+}
+
 
 // ── the Gaffer's Slip ────────────────────────────────────────────────────────
 function SlipCard({ bet }: { bet: DailyBet }) {
@@ -299,17 +368,20 @@ export function GafferValueBoardSection() {
   // Value watch (NOT tips) — best-value fixtures for the fallback/rail.
   const valueWatch = getValueFixtures().filter((p) => !tipIds.has(p.fixtureId));
 
-  const featuredRaw: Leg | null = tips[0] ?? valueWatch[0] ?? null;
-  const featured = featuredRaw ? withLogos(featuredRaw) : null;
+  // Featured card takes the full slip — all tip legs if we have tips, otherwise
+  // the single best value pick as a "top value" callout.
+  const featuredLegs: Leg[] = tips.length > 0
+    ? tips.map((l) => withLogos(l))
+    : (valueWatch[0] ? [withLogos(valueWatch[0])] : []);
   const featuredIsTip = tips.length > 0;
+  const usedIds = new Set<string>(featuredLegs.map((l) => l.fixtureId));
 
-  // Rail: remaining tips first, then value-watch — up to 2 pick cards.
-  const usedIds = new Set<string>([featuredRaw?.fixtureId].filter(Boolean) as string[]);
+  // Below-the-fold value watch — stacked list, no horizontal scroll.
   const rail: { leg: Leg; isTip: boolean }[] = [];
-  for (const l of tips) { if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: true }); usedIds.add(l.fixtureId); } }
-  for (const l of valueWatch) { if (rail.length >= 2) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
+  for (const l of valueWatch) { if (rail.length >= 4) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
 
   const activeCount = tips.length || valueWatch.length;
+
   const profit = monthProfit ?? 48; // sample until first settlements
 
   return (
@@ -356,9 +428,9 @@ export function GafferValueBoardSection() {
           </div>
         </div>
 
-        {/* Featured */}
-        {featured ? (
-          <div className="mt-6"><FeaturedCard leg={featured} isTip={featuredIsTip} stake={bet.type === 'none' ? 10 : bet.stake} /></div>
+        {/* Featured — includes ALL tip legs (single, double, multi) */}
+        {featuredLegs.length > 0 ? (
+          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} /></div>
         ) : (
           <div className="mt-6 rounded-2xl border border-white/10 bg-[#0b0518]/80 p-6 text-center text-white/70">
             <h3 className="font-display text-2xl uppercase text-white">No bet today.</h3>
@@ -366,20 +438,26 @@ export function GafferValueBoardSection() {
           </div>
         )}
 
-        {/* Rail — secondary picks (carousel on mobile) + slip */}
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 md:col-span-2 md:grid md:grid-cols-2 md:overflow-visible">
-            {rail.map(({ leg, isTip }) => (
-              <div key={leg.fixtureId} className="w-[82%] shrink-0 snap-start md:w-auto"><SecondaryCard leg={leg} isTip={isTip} /></div>
-            ))}
-            {rail.length === 0 && (
-              <div className="grid place-items-center rounded-2xl border border-white/10 bg-[#0b0518]/60 p-6 text-center text-xs text-white/60 md:col-span-2">
-                No secondary value on the card right now.
-              </div>
-            )}
+        {/* Today's other value — stacked list, always fully visible, no scroll */}
+        {rail.length > 0 && (
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between px-1">
+              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">Today's Value Watch</span>
+              <Link to={CTA_URL} className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 hover:text-violet-100">See all →</Link>
+            </div>
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              {rail.map(({ leg, isTip }) => (
+                <SecondaryRow key={leg.fixtureId} leg={leg} isTip={isTip} />
+              ))}
+            </div>
           </div>
-          <SlipCard bet={bet} />
-        </div>
+        )}
+
+        {/* Slip fallback only when there are no tips today */}
+        {!featuredIsTip && (
+          <div className="mt-4"><SlipCard bet={bet} /></div>
+        )}
+
 
         {/* Footer bar — month profit + view all */}
         <div className="mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
