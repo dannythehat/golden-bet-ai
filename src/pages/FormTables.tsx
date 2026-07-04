@@ -8,6 +8,7 @@ import { TeamAvatar } from '@/components/TeamAvatar';
 import { FormStrip } from '@/components/FormStrip';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useInPlay, type InPlayState } from '@/components/homepage/useInPlay';
+import { useLiveScores, matchLive, type LiveScore } from '@/components/homepage/useLiveScores';
 import { supabase } from '@/integrations/supabase/client';
 import raw from '@/data/formTablesData.json';
 import type { FormFixtureRow as Fixture, FormValueCell, FormValueFlag, FormGame } from '@/types/footy';
@@ -261,25 +262,46 @@ const lineFromSelection = (s: string): number | null => {
   return m ? Number(m[1]) : null;
 };
 
-type Live = { landed: boolean; text: string };
-function liveLabel(catKey: CatKey, line: number | null, under: boolean, ip?: InPlayState): Live | null {
-  if (!ip?.live) return null;
-  if (catKey === 'btts') {
-    const both = ip.homeGoals > 0 && ip.awayGoals > 0;
-    if (under) return { landed: false, text: `In Play · ${ip.homeGoals}–${ip.awayGoals}` };
-    return { landed: both, text: both ? 'In Play · BTTS ✓' : `In Play · ${ip.homeGoals}–${ip.awayGoals}` };
-  }
-  const n = catKey === 'corners' ? ip.corners : catKey === 'cards' ? ip.cards : ip.goals;
-  const unit = catKey === 'corners' ? 'corners' : catKey === 'cards' ? 'cards' : 'goals';
-  if (n == null) return { landed: false, text: 'In Play' };
-  // Unders only settle at full-time — show the running count, never a false ✓.
-  if (under) return { landed: false, text: `In Play · ${n} ${unit}` };
-  const landed = line != null && n > line;
-  return { landed, text: landed ? `In Play · ${n} ${unit} ✓` : `In Play · ${n} ${unit}` };
+type VStatus = { state: 'live' | 'ft'; result?: 'won' | 'lost'; landed?: boolean; text: string };
+
+function settleMarket(catKey: CatKey, line: number | null, under: boolean, ip: InPlayState): 'won' | 'lost' | null {
+  if (catKey === 'btts') { const both = ip.homeGoals > 0 && ip.awayGoals > 0; return (under ? !both : both) ? 'won' : 'lost'; }
+  const metric = catKey === 'corners' ? ip.corners : catKey === 'cards' ? ip.cards : ip.goals;
+  if (metric == null || line == null) return null;
+  const over = metric > line;
+  return (under ? !over : over) ? 'won' : 'lost';
 }
 
-function ValueSelBox({ sel, ip, today, gaffer }: { sel: ValueSel; ip?: InPlayState; today: string; gaffer?: boolean }) {
-  const live = liveLabel(sel.catKey, sel.line, sel.under, ip);
+/** Time-based in-play (today only) — enables live polling + falls back when no score. */
+function fixtureLive(time: string, date: string, today: string): boolean {
+  if (date !== today) return false;
+  const m = /^(\d{1,2}):(\d{2})/.exec(time || '');
+  if (!m) return false;
+  const uk = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+  const nowMin = uk.getHours() * 60 + uk.getMinutes();
+  const ko = Number(m[1]) * 60 + Number(m[2]);
+  return nowMin >= ko && nowMin < ko + 160;
+}
+
+function valueStatus(sel: ValueSel, ip: InPlayState | undefined, live: LiveScore | undefined, today: string): VStatus | null {
+  // Finished — settle Won/Lost from FootyStats final numbers.
+  if (ip?.ended) return { state: 'ft', result: settleMarket(sel.catKey, sel.line, sel.under, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}` };
+  // Real live score from API-Football.
+  if (live) {
+    const score = `${live.gh}–${live.ga}`;
+    const clock = live.status === 'HT' ? 'HT' : live.elapsed != null ? `${live.elapsed}'` : 'LIVE';
+    const total = live.gh + live.ga;
+    const landed = !sel.under && sel.catKey === 'goals' && sel.line != null ? total > sel.line
+      : !sel.under && sel.catKey === 'btts' ? live.gh > 0 && live.ga > 0
+      : false;
+    return { state: 'live', landed, text: `${clock} · ${score}` };
+  }
+  if (fixtureLive(sel.f.time, sel.f.date, today)) return { state: 'live', text: 'In Play' };
+  return null;
+}
+
+function ValueSelBox({ sel, ip, liveList, today, gaffer }: { sel: ValueSel; ip?: InPlayState; liveList?: LiveScore[]; today: string; gaffer?: boolean }) {
+  const st = valueStatus(sel, ip, matchLive(sel.f.home.name, sel.f.away.name, liveList), today);
   return (
     <div className={`card-3d rounded-2xl p-3.5 ${gaffer ? 'ring-1 ring-inset ring-violet-400/45' : ''}`}>
       <div className="flex items-center justify-between gap-2">
@@ -293,11 +315,17 @@ function ValueSelBox({ sel, ip, today, gaffer }: { sel: ValueSel; ip?: InPlaySta
             <div className="truncate text-[10px] text-white/45">{gaffer ? "The Gaffer's pick · " : ''}{sel.f.region} · {fold(sel.f.league)}</div>
           </div>
         </div>
-        {live ? (
-          <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${live.landed ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/55 bg-rose-500/15 text-rose-200'}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${live.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />
-            {live.text}
-          </span>
+        {st ? (
+          st.state === 'ft' ? (
+            <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/55 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>
+              {st.text}{st.result === 'won' ? ' · Won ✓' : st.result === 'lost' ? ' · Lost' : ''}
+            </span>
+          ) : (
+            <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/55 bg-rose-500/15 text-rose-200'}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />
+              {st.text}
+            </span>
+          )
         ) : (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/12 bg-white/[0.04] px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-white/60">
             {whenLabel(sel.f.date, today)} · {sel.f.time}
@@ -350,6 +378,12 @@ function ValueBoard({ fixtures, C, underMode, mark, selection, gafferPick, today
     return [...s];
   }, [list, gafferPick]);
   const { data: inplay } = useInPlay(ids);
+  // Real live scores — only poll when one of these selections is in its window.
+  const anyLive = useMemo(
+    () => list.some((v) => fixtureLive(v.f.time, v.f.date, today)) || (!!gafferPick && fixtureLive(gafferPick.f.time, gafferPick.f.date, today)),
+    [list, gafferPick, today],
+  );
+  const { data: liveList } = useLiveScores(anyLive);
 
   const gafferSel: ValueSel | null = showGaffer ? {
     f: gafferPick!.f, catKey: gafferPick!.catKey, label: gafferPick!.label, selection: gafferPick!.selection,
@@ -365,8 +399,8 @@ function ValueBoard({ fixtures, C, underMode, mark, selection, gafferPick, today
         </div>
       ) : (
         <div className="grid gap-2.5 sm:grid-cols-2">
-          {gafferSel && <ValueSelBox sel={gafferSel} ip={inplay?.[String(gafferSel.f.id)]} today={today} gaffer />}
-          {shownList.map((v) => <ValueSelBox key={`${v.catKey}-${v.f.id}`} sel={v} ip={inplay?.[String(v.f.id)]} today={today} />)}
+          {gafferSel && <ValueSelBox sel={gafferSel} ip={inplay?.[String(gafferSel.f.id)]} liveList={liveList} today={today} gaffer />}
+          {shownList.map((v) => <ValueSelBox key={`${v.catKey}-${v.f.id}`} sel={v} ip={inplay?.[String(v.f.id)]} liveList={liveList} today={today} />)}
         </div>
       )}
     </section>
