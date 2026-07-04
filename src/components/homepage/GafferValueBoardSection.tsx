@@ -145,10 +145,23 @@ function withLogos(leg: Leg): Leg {
   };
 }
 
-type Enriched = { formScore: number | null; leagueAverage: number | null; headToHead: string | null };
+type FormGame = { res?: string; gf?: number; ga?: number; corners?: number; cards?: number; btts?: boolean };
+type Enriched = {
+  formScore: number | null; leagueAverage: number | null; headToHead: string | null;
+  homeForm: string[]; awayForm: string[];       // recent W/D/L, most recent first
+  marketHits: { hits: number; total: number } | null; // how often the pick landed recently
+};
+// Did a single recent game hit the leg's market?
+function gameHitsMarket(g: FormGame, market: Leg['market'], line: number): boolean {
+  if (market === 'Goals') return (Number(g.gf ?? 0) + Number(g.ga ?? 0)) > line;
+  if (market === 'Corners') return Number(g.corners ?? 0) > line;
+  if (market === 'BTTS') return !!g.btts;
+  return Number(g.cards ?? 0) > line;
+}
 function enrich(leg: Leg): Enriched {
   const f = findFixture(leg);
-  if (!f) return { formScore: leg.prob ?? null, leagueAverage: null, headToHead: null };
+  const base = { homeForm: [] as string[], awayForm: [] as string[], marketHits: null as Enriched['marketHits'] };
+  if (!f) return { formScore: leg.prob ?? null, leagueAverage: null, headToHead: null, ...base };
   const line = lineOf(leg.selection);
   const key = String(line);
   const formScore =
@@ -173,7 +186,35 @@ function enrich(leg: Leg): Enriched {
     }
     headToHead = `${hits}/${total}`;
   }
-  return { formScore: formScore ?? leg.prob ?? null, leagueAverage: leagueAverage ?? null, headToHead };
+  const homeGames = (f.home_form as FormGame[] | undefined ?? []).slice(0, 5);
+  const awayGames = (f.away_form as FormGame[] | undefined ?? []).slice(0, 5);
+  const homeForm = homeGames.map((g) => String(g.res ?? '·').toUpperCase());
+  const awayForm = awayGames.map((g) => String(g.res ?? '·').toUpperCase());
+  const marketGames = [...homeGames, ...awayGames];
+  const marketHits = marketGames.length
+    ? { hits: marketGames.filter((g) => gameHitsMarket(g, leg.market, line)).length, total: marketGames.length }
+    : null;
+  return { formScore: formScore ?? leg.prob ?? null, leagueAverage: leagueAverage ?? null, headToHead, homeForm, awayForm, marketHits };
+}
+
+// Market-aware average label so "Avg 71.5" reads clearly per market.
+const avgLabel = (market: Leg['market'], avg: number | null): string | null => {
+  if (avg == null) return null;
+  if (market === 'BTTS') return `${avg}% BTTS`;
+  if (market === 'Corners') return `${avg.toFixed(1)} crnrs/gm`;
+  return `${avg.toFixed(1)} gls/gm`;
+};
+
+// Recent form as compact W / D / L chips.
+function FormDots({ results }: { results: string[] }) {
+  if (!results.length) return <span className="text-white/30">—</span>;
+  return (
+    <span className="inline-flex gap-0.5">
+      {results.map((r, i) => (
+        <span key={i} className={`grid h-3.5 w-3.5 place-items-center rounded-[3px] text-[8px] font-black leading-none ${r === 'W' ? 'bg-emerald-500/30 text-emerald-200' : r === 'L' ? 'bg-rose-500/30 text-rose-200' : 'bg-white/12 text-white/55'}`}>{r}</span>
+      ))}
+    </span>
+  );
 }
 
 // ── month-to-date profit from settled picks ─────────────────────────────────
@@ -292,15 +333,34 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       </div>
 
       <div className="inset-3d mt-3 rounded-xl px-3 py-2.5">
+        {/* confidence */}
         <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
           <span>Confidence</span>
           <span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-white/70">
-          <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
-          <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
-          <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/25">+{leg.edge.toFixed(1)}%</span>
+
+        {/* recent form — both teams, last 5 (most recent first) */}
+        <div className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1 border-t border-white/10 pt-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="w-9 shrink-0 truncate text-[9px] font-black uppercase tracking-wide text-white/45">{leg.home.short}</span>
+            <FormDots results={e.homeForm} />
+          </div>
+          <div className="flex items-center justify-end gap-1.5">
+            <FormDots results={e.awayForm} />
+            <span className="w-9 shrink-0 truncate text-right text-[9px] font-black uppercase tracking-wide text-white/45">{leg.away.short}</span>
+          </div>
+        </div>
+
+        {/* market evidence — how often the pick has actually landed lately */}
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-white/70">
+          {e.marketHits && (
+            <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-emerald-300" /> Landed <b className="text-emerald-300">{e.marketHits.hits}/{e.marketHits.total}</b> recent</span>
+          )}
+          {e.leagueAverage != null && (
+            <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> <b className="text-white">{avgLabel(leg.market, e.leagueAverage)}</b></span>
+          )}
+          <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/25">+{leg.edge.toFixed(1)}% edge</span>
         </div>
       </div>
     </div>
