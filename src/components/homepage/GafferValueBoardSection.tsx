@@ -391,13 +391,13 @@ function SecondaryRow({ leg, ip }: { leg: Leg; ip?: InPlayState }) {
       </div>
       {/* selection + meta */}
       <div className="min-w-0">
-        <div className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</div>
-        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-white/50">
+        <div className="flex items-center gap-2">
+          <span className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</span>
           {li
-            ? <span className={`inline-flex shrink-0 items-center gap-1 font-black uppercase tracking-wide ${li.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${li.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{li.text}</span>
-            : <span className="inline-flex shrink-0 items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
-          <span className="truncate text-white/45">{leg.home.name} v {leg.away.name}</span>
+            ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${li.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${li.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{li.text}</span>
+            : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
+        <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
       </div>
       {/* odds + edge */}
       <div className="shrink-0 text-right">
