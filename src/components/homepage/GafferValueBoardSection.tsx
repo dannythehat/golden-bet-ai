@@ -69,6 +69,18 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
   return null;
 }
 
+// Whether a selection has landed (live line already beaten, or settled won).
+const isWon = (st: StatusInfo | null): boolean => !!st && (st.state === 'ft' ? st.result === 'won' : !!st.landed);
+
+// Corner "WON" flag for a leg box.
+function WonTag() {
+  return (
+    <span className="absolute left-0 top-0 z-20 inline-flex items-center gap-0.5 rounded-br-xl bg-gradient-to-r from-emerald-400 to-emerald-500 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#04140d] shadow-[0_5px_14px_-4px_rgba(16,185,129,0.9)]">
+      Won ✓
+    </span>
+  );
+}
+
 function StatusChip({ st }: { st: StatusInfo }) {
   if (st.state === 'ft') {
     const tone = st.result === 'won'
@@ -210,14 +222,16 @@ function ConfidenceBar({ pct }: { pct: number }) {
 function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number; total: number; ip?: InPlayState; liveList?: LiveScore[] }) {
   const e = enrich(leg);
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
+  const won = isWon(st);
   return (
-    <div className="card-3d relative overflow-hidden rounded-2xl p-4">
+    <div className={`card-3d relative overflow-hidden rounded-2xl p-4 ${won ? 'ring-2 ring-inset ring-emerald-400/50' : ''}`}>
+      {won && <WonTag />}
       {/* premium top sheen line */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
 
       {/* header: leg number + prominent kickoff pill */}
       <div className="flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
+        <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/65 ${won ? 'pl-[54px]' : ''}`}>
           <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
           Leg {index + 1} of {total}
         </span>
@@ -420,9 +434,10 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
 // ── secondary pick row — full-width, list-style, no horizontal scroll ────────
 function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveList?: LiveScore[] }) {
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
-  const ftTone = st?.result === 'won' ? 'text-emerald-300' : st?.result === 'lost' ? 'text-rose-400' : 'text-white/65';
+  const won = isWon(st);
   return (
-    <div className="inset-3d grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-2.5">
+    <div className={`inset-3d relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-xl px-3 ${won ? 'pb-2.5 pt-6 ring-2 ring-inset ring-emerald-400/45' : 'py-2.5'}`}>
+      {won && <WonTag />}
       {/* crests */}
       <div className="flex shrink-0 items-center gap-1">
         <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
@@ -435,9 +450,9 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
           <span className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</span>
           {st
             ? (st.state === 'ft'
-                ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${ftTone}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
-                : <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
-            : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
+                ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
+                : <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
+            : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
         <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
       </div>
