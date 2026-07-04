@@ -106,11 +106,16 @@ export function gafferPickLine(s: PickSignals, seed = '', flavourful = true): st
 export function gafferReason(s: PickSignals, seed = ''): string {
   const rng = mulberry32(seedOf(`${s.team}|${s.opp}|${s.market}|reason|${seed}`));
   const vars = varsFor(s, rng);
+  // Read → value → PUNCHLINE. He lands on a bit of wit or a confident verdict —
+  // never a limp "bet responsibly" hedge (that belongs on the small print, not
+  // in his mouth). Keeps every pick fun, funny and sharp.
+  const closer = rng() > 0.38
+    ? pick(ASIDES, 'aside', rng)
+    : pick(verdictBankFor(s), `verdict:${s.tier}`, rng);
   const parts = [
     pick(MARKET_FLAVOUR[s.market] ?? MARKET_FLAVOUR.Goals, `flavour:${s.market}`, rng),
     pick(edgeBankFor(s), 'edge', rng),
-    pick(verdictBankFor(s), `verdict:${s.tier}`, rng),
-    pick(HEDGES, 'hedge', rng),
+    closer,
   ];
   return parts.map((p) => fill(p, vars)).join(' ');
 }
