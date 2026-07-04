@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, ArrowRight, Check } from 'lucide-react';
 import { Countdown } from '@/components/fantasy/Countdown';
+import { supabase } from '@/integrations/supabase/client';
 
 const POSTER = '/images/fantasy/fantasy-coming-soon.jpg';
 // Registration target for the coming-soon countdown (season opens Aug 2026).
@@ -25,9 +26,12 @@ export function FantasyLeagueSellItSection() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    try { localStorage.setItem('fantasy_waitlist_email', email.trim()); } catch { /* ignore */ }
-    setDone(true);
+    const clean = email.trim();
+    if (!clean) return;
+    setDone(true); // optimistic — don't make them wait on the network
+    try { localStorage.setItem('fantasy_waitlist_email', clean); } catch { /* ignore */ }
+    // Persist to the waitlist (fire-and-forget; localStorage is the fallback).
+    void supabase.functions.invoke('fantasy-waitlist', { body: { email: clean, source: 'homepage' } }).catch(() => {});
   };
 
   return (
