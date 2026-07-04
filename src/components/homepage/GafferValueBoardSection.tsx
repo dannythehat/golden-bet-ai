@@ -271,6 +271,12 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
         </div>
       </div>
 
+      {/* league — so obscure fixtures are identifiable */}
+      <div className="mt-2 flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/55">
+        <Trophy className="h-3 w-3 text-[#f5c542]/80" />
+        <span className="truncate">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
+      </div>
+
       {/* the pick + odds */}
       <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/[0.16] to-emerald-500/[0.02] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_26px_-16px_rgba(16,185,129,0.55)]">
         <div className="min-w-0">
@@ -468,6 +474,7 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
             : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
         <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
+        <div className="truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</div>
       </div>
       {/* odds + edge */}
       <div className="shrink-0 text-right">
