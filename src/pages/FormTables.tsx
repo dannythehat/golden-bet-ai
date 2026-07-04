@@ -327,7 +327,7 @@ function ValueHeading({ selection }: { selection: string }) {
     <div className="mb-4">
       <h2 className="font-display text-2xl uppercase tracking-tight text-white md:text-3xl">Best Value · <span className="text-emerald-400">{selection}</span></h2>
       <p className="mt-1 max-w-2xl text-sm leading-relaxed text-white/55">
-        The Gaffer's crunched every fixture so you don't have to — the biggest-value games for this market, juiciest edge first. <span className="text-white/75">His numbers, not a calculator's.</span> Live games tick over as they play.
+        The Gaffer's crunched every fixture so you don't have to — the biggest-value games for this market, juiciest edge first. <span className="text-white/75">His numbers, not a calculator's.</span>
       </p>
     </div>
   );
