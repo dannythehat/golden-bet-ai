@@ -23,14 +23,17 @@ export const SOCIAL_LINKS = {
 } as const;
 
 /* ── Top navigation ───────────────────────────────────────────────────── */
+// Menu targets: on-page anchors that actually exist on the homepage, plus the
+// real tool pages for Form Tables / Fantasy / P&L. (The old #form-tables and
+// #gaffer-story anchors were dead — those sections were removed, so tapping
+// them did nothing.)
 export const NAV_LINKS = [
-  { label: 'Predictions', href: '#tip-of-the-day' },
+  { label: 'Predictions', href: '#daily-picks' },
+  { label: 'Form Tables', href: '/form-tables' },
+  { label: 'Fantasy League', href: '/fantasy-league' },
+  { label: 'P&L', href: '/pnl' },
   { label: 'Articles', href: '#latest-articles' },
-  { label: 'Tips', href: '#tip-of-the-day' },
-  { label: 'Form Tables', href: '#form-tables' },
-  { label: 'Fantasy League', href: '#fantasy-league' },
   { label: 'Community', href: '#community' },
-  { label: 'About The Gaffer', href: '#gaffer-story' },
 ] as const;
 
 /* ── Feature strip (editable cards under the hero) ────────────────────── */
