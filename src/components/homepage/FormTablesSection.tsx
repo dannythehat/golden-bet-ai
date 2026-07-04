@@ -161,8 +161,8 @@ export function FormTablesSection() {
                   <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={22} className="rounded bg-black/30 p-px" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[12px] font-bold text-white">
-                    {f.home.short || f.home.name} <span className="text-white/40">v</span> {f.away.short || f.away.name}
+                  <div className="text-[12px] font-bold leading-tight text-white [overflow-wrap:anywhere]">
+                    {f.home.name} <span className="text-white/40">v</span> {f.away.name}
                   </div>
                   <div className="truncate text-[10px] text-white/45">{f.time} · {f.region}</div>
                 </div>
