@@ -51,6 +51,7 @@ function rawLegToLeg(raw: RawPickLeg, i: number): Leg {
   const odds = toNumber(raw.best_price ?? raw.odds ?? raw.price, 1);
   const prob = normConf(raw.confidence ?? raw.probability ?? raw.formProb, 72);
   const edge = toNumber(raw.edge, Math.max(1, prob - Math.round(100 / Math.max(odds, 1))));
+  const koMs = raw.kickoff_time ? Date.parse(raw.kickoff_time) : NaN;
   return {
     fixtureId: raw.fixtureId ?? raw.fixture_id ?? `${home}-${away}-${i}`,
     home: { name: home, short: home.slice(0, 3).toUpperCase(), logo: raw.home_logo ?? raw.homeLogo ?? null },
@@ -58,6 +59,7 @@ function rawLegToLeg(raw: RawPickLeg, i: number): Leg {
     region: raw.region ?? 'Today',
     league: raw.league ?? 'Featured fixture',
     time: formatKO(raw.kickoff_time ?? raw.time),
+    kickoffMs: Number.isFinite(koMs) ? koMs : null,
     market: market.toLowerCase().includes('corner') ? 'Corners' : market.toLowerCase().includes('btts') ? 'BTTS' : 'Goals',
     selection, odds, prob, edge,
     flag: edge >= 8 ? 'strong' : 'value',

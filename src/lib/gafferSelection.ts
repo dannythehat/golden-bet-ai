@@ -21,6 +21,9 @@ export interface Leg {
   home: { name: string; short: string; logo: string | null };
   away: { name: string; short: string; logo: string | null };
   region: string; league: string; time: string;
+  // Absolute kickoff (epoch ms) when known — lets us show the time in the
+  // viewer's own timezone and detect live/ended correctly anywhere in the world.
+  kickoffMs?: number | null;
   market: 'Goals' | 'Corners' | 'BTTS';
   selection: string;      // 'Over 9.5 Corners'
   odds: number;

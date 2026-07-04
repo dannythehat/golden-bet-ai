@@ -31,6 +31,19 @@ function matchPhase(timeStr: string): 'pre' | 'live' | 'ended' {
   if (nowMin < koMin + 130) return 'live';
   return 'ended';
 }
+// Prefer the absolute kickoff (timezone-independent) so live/ended is correct for
+// a viewer anywhere in the world; fall back to the UK-clock string when we only
+// have a display time (e.g. the bundled value-watch slate).
+function legPhase(leg: { time: string; kickoffMs?: number | null }): 'pre' | 'live' | 'ended' {
+  const ms = leg.kickoffMs;
+  if (ms != null && Number.isFinite(ms)) {
+    const now = Date.now();
+    if (now < ms) return 'pre';
+    if (now < ms + 130 * 60_000) return 'live';
+    return 'ended';
+  }
+  return matchPhase(leg.time);
+}
 // A selection's live/finished status. FootyStats has no live scores on this
 // plan, so 'live' is time-based (badge only). Once a match is complete it
 // carries the FINAL numbers, so 'ft' shows the score + a settled Won/Lost.
@@ -65,7 +78,7 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
   }
   // No live data (e.g. corners-only markets, or match not on the live feed) —
   // fall back to the time-based badge so it still reads as in-play.
-  if (matchPhase(leg.time) === 'live') return { state: 'live', text: 'In Play' };
+  if (legPhase(leg) === 'live') return { state: 'live', text: 'In Play' };
   return null;
 }
 
@@ -586,7 +599,7 @@ export function GafferValueBoardSection() {
   const inplayIds = boardLegs.map((l) => l.fixtureId);
   const { data: inplay } = useInPlay(inplayIds);
   // Real live scores (API-Football) — only poll while a pick is in its window.
-  const anyLive = boardLegs.some((l) => matchPhase(l.time) === 'live');
+  const anyLive = boardLegs.some((l) => legPhase(l) === 'live');
   const { data: liveList } = useLiveScores(anyLive);
 
   const activeCount = featuredIsTip ? tips.length + trebleLegs.length : valueWatch.length;
