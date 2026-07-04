@@ -54,8 +54,6 @@ export function HeroBanner() {
           The Gaffer
         </span>
 
-        {/* DESKTOP — Fantasy Football coming soon badge, tucked over the trophy */}
-        <FantasyComingSoonBadge className="pointer-events-auto absolute right-6 bottom-8 z-[2] hidden md:block" />
 
         <div className="relative flex flex-col md:min-h-[660px] md:justify-between md:gap-8">
           {/* MOBILE scene banner — the Gaffer shown clearly up top, fading into the copy */}
