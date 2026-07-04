@@ -41,7 +41,7 @@ export function FantasyLeagueSellItSection() {
       {/* ── cinematic poster (cropped to hide baked CTA strip) ── */}
       <div
         className="relative w-full overflow-hidden"
-        style={{ aspectRatio: '3 / 4' }}
+        style={{ aspectRatio: '2.2 / 1' }}
       >
         <img
           src={POSTER}
