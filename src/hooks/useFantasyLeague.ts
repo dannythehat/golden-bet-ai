@@ -136,7 +136,8 @@ export const FANTASY_PLAYERS: FantasyPlayer[] = [
 
 const slot = (id: string, is_starter: boolean, opts: { c?: boolean; v?: boolean; bench?: number } = {}) => {
   const player = FANTASY_PLAYERS.find((p) => p.id === id)!;
-  return { player: { ...player, gameweek_points: is_starter ? Math.round(player.form * (opts.c ? 2 : 1)) : 0 }, is_starter, is_captain: !!opts.c, is_vice_captain: !!opts.v, bench_order: opts.bench };
+  // Base gameweek points only — the captain ×2 is applied at display, never baked.
+  return { player: { ...player, gameweek_points: is_starter ? Math.round(player.form) : 0 }, is_starter, is_captain: !!opts.c, is_vice_captain: !!opts.v, bench_order: opts.bench };
 };
 
 /** A full legal fallback squad: 2·5·5·3, XI in a 4-4-2, captain + vice + bench order. */
@@ -157,7 +158,9 @@ export const FANTASY_TEAM: FantasyTeam = {
 const daysAdd = (d: number) => new Date(Date.now() + d * 86400000).toISOString();
 
 export const FANTASY_GAMEWEEK: FantasyGameweekResponse = {
-  season: '2025/26', gameweek: 24, status: 'open', deadline_at: daysAdd(2.35),
+  // Sample state: a gameweek in play (so Results + live totals render). Real FPL
+  // data drives status/deadline live; the countdown reads the next deadline.
+  season: '2025/26', gameweek: 24, status: 'live', deadline_at: daysAdd(2.35),
   bonus_rules: [{ key: 'manual_bonus', label: 'Gaffer Bonus', description: 'Optional 0–3 bonus points, awarded by The Gaffer for standout performances.' }],
   fixtures: [
     { id: 'fx_1', kickoff_time: daysAdd(2.4), home_team: LIV, away_team: NEW, status: 'scheduled' },

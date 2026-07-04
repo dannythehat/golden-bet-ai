@@ -87,7 +87,8 @@ export function FantasyPageHero() {
               ))}
             </div>
 
-            <div className="absolute -right-1 top-2 z-20 w-[220px] rounded-2xl border border-[#f5c542]/25 bg-[#0b0518]/90 p-3 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.9)] backdrop-blur-md sm:right-0 md:w-[240px]">
+            {/* leaderboard — stacks below the Gaffer on mobile (off his face), floats top-right on desktop */}
+            <div className="relative z-20 mx-auto mt-8 w-full max-w-[300px] rounded-2xl border border-[#f5c542]/25 bg-[#0b0518]/90 p-3 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.9)] backdrop-blur-md lg:absolute lg:-right-1 lg:top-2 lg:mt-0 lg:w-[240px] lg:max-w-none">
               <div className="flex items-center gap-1.5 border-b border-white/10 pb-2">
                 <Crown className="h-3.5 w-3.5 fill-[#f5c542] text-[#f5c542]" />
                 <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">The Gaffer League</span>
