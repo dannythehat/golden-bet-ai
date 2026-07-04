@@ -97,7 +97,7 @@ export const RANDOM_PRIZES = [
   'Restaurant vouchers', 'Football experiences', 'Surprise giveaways',
 ];
 export const THEMED_EVENTS = [
-  '£1,000 Christmas Hamper Giveaway', 'Halloween Special', 'Easter Special',
+  'Christmas Hamper Giveaway', 'Halloween Special', 'Easter Special',
   'Opening Weekend Giveaway', 'Final Day Celebration',
 ];
 

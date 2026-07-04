@@ -26,7 +26,7 @@ export function WeeklyPrizesFeatureCard() {
       tone="amber"
       eyebrow="Weekly Prizes"
       title={<>Real prizes. <Accent tone="amber">Every week.</Accent></>}
-      body="Climb the leaderboard and win real prizes paid straight to members — plus big themed giveaways all season."
+      body="Climb the leaderboard and win real prizes — vouchers, trips, tech and experiences — plus big themed giveaways all season."
       ctas={[{ label: 'See Prizes', to: primaryLink }]}
     >
       <div className="flex flex-col gap-3">
