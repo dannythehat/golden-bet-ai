@@ -7,6 +7,7 @@ import { TeamAvatar } from '@/components/TeamAvatar';
 import { getDailyBet, getGafferPicks, getValueFixtures, type Leg, type DailyBet } from '@/lib/gafferSelection';
 import { useLiveDailyPicks } from './useLiveDailyPicks';
 import { useInPlay, type InPlayState } from './useInPlay';
+import { useLiveScores, matchLive, type LiveScore } from './useLiveScores';
 import rawSnapshot from '@/data/formTablesData.json';
 import type { FormFixtureRow } from '@/types/footy';
 
@@ -30,39 +31,66 @@ function matchPhase(timeStr: string): 'pre' | 'live' | 'ended' {
   if (nowMin < koMin + 130) return 'live';
   return 'ended';
 }
-function InPlayPill({ text, landed }: { text: string; landed?: boolean }) {
-  const tone = landed
-    ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200 shadow-[0_0_16px_-4px_rgba(16,185,129,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]'
-    : 'border-rose-400/55 bg-rose-500/15 text-rose-200 shadow-[0_0_16px_-4px_rgba(244,63,94,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]';
-  return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-wide ${tone}`}>
-      <span className={`h-1.5 w-1.5 rounded-full ${landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />
-      {text}
-    </span>
-  );
+// A selection's live/finished status. FootyStats has no live scores on this
+// plan, so 'live' is time-based (badge only). Once a match is complete it
+// carries the FINAL numbers, so 'ft' shows the score + a settled Won/Lost.
+type StatusInfo = { state: 'live' | 'ft'; result?: 'won' | 'lost'; landed?: boolean; text: string };
+
+function selectionLine(sel: string): number | null {
+  const lm = /(\d+(?:\.\d+)?)/.exec(sel);
+  return lm ? Number(lm[1]) : null;
 }
 
-// Live label for a selection from its market + the in-play count. Falls back to
-// the time-based phase when the feed hasn't provided a state yet.
-type LiveInfo = { live: boolean; landed: boolean; text: string };
-function liveInfo(leg: Leg, ip?: InPlayState): LiveInfo | null {
-  const live = ip ? ip.live : matchPhase(leg.time) === 'live';
-  if (!live) return null;
-  const lm = /(\d+(?:\.\d+)?)/.exec(leg.selection);
-  const line = lm ? Number(lm[1]) : null;
-  const over = (n: number | null | undefined, unit: string): LiveInfo => {
-    if (n == null) return { live: true, landed: false, text: 'In Play' };
-    const landed = line != null && n > line;
-    return { live: true, landed, text: landed ? `In Play · ${n} ${unit} ✓` : `In Play · ${n} ${unit}` };
-  };
-  if (leg.market === 'Goals') return over(ip?.goals ?? null, 'goals');
-  if (leg.market === 'Corners') return over(ip?.corners ?? null, 'corners');
-  if (leg.market === 'BTTS') {
-    if (!ip) return { live: true, landed: false, text: 'In Play' };
-    const both = ip.homeGoals > 0 && ip.awayGoals > 0;
-    return { live: true, landed: both, text: both ? 'In Play · BTTS ✓' : `In Play · ${ip.homeGoals}–${ip.awayGoals}` };
+function settleLeg(leg: Leg, ip: InPlayState): 'won' | 'lost' | null {
+  const line = selectionLine(leg.selection);
+  if (leg.market === 'BTTS') return ip.homeGoals > 0 && ip.awayGoals > 0 ? 'won' : 'lost';
+  const metric = leg.market === 'Corners' ? ip.corners : ip.goals;
+  if (metric == null || line == null) return null;
+  return metric > line ? 'won' : 'lost';
+}
+
+function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | null {
+  // Finished — FootyStats carries the final numbers → settle Won/Lost.
+  if (ip?.ended) return { state: 'ft', result: settleLeg(leg, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}` };
+  // Live score from API-Football (real in-play).
+  if (live) {
+    const score = `${live.gh}–${live.ga}`;
+    const clock = live.status === 'HT' ? 'HT' : live.elapsed != null ? `${live.elapsed}'` : 'LIVE';
+    const line = selectionLine(leg.selection);
+    const total = live.gh + live.ga;
+    const landed = leg.market === 'Goals' && line != null ? total > line
+      : leg.market === 'BTTS' ? live.gh > 0 && live.ga > 0
+      : false;
+    return { state: 'live', landed, text: `${clock} · ${score}` };
   }
-  return { live: true, landed: false, text: 'In Play' };
+  // No live data (e.g. corners-only markets, or match not on the live feed) —
+  // fall back to the time-based badge so it still reads as in-play.
+  if (matchPhase(leg.time) === 'live') return { state: 'live', text: 'In Play' };
+  return null;
+}
+
+function StatusChip({ st }: { st: StatusInfo }) {
+  if (st.state === 'ft') {
+    const tone = st.result === 'won'
+      ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200'
+      : st.result === 'lost'
+        ? 'border-rose-400/55 bg-rose-500/15 text-rose-200'
+        : 'border-white/20 bg-white/[0.06] text-white/70';
+    return (
+      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-wide ${tone}`}>
+        {st.text}{st.result === 'won' ? ' · Won ✓' : st.result === 'lost' ? ' · Lost' : ''}
+      </span>
+    );
+  }
+  const tone = st.landed
+    ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200'
+    : 'border-rose-400/55 bg-rose-500/15 text-rose-200';
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-wide shadow-[0_0_16px_-4px_rgba(244,63,94,0.6),inset_0_1px_0_rgba(255,255,255,0.15)] ${tone}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />
+      {st.text}
+    </span>
+  );
 }
 
 const GAFFER_IMG = '/images/gaffer/gaffer-pointing-board.jpg';
@@ -179,9 +207,9 @@ function ConfidenceBar({ pct }: { pct: number }) {
 }
 
 // ── a compact leg block used inside the multi-leg featured card ─────────────
-function LegBlock({ leg, index, total, ip }: { leg: Leg; index: number; total: number; ip?: InPlayState }) {
+function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number; total: number; ip?: InPlayState; liveList?: LiveScore[] }) {
   const e = enrich(leg);
-  const li = liveInfo(leg, ip);
+  const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
   return (
     <div className="card-3d relative overflow-hidden rounded-2xl p-4">
       {/* premium top sheen line */}
@@ -193,7 +221,7 @@ function LegBlock({ leg, index, total, ip }: { leg: Leg; index: number; total: n
           <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
           Leg {index + 1} of {total}
         </span>
-        {li ? <InPlayPill text={li.text} landed={li.landed} /> : (
+        {st ? <StatusChip st={st} /> : (
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-2.5 py-1 text-[13px] font-black tracking-wide text-[#f8e7a1] shadow-[0_0_16px_-6px_rgba(245,197,66,0.65)]">
             <Clock className="h-3.5 w-3.5" /> {leg.time}
             <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/65">KO</span>
@@ -245,11 +273,11 @@ function LegBlock({ leg, index, total, ip }: { leg: Leg; index: number; total: n
 }
 
 // ── the featured "Gaffer's Top Pick" card — single leg OR full multi-leg ─────
-function FeaturedCard({ legs, isTip, bet, inplay }: { legs: Leg[]; isTip: boolean; bet: DailyBet; inplay?: Record<string, InPlayState> }) {
+function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isTip: boolean; bet: DailyBet; inplay?: Record<string, InPlayState>; liveList?: LiveScore[] }) {
   const single = legs.length <= 1;
   const primary = legs[0];
   const e = enrich(primary);
-  const primaryLi = liveInfo(primary, inplay?.[primary.fixtureId]);
+  const primaryStatus = statusInfo(primary, inplay?.[primary.fixtureId], matchLive(primary.home.name, primary.away.name, liveList));
   const stake = bet.type === 'none' ? 10 : bet.stake;
   const singleReturn = primary.odds * stake;
   const combined = bet.type === 'none' ? primary.odds : bet.combinedOdds;
@@ -295,7 +323,7 @@ function FeaturedCard({ legs, isTip, bet, inplay }: { legs: Leg[]; isTip: boolea
             <div className="min-w-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  {primaryLi ? <InPlayPill text={primaryLi.text} landed={primaryLi.landed} /> : <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">Today · {primary.time} KO</div>}
+                  {primaryStatus ? <StatusChip st={primaryStatus} /> : <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">Today · {primary.time} KO</div>}
                   <div className="mt-1 truncate font-display text-2xl uppercase tracking-tight text-white md:text-3xl">{primary.selection}</div>
                   <div className="text-xs text-white/50">{primary.region} · {primary.league}</div>
                 </div>
@@ -326,7 +354,7 @@ function FeaturedCard({ legs, isTip, bet, inplay }: { legs: Leg[]; isTip: boolea
         ) : (
           // ── multi-leg featured: every leg visible in the big box ──
           <div className="mt-3 grid gap-2.5 md:grid-cols-2">
-            {legs.map((l, i) => <LegBlock key={l.fixtureId} leg={l} index={i} total={legs.length} ip={inplay?.[l.fixtureId]} />)}
+            {legs.map((l, i) => <LegBlock key={l.fixtureId} leg={l} index={i} total={legs.length} ip={inplay?.[l.fixtureId]} liveList={liveList} />)}
           </div>
         )}
 
@@ -390,8 +418,9 @@ function FeaturedCard({ legs, isTip, bet, inplay }: { legs: Leg[]; isTip: boolea
 }
 
 // ── secondary pick row — full-width, list-style, no horizontal scroll ────────
-function SecondaryRow({ leg, ip }: { leg: Leg; ip?: InPlayState }) {
-  const li = liveInfo(leg, ip);
+function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveList?: LiveScore[] }) {
+  const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
+  const ftTone = st?.result === 'won' ? 'text-emerald-300' : st?.result === 'lost' ? 'text-rose-400' : 'text-white/65';
   return (
     <div className="inset-3d grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-2.5">
       {/* crests */}
@@ -404,8 +433,10 @@ function SecondaryRow({ leg, ip }: { leg: Leg; ip?: InPlayState }) {
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <span className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</span>
-          {li
-            ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${li.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${li.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{li.text}</span>
+          {st
+            ? (st.state === 'ft'
+                ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${ftTone}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
+                : <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide text-rose-300"><span className="h-1.5 w-1.5 rounded-full bg-rose-400 [animation:pulse_1.4s_ease-in-out_infinite]" />In Play</span>)
             : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
         <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
@@ -421,7 +452,7 @@ function SecondaryRow({ leg, ip }: { leg: Leg; ip?: InPlayState }) {
 
 
 // ── the Treble — next 3 value games rolled into one £10 punt ─────────────────
-function TrebleCard({ legs, inplay }: { legs: Leg[]; inplay?: Record<string, InPlayState> }) {
+function TrebleCard({ legs, inplay, liveList }: { legs: Leg[]; inplay?: Record<string, InPlayState>; liveList?: LiveScore[] }) {
   const odds = legs.reduce((a, l) => a * l.odds, 1);
   const returns = odds * 10;
   return (
@@ -437,7 +468,7 @@ function TrebleCard({ legs, inplay }: { legs: Leg[]; inplay?: Record<string, InP
         </div>
         <p className="mt-2 text-xs text-white/55">The next three value games in one £10 punt — longer odds, bigger pay-off if it lands.</p>
         <div className="mt-3 space-y-2">
-          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} ip={inplay?.[l.fixtureId]} />)}
+          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} ip={inplay?.[l.fixtureId]} liveList={liveList} />)}
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-[#06202a]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
           <div>
@@ -529,8 +560,12 @@ export function GafferValueBoardSection() {
   const hasTreble = trebleLegs.length === 3;
 
   // Live in-play state for every selection on the board (double + treble).
-  const inplayIds = [...featuredLegs, ...trebleLegs].map((l) => l.fixtureId);
+  const boardLegs = [...featuredLegs, ...trebleLegs];
+  const inplayIds = boardLegs.map((l) => l.fixtureId);
   const { data: inplay } = useInPlay(inplayIds);
+  // Real live scores (API-Football) — only poll while a pick is in its window.
+  const anyLive = boardLegs.some((l) => matchPhase(l.time) === 'live');
+  const { data: liveList } = useLiveScores(anyLive);
 
   const activeCount = featuredIsTip ? tips.length + trebleLegs.length : valueWatch.length;
 
@@ -582,7 +617,7 @@ export function GafferValueBoardSection() {
 
         {/* Featured — includes ALL tip legs (single, double, multi) */}
         {featuredLegs.length > 0 ? (
-          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} inplay={inplay} /></div>
+          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} inplay={inplay} liveList={liveList} /></div>
         ) : (
           <div className="mt-6 rounded-2xl border border-white/10 bg-[#0b0518]/80 p-6 text-center text-white/70">
             <h3 className="font-display text-2xl uppercase text-white">No bet today.</h3>
@@ -591,7 +626,7 @@ export function GafferValueBoardSection() {
         )}
 
         {/* The Treble — second £10 slip, clearly separated from the double */}
-        {hasTreble && <div className="mt-3"><TrebleCard legs={trebleLegs} inplay={inplay} /></div>}
+        {hasTreble && <div className="mt-3"><TrebleCard legs={trebleLegs} inplay={inplay} liveList={liveList} /></div>}
 
         {/* Slip fallback only when there are no tips today */}
         {!featuredIsTip && (

@@ -1,8 +1,12 @@
-// Cloudflare Pages Function — live in-play state for the picks board.
-// GET /api/inplay?ids=8464276,8419923  ->  { ok, data: { [id]: InPlay } }
-// Runs server-side so the FootyStats key stays secret (Cloudflare env var).
-// One upstream call per request (today's-matches carries every live number),
-// so cost is flat regardless of how many selections we look up.
+// Cloudflare Pages Function — match state for the picks board.
+// GET /api/inplay?ids=8471638,8419923  ->  { ok, data: { [id]: MatchState } }
+//
+// FootyStats does NOT stream live in-play scores on this plan, but it DOES
+// carry the final result once a match completes. So this returns:
+//   live   — kicked off, not yet complete (client shows a time-based badge)
+//   ended  — FootyStats marked it complete → goals/corners/cards are FINAL
+// We fetch per match_id (the bulk /todays-matches feed omits some leagues,
+// e.g. K-League 2), capped, and cache briefly so one poll serves everyone.
 interface Env {
   FOOTYSTATS_KEY: string;
 }
@@ -14,11 +18,41 @@ const num = (v: unknown): number => {
   return Number.isFinite(n) ? n : 0;
 };
 
+// FootyStats returns /match `data` as an object; /todays-matches as an array.
+function pickMatch(body: unknown): Json | null {
+  const data = (body as { data?: unknown })?.data;
+  if (Array.isArray(data)) return (data[0] as Json) ?? null;
+  if (data && typeof data === "object") return data as Json;
+  return null;
+}
+
+function shape(m: Json, nowSec: number) {
+  const ko = num(m.date_unix);
+  const status = String(m.status ?? "");
+  const complete = status === "complete";
+  const started = ko > 0 && nowSec >= ko;
+  const live = started && !complete && nowSec < ko + 160 * 60;
+  const homeGoals = num(m.homeGoalCount);
+  const awayGoals = num(m.awayGoalCount);
+  const cornersRaw = num(m.totalCornerCount);
+  const cardsA = num(m.team_a_cards_num);
+  const cardsB = num(m.team_b_cards_num);
+  return {
+    live,
+    ended: complete,
+    goals: homeGoals + awayGoals,
+    homeGoals,
+    awayGoals,
+    corners: cornersRaw >= 0 ? cornersRaw : null,
+    cards: cardsA >= 0 && cardsB >= 0 ? cardsA + cardsB : null,
+  };
+}
+
 export const onRequest: PagesFunction<Env> = async (context) => {
   const headers = {
     "content-type": "application/json",
     "access-control-allow-origin": "*",
-    "cache-control": "public, max-age=25",
+    "cache-control": "public, max-age=45",
   };
   const key = context.env.FOOTYSTATS_KEY;
   if (!key) {
@@ -26,53 +60,40 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   const url = new URL(context.request.url);
-  const ids = new Set(
-    (url.searchParams.get("ids") || "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean),
-  );
-
-  let matches: Json[] = [];
-  try {
-    const res = await fetch(`https://api.football-data-api.com/todays-matches?key=${key}`);
-    const body = (await res.json()) as { data?: Json[] };
-    matches = Array.isArray(body?.data) ? body.data : [];
-  } catch {
-    return new Response(JSON.stringify({ ok: false, error: "fetch_failed" }), { status: 502, headers });
-  }
+  const ids = (url.searchParams.get("ids") || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   const nowSec = Math.floor(Date.now() / 1000);
   const out: Record<string, unknown> = {};
-  for (const m of matches) {
-    const id = String(m.id ?? "");
-    if (!id) continue;
-    if (ids.size && !ids.has(id)) continue;
 
-    const ko = num(m.date_unix);
-    const status = String(m.status ?? "");
-    const complete = status === "complete";
-    const started = ko > 0 && nowSec >= ko;
-    // FootyStats has no clean "live" flag; infer from kick-off + a ~150-min window.
-    const live = started && !complete && nowSec < ko + 150 * 60;
-
-    const homeGoals = num(m.homeGoalCount);
-    const awayGoals = num(m.awayGoalCount);
-    const cornersRaw = num(m.totalCornerCount);
-    const cardsA = num(m.team_a_cards_num);
-    const cardsB = num(m.team_b_cards_num);
-
-    out[id] = {
-      live,
-      ended: complete,
-      goals: homeGoals + awayGoals,
-      homeGoals,
-      awayGoals,
-      // FootyStats reports -1 when a market isn't recorded (yet) — pass null so
-      // the UI never shows a made-up count.
-      corners: cornersRaw >= 0 ? cornersRaw : null,
-      cards: cardsA >= 0 && cardsB >= 0 ? cardsA + cardsB : null,
-    };
+  try {
+    if (ids.length === 0) {
+      // No ids → bulk feed (debug / everything today).
+      const res = await fetch(`https://api.football-data-api.com/todays-matches?key=${key}`);
+      const body = (await res.json()) as { data?: Json[] };
+      for (const m of Array.isArray(body?.data) ? body.data : []) {
+        const id = String(m.id ?? "");
+        if (id) out[id] = shape(m, nowSec);
+      }
+    } else {
+      // Per match_id so every pick is covered, capped to protect the rate limit.
+      const list = ids.slice(0, 20);
+      const fetched = await Promise.all(
+        list.map((id) =>
+          fetch(`https://api.football-data-api.com/match?key=${key}&match_id=${id}`)
+            .then((r) => r.json())
+            .then(pickMatch)
+            .catch(() => null),
+        ),
+      );
+      fetched.forEach((m, i) => {
+        if (m) out[list[i]] = shape(m, nowSec);
+      });
+    }
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: "fetch_failed" }), { status: 502, headers });
   }
 
   return new Response(JSON.stringify({ ok: true, data: out }), { headers });
