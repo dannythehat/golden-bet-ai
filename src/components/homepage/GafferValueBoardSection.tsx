@@ -444,17 +444,11 @@ export function GafferValueBoardSection() {
     ? tips.map((l) => withLogos(l))
     : (valueWatch[0] ? [withLogos(valueWatch[0])] : []);
   const featuredIsTip = tips.length > 0;
-  const usedIds = new Set<string>(featuredLegs.map((l) => l.fixtureId));
 
   // The Treble — the next 3 value games after the double, one £10 punt that gives
   // the P&L a bigger swing. Only when we actually have an official double + 3 more.
   const trebleLegs: Leg[] = featuredIsTip ? valueWatch.slice(0, 3).map((l) => withLogos(l)) : [];
   const hasTreble = trebleLegs.length === 3;
-  const trebleIds = new Set<string>(trebleLegs.map((l) => l.fixtureId));
-
-  // Below-the-fold value watch — stacked list, no horizontal scroll.
-  const rail: { leg: Leg; isTip: boolean }[] = [];
-  for (const l of valueWatch) { if (rail.length >= 4) break; if (!usedIds.has(l.fixtureId) && !trebleIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
 
   const activeCount = featuredIsTip ? tips.length + trebleLegs.length : valueWatch.length;
 
@@ -516,21 +510,6 @@ export function GafferValueBoardSection() {
 
         {/* The Treble — second £10 slip, clearly separated from the double */}
         {hasTreble && <div className="mt-3"><TrebleCard legs={trebleLegs} /></div>}
-
-        {/* Today's other value — stacked list, always fully visible, no scroll */}
-        {rail.length > 0 && (
-          <div className="mt-4">
-            <div className="mb-2 flex items-center justify-between px-1">
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">Today's Value Watch</span>
-              <Link to={CTA_URL} className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 hover:text-violet-100">See all →</Link>
-            </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-              {rail.map(({ leg, isTip }) => (
-                <SecondaryRow key={leg.fixtureId} leg={leg} isTip={isTip} />
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Slip fallback only when there are no tips today */}
         {!featuredIsTip && (
