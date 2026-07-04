@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check } from 'lucide-react';
+import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check, Layers } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { getDailyBet, getGafferPicks, getValueFixtures, type Leg, type DailyBet } from '@/lib/gafferSelection';
@@ -125,44 +125,47 @@ function ConfidenceBar({ pct }: { pct: number }) {
 function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: number }) {
   const e = enrich(leg);
   return (
-    <div className="frost-tile relative overflow-hidden rounded-2xl border border-white/12 p-3.5 md:p-4">
+    <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.015] p-4 ring-1 ring-inset ring-white/[0.06] shadow-[0_16px_40px_-22px_rgba(0,0,0,0.95)]">
+      {/* premium top sheen line */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
       {/* header: leg number + kickoff */}
       <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
         <span className="inline-flex items-center gap-1.5">
-          <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
+          <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
           Leg {index + 1} of {total} · {leg.time} KO
         </span>
         <Star className="h-3.5 w-3.5 fill-current text-[#f5c542]" />
       </div>
 
-      {/* teams — bigger crests + FULL names, clearly labelled home / away */}
-      <div className="mt-3 flex items-center gap-2.5">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={40} className="rounded-lg bg-black/40 p-1 ring-1 ring-white/10" />
+      {/* teams — framed matchup box: bigger crests + FULL names, home / away */}
+      <div className="mt-3 flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/30 p-2.5 ring-1 ring-inset ring-white/[0.04]">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={46} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
           <div className="min-w-0">
-            <div className="text-[13px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.home.name}</div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/40">Home</div>
+            <div className="text-[15px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.home.name}</div>
+            <div className="mt-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/40">Home</div>
           </div>
         </div>
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-white/15 bg-white/[0.04] text-[9px] font-black text-white/50">VS</span>
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 text-right">
+        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.06] text-[10px] font-black text-white/55">VS</span>
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2.5 text-right">
           <div className="min-w-0">
-            <div className="text-[13px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.away.name}</div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/40">Away</div>
+            <div className="text-[15px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.away.name}</div>
+            <div className="mt-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/40">Away</div>
           </div>
-          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={40} className="rounded-lg bg-black/40 p-1 ring-1 ring-white/10" />
+          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={46} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
         </div>
       </div>
 
       {/* the pick + odds */}
-      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/[0.06] px-3 py-2">
+      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500/[0.14] to-transparent px-3.5 py-2.5 ring-1 ring-inset ring-emerald-400/10">
         <div className="min-w-0">
-          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-emerald-300/80">The pick</div>
-          <div className="truncate font-display text-base uppercase tracking-tight text-white">{leg.selection}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300/85">The pick</div>
+          <div className="truncate font-display text-lg uppercase tracking-tight text-white">{leg.selection}</div>
         </div>
         <div className="shrink-0 text-right">
-          <div className="font-display text-2xl leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
-          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Odds</div>
+          <div className="font-display text-[26px] leading-none text-[#f5c542] [text-shadow:0_0_18px_rgba(245,197,66,0.35)]">{leg.odds.toFixed(2)}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/55">Odds</div>
         </div>
       </div>
 
@@ -173,10 +176,10 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
         </div>
         <ConfidenceBar pct={leg.prob} />
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/65">
+      <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/10 bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65">
         <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
         <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
-        <span className="ml-auto inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-black uppercase text-emerald-300">+{leg.edge.toFixed(1)}%</span>
+        <span className="ml-auto inline-flex items-center gap-1 rounded bg-emerald-500/12 px-1.5 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/20">+{leg.edge.toFixed(1)}%</span>
       </div>
     </div>
   );
@@ -344,6 +347,44 @@ function SecondaryRow({ leg, isTip }: { leg: Leg; isTip: boolean }) {
 }
 
 
+// ── the Treble — next 3 value games rolled into one £10 punt ─────────────────
+function TrebleCard({ legs }: { legs: Leg[] }) {
+  const odds = legs.reduce((a, l) => a * l.odds, 1);
+  const returns = odds * 10;
+  return (
+    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#22d3ee_0%,#7c3aed_52%,#f5c542_100%)] shadow-[0_24px_60px_-30px_rgba(34,211,238,0.55)]">
+      <div className="frost-panel relative overflow-hidden rounded-[1.33rem] p-4 md:p-5">
+        <div className="flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/45 bg-cyan-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">
+            <Layers className="h-3.5 w-3.5" /> Today's Treble
+          </span>
+          <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-violet-400/40 bg-violet-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 sm:inline-flex">
+            <Ticket className="h-3.5 w-3.5" /> 3 legs · bigger swing
+          </span>
+        </div>
+        <p className="mt-2 text-xs text-white/55">The next three value games in one £10 punt — longer odds, bigger pay-off if it lands.</p>
+        <div className="mt-3 space-y-2">
+          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} isTip />)}
+        </div>
+        <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-[#06202a]/70 to-[#0b0518]/60 p-3">
+          <div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Combined odds</div>
+            <div className="font-display text-xl leading-none text-cyan-200">{odds.toFixed(2)}</div>
+          </div>
+          <div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Stake</div>
+            <div className="font-display text-xl leading-none text-white">£10</div>
+          </div>
+          <div className="text-right">
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Returns</div>
+            <div className="font-display text-xl leading-none text-emerald-300">£{returns.toFixed(2)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── the Gaffer's Slip ────────────────────────────────────────────────────────
 function SlipCard({ bet }: { bet: DailyBet }) {
   const count = bet.type === 'none' ? 0 : bet.legs.length;
@@ -409,11 +450,17 @@ export function GafferValueBoardSection() {
   const featuredIsTip = tips.length > 0;
   const usedIds = new Set<string>(featuredLegs.map((l) => l.fixtureId));
 
+  // The Treble — the next 3 value games after the double, one £10 punt that gives
+  // the P&L a bigger swing. Only when we actually have an official double + 3 more.
+  const trebleLegs: Leg[] = featuredIsTip ? valueWatch.slice(0, 3).map((l) => withLogos(l)) : [];
+  const hasTreble = trebleLegs.length === 3;
+  const trebleIds = new Set<string>(trebleLegs.map((l) => l.fixtureId));
+
   // Below-the-fold value watch — stacked list, no horizontal scroll.
   const rail: { leg: Leg; isTip: boolean }[] = [];
-  for (const l of valueWatch) { if (rail.length >= 4) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
+  for (const l of valueWatch) { if (rail.length >= 4) break; if (!usedIds.has(l.fixtureId) && !trebleIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
 
-  const activeCount = tips.length || valueWatch.length;
+  const activeCount = featuredIsTip ? tips.length + trebleLegs.length : valueWatch.length;
 
   const profit = monthProfit ?? 48; // sample until first settlements
 
@@ -470,6 +517,9 @@ export function GafferValueBoardSection() {
             <p className="mt-1 text-sm">Nowt on the card worth your money — the Gaffer sits it out. Back tomorrow.</p>
           </div>
         )}
+
+        {/* The Treble — second £10 slip, clearly separated from the double */}
+        {hasTreble && <div className="mt-3"><TrebleCard legs={trebleLegs} /></div>}
 
         {/* Today's other value — stacked list, always fully visible, no scroll */}
         {rail.length > 0 && (
