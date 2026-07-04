@@ -578,27 +578,22 @@ export function GafferValueBoardSection() {
     for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l); // sorted by edge desc
     return [...best.values()];
   })();
-  // Settlement for finished games among the top contenders, so we know winners.
-  const endedIds = candidates.slice(0, 14).filter((l) => legPhase(l) === 'ended').map((l) => l.fixtureId);
-  const { data: settle } = useInPlay(endedIds);
-  const wonNow = (l: Leg) => { const ip = settle?.[l.fixtureId]; return !!ip?.ended && settleLeg(l, ip) === 'won'; };
+  // Settlement for any game that has kicked off (live or finished) so we know
+  // which completed games WON.
+  const checkIds = candidates.slice(0, 16).filter((l) => legPhase(l) !== 'pre').map((l) => l.fixtureId);
+  const { data: settle } = useInPlay(checkIds);
 
-  const fresh = candidates.filter((l) => legPhase(l) !== 'ended');   // upcoming or in-play — still backable
-  const winners = candidates.filter(wonNow);                         // finished winners — proof
+  // Board rule: keep every COMPLETED winner (proof), and fill the rest with games
+  // YET TO PLAY. A game that's in play is swapped out for one yet to play; games
+  // that finished and lost never show. Best value (edge) first within that.
+  const eligible = candidates.filter((l) => {
+    const ip = settle?.[l.fixtureId];
+    if (ip?.ended) return settleLeg(l, ip) === 'won'; // finished → keep only winners
+    return legPhase(l) === 'pre';                      // not finished → keep only upcoming (drop in-play)
+  });
 
-  // Double = the two best games you can still back; fall back to winners only if
-  // there aren't enough fresh ones.
-  const doublePicks = [...fresh, ...winners].slice(0, 2);
-  const usedId = new Set(doublePicks.map((l) => l.fixtureId));
-  // Treble = lead with a recent winner (proof), then the next best fresh games.
-  const trebleSrc = [
-    ...winners.filter((l) => !usedId.has(l.fixtureId)).slice(0, 1),
-    ...fresh.filter((l) => !usedId.has(l.fixtureId)),
-    ...winners.filter((l) => !usedId.has(l.fixtureId)).slice(1),
-  ];
-
-  const doubleLegs: Leg[] = doublePicks.map((l) => withLogos(l));
-  const trebleLegs: Leg[] = trebleSrc.slice(0, 3).map((l) => withLogos(l));
+  const doubleLegs: Leg[] = eligible.slice(0, 2).map((l) => withLogos(l));
+  const trebleLegs: Leg[] = eligible.slice(2, 5).map((l) => withLogos(l));
   const featuredLegs = doubleLegs;
   const featuredIsTip = doubleLegs.length > 0;
   const hasTreble = trebleLegs.length === 3;
