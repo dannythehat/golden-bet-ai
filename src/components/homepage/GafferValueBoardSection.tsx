@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check, Layers, Clock } from 'lucide-react';
@@ -7,6 +8,34 @@ import { getDailyBet, getGafferPicks, getValueFixtures, type Leg, type DailyBet 
 import { useLiveDailyPicks } from './useLiveDailyPicks';
 import rawSnapshot from '@/data/formTablesData.json';
 import type { FormFixtureRow } from '@/types/footy';
+
+// ── in-play (time-based v1; live counts land once the FootyStats poller ships) ──
+// Re-render on a timer so the in-play state advances without a manual refresh.
+function useClock(ms = 30000) {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((n) => n + 1), ms);
+    return () => clearInterval(id);
+  }, [ms]);
+}
+// Rough phase from kick-off time (today, UK): pre → live (≤130 min) → ended.
+function matchPhase(timeStr: string): 'pre' | 'live' | 'ended' {
+  const m = /^(\d{1,2}):(\d{2})/.exec(timeStr || '');
+  if (!m) return 'pre';
+  const uk = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+  const nowMin = uk.getHours() * 60 + uk.getMinutes();
+  const koMin = Number(m[1]) * 60 + Number(m[2]);
+  if (nowMin < koMin) return 'pre';
+  if (nowMin < koMin + 130) return 'live';
+  return 'ended';
+}
+function InPlayPill() {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/55 bg-rose-500/15 px-2.5 py-1 text-[12px] font-black uppercase tracking-wide text-rose-200 shadow-[0_0_16px_-4px_rgba(244,63,94,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]">
+      <span className="h-1.5 w-1.5 rounded-full bg-rose-400 [animation:pulse_1.4s_ease-in-out_infinite]" /> In Play
+    </span>
+  );
+}
 
 const GAFFER_IMG = '/images/gaffer/gaffer-pointing-board.jpg';
 const CTA_URL = '/form-tables';
@@ -135,10 +164,12 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
           <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
           Leg {index + 1} of {total}
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-2.5 py-1 text-[13px] font-black tracking-wide text-[#f8e7a1] shadow-[0_0_16px_-6px_rgba(245,197,66,0.65)]">
-          <Clock className="h-3.5 w-3.5" /> {leg.time}
-          <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/65">KO</span>
-        </span>
+        {matchPhase(leg.time) === 'live' ? <InPlayPill /> : (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-2.5 py-1 text-[13px] font-black tracking-wide text-[#f8e7a1] shadow-[0_0_16px_-6px_rgba(245,197,66,0.65)]">
+            <Clock className="h-3.5 w-3.5" /> {leg.time}
+            <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/65">KO</span>
+          </span>
+        )}
       </div>
 
       {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
@@ -331,7 +362,9 @@ function SecondaryRow({ leg }: { leg: Leg }) {
       <div className="min-w-0">
         <div className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</div>
         <div className="mt-1 flex items-center gap-1.5 text-[11px] text-white/50">
-          <span className="inline-flex shrink-0 items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>
+          {matchPhase(leg.time) === 'live'
+            ? <span className="inline-flex shrink-0 items-center gap-1 font-black uppercase tracking-wide text-rose-300"><span className="h-1.5 w-1.5 rounded-full bg-rose-400 [animation:pulse_1.4s_ease-in-out_infinite]" />In Play</span>
+            : <span className="inline-flex shrink-0 items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
           <span className="truncate">{leg.home.name} v {leg.away.name}</span>
         </div>
       </div>
@@ -427,6 +460,7 @@ function SlipCard({ bet }: { bet: DailyBet }) {
  * watch" fallbacks. Reads live gaffer_picks, falls back to the bundled slate.
  */
 export function GafferValueBoardSection() {
+  useClock(); // advance in-play state every 30s
   const { data: live } = useLiveDailyPicks();
   const { data: monthProfit } = useMonthProfit();
 
