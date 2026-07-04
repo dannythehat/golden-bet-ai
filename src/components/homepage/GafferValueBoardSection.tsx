@@ -367,17 +367,20 @@ export function GafferValueBoardSection() {
   // Value watch (NOT tips) — best-value fixtures for the fallback/rail.
   const valueWatch = getValueFixtures().filter((p) => !tipIds.has(p.fixtureId));
 
-  const featuredRaw: Leg | null = tips[0] ?? valueWatch[0] ?? null;
-  const featured = featuredRaw ? withLogos(featuredRaw) : null;
+  // Featured card takes the full slip — all tip legs if we have tips, otherwise
+  // the single best value pick as a "top value" callout.
+  const featuredLegs: Leg[] = tips.length > 0
+    ? tips.map((l) => withLogos(l))
+    : (valueWatch[0] ? [withLogos(valueWatch[0])] : []);
   const featuredIsTip = tips.length > 0;
+  const usedIds = new Set<string>(featuredLegs.map((l) => l.fixtureId));
 
-  // Rail: remaining tips first, then value-watch — up to 2 pick cards.
-  const usedIds = new Set<string>([featuredRaw?.fixtureId].filter(Boolean) as string[]);
+  // Below-the-fold value watch — stacked list, no horizontal scroll.
   const rail: { leg: Leg; isTip: boolean }[] = [];
-  for (const l of tips) { if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: true }); usedIds.add(l.fixtureId); } }
-  for (const l of valueWatch) { if (rail.length >= 2) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
+  for (const l of valueWatch) { if (rail.length >= 4) break; if (!usedIds.has(l.fixtureId)) { rail.push({ leg: withLogos(l), isTip: false }); usedIds.add(l.fixtureId); } }
 
   const activeCount = tips.length || valueWatch.length;
+
   const profit = monthProfit ?? 48; // sample until first settlements
 
   return (
