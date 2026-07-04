@@ -556,7 +556,11 @@ export function GafferValueBoardSection() {
 
   // The Treble — the next 3 value games after the double, one £10 punt that gives
   // the P&L a bigger swing. Only when we actually have an official double + 3 more.
-  const trebleLegs: Leg[] = featuredIsTip ? valueWatch.slice(0, 3).map((l) => withLogos(l)) : [];
+  // Treble features UPCOMING value games only — skip anything already in play or
+  // finished, so it stays clean (and never shows a stale in-play row).
+  const trebleLegs: Leg[] = featuredIsTip
+    ? valueWatch.filter((l) => matchPhase(l.time) === 'pre').slice(0, 3).map((l) => withLogos(l))
+    : [];
   const hasTreble = trebleLegs.length === 3;
 
   // Live in-play state for every selection on the board (double + treble).
