@@ -578,22 +578,22 @@ export function GafferValueBoardSection() {
     for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l); // sorted by edge desc
     return [...best.values()];
   })();
-  // Settlement for any game that has kicked off (live or finished) so we know
-  // which completed games WON.
+  // Settlement for games that have kicked off, so a finished LOSER doesn't sit on
+  // the board (and we can tell it from a winner).
   const checkIds = candidates.slice(0, 16).filter((l) => legPhase(l) !== 'pre').map((l) => l.fixtureId);
   const { data: settle } = useInPlay(checkIds);
 
-  // Board rule: keep every COMPLETED winner (proof), and fill the rest with games
-  // YET TO PLAY. A game that's in play is swapped out for one yet to play; games
-  // that finished and lost never show. Best value (edge) first within that.
-  const eligible = candidates.filter((l) => {
+  // Pure value ranking — top 2 = the £10 double, next 3 = the £10 treble — with two
+  // skips only: a game that's IN PLAY (today's in-play data is unreliable) and a
+  // game that FINISHED and LOST. Their slots go to the next value game. Winners and
+  // games yet to play stay exactly where the value ranks them.
+  const rankedPicks = candidates.filter((l) => {
     const ip = settle?.[l.fixtureId];
-    if (ip?.ended) return settleLeg(l, ip) === 'won'; // finished → keep only winners
-    return legPhase(l) === 'pre';                      // not finished → keep only upcoming (drop in-play)
+    if (ip?.ended) return settleLeg(l, ip) !== 'lost'; // finished → drop losers, keep winners
+    return legPhase(l) !== 'live';                      // not finished → drop in-play, keep upcoming
   });
-
-  const doubleLegs: Leg[] = eligible.slice(0, 2).map((l) => withLogos(l));
-  const trebleLegs: Leg[] = eligible.slice(2, 5).map((l) => withLogos(l));
+  const doubleLegs: Leg[] = rankedPicks.slice(0, 2).map((l) => withLogos(l));
+  const trebleLegs: Leg[] = rankedPicks.slice(2, 5).map((l) => withLogos(l));
   const featuredLegs = doubleLegs;
   const featuredIsTip = doubleLegs.length > 0;
   const hasTreble = trebleLegs.length === 3;
