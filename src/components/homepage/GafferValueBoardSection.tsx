@@ -436,7 +436,7 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
           {st
             ? (st.state === 'ft'
                 ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${ftTone}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
-                : <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide text-rose-300"><span className="h-1.5 w-1.5 rounded-full bg-rose-400 [animation:pulse_1.4s_ease-in-out_infinite]" />In Play</span>)
+                : <span className={`ml-auto inline-flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
             : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
         <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
