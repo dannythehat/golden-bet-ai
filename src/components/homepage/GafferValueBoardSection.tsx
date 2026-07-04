@@ -332,7 +332,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/[0.16] to-emerald-500/[0.02] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_26px_-16px_rgba(16,185,129,0.55)]">
         <div className="min-w-0">
           <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300/90 text-emboss">The pick</div>
-          <div className="truncate font-display text-lg uppercase tracking-tight text-white text-extrude">{leg.selection}</div>
+          <div className="font-display text-lg uppercase leading-tight tracking-tight text-white text-extrude">{leg.selection}</div>
         </div>
         <div className="shrink-0 text-right">
           <div className="font-display text-[27px] leading-none text-[#f5c542] text-extrude">{leg.odds.toFixed(2)}</div>
@@ -534,18 +534,18 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
         <span className="text-[8px] font-black uppercase text-white/40">v</span>
         <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
       </div>
-      {/* selection + meta */}
+      {/* selection + meta — the bet type gets its own full line, never truncated */}
       <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</span>
+        <div className="text-[14px] font-black leading-tight text-white text-emboss">{leg.selection}</div>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="truncate text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</span>
           {st
             ? (st.state === 'ft'
                 ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
                 : <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
             : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
-        <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
-        <div className="truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</div>
+        <div className="mt-0.5 truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</div>
       </div>
       {/* odds + edge */}
       <div className="shrink-0 text-right">
