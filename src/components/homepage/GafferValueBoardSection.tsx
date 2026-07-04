@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check, Layers } from 'lucide-react';
+import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check, Layers, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { getDailyBet, getGafferPicks, getValueFixtures, type Leg, type DailyBet } from '@/lib/gafferSelection';
@@ -129,13 +129,16 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
       {/* premium top sheen line */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
-      {/* header: leg number + kickoff */}
-      <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
-        <span className="inline-flex items-center gap-1.5">
+      {/* header: leg number + prominent kickoff pill */}
+      <div className="flex items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
           <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
-          Leg {index + 1} of {total} · {leg.time} KO
+          Leg {index + 1} of {total}
         </span>
-        <Star className="h-3.5 w-3.5 fill-current text-[#f5c542]" />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-2.5 py-1 text-[13px] font-black tracking-wide text-[#f8e7a1] shadow-[0_0_16px_-6px_rgba(245,197,66,0.65)]">
+          <Clock className="h-3.5 w-3.5" /> {leg.time}
+          <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/65">KO</span>
+        </span>
       </div>
 
       {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
@@ -332,7 +335,7 @@ function SecondaryRow({ leg, isTip }: { leg: Leg; isTip: boolean }) {
             <span className="shrink-0 rounded bg-white/10 px-1 py-px text-[8px] font-black uppercase tracking-wide text-white/55">Value</span>
           )}
         </div>
-        <div className="truncate text-[11px] text-white/50">{leg.time} · {leg.home.name} v {leg.away.name} · {leg.prob}%</div>
+        <div className="truncate text-[11px] text-white/50"><span className="inline-flex items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span> · {leg.home.name} v {leg.away.name} · {leg.prob}%</div>
       </div>
       <div className="shrink-0 text-right">
         <div className="font-display text-lg leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
