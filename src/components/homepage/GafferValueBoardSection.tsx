@@ -237,7 +237,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
   const won = isWon(st);
   return (
-    <div className={`card-3d relative overflow-hidden rounded-2xl p-4 ${won ? 'ring-2 ring-inset ring-emerald-400/50' : ''}`}>
+    <div className={`card-3d relative overflow-hidden rounded-2xl border p-4 ${won ? 'border-emerald-400/30 ring-2 ring-inset ring-emerald-400/50' : 'border-white/[0.09]'}`}>
       {won && <WonTag />}
       {/* premium top sheen line */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
@@ -257,7 +257,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       </div>
 
       {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
-      <div className="inset-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl p-3">
+      <div className="inset-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl border border-white/[0.07] p-3">
         <div className="flex flex-col items-center gap-1.5 text-center">
           <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
           <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.home.name}</div>
@@ -271,10 +271,12 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
         </div>
       </div>
 
-      {/* league — so obscure fixtures are identifiable */}
-      <div className="mt-2 flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/55">
-        <Trophy className="h-3 w-3 text-[#f5c542]/80" />
-        <span className="truncate">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
+      {/* league — boxed chip so obscure fixtures are identifiable */}
+      <div className="mt-2.5 flex justify-center">
+        <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#f5c542]/30 bg-[#f5c542]/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_6px_14px_-10px_rgba(245,197,66,0.5)]">
+          <Trophy className="h-3 w-3 shrink-0 text-[#f5c542]/85" />
+          <span className="truncate">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
+        </span>
       </div>
 
       {/* the pick + odds */}
@@ -289,17 +291,17 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
         </div>
       </div>
 
-      <div className="mt-3">
-        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
+      <div className="inset-3d mt-3 rounded-xl px-3 py-2.5">
+        <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
           <span>Confidence</span>
           <span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
-      </div>
-      <div className="inset-3d mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg px-2.5 py-1.5 text-[11px] text-white/70">
-        <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
-        <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
-        <span className="ml-auto inline-flex items-center gap-1 rounded bg-emerald-500/12 px-1.5 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/20">+{leg.edge.toFixed(1)}%</span>
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-white/70">
+          <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
+          <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
+          <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/25">+{leg.edge.toFixed(1)}%</span>
+        </div>
       </div>
     </div>
   );
