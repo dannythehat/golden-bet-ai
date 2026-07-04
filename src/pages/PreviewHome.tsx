@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
 
-import { FormTablesSection } from '@/components/homepage/FormTablesSection';
 import { FantasyLeagueSellItSection } from '@/components/homepage/FantasyLeagueSellItSection';
 import { LatestArticlesSection } from '@/components/homepage/LatestArticlesSection';
 import { TipOfTheDayCard } from '@/components/homepage/TipOfTheDayCard';
@@ -37,11 +36,8 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="emerald" eyebrow="02 · Form & Fantasy">
-        <FormTablesSection />
-        <div className="mt-3 md:mt-4">
-          <FantasyLeagueSellItSection />
-        </div>
+      <HomepageScene tone="emerald" eyebrow="02 · Fantasy">
+        <FantasyLeagueSellItSection />
       </HomepageScene>
 
       <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
