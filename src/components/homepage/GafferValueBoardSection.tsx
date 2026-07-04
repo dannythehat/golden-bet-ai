@@ -428,9 +428,9 @@ export function GafferValueBoardSection() {
           </div>
         </div>
 
-        {/* Featured */}
-        {featured ? (
-          <div className="mt-6"><FeaturedCard leg={featured} isTip={featuredIsTip} stake={bet.type === 'none' ? 10 : bet.stake} /></div>
+        {/* Featured — includes ALL tip legs (single, double, multi) */}
+        {featuredLegs.length > 0 ? (
+          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} /></div>
         ) : (
           <div className="mt-6 rounded-2xl border border-white/10 bg-[#0b0518]/80 p-6 text-center text-white/70">
             <h3 className="font-display text-2xl uppercase text-white">No bet today.</h3>
@@ -438,20 +438,26 @@ export function GafferValueBoardSection() {
           </div>
         )}
 
-        {/* Rail — secondary picks (carousel on mobile) + slip */}
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 md:col-span-2 md:grid md:grid-cols-2 md:overflow-visible">
-            {rail.map(({ leg, isTip }) => (
-              <div key={leg.fixtureId} className="w-[82%] shrink-0 snap-start md:w-auto"><SecondaryCard leg={leg} isTip={isTip} /></div>
-            ))}
-            {rail.length === 0 && (
-              <div className="grid place-items-center rounded-2xl border border-white/10 bg-[#0b0518]/60 p-6 text-center text-xs text-white/60 md:col-span-2">
-                No secondary value on the card right now.
-              </div>
-            )}
+        {/* Today's other value — stacked list, always fully visible, no scroll */}
+        {rail.length > 0 && (
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between px-1">
+              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">Today's Value Watch</span>
+              <Link to={CTA_URL} className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 hover:text-violet-100">See all →</Link>
+            </div>
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              {rail.map(({ leg, isTip }) => (
+                <SecondaryRow key={leg.fixtureId} leg={leg} isTip={isTip} />
+              ))}
+            </div>
           </div>
-          <SlipCard bet={bet} />
-        </div>
+        )}
+
+        {/* Slip fallback only when there are no tips today */}
+        {!featuredIsTip && (
+          <div className="mt-4"><SlipCard bet={bet} /></div>
+        )}
+
 
         {/* Footer bar — month profit + view all */}
         <div className="mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
