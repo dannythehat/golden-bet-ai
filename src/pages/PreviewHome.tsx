@@ -28,58 +28,47 @@ export default function PreviewHome() {
 
       <HomepageNav />
 
-      <HomepageScene tone="hero" flushTop flushBottom>
+      <HomepageScene tone="hero" flushTop flushBottom boxed={false}>
         <HeroBanner />
       </HomepageScene>
 
       <HomepageScene tone="finale" eyebrow="01 · The Gaffer's Picks">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <GafferValueBoardSection />
-          <div className="mt-3 md:mt-4">
-            <GafferPnLTrustSection />
-          </div>
+        <GafferValueBoardSection />
+        <div className="mt-3 md:mt-4">
+          <GafferPnLTrustSection />
         </div>
       </HomepageScene>
 
       <HomepageScene tone="emerald" eyebrow="02 · Form & Fantasy">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <FormTablesSection />
-          <div className="mt-3 md:mt-4">
-            <FantasyLeagueSellItSection />
-          </div>
+        <FormTablesSection />
+        <div className="mt-3 md:mt-4">
+          <FantasyLeagueSellItSection />
         </div>
       </HomepageScene>
 
       <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
-            <LatestArticlesSection />
-            <WeeklyPrizesFeatureCard />
-            <GafferStoryCard />
-          </div>
+        <div className="grid gap-3 lg:grid-cols-[0.95fr_0.9fr_0.98fr] md:gap-4">
+          <LatestArticlesSection />
+          <WeeklyPrizesFeatureCard />
+          <GafferStoryCard />
         </div>
       </HomepageScene>
 
       <HomepageScene tone="violet" eyebrow="04 · Donkey of the Week">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <DonkeyOfTheWeekFeatureCard />
-        </div>
+        <DonkeyOfTheWeekFeatureCard />
       </HomepageScene>
 
       <HomepageScene tone="crowd" eyebrow="05 · The Community">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
-            <CommunityFeatureCard />
-            <TipOfTheDayCard />
-          </div>
+        <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
+          <CommunityFeatureCard />
+          <TipOfTheDayCard />
         </div>
       </HomepageScene>
 
       <HomepageScene tone="finale" eyebrow="06 · Join the Club">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
-          <FinalCallToActionBanner />
-        </div>
+        <FinalCallToActionBanner />
       </HomepageScene>
+
 
       <div className="mx-auto max-w-7xl px-3 pb-8 sm:px-4 md:px-6">
         <FooterNavigation />
