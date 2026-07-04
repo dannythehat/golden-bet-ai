@@ -126,6 +126,7 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
   const e = enrich(leg);
   return (
     <div className="frost-tile relative overflow-hidden rounded-2xl border border-white/12 p-3.5 md:p-4">
+      {/* header: leg number + kickoff */}
       <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-white/65">
         <span className="inline-flex items-center gap-1.5">
           <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
@@ -133,22 +134,39 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
         </span>
         <Star className="h-3.5 w-3.5 fill-current text-[#f5c542]" />
       </div>
-      <div className="mt-2.5 flex items-center gap-2.5">
-        <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={36} className="rounded-lg bg-black/30 p-0.5" />
-        <span className="grid h-5 w-5 place-items-center rounded-md border border-white/15 bg-white/[0.04] text-[9px] font-black text-white/50">VS</span>
-        <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={36} className="rounded-lg bg-black/30 p-0.5" />
-        <div className="ml-auto text-right">
+
+      {/* teams — bigger crests + FULL names, clearly labelled home / away */}
+      <div className="mt-3 flex items-center gap-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={40} className="rounded-lg bg-black/40 p-1 ring-1 ring-white/10" />
+          <div className="min-w-0">
+            <div className="text-[13px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.home.name}</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/40">Home</div>
+          </div>
+        </div>
+        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-white/15 bg-white/[0.04] text-[9px] font-black text-white/50">VS</span>
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 text-right">
+          <div className="min-w-0">
+            <div className="text-[13px] font-bold leading-tight text-white [overflow-wrap:anywhere]">{leg.away.name}</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/40">Away</div>
+          </div>
+          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={40} className="rounded-lg bg-black/40 p-1 ring-1 ring-white/10" />
+        </div>
+      </div>
+
+      {/* the pick + odds */}
+      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/[0.06] px-3 py-2">
+        <div className="min-w-0">
+          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-emerald-300/80">The pick</div>
+          <div className="truncate font-display text-base uppercase tracking-tight text-white">{leg.selection}</div>
+        </div>
+        <div className="shrink-0 text-right">
           <div className="font-display text-2xl leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
           <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Odds</div>
         </div>
       </div>
-      <div className="mt-2.5 flex items-end justify-between gap-2">
-        <div className="min-w-0">
-          <div className="truncate font-display text-base uppercase tracking-tight text-white">{leg.selection}</div>
-          <div className="truncate text-[11px] text-white/60">{leg.home.name} v {leg.away.name}</div>
-        </div>
-      </div>
-      <div className="mt-2.5">
+
+      <div className="mt-3">
         <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
           <span>Confidence</span>
           <span className="text-white">{leg.prob}%</span>
@@ -267,13 +285,28 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
           </div>
         )}
 
-        {/* verdict */}
+        {/* verdict — the Gaffer reviews EVERY leg, not just the first */}
         <div className="relative mt-3 overflow-hidden rounded-2xl border border-violet-400/25 bg-violet-500/[0.06] p-3.5">
           <div className="flex items-start gap-3">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-violet-400/40 bg-violet-500/15 font-display text-lg text-violet-200">“</span>
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">The Gaffer's Verdict</div>
-              <p className="mt-1 text-sm italic leading-relaxed text-white/85">{primary.placeholderReason}</p>
+              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">
+                The Gaffer's Verdict{!single ? ` · both legs` : ''}
+              </div>
+              {single ? (
+                <p className="mt-1 text-sm italic leading-relaxed text-white/85">{primary.placeholderReason}</p>
+              ) : (
+                <div className="mt-2 space-y-2.5">
+                  {legs.map((l, i) => (
+                    <div key={l.fixtureId} className="border-l-2 border-violet-400/30 pl-3">
+                      <div className="text-[10px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]">
+                        Leg {i + 1} · {l.home.name} v {l.away.name} · {l.selection}
+                      </div>
+                      <p className="mt-0.5 text-sm italic leading-relaxed text-white/85">{l.placeholderReason}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
