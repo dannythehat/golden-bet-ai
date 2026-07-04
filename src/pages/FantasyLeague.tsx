@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { HomepageScene } from '@/components/homepage/HomepageScene';
+import { FantasySubNav } from '@/components/fantasy/FantasySubNav';
 import { FantasyPageHero } from '@/components/fantasy/FantasyPageHero';
 import { SquadBuilder } from '@/components/fantasy/SquadBuilder';
 import { LeagueStandings } from '@/components/fantasy/LeagueStandings';
@@ -23,6 +24,8 @@ export default function FantasyLeague() {
       <HomepageNav />
 
       <FantasyPageHero />
+
+      <div className="relative z-10 -mt-4 pb-2"><FantasySubNav /></div>
 
       <HomepageScene tone="violet" eyebrow="01 · Pick Your Squad">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">

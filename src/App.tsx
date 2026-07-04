@@ -16,6 +16,9 @@ const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const FormTables = lazy(() => import("./pages/FormTables"));
 const FantasyLeague = lazy(() => import("./pages/FantasyLeague"));
+const FantasyMyTeam = lazy(() => import("./pages/FantasyMyTeam"));
+const FantasyTransfers = lazy(() => import("./pages/FantasyTransfers"));
+const FantasyResults = lazy(() => import("./pages/FantasyResults"));
 const Pnl = lazy(() => import("./pages/Pnl"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -60,6 +63,9 @@ const App = () => {
 
                 {/* Placeholder shells — to be rebuilt from scratch */}
                 <Route path="/fantasy-league" element={<FantasyLeague />} />
+                <Route path="/fantasy-league/my-team" element={<FantasyMyTeam />} />
+                <Route path="/fantasy-league/transfers" element={<FantasyTransfers />} />
+                <Route path="/fantasy-league/results" element={<FantasyResults />} />
                 <Route path="/form-tables" element={<FormTables />} />
                 <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
                 <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
