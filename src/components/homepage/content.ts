@@ -123,7 +123,7 @@ export const COMMUNITY_CARDS = [
   {
     network: 'facebook' as const, name: 'Facebook', cta: 'Join Facebook',
     heading: 'Join the Footy Oracle Club.',
-    points: ['Daily Gaffer articles', 'Fantasy League updates', 'Donkey of the Week', 'Form table discussions', 'Prize announcements', 'Community banter'],
+    points: ['Daily Gaffer articles', 'Fantasy League updates', 'Form table discussions', 'Prize announcements', 'Community banter'],
   },
   {
     network: 'telegram' as const, name: 'Telegram', cta: 'Join Telegram',
