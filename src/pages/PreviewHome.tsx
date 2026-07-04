@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
+import { SectionErrorBoundary } from '@/components/homepage/SectionErrorBoundary';
 import { HeroBanner } from '@/components/homepage/HeroBanner';
 
 import { FantasyLeagueSellItSection } from '@/components/homepage/FantasyLeagueSellItSection';
@@ -25,33 +26,49 @@ export default function PreviewHome() {
       <HomepageNav />
 
       <HomepageScene tone="hero" flushTop flushBottom boxed={false}>
-        <HeroBanner />
+        <SectionErrorBoundary name="HeroBanner">
+          <HeroBanner />
+        </SectionErrorBoundary>
       </HomepageScene>
 
       <HomepageScene tone="finale" eyebrow="01 · The Gaffer's Picks">
-        <GafferValueBoardSection />
+        <SectionErrorBoundary name="GafferValueBoardSection">
+          <GafferValueBoardSection />
+        </SectionErrorBoundary>
         <div className="mt-3 md:mt-4">
-          <GafferPnLTrustSection />
+          <SectionErrorBoundary name="GafferPnLTrustSection">
+            <GafferPnLTrustSection />
+          </SectionErrorBoundary>
         </div>
       </HomepageScene>
 
       <HomepageScene tone="emerald" eyebrow="02 · Fantasy">
-        <FantasyLeagueSellItSection />
+        <SectionErrorBoundary name="FantasyLeagueSellItSection">
+          <FantasyLeagueSellItSection />
+        </SectionErrorBoundary>
       </HomepageScene>
 
       <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
-        <LatestArticlesSection />
+        <SectionErrorBoundary name="LatestArticlesSection">
+          <LatestArticlesSection />
+        </SectionErrorBoundary>
       </HomepageScene>
 
       <HomepageScene tone="crowd" eyebrow="05 · The Community">
         <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr] md:gap-4">
-          <CommunityFeatureCard />
-          <TipOfTheDayCard />
+          <SectionErrorBoundary name="CommunityFeatureCard">
+            <CommunityFeatureCard />
+          </SectionErrorBoundary>
+          <SectionErrorBoundary name="TipOfTheDayCard">
+            <TipOfTheDayCard />
+          </SectionErrorBoundary>
         </div>
       </HomepageScene>
 
       <HomepageScene tone="finale" eyebrow="06 · Join the Club">
-        <FinalCallToActionBanner />
+        <SectionErrorBoundary name="FinalCallToActionBanner">
+          <FinalCallToActionBanner />
+        </SectionErrorBoundary>
       </HomepageScene>
 
 
