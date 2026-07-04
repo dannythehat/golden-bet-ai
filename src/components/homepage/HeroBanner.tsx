@@ -70,8 +70,10 @@ export function HeroBanner() {
             >
               The Gaffer
             </span>
+          </div>
 
           {/* copy */}
+
           <div className="max-w-xl px-5 pt-2 sm:px-8 md:p-10 md:pt-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
               <span className="relative flex h-2 w-2">
