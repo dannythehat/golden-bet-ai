@@ -348,29 +348,40 @@ function FeaturedCard({ legs, isTip, bet, inplay }: { legs: Leg[]; isTip: boolea
           </div>
         )}
 
-        {/* verdict — the Gaffer reviews EVERY leg, not just the first */}
-        <div className="relative mt-3 overflow-hidden rounded-2xl border border-violet-400/25 bg-violet-500/[0.06] p-3.5">
-          <div className="flex items-start gap-3">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-violet-400/40 bg-violet-500/15 font-display text-lg text-violet-200">“</span>
-            <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">
-                The Gaffer's Verdict{!single ? ` · both legs` : ''}
-              </div>
-              {single ? (
-                <p className="mt-1 text-sm italic leading-relaxed text-white/85">{primary.placeholderReason}</p>
-              ) : (
-                <div className="mt-2 space-y-2.5">
-                  {legs.map((l, i) => (
-                    <div key={l.fixtureId} className="border-l-2 border-violet-400/30 pl-3">
-                      <div className="text-[10px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]">
-                        Leg {i + 1} · {l.home.name} v {l.away.name} · {l.selection}
-                      </div>
-                      <p className="mt-0.5 text-sm italic leading-relaxed text-white/85">{l.placeholderReason}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {/* verdict — the Gaffer speaks on every leg, each in its own box */}
+        <div className="mt-3">
+          <div className="mb-2.5 flex items-center gap-2.5">
+            <span className="relative shrink-0">
+              <img
+                src="/images/the-gaffer.png"
+                alt="The Gaffer"
+                loading="lazy"
+                draggable={false}
+                className="h-10 w-10 select-none rounded-full object-cover object-top ring-2 ring-violet-400/50 shadow-[0_6px_16px_-6px_rgba(0,0,0,0.9)]"
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0b0518] bg-emerald-400 [animation:pulse_1.6s_ease-in-out_infinite]" />
+            </span>
+            <div className="min-w-0">
+              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">The Gaffer's Verdict</div>
+              <div className="text-[10px] text-white/45">{legs.length > 1 ? 'His read on both legs' : 'His read on the pick'}</div>
             </div>
+          </div>
+
+          <div className="space-y-2.5">
+            {legs.map((l, i) => (
+              <div key={l.fixtureId} className="relative overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-br from-violet-500/[0.1] to-violet-500/[0.015] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_28px_-20px_rgba(0,0,0,0.9)]">
+                <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/35 bg-[#f5c542]/10 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]">
+                    {legs.length > 1 ? `Leg ${i + 1} · ` : ''}{l.selection}
+                  </span>
+                  <span className="text-[11px] font-semibold text-white/55">{l.home.name} v {l.away.name}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-display text-2xl leading-[0.7] text-violet-300/70">“</span>
+                  <p className="text-[13px] italic leading-relaxed text-white/85">{l.placeholderReason}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
