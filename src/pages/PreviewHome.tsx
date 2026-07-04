@@ -8,7 +8,6 @@ import { LatestArticlesSection } from '@/components/homepage/LatestArticlesSecti
 import { TipOfTheDayCard } from '@/components/homepage/TipOfTheDayCard';
 import { WeeklyPrizesFeatureCard } from '@/components/homepage/WeeklyPrizesFeatureCard';
 import { GafferStoryCard } from '@/components/homepage/GafferStoryCard';
-import { DonkeyOfTheWeekFeatureCard } from '@/components/homepage/DonkeyOfTheWeekFeatureCard';
 import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard';
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
@@ -52,10 +51,6 @@ export default function PreviewHome() {
           <WeeklyPrizesFeatureCard />
           <GafferStoryCard />
         </div>
-      </HomepageScene>
-
-      <HomepageScene tone="violet" eyebrow="04 · Donkey of the Week">
-        <DonkeyOfTheWeekFeatureCard />
       </HomepageScene>
 
       <HomepageScene tone="crowd" eyebrow="05 · The Community">
