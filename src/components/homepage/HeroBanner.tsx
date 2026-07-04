@@ -103,6 +103,8 @@ export function HeroBanner() {
             >
               The Gaffer
             </span>
+            {/* MOBILE — Fantasy Football coming soon badge */}
+            <FantasyComingSoonBadge className="absolute right-3 bottom-3 sm:right-5 sm:bottom-5" />
           </div>
 
           {/* copy */}
