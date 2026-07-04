@@ -318,28 +318,27 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
 }
 
 // ── secondary pick row — full-width, list-style, no horizontal scroll ────────
-function SecondaryRow({ leg, isTip }: { leg: Leg; isTip: boolean }) {
+function SecondaryRow({ leg }: { leg: Leg }) {
   return (
-    <div className="frost-tile relative flex items-center gap-3 overflow-hidden rounded-2xl border border-white/12 px-3 py-2.5">
-      <div className="flex shrink-0 items-center gap-1.5">
-        <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={28} className="rounded-md bg-black/30 p-0.5" />
-        <span className="text-[9px] font-black text-white/45">VS</span>
-        <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={28} className="rounded-md bg-black/30 p-0.5" />
+    <div className="inset-3d grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-2.5">
+      {/* crests */}
+      <div className="flex shrink-0 items-center gap-1">
+        <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
+        <span className="text-[8px] font-black uppercase text-white/40">v</span>
+        <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5">
-          <span className="truncate text-[13px] font-bold text-white">{leg.selection}</span>
-          {isTip ? (
-            <Star className="h-3 w-3 shrink-0 fill-current text-[#f5c542]" />
-          ) : (
-            <span className="shrink-0 rounded bg-white/10 px-1 py-px text-[8px] font-black uppercase tracking-wide text-white/55">Value</span>
-          )}
+      {/* selection + meta */}
+      <div className="min-w-0">
+        <div className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</div>
+        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-white/50">
+          <span className="inline-flex shrink-0 items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>
+          <span className="truncate">{leg.home.name} v {leg.away.name}</span>
         </div>
-        <div className="truncate text-[11px] text-white/50"><span className="inline-flex items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span> · {leg.home.name} v {leg.away.name} · {leg.prob}%</div>
       </div>
+      {/* odds + edge */}
       <div className="shrink-0 text-right">
-        <div className="font-display text-lg leading-none text-[#f5c542]">{leg.odds.toFixed(2)}</div>
-        <div className="text-[9px] font-black uppercase tracking-[0.14em] text-emerald-300">+{leg.edge.toFixed(1)}%</div>
+        <div className="font-display text-xl leading-none text-[#f5c542] text-extrude">{leg.odds.toFixed(2)}</div>
+        <div className="mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-emerald-300">+{leg.edge.toFixed(1)}%</div>
       </div>
     </div>
   );
@@ -363,7 +362,7 @@ function TrebleCard({ legs }: { legs: Leg[] }) {
         </div>
         <p className="mt-2 text-xs text-white/55">The next three value games in one £10 punt — longer odds, bigger pay-off if it lands.</p>
         <div className="mt-3 space-y-2">
-          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} isTip />)}
+          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} />)}
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-[#06202a]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
           <div>
