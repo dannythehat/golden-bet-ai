@@ -278,7 +278,15 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
   const won = isWon(st);
   return (
-    <div className={`card-3d relative overflow-hidden rounded-2xl border p-4 ${won ? 'border-emerald-400/30 ring-2 ring-inset ring-emerald-400/50' : 'border-white/[0.09]'}`}>
+    <div
+      className={`relative rounded-[1.15rem] p-[1.6px] ${won
+        ? 'shadow-[0_34px_64px_-28px_rgba(0,0,0,1),0_0_50px_-14px_rgba(16,185,129,0.6)]'
+        : 'shadow-[0_34px_64px_-28px_rgba(0,0,0,1),0_0_46px_-16px_rgba(124,58,237,0.55)]'}`}
+      style={{ background: won
+        ? 'linear-gradient(155deg,#6ee7b7 0%,#059669 48%,#34d399 100%)'
+        : 'linear-gradient(155deg,rgba(245,197,66,0.75) 0%,rgba(124,58,237,0.62) 46%,rgba(34,211,238,0.66) 100%)' }}
+    >
+    <div className={`card-3d relative overflow-hidden rounded-[1.05rem] p-4 ${won ? 'ring-1 ring-inset ring-emerald-400/40' : ''}`}>
       {won && <WonTag />}
       {/* premium top sheen line */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
@@ -363,6 +371,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
           <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/25">+{leg.edge.toFixed(1)}% edge</span>
         </div>
       </div>
+    </div>
     </div>
   );
 }
