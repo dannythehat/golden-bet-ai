@@ -284,14 +284,10 @@ export default function FormTables() {
       return underMode ? Math.round((100 - o) * 10) / 10 : o;
     };
     const inWindow = tables.fixtures.filter(
-      (f) => windowDates.includes(f.date) && (league === 'all' || f.league === league),
+      (f) => windowDates.includes(f.date) && (league === 'all' || f.league === league) && prob(f) >= 0,
     );
-    const perLeague = new Map<string, Fixture[]>();
-    for (const f of [...inWindow].sort((a, b) => prob(b) - prob(a))) {
-      const arr = perLeague.get(f.league) ?? [];
-      if (arr.length < 20) { arr.push(f); perLeague.set(f.league, arr); }
-    }
-    return [...perLeague.values()].flat().sort((a, b) => prob(b) - prob(a));
+    // Top 20 overall for the selected category/line, best form first.
+    return [...inWindow].sort((a, b) => prob(b) - prob(a)).slice(0, 20);
   }, [league, C, tables, windowDates, underMode, mark]);
 
   // The Gaffer's ONE pick of the day — computed once across every market on
@@ -314,7 +310,7 @@ export default function FormTables() {
             <h1 className="font-display text-3xl tracking-tight text-white md:text-5xl">FORM TABLES</h1>
           </div>
           <p className="mt-1 text-sm text-white/60 md:text-base">
-            Every fixture ranked by its <span className="text-white">form probability for the line you pick</span>. Highest on top.
+            The <span className="text-white">top 20</span> ranked by <span className="text-white">form probability for the line you pick</span>. Highest on top.
           </p>
           <p className="mt-1 text-[13px] text-white/55">Next 3 days · <span className="font-semibold text-emerald-300">today's games highlighted</span> · the Gaffer's pick in <span className="font-semibold text-violet-300">purple</span>.</p>
         </div>
