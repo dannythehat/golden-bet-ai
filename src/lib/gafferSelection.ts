@@ -105,6 +105,32 @@ export function getValueFixtures(): Leg[] {
   return best.sort((a, b) => b.edge - a.edge);
 }
 
+/**
+ * Every qualifying value leg today across ALL markets (not deduped to one per
+ * fixture), best edge first. Used to assemble a market-diverse treble so it
+ * isn't three of the same market when other markets have value too.
+ */
+export function getValueCandidates(): Leg[] {
+  const makeLeg = (f: FormFixtureRow, market: Leg['market'], selection: string, cell: FormValueCell): Leg => ({
+    fixtureId: f.id, home: f.home, away: f.away, region: f.region, league: f.league, time: f.time,
+    market, selection, odds: cell.odds!, prob: cell.prob, edge: cell.edge, flag: cell.flag ?? 'value',
+    placeholderReason: gafferReason(
+      { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value' },
+      f.id,
+    ),
+  });
+  const today = todayUK();
+  const out: Leg[] = [];
+  const ok = (c: FormValueCell | null | undefined) => !!c?.odds && c.odds >= 1.4 && c.prob >= 60;
+  for (const f of DATA.fixtures) {
+    if (f.date !== today) continue;
+    for (const [mk, cell] of Object.entries(f.value.corners ?? {})) if (ok(cell)) out.push(makeLeg(f, 'Corners', `Over ${mk} Corners`, cell!));
+    for (const [mk, cell] of Object.entries(f.value.goals ?? {})) if (ok(cell)) out.push(makeLeg(f, 'Goals', `Over ${mk} Goals`, cell!));
+    if (ok(f.value.btts)) out.push(makeLeg(f, 'BTTS', 'BTTS – Yes', f.value.btts!));
+  }
+  return out.sort((a, b) => b.edge - a.edge);
+}
+
 /** The day's bet: £10 double if 2 qualify, else £10 single, else none. */
 export function getDailyBet(picks: Leg[] = getGafferPicks()): DailyBet {
   if (picks.length >= 2) {
