@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { getDailyBet, getGafferPicks, getValueFixtures, type Leg, type DailyBet } from '@/lib/gafferSelection';
 import { useLiveDailyPicks } from './useLiveDailyPicks';
+import { useInPlay, type InPlayState } from './useInPlay';
 import rawSnapshot from '@/data/formTablesData.json';
 import type { FormFixtureRow } from '@/types/footy';
 
@@ -29,12 +30,39 @@ function matchPhase(timeStr: string): 'pre' | 'live' | 'ended' {
   if (nowMin < koMin + 130) return 'live';
   return 'ended';
 }
-function InPlayPill() {
+function InPlayPill({ text, landed }: { text: string; landed?: boolean }) {
+  const tone = landed
+    ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200 shadow-[0_0_16px_-4px_rgba(16,185,129,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]'
+    : 'border-rose-400/55 bg-rose-500/15 text-rose-200 shadow-[0_0_16px_-4px_rgba(244,63,94,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]';
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/55 bg-rose-500/15 px-2.5 py-1 text-[12px] font-black uppercase tracking-wide text-rose-200 shadow-[0_0_16px_-4px_rgba(244,63,94,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]">
-      <span className="h-1.5 w-1.5 rounded-full bg-rose-400 [animation:pulse_1.4s_ease-in-out_infinite]" /> In Play
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-wide ${tone}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />
+      {text}
     </span>
   );
+}
+
+// Live label for a selection from its market + the in-play count. Falls back to
+// the time-based phase when the feed hasn't provided a state yet.
+type LiveInfo = { live: boolean; landed: boolean; text: string };
+function liveInfo(leg: Leg, ip?: InPlayState): LiveInfo | null {
+  const live = ip ? ip.live : matchPhase(leg.time) === 'live';
+  if (!live) return null;
+  const lm = /(\d+(?:\.\d+)?)/.exec(leg.selection);
+  const line = lm ? Number(lm[1]) : null;
+  const over = (n: number | null | undefined, unit: string): LiveInfo => {
+    if (n == null) return { live: true, landed: false, text: 'In Play' };
+    const landed = line != null && n > line;
+    return { live: true, landed, text: landed ? `In Play · ${n} ${unit} ✓` : `In Play · ${n} ${unit}` };
+  };
+  if (leg.market === 'Goals') return over(ip?.goals ?? null, 'goals');
+  if (leg.market === 'Corners') return over(ip?.corners ?? null, 'corners');
+  if (leg.market === 'BTTS') {
+    if (!ip) return { live: true, landed: false, text: 'In Play' };
+    const both = ip.homeGoals > 0 && ip.awayGoals > 0;
+    return { live: true, landed: both, text: both ? 'In Play · BTTS ✓' : `In Play · ${ip.homeGoals}–${ip.awayGoals}` };
+  }
+  return { live: true, landed: false, text: 'In Play' };
 }
 
 const GAFFER_IMG = '/images/gaffer/gaffer-pointing-board.jpg';
@@ -151,8 +179,9 @@ function ConfidenceBar({ pct }: { pct: number }) {
 }
 
 // ── a compact leg block used inside the multi-leg featured card ─────────────
-function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: number }) {
+function LegBlock({ leg, index, total, ip }: { leg: Leg; index: number; total: number; ip?: InPlayState }) {
   const e = enrich(leg);
+  const li = liveInfo(leg, ip);
   return (
     <div className="card-3d relative overflow-hidden rounded-2xl p-4">
       {/* premium top sheen line */}
@@ -164,7 +193,7 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
           <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
           Leg {index + 1} of {total}
         </span>
-        {matchPhase(leg.time) === 'live' ? <InPlayPill /> : (
+        {li ? <InPlayPill text={li.text} landed={li.landed} /> : (
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-2.5 py-1 text-[13px] font-black tracking-wide text-[#f8e7a1] shadow-[0_0_16px_-6px_rgba(245,197,66,0.65)]">
             <Clock className="h-3.5 w-3.5" /> {leg.time}
             <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/65">KO</span>
@@ -216,10 +245,11 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
 }
 
 // ── the featured "Gaffer's Top Pick" card — single leg OR full multi-leg ─────
-function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: DailyBet }) {
+function FeaturedCard({ legs, isTip, bet, inplay }: { legs: Leg[]; isTip: boolean; bet: DailyBet; inplay?: Record<string, InPlayState> }) {
   const single = legs.length <= 1;
   const primary = legs[0];
   const e = enrich(primary);
+  const primaryLi = liveInfo(primary, inplay?.[primary.fixtureId]);
   const stake = bet.type === 'none' ? 10 : bet.stake;
   const singleReturn = primary.odds * stake;
   const combined = bet.type === 'none' ? primary.odds : bet.combinedOdds;
@@ -265,7 +295,7 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
             <div className="min-w-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">Today · {primary.time} KO</div>
+                  {primaryLi ? <InPlayPill text={primaryLi.text} landed={primaryLi.landed} /> : <div className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-300">Today · {primary.time} KO</div>}
                   <div className="mt-1 truncate font-display text-2xl uppercase tracking-tight text-white md:text-3xl">{primary.selection}</div>
                   <div className="text-xs text-white/50">{primary.region} · {primary.league}</div>
                 </div>
@@ -296,7 +326,7 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
         ) : (
           // ── multi-leg featured: every leg visible in the big box ──
           <div className="mt-3 grid gap-2.5 md:grid-cols-2">
-            {legs.map((l, i) => <LegBlock key={l.fixtureId} leg={l} index={i} total={legs.length} />)}
+            {legs.map((l, i) => <LegBlock key={l.fixtureId} leg={l} index={i} total={legs.length} ip={inplay?.[l.fixtureId]} />)}
           </div>
         )}
 
@@ -349,7 +379,8 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
 }
 
 // ── secondary pick row — full-width, list-style, no horizontal scroll ────────
-function SecondaryRow({ leg }: { leg: Leg }) {
+function SecondaryRow({ leg, ip }: { leg: Leg; ip?: InPlayState }) {
+  const li = liveInfo(leg, ip);
   return (
     <div className="inset-3d grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-2.5">
       {/* crests */}
@@ -362,10 +393,10 @@ function SecondaryRow({ leg }: { leg: Leg }) {
       <div className="min-w-0">
         <div className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</div>
         <div className="mt-1 flex items-center gap-1.5 text-[11px] text-white/50">
-          {matchPhase(leg.time) === 'live'
-            ? <span className="inline-flex shrink-0 items-center gap-1 font-black uppercase tracking-wide text-rose-300"><span className="h-1.5 w-1.5 rounded-full bg-rose-400 [animation:pulse_1.4s_ease-in-out_infinite]" />In Play</span>
+          {li
+            ? <span className={`inline-flex shrink-0 items-center gap-1 font-black uppercase tracking-wide ${li.landed ? 'text-emerald-300' : 'text-rose-300'}`}><span className={`h-1.5 w-1.5 rounded-full ${li.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{li.text}</span>
             : <span className="inline-flex shrink-0 items-center gap-0.5 font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
-          <span className="truncate">{leg.home.name} v {leg.away.name}</span>
+          {!li && <span className="truncate">{leg.home.name} v {leg.away.name}</span>}
         </div>
       </div>
       {/* odds + edge */}
@@ -379,7 +410,7 @@ function SecondaryRow({ leg }: { leg: Leg }) {
 
 
 // ── the Treble — next 3 value games rolled into one £10 punt ─────────────────
-function TrebleCard({ legs }: { legs: Leg[] }) {
+function TrebleCard({ legs, inplay }: { legs: Leg[]; inplay?: Record<string, InPlayState> }) {
   const odds = legs.reduce((a, l) => a * l.odds, 1);
   const returns = odds * 10;
   return (
@@ -395,7 +426,7 @@ function TrebleCard({ legs }: { legs: Leg[] }) {
         </div>
         <p className="mt-2 text-xs text-white/55">The next three value games in one £10 punt — longer odds, bigger pay-off if it lands.</p>
         <div className="mt-3 space-y-2">
-          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} />)}
+          {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} ip={inplay?.[l.fixtureId]} />)}
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-[#06202a]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
           <div>
@@ -486,6 +517,10 @@ export function GafferValueBoardSection() {
   const trebleLegs: Leg[] = featuredIsTip ? valueWatch.slice(0, 3).map((l) => withLogos(l)) : [];
   const hasTreble = trebleLegs.length === 3;
 
+  // Live in-play state for every selection on the board (double + treble).
+  const inplayIds = [...featuredLegs, ...trebleLegs].map((l) => l.fixtureId);
+  const { data: inplay } = useInPlay(inplayIds);
+
   const activeCount = featuredIsTip ? tips.length + trebleLegs.length : valueWatch.length;
 
   const profit = monthProfit ?? 48; // sample until first settlements
@@ -536,7 +571,7 @@ export function GafferValueBoardSection() {
 
         {/* Featured — includes ALL tip legs (single, double, multi) */}
         {featuredLegs.length > 0 ? (
-          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} /></div>
+          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} inplay={inplay} /></div>
         ) : (
           <div className="mt-6 rounded-2xl border border-white/10 bg-[#0b0518]/80 p-6 text-center text-white/70">
             <h3 className="font-display text-2xl uppercase text-white">No bet today.</h3>
@@ -545,7 +580,7 @@ export function GafferValueBoardSection() {
         )}
 
         {/* The Treble — second £10 slip, clearly separated from the double */}
-        {hasTreble && <div className="mt-3"><TrebleCard legs={trebleLegs} /></div>}
+        {hasTreble && <div className="mt-3"><TrebleCard legs={trebleLegs} inplay={inplay} /></div>}
 
         {/* Slip fallback only when there are no tips today */}
         {!featuredIsTip && (
