@@ -19,16 +19,30 @@ export function useLiveScores(enabled: boolean) {
   });
 }
 
-const norm = (s: string) => s.normalize('NFKD').replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+// Diacritic-stripped, punctuation-free compact form ("ÍA" -> "ia", "Daegu FC" -> "daegufc").
+const compact = (s: string) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+// Word tokens, diacritics stripped ("ÍA Akranes" -> ["ia","akranes"]).
+const words = (s: string) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
 
-/** Match a fixture (by team names) to a live score. Names differ across feeds
- *  (e.g. "Daegu" vs "Daegu FC"), so we match on containment either way round. */
+/** Do two team names refer to the same club across feeds? Handles "Daegu" vs
+ *  "Daegu FC" (containment) AND short/abbreviated names like "ÍA" vs "ÍA
+ *  Akranes" — where one side's whole name is a standalone word of the other,
+ *  which the old ≥3-char containment guard wrongly rejected. */
+const sameTeam = (a: string, b: string): boolean => {
+  const ca = compact(a), cb = compact(b);
+  if (!ca || !cb) return false;
+  if (ca === cb) return true;
+  if (ca.length >= 4 && cb.length >= 4 && (ca.includes(cb) || cb.includes(ca))) return true;
+  // Short-name case: the full compact of one side appears as a whole word of the other.
+  return words(a).includes(cb) || words(b).includes(ca);
+};
+
+/** Match a fixture (by team names) to a live score, either way round. */
 export function matchLive(home: string, away: string, list: LiveScore[] | undefined): LiveScore | undefined {
   if (!list?.length) return undefined;
-  const h = norm(home), a = norm(away);
-  const hit = (x: string, y: string) => x.length >= 3 && y.length >= 3 && (x.includes(y) || y.includes(x));
-  return list.find((l) => {
-    const lh = norm(l.home), la = norm(l.away);
-    return (hit(lh, h) && hit(la, a)) || (hit(lh, a) && hit(la, h));
-  });
-}
+  return list.find(
+    (l) =>
+      (sameTeam(l.home, home) && sameTeam(l.away, away)) ||
+      (sameTeam(l.home, away) && sameTeam(l.away, home)),
+  );
+};

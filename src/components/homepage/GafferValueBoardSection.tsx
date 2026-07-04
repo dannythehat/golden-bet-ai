@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check, Layers, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { TeamAvatar } from '@/components/TeamAvatar';
-import { getDailyBet, getGafferPicks, getValueFixtures, type Leg, type DailyBet } from '@/lib/gafferSelection';
+import { getDailyBet, getGafferPicks, getValueFixtures, getValueCandidates, type Leg, type DailyBet } from '@/lib/gafferSelection';
 import { useLiveDailyPicks } from './useLiveDailyPicks';
 import { useInPlay, type InPlayState } from './useInPlay';
 import { useLiveScores, matchLive, type LiveScore } from './useLiveScores';
@@ -30,6 +30,19 @@ function matchPhase(timeStr: string): 'pre' | 'live' | 'ended' {
   if (nowMin < koMin) return 'pre';
   if (nowMin < koMin + 130) return 'live';
   return 'ended';
+}
+// Prefer the absolute kickoff (timezone-independent) so live/ended is correct for
+// a viewer anywhere in the world; fall back to the UK-clock string when we only
+// have a display time (e.g. the bundled value-watch slate).
+function legPhase(leg: { time: string; kickoffMs?: number | null }): 'pre' | 'live' | 'ended' {
+  const ms = leg.kickoffMs;
+  if (ms != null && Number.isFinite(ms)) {
+    const now = Date.now();
+    if (now < ms) return 'pre';
+    if (now < ms + 130 * 60_000) return 'live';
+    return 'ended';
+  }
+  return matchPhase(leg.time);
 }
 // A selection's live/finished status. FootyStats has no live scores on this
 // plan, so 'live' is time-based (badge only). Once a match is complete it
@@ -65,7 +78,7 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
   }
   // No live data (e.g. corners-only markets, or match not on the live feed) —
   // fall back to the time-based badge so it still reads as in-play.
-  if (matchPhase(leg.time) === 'live') return { state: 'live', text: 'In Play' };
+  if (legPhase(leg) === 'live') return { state: 'live', text: 'In Play' };
   return null;
 }
 
@@ -112,6 +125,38 @@ const SNAP = (rawSnapshot as unknown as { fixtures: FormFixtureRow[] }).fixtures
 // ── snapshot enrichment: form %, league average, head-to-head hit rate ──────
 const norm = (s: string) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const lineOf = (selection: string) => { const m = selection.match(/(\d+(?:\.\d+)?)/); return m ? Number(m[1]) : 0; };
+
+/** Choose the treble for MARKET VARIETY: best-edge leg per market first (so it
+ *  isn't three of the same market), then fill remaining slots by edge. Never
+ *  repeats a fixture and never reuses one of the double's games. */
+function pickDiverseTreble(
+  pool: Leg[],
+  excludeIds: Set<string>,
+  excludeMatchups: Set<string>,
+  matchupKey: (h: string, a: string) => string,
+  n = 3,
+): Leg[] {
+  const chosen: Leg[] = [];
+  const usedFixtures = new Set<string>();
+  const usedMarkets = new Set<string>();
+  const eligible = (l: Leg) =>
+    !excludeIds.has(l.fixtureId) &&
+    !excludeMatchups.has(matchupKey(l.home.name, l.away.name)) &&
+    !usedFixtures.has(l.fixtureId);
+  // Pass 1 — at most one leg per market, highest edge first.
+  for (const l of pool) {
+    if (chosen.length >= n) break;
+    if (!eligible(l) || usedMarkets.has(l.market)) continue;
+    chosen.push(l); usedFixtures.add(l.fixtureId); usedMarkets.add(l.market);
+  }
+  // Pass 2 — fill any remaining slots with the next best legs (unique fixtures).
+  for (const l of pool) {
+    if (chosen.length >= n) break;
+    if (!eligible(l)) continue;
+    chosen.push(l); usedFixtures.add(l.fixtureId);
+  }
+  return chosen;
+}
 
 function findFixture(leg: Leg): FormFixtureRow | undefined {
   const h = norm(leg.home.name), a = norm(leg.away.name);
@@ -558,27 +603,72 @@ export function GafferValueBoardSection() {
   const updatedAt = live?.updatedAt ?? null;
 
   const tips: Leg[] = bet.type === 'none' ? [] : (bet.legs as Leg[]);
-  const tipIds = new Set(tips.map((l) => l.fixtureId));
-  // The treble must NEVER repeat a game from the double. Exclude by fixture id
-  // AND by team matchup — the live double can carry a different id scheme, so
-  // id-only matching could let a duplicate slip through.
   const matchupKey = (h: string, a: string) => [norm(h), norm(a)].sort().join('|');
-  const tipMatchups = new Set(tips.map((l) => matchupKey(l.home.name, l.away.name)));
+
+  // Settlement state for the official legs — a leg the feed marks complete has
+  // already won/lost, so we must keep it (never swap a settled result out).
+  const { data: tipSettle } = useInPlay(tips.map((l) => l.fixtureId));
+  const settled = (l: Leg) => !!tipSettle?.[l.fixtureId]?.ended;
+
+  // Only ever feature games you can still back: upcoming value games (not yet
+  // kicked off), best edge first.
+  const upcomingPool = getValueCandidates().filter((l) => legPhase(l) === 'pre');
+
+  // Swap out ONLY games that are currently in play — you can't freshly back a
+  // game that's mid-match. Upcoming picks AND already-settled (won/lost) legs are
+  // left exactly as they are, so a winning leg keeps showing its result. Swaps
+  // pull the next best upcoming value game, never duplicating one on the slip.
+  const freshTips: Leg[] = (() => {
+    if (tips.length === 0) return [];
+    const usedId = new Set<string>();
+    const usedM = new Set<string>();
+    const keep = (l: Leg) => legPhase(l) !== 'live' || settled(l); // upcoming, or already won/lost
+    for (const l of tips) {
+      if (keep(l)) { usedId.add(l.fixtureId); usedM.add(matchupKey(l.home.name, l.away.name)); }
+    }
+    return tips.map((l) => {
+      if (keep(l)) return l; // keep upcoming and already-decided legs
+      const rep = upcomingPool.find((p) => !usedId.has(p.fixtureId) && !usedM.has(matchupKey(p.home.name, p.away.name)));
+      if (!rep) return l; // nothing upcoming to swap in — leave it as-is
+      usedId.add(rep.fixtureId); usedM.add(matchupKey(rep.home.name, rep.away.name));
+      return rep;
+    });
+  })();
+
+  const tipIds = new Set(freshTips.map((l) => l.fixtureId));
+  const tipMatchups = new Set(freshTips.map((l) => matchupKey(l.home.name, l.away.name)));
+
+  // If a leg was swapped, recompute the £10 slip's odds + returns so they stay honest.
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+  const swapped = freshTips.some((l, i) => l !== tips[i]);
+  const displayBet: DailyBet =
+    bet.type !== 'none' && swapped
+      ? ({
+          ...bet,
+          legs: freshTips,
+          combinedOdds: round2(freshTips.reduce((p, l) => p * l.odds, 1)),
+          returns: round2(bet.stake * freshTips.reduce((p, l) => p * l.odds, 1)),
+        } as DailyBet)
+      : bet;
+
   const valueWatch = getValueFixtures().filter(
     (p) => !tipIds.has(p.fixtureId) && !tipMatchups.has(matchupKey(p.home.name, p.away.name)),
   );
 
   // Featured card takes the full slip — all tip legs if we have tips, otherwise
   // the single best value pick as a "top value" callout.
-  const featuredLegs: Leg[] = tips.length > 0
-    ? tips.map((l) => withLogos(l))
+  const featuredLegs: Leg[] = freshTips.length > 0
+    ? freshTips.map((l) => withLogos(l))
     : (valueWatch[0] ? [withLogos(valueWatch[0])] : []);
-  const featuredIsTip = tips.length > 0;
+  const featuredIsTip = freshTips.length > 0;
 
-  // The Treble — the next 3 value games after the double, one £10 punt that gives
-  // the P&L a bigger swing. Only when we actually have an official double + 3 more.
-  // Treble = the next 3 best value games (already excludes the double's games).
-  const trebleLegs: Leg[] = featuredIsTip ? valueWatch.slice(0, 3).map((l) => withLogos(l)) : [];
+  // The Treble — three more UPCOMING value games after the double, one £10 punt
+  // that gives the P&L a bigger swing. Picked for MARKET VARIETY (not three of
+  // the same market): best-edge leg per market first, then fill by edge. Excludes
+  // the double's games and never repeats a fixture.
+  const trebleLegs: Leg[] = featuredIsTip
+    ? pickDiverseTreble(upcomingPool, tipIds, tipMatchups, matchupKey).map((l) => withLogos(l))
+    : [];
   const hasTreble = trebleLegs.length === 3;
 
   // Live in-play state for every selection on the board (double + treble).
@@ -586,7 +676,7 @@ export function GafferValueBoardSection() {
   const inplayIds = boardLegs.map((l) => l.fixtureId);
   const { data: inplay } = useInPlay(inplayIds);
   // Real live scores (API-Football) — only poll while a pick is in its window.
-  const anyLive = boardLegs.some((l) => matchPhase(l.time) === 'live');
+  const anyLive = boardLegs.some((l) => legPhase(l) === 'live');
   const { data: liveList } = useLiveScores(anyLive);
 
   const activeCount = featuredIsTip ? tips.length + trebleLegs.length : valueWatch.length;
@@ -639,7 +729,7 @@ export function GafferValueBoardSection() {
 
         {/* Featured — includes ALL tip legs (single, double, multi) */}
         {featuredLegs.length > 0 ? (
-          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={bet} inplay={inplay} liveList={liveList} /></div>
+          <div className="mt-6"><FeaturedCard legs={featuredLegs} isTip={featuredIsTip} bet={displayBet} inplay={inplay} liveList={liveList} /></div>
         ) : (
           <div className="mt-6 rounded-2xl border border-white/10 bg-[#0b0518]/80 p-6 text-center text-white/70">
             <h3 className="font-display text-2xl uppercase text-white">No bet today.</h3>
@@ -652,7 +742,7 @@ export function GafferValueBoardSection() {
 
         {/* Slip fallback only when there are no tips today */}
         {!featuredIsTip && (
-          <div className="mt-4"><SlipCard bet={bet} /></div>
+          <div className="mt-4"><SlipCard bet={displayBet} /></div>
         )}
 
 
