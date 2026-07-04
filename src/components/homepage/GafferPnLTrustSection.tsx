@@ -13,6 +13,15 @@ type PnLSummary = {
   status: 'live' | 'sample' | 'empty';
   summary: { profit: number; roi: number; wins: number; losses: number; strikeRate: number; staked: number; returned: number };
   recentSettlements: Settlement[];
+  updatedAt: string | null;
+};
+
+// "Last updated" in the viewer's own local date + time.
+const fmtUpdated = (iso: string | null): string | null => {
+  if (!iso) return null;
+  const t = new Date(iso);
+  if (Number.isNaN(t.getTime())) return null;
+  return t.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 };
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -22,6 +31,7 @@ const splitFix = (f: string) => { const p = f.split(/\s+v\s+/i); return { home: 
 // Sample until the first real settlements land.
 const SAMPLE: PnLSummary = {
   status: 'sample',
+  updatedAt: null,
   summary: { profit: 48, roi: 8.9, wins: 30, losses: 24, strikeRate: 56, staked: 540, returned: 588 },
   recentSettlements: [
     { fixture: 'Arsenal v Spurs', league: 'Premier League', market: 'Over 2.5 Goals', odds: 1.72, stake: 10, return: 17.2, result: 'WIN' },
@@ -45,10 +55,13 @@ async function fetchPnLSummary(): Promise<PnLSummary> {
   if (error || !Array.isArray(data) || data.length === 0) return SAMPLE;
 
   let staked = 0, profit = 0, wins = 0, losses = 0;
+  let latest = 0;
   const settlements: Settlement[] = [];
   for (const row of data as RawRow[]) {
     const s = Number(row.stake ?? 10), pl = Number(row.profit_loss ?? 0);
     staked += s; profit += pl;
+    const t = row.updated_at ? new Date(row.updated_at).getTime() : 0;
+    if (Number.isFinite(t) && t > latest) latest = t;
     if (row.status === 'won') wins += 1; else losses += 1;
     const legsArr = Array.isArray(row.legs) ? row.legs : [];
     const leg = legsArr[0];
@@ -67,6 +80,7 @@ async function fetchPnLSummary(): Promise<PnLSummary> {
   const games = wins + losses;
   return {
     status: 'live',
+    updatedAt: latest > 0 ? new Date(latest).toISOString() : null,
     summary: { profit: round2(profit), roi: staked > 0 ? round2((profit / staked) * 100) : 0, wins, losses, strikeRate: games ? Math.round((wins / games) * 100) : 0, staked: round2(staked), returned: round2(staked + profit) },
     recentSettlements: settlements.reverse().slice(0, 8),
   };
@@ -98,6 +112,7 @@ export function GafferPnLTrustSection() {
   const { data } = useQuery({ queryKey: ['gaffer_pnl_summary'], staleTime: 1000 * 60 * 5, queryFn: fetchPnLSummary });
   const p = data ?? SAMPLE;
   const s = p.summary;
+  const updated = fmtUpdated(p.updatedAt);
   const up = s.profit >= 0;
   const sampleMode = p.status !== 'live';
   const games = s.wins + s.losses;
@@ -114,6 +129,7 @@ export function GafferPnLTrustSection() {
           <div>
             <h2 className="font-display text-xl uppercase tracking-tight text-white md:text-2xl">The Gaffer's Record</h2>
             <p className="mt-0.5 text-xs text-white/50">Every £10 pick tracked — wins and losses, all logged.</p>
+            {updated && <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-white/40">Last updated @ {updated}</p>}
           </div>
           <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${sampleMode ? 'border-white/15 bg-white/[0.05] text-white/55' : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200'}`}>
             <ShieldCheck className="h-3.5 w-3.5" /> {sampleMode ? 'Sample' : 'Live · settled'}
