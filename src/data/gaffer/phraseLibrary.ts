@@ -129,6 +129,10 @@ export const MARKET_FLAVOUR: Record<string, string[]> = {
     'Both sides force it wide and chuck bodies forward — corners pile up.',
     'They don’t do narrow. It’s wing play and whipped balls — corners coming.',
     'This pair turn every attack into a corner. Proper flag-fest.',
+    'These two attack down the flanks like the middle of the pitch owes ’em money — corners galore.',
+    'Cross, block, corner. Cross, block, corner. It’s basically their whole gameplan.',
+    'The corner flag’s about to get more touches than either striker.',
+    'Both defences clear it straight back out for a corner like it’s a party trick.',
   ],
   Goals: [
     'Both these lot think defending’s beneath them — goals guaranteed entertainment.',
@@ -143,6 +147,10 @@ export const MARKET_FLAVOUR: Record<string, string[]> = {
     'Defences made of paper, strikers in form — fill yer boots.',
     'These two go gung-ho. The scoreboard’s going to tick over.',
     'All-out attack from both ends — keepers picking it out the net.',
+    'These two defend like the goal’s got a “please score” sign on it.',
+    'Both keepers might as well bring a deckchair — then a shovel to dig it out.',
+    'A clean sheet in this one would be front-page news. Goals it is.',
+    'They swap goals like kids swap stickers. Got, got, need, GOAL.',
   ],
   Cards: [
     'A proper needle match, this — ref’ll be reaching for his pocket early.',
@@ -165,6 +173,10 @@ export const MARKET_FLAVOUR: Record<string, string[]> = {
     'Open defences, dangerous forwards — the net bulges at both ends.',
     'Clean sheets are a foreign language to this pair. Both score.',
     'Goals guaranteed at both ends — they can’t help themselves.',
+    'Both these lot leak like a chocolate teapot and bite at the other end. Both score.',
+    'A clean sheet for this pair would be a genuine collector’s item. Both to net.',
+    'They attack brilliantly and defend like it’s optional — nets bulging at both ends.',
+    'Two front lines that fancy it, two back lines that don’t. Both score, no drama.',
   ],
 };
 
@@ -328,6 +340,25 @@ export const ASIDES = [
   'Even me old man, rest him, would’ve had this.',
   'Bookies hate this one trick: reading the form.',
   'Call it a hunch backed by a spreadsheet.',
+  'I trust this more than I trust a VAR check.',
+  'Safer than a back-pass to a keeper with hands. Well — almost.',
+  'The stats don’t drink, don’t lie, and don’t support a team. Beautiful.',
+  'This one’s so tasty I nearly kept it to meself.',
+  'I’d walk to the bookies in the rain for this. And I hate rain.',
+  'Numbers this pretty should come with a warning label.',
+  'Cold, hard maths — served with a cheeky grin.',
+  'If confidence were a currency, I’d be buying a yacht off this one.',
+  'I’ve triple-checked it, then checked it again out of pure greed.',
+  'The bookie who priced this is having a Monday. On a Saturday.',
+  'This is less a gamble, more a stern word with probability.',
+  'My spreadsheet did a little dance when it saw this.',
+  'Reads like a gimme, priced like a mystery. Ours.',
+  'I’d put the works Christmas fund on it. Don’t tell the lads.',
+  'Value this loud should be wearing high-vis.',
+  'The bookies left the safe open and wandered off for a brew.',
+  'Form’s screaming, the price is snoozing — rude not to.',
+  'I’ve seen tighter defending in a game of headers-and-volleys.',
+  'This isn’t luck, it’s homework with a sense of humour.',
 ];
 
 /* ── Donkey of the Week roasts ───────────────────────────────────────────── */

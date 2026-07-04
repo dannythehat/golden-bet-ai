@@ -568,21 +568,30 @@ export function GafferValueBoardSection() {
   const updatedAt = live?.updatedAt ?? null;
 
   // ── Value-ranked board ──────────────────────────────────────────────────
-  // The board is driven purely by the value tables: the best 2 value picks (any
-  // market — goals, corners or BTTS) form the £10 double, the next 3 the £10
-  // treble. One pick per fixture, ranked by value (edge). Games still to come or
-  // in play rank ahead of finished ones, so the board stays current and never
-  // shows a dead game while there's a live/upcoming one to show.
+  // Best value picks (any market — goals, corners or BTTS), one per fixture,
+  // ranked by value (edge): best 2 = the £10 double, next 3 = the £10 treble.
+  // Games that finished and WON stay on (a winning pick is proof worth showing);
+  // only games that finished and LOST drop off. Upcoming and in-play stay too.
   const round2 = (n: number) => Math.round(n * 100) / 100;
-  const rankedPicks: Leg[] = (() => {
-    const bestPerFixture = new Map<string, Leg>();
-    for (const l of getValueCandidates()) { // already sorted by edge desc
-      if (!bestPerFixture.has(l.fixtureId)) bestPerFixture.set(l.fixtureId, l);
-    }
-    const finishedLast = (l: Leg) => (legPhase(l) === 'ended' ? 1 : 0);
-    return [...bestPerFixture.values()].sort((a, b) => finishedLast(a) - finishedLast(b) || b.edge - a.edge);
+  const candidates: Leg[] = (() => {
+    const best = new Map<string, Leg>();
+    for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l); // sorted by edge desc
+    return [...best.values()];
   })();
+  // Settlement for games that have kicked off, so a finished LOSER doesn't sit on
+  // the board (and we can tell it from a winner).
+  const checkIds = candidates.slice(0, 16).filter((l) => legPhase(l) !== 'pre').map((l) => l.fixtureId);
+  const { data: settle } = useInPlay(checkIds);
 
+  // Pure value ranking — top 2 = the £10 double, next 3 = the £10 treble — with two
+  // skips only: a game that's IN PLAY (today's in-play data is unreliable) and a
+  // game that FINISHED and LOST. Their slots go to the next value game. Winners and
+  // games yet to play stay exactly where the value ranks them.
+  const rankedPicks = candidates.filter((l) => {
+    const ip = settle?.[l.fixtureId];
+    if (ip?.ended) return settleLeg(l, ip) !== 'lost'; // finished → drop losers, keep winners
+    return legPhase(l) !== 'live';                      // not finished → drop in-play, keep upcoming
+  });
   const doubleLegs: Leg[] = rankedPicks.slice(0, 2).map((l) => withLogos(l));
   const trebleLegs: Leg[] = rankedPicks.slice(2, 5).map((l) => withLogos(l));
   const featuredLegs = doubleLegs;

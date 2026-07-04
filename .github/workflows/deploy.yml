@@ -40,9 +40,13 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
+        # Account ID is not a secret (it appears in dashboard URLs); the only repo
+        # secret needed is CLOUDFLARE_API_TOKEN. Passed via both the action input
+        # and env so wrangler always sees it.
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 964cd8ee33ecf4e58a581f4806cd0cb5
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # Account ID is not a secret (it appears in dashboard URLs), so it's
-          # inline here — the only repo secret you need is CLOUDFLARE_API_TOKEN.
           accountId: 964cd8ee33ecf4e58a581f4806cd0cb5
           command: pages deploy dist --project-name=golden-bet-ai --branch=main

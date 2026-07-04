@@ -16,6 +16,25 @@ export const STAKE = 10;
 /** Today's UK date (YYYY-MM-DD) — the Gaffer only picks from today's card. */
 const todayUK = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' });
 
+/** The bundled fixtures store kick-off as a UK (Europe/London) wall-clock time.
+ *  Turn a date + "HH:MM" into an absolute epoch (ms) so it can be shown in the
+ *  viewer's own timezone and compared to "now" correctly anywhere. */
+const ukWallToMs = (dateStr: string, timeStr: string): number | null => {
+  const dm = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr || '');
+  const tm = /^(\d{1,2}):(\d{2})/.exec(timeStr || '');
+  if (!dm || !tm) return null;
+  const y = +dm[1], mo = +dm[2] - 1, d = +dm[3], h = +tm[1], mi = +tm[2];
+  const utcGuess = Date.UTC(y, mo, d, h, mi);
+  // Offset of Europe/London at that instant (handles BST/GMT automatically).
+  const asUK = new Date(new Date(utcGuess).toLocaleString('en-US', { timeZone: 'Europe/London' })).getTime();
+  const asUTC = new Date(new Date(utcGuess).toLocaleString('en-US', { timeZone: 'UTC' })).getTime();
+  return utcGuess - (asUK - asUTC);
+};
+
+/** Kick-off shown in the viewer's own timezone, e.g. "19:00". */
+const localKO = (ms: number | null, fallback: string): string =>
+  ms == null ? fallback : new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
 export interface Leg {
   fixtureId: string;
   home: { name: string; short: string; logo: string | null };
@@ -111,14 +130,18 @@ export function getValueFixtures(): Leg[] {
  * isn't three of the same market when other markets have value too.
  */
 export function getValueCandidates(): Leg[] {
-  const makeLeg = (f: FormFixtureRow, market: Leg['market'], selection: string, cell: FormValueCell): Leg => ({
-    fixtureId: f.id, home: f.home, away: f.away, region: f.region, league: f.league, time: f.time,
-    market, selection, odds: cell.odds!, prob: cell.prob, edge: cell.edge, flag: cell.flag ?? 'value',
-    placeholderReason: gafferReason(
-      { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value' },
-      f.id,
-    ),
-  });
+  const makeLeg = (f: FormFixtureRow, market: Leg['market'], selection: string, cell: FormValueCell): Leg => {
+    const koMs = ukWallToMs(f.date, f.time);
+    return {
+      fixtureId: f.id, home: f.home, away: f.away, region: f.region, league: f.league,
+      time: localKO(koMs, f.time), kickoffMs: koMs,
+      market, selection, odds: cell.odds!, prob: cell.prob, edge: cell.edge, flag: cell.flag ?? 'value',
+      placeholderReason: gafferReason(
+        { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value' },
+        f.id,
+      ),
+    };
+  };
   const today = todayUK();
   const out: Leg[] = [];
   const ok = (c: FormValueCell | null | undefined) => !!c?.odds && c.odds >= 1.4 && c.prob >= 60;
