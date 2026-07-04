@@ -578,15 +578,27 @@ export function GafferValueBoardSection() {
     for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l); // sorted by edge desc
     return [...best.values()];
   })();
-  // Settlement only for finished games among the top contenders — enough to drop
-  // losers and keep winners, without polling every fixture on the card.
-  const endedIds = candidates.slice(0, 12).filter((l) => legPhase(l) === 'ended').map((l) => l.fixtureId);
+  // Settlement for finished games among the top contenders, so we know winners.
+  const endedIds = candidates.slice(0, 14).filter((l) => legPhase(l) === 'ended').map((l) => l.fixtureId);
   const { data: settle } = useInPlay(endedIds);
-  const lostAndDone = (l: Leg) => { const ip = settle?.[l.fixtureId]; return !!ip?.ended && settleLeg(l, ip) === 'lost'; };
-  const rankedPicks = candidates.filter((l) => !lostAndDone(l));
+  const wonNow = (l: Leg) => { const ip = settle?.[l.fixtureId]; return !!ip?.ended && settleLeg(l, ip) === 'won'; };
 
-  const doubleLegs: Leg[] = rankedPicks.slice(0, 2).map((l) => withLogos(l));
-  const trebleLegs: Leg[] = rankedPicks.slice(2, 5).map((l) => withLogos(l));
+  const fresh = candidates.filter((l) => legPhase(l) !== 'ended');   // upcoming or in-play — still backable
+  const winners = candidates.filter(wonNow);                         // finished winners — proof
+
+  // Double = the two best games you can still back; fall back to winners only if
+  // there aren't enough fresh ones.
+  const doublePicks = [...fresh, ...winners].slice(0, 2);
+  const usedId = new Set(doublePicks.map((l) => l.fixtureId));
+  // Treble = lead with a recent winner (proof), then the next best fresh games.
+  const trebleSrc = [
+    ...winners.filter((l) => !usedId.has(l.fixtureId)).slice(0, 1),
+    ...fresh.filter((l) => !usedId.has(l.fixtureId)),
+    ...winners.filter((l) => !usedId.has(l.fixtureId)).slice(1),
+  ];
+
+  const doubleLegs: Leg[] = doublePicks.map((l) => withLogos(l));
+  const trebleLegs: Leg[] = trebleSrc.slice(0, 3).map((l) => withLogos(l));
   const featuredLegs = doubleLegs;
   const featuredIsTip = doubleLegs.length > 0;
   const hasTreble = trebleLegs.length === 3;
