@@ -125,9 +125,9 @@ function ConfidenceBar({ pct }: { pct: number }) {
 function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: number }) {
   const e = enrich(leg);
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.015] p-4 ring-1 ring-inset ring-white/[0.06] shadow-[0_16px_40px_-22px_rgba(0,0,0,0.95)]">
+    <div className="card-3d relative overflow-hidden rounded-2xl p-4">
       {/* premium top sheen line */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
 
       {/* header: leg number + prominent kickoff pill */}
       <div className="flex items-center justify-between gap-2">
@@ -142,40 +142,40 @@ function LegBlock({ leg, index, total }: { leg: Leg; index: number; total: numbe
       </div>
 
       {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
-      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl border border-white/10 bg-black/30 p-3 ring-1 ring-inset ring-white/[0.04]">
+      <div className="inset-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl p-3">
         <div className="flex flex-col items-center gap-1.5 text-center">
-          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
-          <div className="text-[13px] font-bold leading-tight text-white">{leg.home.name}</div>
-          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40">Home</div>
+          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
+          <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.home.name}</div>
+          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/45">Home</div>
         </div>
-        <span className="mt-3 grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.06] text-[10px] font-black text-white/55">VS</span>
+        <span className="mt-3 grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.06] text-[10px] font-black text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">VS</span>
         <div className="flex flex-col items-center gap-1.5 text-center">
-          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.9)]" />
-          <div className="text-[13px] font-bold leading-tight text-white">{leg.away.name}</div>
-          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40">Away</div>
+          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
+          <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.away.name}</div>
+          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/45">Away</div>
         </div>
       </div>
 
       {/* the pick + odds */}
-      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500/[0.14] to-transparent px-3.5 py-2.5 ring-1 ring-inset ring-emerald-400/10">
+      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/[0.16] to-emerald-500/[0.02] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_26px_-16px_rgba(16,185,129,0.55)]">
         <div className="min-w-0">
-          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300/85">The pick</div>
-          <div className="truncate font-display text-lg uppercase tracking-tight text-white">{leg.selection}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300/90 text-emboss">The pick</div>
+          <div className="truncate font-display text-lg uppercase tracking-tight text-white text-extrude">{leg.selection}</div>
         </div>
         <div className="shrink-0 text-right">
-          <div className="font-display text-[26px] leading-none text-[#f5c542] [text-shadow:0_0_18px_rgba(245,197,66,0.35)]">{leg.odds.toFixed(2)}</div>
-          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/55">Odds</div>
+          <div className="font-display text-[27px] leading-none text-[#f5c542] text-extrude">{leg.odds.toFixed(2)}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/60">Odds</div>
         </div>
       </div>
 
       <div className="mt-3">
-        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
+        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
           <span>Confidence</span>
           <span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
       </div>
-      <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/10 bg-black/20 px-2.5 py-1.5 text-[11px] text-white/65">
+      <div className="inset-3d mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg px-2.5 py-1.5 text-[11px] text-white/70">
         <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
         <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
         <span className="ml-auto inline-flex items-center gap-1 rounded bg-emerald-500/12 px-1.5 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/20">+{leg.edge.toFixed(1)}%</span>
@@ -205,7 +205,7 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
       <div className="frost-panel frost-sheen relative overflow-hidden rounded-[1.33rem] p-4 md:p-6">
         {/* eyebrow chip */}
         <div className="flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1] text-emboss shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_16px_-8px_rgba(245,197,66,0.5)]">
             <Star className="h-3.5 w-3.5 fill-current" /> {label}
           </span>
           {!single && (
@@ -271,18 +271,18 @@ function FeaturedCard({ legs, isTip, bet }: { legs: Leg[]; isTip: boolean; bet: 
 
         {/* combined slip strip — visible for singles AND multis */}
         {isTip && (
-          <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#f5c542]/25 bg-gradient-to-r from-[#1a1003]/70 to-[#0b0518]/60 p-3">
+          <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#f5c542]/30 bg-gradient-to-r from-[#1a1003]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
             <div>
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">{single ? 'Odds' : 'Combined odds'}</div>
-              <div className="font-display text-xl leading-none text-[#f5c542]">{combined.toFixed(2)}</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">{single ? 'Odds' : 'Combined odds'}</div>
+              <div className="font-display text-xl leading-none text-[#f5c542] text-extrude">{combined.toFixed(2)}</div>
             </div>
             <div>
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Stake</div>
-              <div className="font-display text-xl leading-none text-white">{money(stake)}</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Stake</div>
+              <div className="font-display text-xl leading-none text-white text-extrude">{money(stake)}</div>
             </div>
             <div className="text-right">
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Returns</div>
-              <div className="font-display text-xl leading-none text-emerald-300">{money(returns)}</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Returns</div>
+              <div className="font-display text-xl leading-none text-emerald-300 text-extrude">{money(returns)}</div>
             </div>
           </div>
         )}
@@ -354,7 +354,7 @@ function TrebleCard({ legs }: { legs: Leg[] }) {
     <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#22d3ee_0%,#7c3aed_52%,#f5c542_100%)] shadow-[0_24px_60px_-30px_rgba(34,211,238,0.55)]">
       <div className="frost-panel relative overflow-hidden rounded-[1.33rem] p-4 md:p-5">
         <div className="flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/45 bg-cyan-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/45 bg-cyan-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200 text-emboss shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_16px_-8px_rgba(34,211,238,0.5)]">
             <Layers className="h-3.5 w-3.5" /> Today's Treble
           </span>
           <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-violet-400/40 bg-violet-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 sm:inline-flex">
@@ -365,18 +365,18 @@ function TrebleCard({ legs }: { legs: Leg[] }) {
         <div className="mt-3 space-y-2">
           {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} isTip />)}
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-[#06202a]/70 to-[#0b0518]/60 p-3">
+        <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-[#06202a]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
           <div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Combined odds</div>
-            <div className="font-display text-xl leading-none text-cyan-200">{odds.toFixed(2)}</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Combined odds</div>
+            <div className="font-display text-xl leading-none text-cyan-200 text-extrude">{odds.toFixed(2)}</div>
           </div>
           <div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Stake</div>
-            <div className="font-display text-xl leading-none text-white">£10</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Stake</div>
+            <div className="font-display text-xl leading-none text-white text-extrude">£10</div>
           </div>
           <div className="text-right">
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/55">Returns</div>
-            <div className="font-display text-xl leading-none text-emerald-300">£{returns.toFixed(2)}</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Returns</div>
+            <div className="font-display text-xl leading-none text-emerald-300 text-extrude">£{returns.toFixed(2)}</div>
           </div>
         </div>
       </div>
@@ -485,10 +485,10 @@ export function GafferValueBoardSection() {
       <div className="relative z-[2] p-5 md:p-8">
         {/* Header */}
         <div className="max-w-xl md:max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1] text-emboss shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_16px_-8px_rgba(245,197,66,0.5)]">
             <Trophy className="h-3.5 w-3.5 fill-current" /> The Gaffer's Picks
           </span>
-          <h2 className="mt-3 font-display text-4xl uppercase leading-[0.9] tracking-tight text-white md:text-6xl">Today's Value Board</h2>
+          <h2 className="mt-3 font-display text-4xl uppercase leading-[0.9] tracking-tight text-white md:text-6xl text-extrude">Today's Value Board</h2>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-white/65 md:text-[15px]">
             I scan the noise. You get the signal. High value, strong data, proper football. No fluff — just edges I'd back with my rep on it.
           </p>
