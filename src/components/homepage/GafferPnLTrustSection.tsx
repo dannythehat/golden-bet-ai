@@ -212,7 +212,7 @@ export function GafferPnLTrustSection() {
               alt="The Gaffer"
               loading="lazy"
               draggable={false}
-              className="h-auto w-28 shrink-0 self-stretch rounded-2xl border border-white/10 object-cover object-[50%_18%] shadow-[0_16px_40px_-18px_rgba(0,0,0,0.9)] sm:w-36"
+              className="h-auto w-28 shrink-0 self-stretch rounded-2xl border border-white/10 object-cover object-[35%_35%] shadow-[0_16px_40px_-18px_rgba(0,0,0,0.9)] sm:w-36"
             />
           </div>
         </div>
