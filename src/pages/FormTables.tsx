@@ -275,18 +275,24 @@ export default function FormTables() {
   const windowDates = useMemo(() => [0, 1, 2].map((n) => addDays(today, n)), [today]);
 
   const rows = useMemo(() => {
+    // Rank by the SELECTED line's form probability (over-% or, in unders, the
+    // under-%). Highest on top = best stats for the exact market you picked, so
+    // switching 2.5 → 3.5 → 4.5 re-ranks and re-numbers the table.
+    const prob = (f: Fixture) => {
+      const o = C.overPctAt(f, mark);
+      if (o == null) return -1;
+      return underMode ? Math.round((100 - o) * 10) / 10 : o;
+    };
     const inWindow = tables.fixtures.filter(
       (f) => windowDates.includes(f.date) && (league === 'all' || f.league === league),
     );
-    // Over: highest combined average on top. Under: lowest (tightest games) on top.
-    const dir = underMode ? 1 : -1;
     const perLeague = new Map<string, Fixture[]>();
-    for (const f of [...inWindow].sort((a, b) => dir * (C.avg(a) - C.avg(b)))) {
+    for (const f of [...inWindow].sort((a, b) => prob(b) - prob(a))) {
       const arr = perLeague.get(f.league) ?? [];
       if (arr.length < 20) { arr.push(f); perLeague.set(f.league, arr); }
     }
-    return [...perLeague.values()].flat().sort((a, b) => dir * (C.avg(a) - C.avg(b)));
-  }, [league, C, tables, windowDates, underMode]);
+    return [...perLeague.values()].flat().sort((a, b) => prob(b) - prob(a));
+  }, [league, C, tables, windowDates, underMode, mark]);
 
   // The Gaffer's ONE pick of the day — computed once across every market on
   // today's card (not per-tab). Highlighted in the table only within its market.
@@ -308,7 +314,7 @@ export default function FormTables() {
             <h1 className="font-display text-3xl tracking-tight text-white md:text-5xl">FORM TABLES</h1>
           </div>
           <p className="mt-1 text-sm text-white/60 md:text-base">
-            Every fixture ranked by the two teams' <span className="text-white">combined average</span>. Highest on top.
+            Every fixture ranked by its <span className="text-white">form probability for the line you pick</span>. Highest on top.
           </p>
           <p className="mt-1 text-[13px] text-white/55">Next 3 days · <span className="font-semibold text-emerald-300">today's games highlighted</span> · the Gaffer's pick in <span className="font-semibold text-violet-300">purple</span>.</p>
         </div>
@@ -378,65 +384,56 @@ export default function FormTables() {
         {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.015]">
           {/* Header */}
-          <div className="flex items-center gap-3 border-b border-white/10 px-3 py-3 text-[11px] font-black uppercase tracking-[0.12em] text-white/45 md:px-4">
-            <span className="w-6 text-center md:w-7">#</span>
-            <span className="w-[46px] md:w-[56px]" />
+          <div className="flex items-center gap-2.5 border-b border-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/35">
+            <span className="w-5 text-center">#</span>
+            <span className="w-[40px]" />
             <span className="flex-1">Fixture</span>
-            {marks && <span className="hidden w-12 text-right sm:block">Form</span>}
-            <span className="w-12 text-right md:w-14">Odds</span>
-            <span className="w-12 text-right md:w-14">Avg</span>
-            <span className="w-[52px] text-right md:w-16">When</span>
-            <span className="w-4" />
+            <span className="hidden w-10 text-right sm:block">Avg</span>
+            <span className="w-[50px] text-right">Form</span>
+            <span className="w-[48px] text-right">When</span>
+            <span className="hidden w-3.5 sm:block" />
           </div>
 
-          <div className="divide-y divide-white/[0.06]">
+          <div className="divide-y divide-white/10">
           {rows.map((f, i) => {
-            const formPct = marks ? pctFor(f) : null;
+            const formPct = pctFor(f);
             const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id && gafferPick?.catKey === cat;
             const isToday = f.date === today;
-            const rankColor = isPick ? 'text-violet-300' : isToday ? 'text-emerald-300' : i < 3 ? 'text-[#f8e7a1]' : 'text-white/45';
             return (
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
-                className={`group relative flex w-full items-center gap-3 px-3 py-3.5 text-left transition-colors md:px-4 ${
-                  isPick
-                    ? 'bg-violet-500/[0.10] hover:bg-violet-500/[0.15]'
-                    : isToday
-                      ? 'bg-emerald-500/[0.05] hover:bg-emerald-500/[0.09]'
-                      : 'hover:bg-white/[0.035]'
+                className={`group flex w-full items-center gap-2.5 px-3 py-2 text-left transition-colors ${
+                  isPick ? 'bg-violet-500/[0.06] hover:bg-violet-500/[0.1]' : isToday ? 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06]' : 'hover:bg-white/[0.025]'
                 }`}
               >
-                {(isPick || isToday) && (
-                  <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${isPick ? 'bg-violet-400' : 'bg-emerald-400/80'}`} />
-                )}
-                <span className={`w-6 shrink-0 text-center font-display text-sm md:w-7 md:text-base ${rankColor}`}>{i + 1}</span>
-                <div className="flex w-[46px] shrink-0 -space-x-2.5 md:w-[56px]">
-                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={28} className="ring-2 ring-[#0b0617]" />
-                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={28} className="ring-2 ring-[#0b0617]" />
+                <span className={`w-5 shrink-0 text-center text-[13px] font-bold tabular-nums ${isPick ? 'text-violet-300' : isToday ? 'text-emerald-400/70' : 'text-white/35'}`}>{i + 1}</span>
+                <div className="flex w-[40px] shrink-0 -space-x-2">
+                  <TeamAvatar name={f.home.name} logoUrl={f.home.logo} size={22} className="ring-1 ring-[#0b0617]" />
+                  <TeamAvatar name={f.away.name} logoUrl={f.away.logo} size={22} className="ring-1 ring-[#0b0617]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[15px] font-semibold leading-tight text-white">{f.home.name} <span className="text-white/35">v</span> {f.away.name}</div>
-                  <div className="mt-1 flex items-center gap-1.5">
+                  <div className="truncate text-[13px] font-semibold leading-tight text-white/90">{f.home.name} <span className="text-white/25">v</span> {f.away.name}</div>
+                  <div className="mt-0.5 flex items-center gap-1 text-[11px] leading-tight text-white/40">
                     {isPick ? (
-                      <span className="shrink-0 rounded-md bg-violet-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-violet-100 ring-1 ring-inset ring-violet-400/40">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'}</span>
+                      <span className="shrink-0 font-bold text-violet-300/90">Gaffer's {gafferPick?.mode === 'banker' ? 'banker' : 'pick'} ·</span>
                     ) : isToday ? (
-                      <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-200 ring-1 ring-inset ring-emerald-400/30"><span className="h-1 w-1 rounded-full bg-emerald-400" />Today</span>
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400/60" />
                     ) : null}
-                    <span className="truncate text-xs text-white/55">{f.region} · {fold(f.league)}</span>
+                    <span className="truncate">{f.region} · {fold(f.league)}</span>
                   </div>
                 </div>
-                {marks && (
-                  <span className="hidden w-12 shrink-0 text-right text-sm font-semibold text-white/90 sm:block">{formPct != null ? `${formPct}%` : '—'}</span>
-                )}
-                <span className="w-12 shrink-0 text-right text-sm font-bold text-[#f8e7a1] md:w-14">{odd(o)}</span>
-                <span className="w-12 shrink-0 text-right font-display text-lg leading-none text-emerald-300 md:w-14 md:text-xl">{C.pct ? `${pctFor(f) ?? '—'}%` : C.avg(f).toFixed(1)}</span>
-                <div className="w-[52px] shrink-0 text-right md:w-16">
-                  <div className={`text-[13px] font-semibold leading-tight ${isToday ? 'text-emerald-300' : 'text-white'}`}>{whenLabel(f.date, today)}</div>
-                  <div className="text-[11px] text-white/50">{f.time}</div>
+                <span className="hidden w-10 shrink-0 text-right text-[12px] font-semibold text-white/40 sm:block">{C.avg(f).toFixed(1)}</span>
+                <div className="w-[50px] shrink-0 text-right">
+                  <div className={`font-display text-[15px] leading-none ${isPick ? 'text-violet-300' : 'text-emerald-400/85'}`}>{formPct != null ? `${formPct}%` : '—'}</div>
+                  <div className="text-[10.5px] font-semibold leading-tight text-[#f8e7a1]/70">{odd(o)}</div>
                 </div>
-                <ChevronRight className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 ${isPick ? 'text-violet-300' : 'text-white/30'}`} />
+                <div className="w-[48px] shrink-0 text-right">
+                  <div className={`text-[12px] font-semibold leading-tight ${isToday ? 'text-emerald-300/75' : 'text-white/65'}`}>{whenLabel(f.date, today)}</div>
+                  <div className="text-[10px] leading-tight text-white/35">{f.time}</div>
+                </div>
+                <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 text-white/25 sm:block" />
               </button>
             );
           })}
