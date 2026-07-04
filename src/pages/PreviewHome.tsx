@@ -5,7 +5,6 @@ import { HeroBanner } from '@/components/homepage/HeroBanner';
 import { FantasyLeagueSellItSection } from '@/components/homepage/FantasyLeagueSellItSection';
 import { LatestArticlesSection } from '@/components/homepage/LatestArticlesSection';
 import { TipOfTheDayCard } from '@/components/homepage/TipOfTheDayCard';
-import { GafferStoryCard } from '@/components/homepage/GafferStoryCard';
 import { CommunityFeatureCard } from '@/components/homepage/CommunityFeatureCard';
 import { FinalCallToActionBanner } from '@/components/homepage/FinalCallToActionBanner';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
@@ -41,10 +40,7 @@ export default function PreviewHome() {
       </HomepageScene>
 
       <HomepageScene tone="editorial" eyebrow="03 · The Newsroom">
-        <div className="grid gap-3 lg:grid-cols-2 md:gap-4">
-          <LatestArticlesSection />
-          <GafferStoryCard />
-        </div>
+        <LatestArticlesSection />
       </HomepageScene>
 
       <HomepageScene tone="crowd" eyebrow="05 · The Community">
