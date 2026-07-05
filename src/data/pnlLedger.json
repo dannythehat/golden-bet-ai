@@ -10,8 +10,26 @@
       "returns": 27.23,
       "profit": 17.23,
       "legs": [
-        { "home": "Egersund", "away": "Moss", "region": "Norway", "league": "First Division", "selection": "Over 2.5 Goals", "odds": 1.53, "ft": "3-0", "result": "won" },
-        { "home": "Cheongju", "away": "Daegu", "region": "South Korea", "league": "K League 2", "selection": "BTTS - Yes", "odds": 1.78, "ft": "1-5", "result": "won" }
+        {
+          "home": "Egersund",
+          "away": "Moss",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.53,
+          "ft": "3-0",
+          "result": "won"
+        },
+        {
+          "home": "Cheongju",
+          "away": "Daegu",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.78,
+          "ft": "1-5",
+          "result": "won"
+        }
       ]
     },
     {
@@ -23,9 +41,36 @@
       "returns": 0,
       "profit": -10,
       "legs": [
-        { "home": "Degerfors", "away": "Malmö FF", "region": "Sweden", "league": "Allsvenskan", "selection": "BTTS - Yes", "odds": 1.65, "ft": "0-1", "result": "lost" },
-        { "home": "Ansan Greeners", "away": "Suwon", "region": "South Korea", "league": "K League 2", "selection": "BTTS - Yes", "odds": 1.58, "ft": "1-3", "result": "won" },
-        { "home": "Qingdao Youth Island", "away": "Shanghai SIPG", "region": "China", "league": "Chinese Super League", "selection": "BTTS - Yes", "odds": 1.57, "ft": "2-1", "result": "won" }
+        {
+          "home": "Degerfors",
+          "away": "Malmö FF",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "BTTS - Yes",
+          "odds": 1.65,
+          "ft": "0-1",
+          "result": "lost"
+        },
+        {
+          "home": "Ansan Greeners",
+          "away": "Suwon",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.58,
+          "ft": "1-3",
+          "result": "won"
+        },
+        {
+          "home": "Qingdao Youth Island",
+          "away": "Shanghai SIPG",
+          "region": "China",
+          "league": "Chinese Super League",
+          "selection": "BTTS - Yes",
+          "odds": 1.57,
+          "ft": "2-1",
+          "result": "won"
+        }
       ]
     }
   ]
