@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Crown, Trophy, ChevronDown, TrendingUp, TrendingDown, Minus, CalendarClock } from 'lucide-react';
+import { Crown, ChevronDown, TrendingUp, TrendingDown, Minus, CalendarClock } from 'lucide-react';
 import { useFantasyPlayers, useFantasyStandings, useFantasyGameweek, FANTASY_RULES } from '@/hooks/useFantasyLeague';
 import type { FantasyStandingRow } from '@/types/footy';
 import { PlayerCard } from './PlayerCard';
@@ -65,12 +65,11 @@ export function FantasyPageHero() {
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link to="/pricing" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-amber-500 px-7 py-3.5 text-sm font-black uppercase tracking-wide text-[#16051f] transition-transform hover:-translate-y-0.5"><Trophy className="h-4 w-4 fill-current" /> Enter the League</Link>
             <a href="#pick-squad" className="inline-flex items-center justify-center gap-2 rounded-xl border border-violet-400/45 bg-violet-500/[0.08] px-7 py-3.5 text-sm font-black uppercase tracking-wide text-violet-100 transition-all hover:-translate-y-0.5 hover:bg-violet-500/15">Build Your Squad <ChevronDown className="h-4 w-4" /></a>
           </div>
 
           <div className="mt-5 inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.14em] text-white/55">
-            <Crown className="h-4 w-4 text-violet-300" /> Registration open · season starts Aug 2026
+            <Crown className="h-4 w-4 text-violet-300" /> Season starts Sat 22nd August 2026
           </div>
         </div>
 

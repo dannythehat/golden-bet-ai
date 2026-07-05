@@ -107,7 +107,7 @@ export function FantasyPrizes() {
               <div className="text-[12px] text-white/55">One league. Weekly rewards. Season-long glory.</div>
             </div>
           </div>
-          <Link to="/pricing" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-amber-500 px-6 py-3 text-sm font-black uppercase tracking-wide text-[#16051f] transition-transform hover:-translate-y-0.5">Play Fantasy Now <ChevronRight className="h-4 w-4" /></Link>
+          <Link to="/fantasy-waitlist" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-amber-500 px-6 py-3 text-sm font-black uppercase tracking-wide text-[#16051f] transition-transform hover:-translate-y-0.5">Play Fantasy Now <ChevronRight className="h-4 w-4" /></Link>
         </div>
       </div>
     </section>

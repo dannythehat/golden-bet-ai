@@ -209,7 +209,7 @@ export function SquadBuilder() {
                 <span>Pick <span className="font-black text-white">{FANTASY_RULES.squadSize - selected.length}</span> more to complete your 15.</span>
               )}
             </div>
-            <Link to="/pricing" className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-black uppercase tracking-wide transition-transform hover:-translate-y-0.5 ${ready ? 'bg-gradient-to-r from-amber-300 to-amber-500 text-[#16051f]' : 'bg-gradient-to-r from-amber-300/60 to-amber-500/60 text-[#16051f]/80'}`}>
+            <Link to="/fantasy-waitlist" className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-black uppercase tracking-wide transition-transform hover:-translate-y-0.5 ${ready ? 'bg-gradient-to-r from-amber-300 to-amber-500 text-[#16051f]' : 'bg-gradient-to-r from-amber-300/60 to-amber-500/60 text-[#16051f]/80'}`}>
               <Lock className="h-4 w-4" /> Save Squad &amp; Join
             </Link>
           </div>
