@@ -65,7 +65,7 @@ export default function PreviewHome() {
         </div>
       </HomepageScene>
 
-      <HomepageScene tone="finale" eyebrow="06 · Join the Club">
+      <HomepageScene tone="finale" eyebrow="06 · Coming Soon">
         <SectionErrorBoundary name="FinalCallToActionBanner">
           <FinalCallToActionBanner />
         </SectionErrorBoundary>
