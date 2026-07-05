@@ -126,22 +126,35 @@ async function fetchResults(fixtureIds) {
 // Bundle the TS voice engine once so the stored verdict uses the exact same
 // banks/logic as the site — no duplicated wording. Best-effort: if esbuild
 // isn't available the frontend still generates the verdict deterministically.
-let _verdictFn;
-async function getVerdictFn() {
-  if (_verdictFn !== undefined) return _verdictFn;
+let _voice;
+async function getVoice() {
+  if (_voice !== undefined) return _voice;
   try {
     const esbuild = await import('esbuild');
     const r = await esbuild.build({
       entryPoints: [join(ROOT, 'src/lib/gafferVoice.ts')],
       bundle: true, write: false, format: 'esm', platform: 'node',
     });
-    const mod = await import('data:text/javascript,' + encodeURIComponent(r.outputFiles[0].text));
-    _verdictFn = mod.gafferDayVerdict ?? false;
+    _voice = await import('data:text/javascript,' + encodeURIComponent(r.outputFiles[0].text));
   } catch (e) {
     console.warn(`  (verdict baking skipped — ${e.message})`);
-    _verdictFn = false;
+    _voice = false;
   }
-  return _verdictFn;
+  return _voice;
+}
+
+// Voice EVERY day in the ledger as one chronological series under a shared
+// anti-repeat memory, so no two days ever echo the same line. Earlier days are
+// unaffected by later ones (the memory only looks back), so their words stay
+// frozen once written. Mutates each bet's `verdict` in place.
+async function bakeVerdicts(ledger) {
+  const voice = await getVoice();
+  if (!voice || !voice.gafferDayVerdictSeries) return;
+  const byDate = new Map();
+  for (const b of ledger.bets) (byDate.get(b.date) ?? byDate.set(b.date, []).get(b.date)).push(b);
+  const daysChrono = [...byDate.keys()].sort(); // oldest → newest
+  const verdicts = voice.gafferDayVerdictSeries(daysChrono.map((d) => ({ bets: byDate.get(d), seed: d })));
+  daysChrono.forEach((d, i) => { for (const b of byDate.get(d)) b.verdict = verdicts[i]; });
 }
 
 // ── Main ────────────────────────────────────────────────────────────────────
@@ -179,13 +192,6 @@ async function main() {
       console.log(`${date}: only ${treble.length} treble candidate(s) — double only.`);
     }
 
-    // Freeze the Gaffer's word on the day onto every entry for it.
-    const verdictFn = await getVerdictFn();
-    if (verdictFn) {
-      const verdict = verdictFn(entries, date);
-      if (verdict) for (const e of entries) e.verdict = verdict;
-    }
-
     // Idempotent: drop any prior entries for this date, then add the fresh ones.
     ledger.bets = ledger.bets.filter((b) => b.date !== date);
     ledger.bets.push(...entries);
@@ -197,6 +203,8 @@ async function main() {
   }
 
   if (changed) {
+    // Voice the whole ledger as one series so no two days echo each other.
+    await bakeVerdicts(ledger);
     // Keep the ledger sorted newest first for stable diffs.
     ledger.bets.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.kind < b.kind ? -1 : 1));
     writeFileSync(LEDGER_PATH, JSON.stringify(ledger, null, 2) + '\n');

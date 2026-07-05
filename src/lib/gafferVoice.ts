@@ -155,13 +155,15 @@ function legVars(l: DayLeg): Record<string, string> {
 
 const fillLeg = (tpl: string, l: DayLeg) => fill(tpl, legVars(l));
 
-/**
- * A fresh, in-character verdict on a settled day's slips. Reacts to what really
- * happened — both home (buzzing), mixed (wry), blank (honest chin-up) — names the
- * exact teams and scorelines that won or cost us, and closes looking forward.
- * Seed with the date so it's stable for the day but different day to day.
- */
-export function gafferDayVerdict(bets: DayBet[], seed = ''): string {
+// Clear only the day-verdict slice of the anti-repeat memory (leaves the
+// pick-line memory alone).
+function resetDayMemory() {
+  for (const k of [...recent.keys()]) if (k.startsWith('day:')) recent.delete(k);
+}
+
+/** One day's verdict. Does NOT reset memory — the caller controls that so a run
+ *  of days can share the anti-repeat memory and never echo each other. */
+function buildDayVerdict(bets: DayBet[], seed: string): string {
   const settled = bets.filter((b) => b.status === 'won' || b.status === 'lost');
   if (settled.length === 0) return '';
   const rng = mulberry32(seedOf(`dayverdict|${seed}`));
@@ -194,6 +196,29 @@ export function gafferDayVerdict(bets: DayBet[], seed = ''): string {
 
   parts.push(pick(DAY_CLOSERS, 'day:close', rng));
   return parts.join(' ');
+}
+
+/**
+ * A fresh, in-character verdict on a settled day's slips. Reacts to what really
+ * happened — both home (buzzing), mixed (wry), blank (honest chin-up) — names the
+ * exact teams and scorelines that won or cost us, and closes looking forward.
+ * Seed with the date so it's stable for the day but different day to day.
+ */
+export function gafferDayVerdict(bets: DayBet[], seed = ''): string {
+  resetDayMemory();
+  return buildDayVerdict(bets, seed);
+}
+
+/**
+ * Verdicts for a run of days (oldest → newest), generated under ONE shared
+ * anti-repeat memory so no two days ever echo the same line. This is how the
+ * whole ledger is voiced: earlier days are unaffected by later ones (memory only
+ * looks back), so each day's words stay frozen once its predecessors are fixed.
+ * Returns verdicts aligned to the input order.
+ */
+export function gafferDayVerdictSeries(days: { bets: DayBet[]; seed: string }[]): string[] {
+  resetDayMemory();
+  return days.map((d) => buildDayVerdict(d.bets, d.seed));
 }
 
 function legGoals(l: DayLeg): number {

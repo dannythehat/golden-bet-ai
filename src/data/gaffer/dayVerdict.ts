@@ -73,19 +73,29 @@ export const WIN_LEG: Record<string, string[]> = {
     '{home} and {away} threw {g} goals at us{note} — the over was never in doubt.',
     '{g} goals in the {home} game{note}, {ft} — called the goal-fest to a tee.',
     '{home} v {away} finished {ft}{note} — told you the net would bulge, and bulge it did.',
+    '{g}-goal thriller at {home}{note} — {ft}, and the over strolled home.',
+    'no danger in {home} v {away}{note} — {ft}, {g} goals, easy as you like.',
+    '{home} v {away} served up {ft}{note} — that’s {g} goals for the greedy, over romped in.',
+    'the goals turned up early and often in {home} v {away}{note} — {ft}, get in.',
   ],
   BTTS: [
     'both ends busy in {home} v {away}, {ft}{note} — both-teams-to-score, textbook.',
     '{home} {ft} {away}{note} — both found the net, exactly as the Gaffer ordered.',
     'nets rippling at both ends in {home} v {away}{note} — {ft} and paid in full.',
+    'neither kept it out in {home} v {away}{note} — {ft}, both scored, lovely.',
+    '{home} v {away} traded goals like I said they would{note} — {ft}, both-to-score home.',
+    'two teams, two nets bulging in {home} v {away}{note} — {ft}, cashed.',
   ],
   Corners: [
     'the flags never stopped in {home} v {away}{note} — corners cashed, easy money.',
     '{home} v {away} was a set-piece factory{note} — the corner line sailed in.',
+    'corners raining in at {home} v {away}{note} — the over never looked in doubt.',
+    '{home} v {away} whipped ’em in from everywhere{note} — corner line home and hosed.',
   ],
   default: [
     '{home} v {away} did exactly what I said{note}, {ft} — spot on.',
     '{home} v {away} came good, {ft}{note}. Reading the form, that’s all it is.',
+    '{home} v {away} landed clean, {ft}{note} — money in the bank.',
   ],
 };
 
@@ -94,18 +104,27 @@ export const LOSS_LEG: Record<string, string[]> = {
   Goals: [
     '{home} v {away} bored us rigid at {ft}{note} — the goals never turned up, and there’s your loser.',
     'the {home} game died a death, {ft}{note} — not enough goals, and that’s the leg that did us.',
+    '{home} v {away} kept the shutters down, {ft}{note} — the over never got going, that’s the one.',
+    'a low-scorer in {home} v {away} of all games, {ft}{note} — the goals dried up and cost us.',
+    '{home} v {away} froze at {ft}{note} — nowhere near the goals, and that’s our loser.',
   ],
   BTTS: [
     '{cul} couldn’t buy a goal ({ft}){note} — no both-teams-scored, and that’s what cost us.',
     'a clean sheet in {home} v {away} of all games, {ft}{note} — {cul} let us down, simple as.',
     '{home} v {away} stayed one-sided at {ft}{note} — {cul} never showed up, there’s the loser.',
+    '{cul} drew a blank in {home} v {away}, {ft}{note} — both-to-score down the drain.',
+    '{ft} in {home} v {away}{note} — {cul} forgot their shooting boots, and that sank the slip.',
+    'only one team turned up in {home} v {away}, {ft}{note} — {cul} silent, there’s the dud.',
   ],
   Corners: [
     'the corners dried right up in {home} v {away}{note} — the one leg that let the slip down.',
+    '{home} v {away} kept it narrow{note} — the corner count fell short, and that’s our loser.',
+    'not enough flags in {home} v {away}{note} — the corner line missed, that’s the one that hurt.',
   ],
   default: [
     '{home} v {away} was the one that got away, {ft}{note}. Football, eh.',
     '{home} v {away} let us slip at {ft}{note} — that’s the leg I’d want back.',
+    '{home} v {away} came up short, {ft}{note} — the leg that cost the lot.',
   ],
 };
 
