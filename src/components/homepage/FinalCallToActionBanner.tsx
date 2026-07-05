@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Clock } from 'lucide-react';
+import { ArrowRight, Bell, Check, Clock } from 'lucide-react';
 import { FINAL_CTA_FEATURES } from './content';
 import { Icon } from './icons';
 
@@ -8,6 +9,21 @@ import { Icon } from './icons';
  * the Gaffer and an £8.99/month badge, 3D feature tiles, then the join buttons.
  */
 export function FinalCallToActionBanner() {
+  const [email, setEmail] = useState('');
+  const [done, setDone] = useState(false);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = email.trim();
+    if (!clean) return;
+    setDone(true); // optimistic — don't make them wait on the network
+    void fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: clean, source: 'membership' }),
+    }).catch(() => {});
+  };
+
   return (
     <section id="join" className="relative overflow-hidden rounded-[1.6rem] border border-[#f5c542]/35 bg-[#0a0613] shadow-[0_30px_90px_-42px_rgba(245,197,66,0.65)]">
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
@@ -65,13 +81,39 @@ export function FinalCallToActionBanner() {
           ))}
         </div>
 
-        <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center">
-          <span className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-[#f8e7a1]">
-            <Clock className="h-4 w-4" /> Membership Opens 1st August
-          </span>
+        {/* membership waitlist — doors open 1st August, grab the email now */}
+        <div className="mt-6">
+          <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]">
+            <Clock className="h-3.5 w-3.5" /> Membership opens 1st August
+          </div>
+          {done ? (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-5 py-3 text-sm font-bold text-emerald-300">
+              <Check className="h-4 w-4" /> You're on the list — we'll email you the moment doors open.
+            </div>
+          ) : (
+            <form onSubmit={submit} className="mt-3 flex max-w-md flex-col gap-2.5 sm:flex-row">
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                required
+                aria-label="Email address"
+                placeholder="your@email.com"
+                className="min-w-0 flex-1 rounded-xl border border-white/15 bg-[#120726] px-4 py-3 text-sm text-white placeholder-white/35 outline-none transition-colors focus:border-[#f5c542]/60"
+              />
+              <button
+                type="submit"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-amber-500 px-6 py-3 text-sm font-black uppercase tracking-wide text-[#16051f] shadow-[0_14px_36px_-14px_rgba(245,197,66,1)] transition-transform hover:-translate-y-0.5"
+              >
+                <Bell className="h-4 w-4" /> Notify me
+              </button>
+            </form>
+          )}
+          <p className="mt-2.5 text-[11px] text-white/40">No payment now, no spam — just first dibs when the doors open.</p>
+
           <Link
             to="/form-tables"
-            className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white/80 transition-colors hover:bg-white/[0.06]"
+            className="group mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-black uppercase tracking-wide text-white/80 transition-colors hover:bg-white/[0.06]"
           >
             Explore Today's Tips <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>

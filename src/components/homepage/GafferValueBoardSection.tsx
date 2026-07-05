@@ -259,7 +259,7 @@ function TotalsStrip({ odds, stake, returns, oddsLabel, tone = 'gold' }: { odds:
       className="relative rounded-[13px] p-px shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_18px_36px_-18px_rgba(0,0,0,0.95)]"
       style={{ background: 'linear-gradient(160deg,rgba(255,255,255,0.3) 0%,rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.16) 100%)' }}
     >
-      <div className="relative grid grid-cols-3 divide-x divide-white/[0.08] overflow-hidden rounded-[12px] bg-gradient-to-b from-[#191031] to-[#0f0921]">
+      <div className="relative grid grid-cols-3 divide-x divide-white/[0.11] overflow-hidden rounded-[12px] bg-gradient-to-b from-[#191031] to-[#0f0921]">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
         <div className="px-3 py-2.5 md:px-4">
           <div className="whitespace-nowrap text-[8px] font-black uppercase tracking-[0.12em] text-white/40">{oddsLabel}</div>
@@ -297,18 +297,18 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
   return (
     <div
       className={`relative rounded-[15px] p-px ${won
-        ? 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95),0_0_34px_-10px_rgba(16,185,129,0.5)]'
-        : 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95),0_0_30px_-12px_rgba(139,92,246,0.45)]'}`}
+        ? 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95),0_0_22px_-10px_rgba(16,185,129,0.55)]'
+        : 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95)]'}`}
       style={{ background: won
         ? 'linear-gradient(160deg,#6ee7b7 0%,#065f46 55%,#34d399 100%)'
-        : 'linear-gradient(160deg,rgba(245,197,66,0.85) 0%,rgba(124,58,237,0.7) 48%,rgba(34,211,238,0.7) 100%)' }}
+        : 'linear-gradient(160deg,#f5c542 0%,#8b5cf6 48%,#22d3ee 100%)' }}
     >
-    <div className="relative overflow-hidden rounded-[14px] bg-gradient-to-b from-[#1b1236] to-[#120a28]">
+    <div className="relative overflow-hidden rounded-[14px] bg-gradient-to-b from-[#1c1338] to-[#110a26]">
       {/* hairline top light */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/45 to-transparent" />
 
       {/* ── header strip ── */}
-      <div className="flex items-center justify-between gap-2 border-b border-white/[0.07] px-3.5 py-2">
+      <div className="flex items-center justify-between gap-2 border-b border-white/[0.1] px-3.5 py-2">
         <span className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45">
           <span className="grid h-[18px] w-[18px] place-items-center rounded-full bg-[#f5c542] text-[10px] font-black leading-none text-[#16051f]">{index + 1}</span>
           Leg {index + 1} <span className="text-white/25">/</span> {total}
@@ -341,7 +341,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       </div>
 
       {/* ── league line ── */}
-      <div className="flex items-center justify-center gap-1.5 border-y border-white/[0.07] bg-black/20 px-3.5 py-1.5">
+      <div className="flex items-center justify-center gap-1.5 border-y border-white/[0.1] bg-black/20 px-3.5 py-1.5">
         <Trophy className="h-2.5 w-2.5 shrink-0 text-[#f5c542]/70" />
         <span className="truncate text-[9px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]/70">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
       </div>
@@ -359,7 +359,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       </div>
 
       {/* ── confidence + form + evidence ── */}
-      <div className="border-t border-white/[0.07] px-3.5 pb-3 pt-2.5">
+      <div className="border-t border-white/[0.1] px-3.5 pb-3 pt-2.5">
         <div className="mb-1.5 flex items-baseline justify-between">
           <span className="text-[8.5px] font-black uppercase tracking-[0.22em] text-white/40">Confidence</span>
           <span className="font-display text-[15px] leading-none text-white [font-variant-numeric:tabular-nums]">{leg.prob}%</span>
@@ -377,7 +377,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
           </div>
         </div>
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/[0.07] pt-2 text-[10.5px] leading-none text-white/60">
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/[0.1] pt-2 text-[10.5px] leading-none text-white/60">
           {e.marketHits && (
             <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-emerald-300" /> Landed <b className="font-bold text-emerald-300 [font-variant-numeric:tabular-nums]">{e.marketHits.hits}/{e.marketHits.total}</b> recent</span>
           )}
@@ -410,11 +410,12 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
 
 
   return (
-    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#f5c542_0%,#7c3aed_38%,#22d3ee_66%,#f5c542_100%)] shadow-[0_30px_80px_-30px_rgba(124,58,237,0.8)]">
-      <div className="frost-panel frost-sheen relative overflow-hidden rounded-[1.33rem] p-4 md:p-6">
+    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#f5c542_0%,#7c3aed_38%,#22d3ee_66%,#f5c542_100%)] shadow-[0_30px_70px_-32px_rgba(0,0,0,0.95)]">
+      <div className="relative overflow-hidden rounded-[1.33rem] bg-[#0b0616] p-4 md:p-6">
+        <div aria-hidden className="pointer-events-none absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
         {/* eyebrow chip */}
         <div className="flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1] text-emboss shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_16px_-8px_rgba(245,197,66,0.5)]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]">
             <Star className="h-3.5 w-3.5 fill-current" /> {label}
           </span>
           {!single && (
@@ -453,7 +454,7 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
                 </div>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2.5">
-                <div className="frost-tile relative overflow-hidden rounded-xl border border-white/12 px-3 py-2.5">
+                <div className="relative overflow-hidden rounded-xl border border-white/15 bg-black/30 px-3 py-2.5">
                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/65">
                     <span>Confidence</span><span className="font-display text-base text-white">{primary.prob}%</span>
                   </div>
@@ -509,7 +510,7 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
               <div key={l.fixtureId} className="relative overflow-hidden rounded-[13px] border border-white/[0.09] bg-gradient-to-b from-[#171029] to-[#0f0a1e] shadow-[0_2px_4px_-1px_rgba(0,0,0,0.6),0_16px_30px_-18px_rgba(0,0,0,0.9)]">
                 {/* violet spine — his signature colour */}
                 <div aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-fuchsia-400 via-violet-500 to-violet-700" />
-                <div className="flex items-center gap-2 border-b border-white/[0.07] py-2 pl-4 pr-3.5">
+                <div className="flex items-center gap-2 border-b border-white/[0.1] py-2 pl-4 pr-3.5">
                   {legs.length > 1 && (
                     <>
                       <span className="shrink-0 text-[9px] font-black uppercase tracking-[0.2em] text-[#f8e7a1]">Leg {i + 1}</span>
@@ -589,10 +590,11 @@ function TrebleCard({ legs, inplay, liveList }: { legs: Leg[]; inplay?: Record<s
   const odds = legs.reduce((a, l) => a * l.odds, 1);
   const returns = odds * 10;
   return (
-    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#22d3ee_0%,#7c3aed_52%,#f5c542_100%)] shadow-[0_24px_60px_-30px_rgba(34,211,238,0.55)]">
-      <div className="frost-panel relative overflow-hidden rounded-[1.33rem] p-4 md:p-5">
+    <div className="relative rounded-[1.4rem] p-[1.5px] [background:linear-gradient(130deg,#22d3ee_0%,#7c3aed_52%,#f5c542_100%)] shadow-[0_30px_70px_-32px_rgba(0,0,0,0.95)]">
+      <div className="relative overflow-hidden rounded-[1.33rem] bg-[#0b0616] p-4 md:p-5">
+        <div aria-hidden className="pointer-events-none absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
         <div className="flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/45 bg-cyan-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200 text-emboss shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_16px_-8px_rgba(34,211,238,0.5)]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/45 bg-cyan-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">
             <Layers className="h-3.5 w-3.5" /> Today's Treble
           </span>
           <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-violet-400/40 bg-violet-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-violet-200 sm:inline-flex">
@@ -707,9 +709,8 @@ export function GafferValueBoardSection() {
       data-endpoint="gaffer_picks"
       className="relative overflow-hidden rounded-[1.6rem] border border-violet-400/25 bg-[#070312] shadow-[0_0_60px_-22px_rgba(124,58,237,0.7)]"
     >
-      {/* stadium atmosphere */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_-10%,rgba(124,58,237,0.28),transparent_42%),radial-gradient(circle_at_10%_10%,rgba(245,197,66,0.10),transparent_38%),radial-gradient(circle_at_50%_120%,rgba(16,185,129,0.10),transparent_45%)]" />
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:34px_34px] opacity-40" />
+      {/* faint pitch grid only — no radial haze, keeps the cards razor sharp */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:34px_34px] opacity-25" />
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
 
       {/* Gaffer image — desktop only, kept off mobile to preserve header contrast */}
@@ -729,10 +730,10 @@ export function GafferValueBoardSection() {
       <div className="relative z-[2] p-5 md:p-8">
         {/* Header */}
         <div className="max-w-xl md:max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1] text-emboss shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_16px_-8px_rgba(245,197,66,0.5)]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/50 bg-[#f5c542]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
             <Trophy className="h-3.5 w-3.5 fill-current" /> The Gaffer's Picks
           </span>
-          <h2 className="mt-3 font-display text-4xl uppercase leading-[0.9] tracking-tight text-white md:text-6xl text-extrude">Today's Value Board</h2>
+          <h2 className="mt-3 font-display text-4xl uppercase leading-[0.9] tracking-tight text-white drop-shadow-[0_3px_8px_rgba(0,0,0,0.8)] md:text-6xl">Today's Value Board</h2>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-white/65 md:text-[15px]">
             I scan the noise. You get the signal. High value, strong data, proper football. No fluff — just edges I'd back with my rep on it.
           </p>
