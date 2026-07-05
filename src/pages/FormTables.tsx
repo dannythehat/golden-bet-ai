@@ -475,22 +475,28 @@ export default function FormTables() {
   const gafferPick = useMemo(() => pickGafferDaily(tables.fixtures, today), [tables, today]);
 
   // The Gaffer's LOCKED selections today — the same top-5 value ranking the
-  // homepage board uses (top 2 = double, next 3 = treble). These rows glow
-  // neon purple in every table, whatever tab you're on.
-  const gafferIds = useMemo(() => {
+  // homepage board uses (top 2 = double, next 3 = treble). Each selection is a
+  // SPECIFIC bet type, so it only glows purple in ITS market's table.
+  const gafferMkt = useMemo(() => {
     const ok = (c: FormValueCell | null | undefined) => !!c?.odds && c.odds >= 1.4 && (c.prob ?? 0) >= 60;
-    type Cand = { id: string; edge: number };
+    type Cand = { id: string; mkt: CatKey; edge: number };
     const legs: Cand[] = [];
     for (const f of tables.fixtures) {
       if (f.date !== today) continue;
-      for (const c of Object.values(f.value.corners ?? {})) if (ok(c)) legs.push({ id: f.id, edge: c!.edge });
-      for (const c of Object.values(f.value.goals ?? {})) if (ok(c)) legs.push({ id: f.id, edge: c!.edge });
-      if (ok(f.value.btts)) legs.push({ id: f.id, edge: f.value.btts!.edge });
+      for (const c of Object.values(f.value.corners ?? {})) if (ok(c)) legs.push({ id: f.id, mkt: 'corners', edge: c!.edge });
+      for (const c of Object.values(f.value.goals ?? {})) if (ok(c)) legs.push({ id: f.id, mkt: 'goals', edge: c!.edge });
+      if (ok(f.value.btts)) legs.push({ id: f.id, mkt: 'btts', edge: f.value.btts!.edge });
     }
-    const best = new Map<string, number>();
-    for (const l of legs) if (!best.has(l.id) || l.edge > best.get(l.id)!) best.set(l.id, l.edge);
-    return new Set([...best.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id]) => id));
+    // Best leg per fixture (its actual bet type), then top 5 by edge.
+    const best = new Map<string, Cand>();
+    for (const l of legs) if (!best.has(l.id) || l.edge > best.get(l.id)!.edge) best.set(l.id, l);
+    const top5 = [...best.values()].sort((a, b) => b.edge - a.edge).slice(0, 5);
+    return new Map(top5.map((l) => [l.id, l.mkt]));
   }, [tables, today]);
+
+  // Has a today's game already kicked off (UK wall-clock)? Started games never glow.
+  const nowUK = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false });
+  const kickedOff = (f: Fixture) => f.date < today || (f.date === today && !!f.time && f.time <= nowUK);
 
   // Fixtures the value board considers — same window + league filter as the table.
   const valueFixtures = useMemo(
@@ -610,10 +616,14 @@ export default function FormTables() {
             const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id && gafferPick?.catKey === cat;
             const isToday = f.date === today;
-            // The Gaffer's locked selection today → neon PURPLE frame (any tab).
-            const gafferToday = isToday && gafferIds.has(f.id);
-            // Other value playing TODAY → neon GREEN frame.
-            const valueToday = !gafferToday && isToday && !!computeValue(formPct, o)?.flag;
+            // Playable = today AND not kicked off yet. Started/past games never glow.
+            const playable = isToday && !kickedOff(f);
+            // The Gaffer's selection → neon PURPLE, but ONLY in its own bet-type
+            // table (a goals pick glows on the Goals tab, nowhere else) and only
+            // for overs (his picks are overs/BTTS-yes).
+            const gafferToday = playable && !underMode && gafferMkt.get(f.id) === cat;
+            // Other value at THIS table's bet type → neon GREEN frame.
+            const valueToday = !gafferToday && playable && !!computeValue(formPct, o)?.flag;
             return (
               <button
                 key={f.id}
