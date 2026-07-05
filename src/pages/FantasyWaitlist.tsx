@@ -75,28 +75,48 @@ function SectionHead({ eyebrow, title, children }: { eyebrow: string; title: str
   );
 }
 
-/* ── jersey pick cards (Pick Your Squad band) ──────────────────────────────── */
-function JerseyCard({ name, team, colour, tilt }: { name: string; team: string; colour: string; tilt: string }) {
+/* ── real football-kit SVG (FPL-style flat jersey) ─────────────────────────── */
+function Kit({ body, sleeves, trim, number }: { body: string; sleeves: string; trim: string; number: string }) {
   return (
-    <div className={`relative w-[42%] max-w-[170px] rounded-2xl bg-[#0d3b2e] p-3 shadow-[0_3px_5px_-1px_rgba(0,0,0,0.6),0_22px_38px_-16px_rgba(0,0,0,0.9)] ${tilt}`}>
-      <div className="mx-auto grid h-20 w-20 place-items-center rounded-xl shadow-[inset_0_2px_0_rgba(255,255,255,0.25)]" style={{ background: colour }}>
-        <Shirt className="h-11 w-11 text-white drop-shadow" />
-      </div>
-      <div className="mt-2 rounded-lg bg-white px-2 py-1.5 text-center shadow">
-        <div className="truncate font-display text-[15px] uppercase leading-none tracking-tight text-[#2d0a4e]">{name}</div>
-        <div className="text-[10px] font-bold text-[#2d0a4e]/60">{team}</div>
+    <svg viewBox="0 0 120 110" className="h-24 w-24 drop-shadow-[0_8px_14px_rgba(0,0,0,0.45)]" aria-hidden>
+      {/* sleeves */}
+      <path d="M31 16 6 30l8 26 18-7z" fill={sleeves} stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" />
+      <path d="M89 16l25 14-8 26-18-7z" fill={sleeves} stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" />
+      {/* sleeve cuffs */}
+      <path d="M9.5 42.5 14 56l18-7-3.5-13z" fill={trim} opacity="0.9" />
+      <path d="M110.5 42.5 106 56l-18-7 3.5-13z" fill={trim} opacity="0.9" />
+      {/* body */}
+      <path d="M31 16 45 8c3 5 9 8 15 8s12-3 15-8l14 8-4 34v56c-8 3-17 4-25 4s-17-1-25-4V50z" fill={body} stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" />
+      {/* collar */}
+      <path d="M45 8c3 5 9 8 15 8s12-3 15-8l-5-3c-2 3-6 5-10 5s-8-2-10-5z" fill={trim} />
+      {/* chest number */}
+      <text x="60" y="66" textAnchor="middle" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="30" fill={trim} stroke="rgba(0,0,0,0.2)" strokeWidth="0.8">{number}</text>
+    </svg>
+  );
+}
+
+/* ── jersey pick cards (Pick Your Squad band), FPL-style ───────────────────── */
+function JerseyCard({ name, fixture, kit, tilt }: {
+  name: string; fixture: string; kit: { body: string; sleeves: string; trim: string; number: string }; tilt: string;
+}) {
+  return (
+    <div className={`relative w-[42%] max-w-[175px] rounded-2xl bg-gradient-to-b from-[#12503c] to-[#0b3a2b] p-3 pb-2.5 shadow-[0_3px_5px_-1px_rgba(0,0,0,0.6),0_22px_38px_-16px_rgba(0,0,0,0.9)] ring-1 ring-inset ring-white/10 ${tilt}`}>
+      <div className="flex justify-center pt-1"><Kit {...kit} /></div>
+      <div className="mt-2 overflow-hidden rounded-lg bg-white text-center shadow">
+        <div className="truncate px-2 pt-1.5 font-display text-[16px] uppercase leading-none tracking-tight text-[#2d0a4e]">{name}</div>
+        <div className="mt-1 bg-[#efeaf6] px-2 py-1 text-[10px] font-black tracking-wide text-[#2d0a4e]/70">{fixture}</div>
       </div>
     </div>
   );
 }
 
-/* ── prize image card ──────────────────────────────────────────────────────── */
-function PrizeCard({ img, tag, title, body, big = false, Icon }: {
-  img: string; tag: string; title: string; body: string; big?: boolean; Icon: typeof Trophy;
+/* ── hero prize card (full-bleed photo) ────────────────────────────────────── */
+function PrizeHeroCard({ img, tag, title, body, Icon }: {
+  img: string; tag: string; title: string; body: string; Icon: typeof Trophy;
 }) {
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border border-white/[0.16] shadow-[0_3px_5px_-1px_rgba(0,0,0,0.75),0_22px_38px_-16px_rgba(0,0,0,0.98)] ${big ? 'sm:col-span-2' : ''}`}>
-      <div className={`relative overflow-hidden ${big ? 'h-52 md:h-64' : 'h-36 md:h-40'}`}>
+    <div className="group relative overflow-hidden rounded-2xl border border-white/[0.16] shadow-[0_3px_5px_-1px_rgba(0,0,0,0.75),0_22px_38px_-16px_rgba(0,0,0,0.98)]">
+      <div className="relative h-52 overflow-hidden md:h-64">
         <img src={img} alt={title} loading="lazy" draggable={false}
           className="h-full w-full select-none object-cover transition-transform duration-500 group-hover:scale-[1.06]" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0c0518] via-transparent to-transparent" />
@@ -104,12 +124,32 @@ function PrizeCard({ img, tag, title, body, big = false, Icon }: {
           <Icon className="h-3 w-3" /> {tag}
         </span>
       </div>
-      <div className="border-t border-white/10 bg-[#140b28] p-3.5">
-        <div className="font-display text-lg uppercase leading-none tracking-tight text-white">{title}</div>
-        <p className="mt-1 text-[12.5px] leading-relaxed text-white/60">{body}</p>
+      <div className="border-t border-white/10 bg-[#140b28] p-4">
+        <div className="font-display text-xl uppercase leading-none tracking-tight text-white">{title}</div>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-white/60">{body}</p>
       </div>
-      {/* sharp bevel */}
       <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.35),inset_0_0_0_1px_rgba(255,255,255,0.06)]" />
+    </div>
+  );
+}
+
+/* ── compact prize card (small square thumb, razor-sharp at this size) ─────── */
+function PrizeRow({ img, tag, title, body, Icon }: {
+  img: string; tag: string; title: string; body: string; Icon: typeof Trophy;
+}) {
+  return (
+    <div className="frost-3d relative flex items-stretch gap-0 overflow-hidden rounded-2xl">
+      <div className="relative w-[104px] shrink-0 overflow-hidden md:w-32">
+        <img src={img} alt={title} loading="lazy" draggable={false} className="h-full w-full select-none object-cover" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-transparent to-[#150e30]/70" />
+      </div>
+      <div className="min-w-0 flex-1 p-3.5">
+        <span className="inline-flex items-center gap-1 rounded-full border border-[#f5c542]/35 bg-[#f5c542]/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]">
+          <Icon className="h-2.5 w-2.5" /> {tag}
+        </span>
+        <div className="mt-1.5 font-display text-[17px] uppercase leading-none tracking-tight text-white">{title}</div>
+        <p className="mt-1 text-[12px] leading-relaxed text-white/60">{body}</p>
+      </div>
     </div>
   );
 }
@@ -132,16 +172,16 @@ export default function FantasyWaitlist() {
           <div aria-hidden className="pointer-events-none absolute -left-12 -top-12 h-44 w-44 rounded-full bg-white/25 blur-3xl" />
           <div aria-hidden className="pointer-events-none absolute -bottom-16 right-1/3 h-44 w-44 rounded-full bg-fuchsia-300/30 blur-3xl" />
 
-          <div className="relative flex items-end">
+          <div className="relative flex items-stretch">
             {/* copy — left */}
-            <div className="min-w-0 flex-1 px-5 pb-8 pt-8 md:px-8 md:pb-12 md:pt-12">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-sm">
+            <div className="flex min-w-0 flex-1 flex-col justify-center px-5 py-9 md:px-8 md:py-14">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-sm">
                 <Sparkles className="h-3 w-3" /> Coming Soon
               </span>
-              <h1 className="mt-3 font-display text-[44px] uppercase leading-[0.84] tracking-tight text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.35)] sm:text-6xl md:text-7xl">
+              <h1 className="mt-3 font-display text-[42px] uppercase leading-[0.84] tracking-tight text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.35)] sm:text-6xl md:text-7xl">
                 Fantasy<br /><span className="text-[#f8e7a1]">Football</span>
               </h1>
-              <p className="mt-3 max-w-[16rem] text-[13.5px] font-semibold leading-snug text-white/95 sm:max-w-sm sm:text-[15px]">
+              <p className="mt-3 pr-1 text-[13.5px] font-semibold leading-snug text-white/95 [text-wrap:balance] sm:text-[15px] md:max-w-sm">
                 Pick your squad. Rack up points every gameweek. Win real prizes — and beat The Gaffer.
               </p>
             </div>
@@ -151,17 +191,18 @@ export default function FantasyWaitlist() {
               alt="The Gaffer celebrating"
               loading="eager"
               draggable={false}
-              className="pointer-events-none -mb-1 w-[38%] max-w-[300px] shrink-0 select-none self-end drop-shadow-[0_18px_36px_rgba(0,0,0,0.45)] md:w-[34%]"
+              className="pointer-events-none -mb-px w-[36%] max-w-[300px] shrink-0 select-none self-end drop-shadow-[0_18px_36px_rgba(0,0,0,0.45)] md:w-[32%]"
             />
           </div>
         </section>
 
         {/* ═══ Register / waitlist ═══ */}
         <section className="border-b border-white/10 bg-[#130321] px-5 py-8 text-center md:px-8 md:py-10">
-          <h2 className="font-display text-3xl uppercase leading-none tracking-tight text-white md:text-4xl">
-            Register to play the Footy Oracle Fantasy League
+          <div className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#f8e7a1]">The Footy Oracle Fantasy League</div>
+          <h2 className="mx-auto max-w-md font-display text-3xl uppercase leading-[0.95] tracking-tight text-white [text-wrap:balance] md:text-4xl">
+            Register to play
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-white/70">
+          <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-white/70 [text-wrap:balance]">
             Powered by the official Premier League game — <b className="text-white">free to play</b>, real players, real points,
             and prizes you'll actually want. It's not live yet: get on the waitlist and you're first through the door.
           </p>
@@ -177,12 +218,13 @@ export default function FantasyWaitlist() {
           the Premier League. Captain your talisman, bench your dead weight, and out-think everyone.
         </SectionHead>
         <div className={`relative ${BAND} flex items-center justify-center gap-3 overflow-hidden px-4 py-10`}>
-          <JerseyCard name="Saka" team="ARS (H)" colour="#ef2b2d" tilt="-rotate-6" />
-          <div className="z-10 -mx-4 grid place-items-center rounded-2xl bg-[#0d3b2e] px-4 py-6 text-center text-white shadow-[0_3px_5px_-1px_rgba(0,0,0,0.6),0_22px_38px_-16px_rgba(0,0,0,0.9)]">
+          <div aria-hidden className="pointer-events-none absolute -left-10 top-4 h-36 w-36 rounded-full bg-white/20 blur-3xl" />
+          <JerseyCard name="Saka" fixture="ARS (H) · £10.0m" kit={{ body: '#EF0107', sleeves: '#ffffff', trim: '#ffffff', number: '7' }} tilt="-rotate-6" />
+          <div className="z-10 -mx-4 grid place-items-center rounded-2xl bg-gradient-to-b from-[#12503c] to-[#0b3a2b] px-4 py-6 text-center text-white shadow-[0_3px_5px_-1px_rgba(0,0,0,0.6),0_22px_38px_-16px_rgba(0,0,0,0.9)] ring-1 ring-inset ring-white/10">
             <Users className="h-6 w-6" />
             <span className="mt-1 font-display text-sm uppercase tracking-tight">Midfield</span>
           </div>
-          <JerseyCard name="Palmer" team="CHE (A)" colour="#1e63d0" tilt="rotate-6" />
+          <JerseyCard name="Palmer" fixture="CHE (A) · £10.5m" kit={{ body: '#034694', sleeves: '#034694', trim: '#ffffff', number: '10' }} tilt="rotate-6" />
         </div>
 
         {/* ═══ 02 · THE PRIZES — real prize photography ═══ */}
@@ -190,22 +232,24 @@ export default function FantasyWaitlist() {
           This isn't bragging rights and a spreadsheet. Every gameweek there's something real on the line —
           and one season-long grand prize worth chasing all year.
         </SectionHead>
-        <div className="grid gap-3 px-5 pb-8 sm:grid-cols-2 md:px-8">
-          <PrizeCard
-            big img="/images/fantasy/prizes/prize-tropical.jpg" Icon={Palmtree}
+        <div className="space-y-3 px-5 pb-8 md:px-8">
+          <PrizeHeroCard
+            img="/images/fantasy/prizes/prize-tropical.jpg" Icon={Palmtree}
             tag="1st Prize · Season Winner" title="A dream tropical getaway"
             body="Win the season and you're not getting a mug — you're on a plane. Seven nights for two, anywhere the sun's shining."
           />
-          <PrizeCard
-            img="/images/fantasy/prizes/prize-voucher.jpg" Icon={Gift}
-            tag="Weekly" title="Vouchers & rewards"
-            body="Top the gameweek and bank a Footy Oracle voucher. Fresh shot every single week."
-          />
-          <PrizeCard
-            img="/images/fantasy/prizes/prize-experiences.jpg" Icon={Ticket}
-            tag="Monthly" title="Matchday experiences"
-            body="Tickets, kit and matchday money-can't-buy bits for the month's best managers."
-          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <PrizeRow
+              img="/images/fantasy/prizes/prize-voucher.jpg" Icon={Gift}
+              tag="Weekly" title="Vouchers & rewards"
+              body="Top the gameweek, bank a voucher. Fresh shot every week."
+            />
+            <PrizeRow
+              img="/images/fantasy/prizes/prize-experiences.jpg" Icon={Ticket}
+              tag="Monthly" title="Matchday experiences"
+              body="Tickets, kit and money-can't-buy bits for the month's best."
+            />
+          </div>
         </div>
 
         {/* ═══ 03 · CREATE & JOIN LEAGUES ═══ */}
