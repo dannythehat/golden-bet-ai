@@ -172,8 +172,13 @@ function GafferPickCard({ pick }: { pick: GafferDaily }) {
   }
   const { f, selection, prob, odds, mode } = pick;
   return (
-    <div className="relative mb-4 overflow-hidden rounded-2xl border border-violet-400/40 bg-gradient-to-r from-violet-600/25 via-violet-600/10 to-transparent px-4 py-4 shadow-[0_20px_50px_-24px_rgba(139,92,246,0.9)]">
-      <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-violet-500/20 blur-3xl" />
+    <div
+      className="relative mb-4 rounded-2xl p-[2px] shadow-[0_0_16px_-2px_rgba(192,132,252,0.8),0_0_46px_-8px_rgba(139,92,246,0.7),0_18px_40px_-20px_rgba(0,0,0,0.9)]"
+      style={{ background: 'linear-gradient(135deg,#e879f9 0%,#8b5cf6 40%,#c084fc 70%,#a855f7 100%)' }}
+    >
+    <div className="relative overflow-hidden rounded-[14px] bg-gradient-to-r from-[#1c0f38] via-[#150b2a] to-[#100722] px-4 py-4">
+      <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-violet-500/25 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-fuchsia-300/70 to-transparent" />
       <div className="relative flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-500/20 ring-1 ring-inset ring-violet-400/40">
@@ -192,6 +197,7 @@ function GafferPickCard({ pick }: { pick: GafferDaily }) {
           <div className="text-sm text-white/70">form <span className="font-bold text-emerald-300">{prob}%</span> · odds <span className="font-bold text-[#f8e7a1]">{odd(odds)}</span></div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
@@ -576,12 +582,16 @@ export default function FormTables() {
             const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id && gafferPick?.catKey === cat;
             const isToday = f.date === today;
+            // Value bet playing TODAY → neon green frame so it jumps off the table.
+            const valueToday = isToday && !!computeValue(formPct, o)?.flag;
             return (
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
                 className={`group flex w-full items-center gap-2.5 px-3 py-1.5 text-left transition-colors ${
-                  isPick ? 'bg-violet-500/[0.045] hover:bg-violet-500/[0.08]' : 'hover:bg-white/[0.02]'
+                  valueToday
+                    ? 'relative z-[1] my-1 rounded-xl bg-emerald-400/[0.06] ring-2 ring-inset ring-emerald-400/80 shadow-[inset_0_0_22px_-10px_rgba(52,211,153,0.7),0_0_14px_-4px_rgba(52,211,153,0.45)] hover:bg-emerald-400/[0.1]'
+                    : isPick ? 'bg-violet-500/[0.045] hover:bg-violet-500/[0.08]' : 'hover:bg-white/[0.02]'
                 }`}
               >
                 <span className={`w-5 shrink-0 text-center text-[12px] font-semibold tabular-nums ${isPick ? 'text-violet-300/75' : 'text-white/30'}`}>{i + 1}</span>
