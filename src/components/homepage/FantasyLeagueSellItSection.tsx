@@ -3,19 +3,16 @@ import { Link } from 'react-router-dom';
 import { Bell, ArrowRight, Check } from 'lucide-react';
 import { Countdown } from '@/components/fantasy/Countdown';
 
-const POSTER = '/images/fantasy/fantasy-coming-soon.jpg';
+const POSTER = '/images/fantasy/dream-xi.jpg';
 // Registration target for the coming-soon countdown (season opens Aug 2026).
 const REG_OPEN = '2026-08-01T18:00:00Z';
 
 /**
  * FantasyLeagueSellItSection — homepage "coming soon" feature.
  *
- * The poster is the hero. We deliberately crop the bottom band of the artwork
- * (which contains the baked "JOIN NOW / COMPETE / WIN / COMING SOON" text)
- * using a fixed aspect-ratio window + object-position, so the crest, headline,
- * Gaffer and "TOP PRIZES" panel all remain visible while the redundant CTA
- * strip is hidden. A dark gradient fades the poster into the panel below,
- * where the live registration UI lives.
+ * The "Build Your Dream XI" showcase (FUT-style player cards) is the hero,
+ * shown in full at its natural aspect with a dark gradient fading it into the
+ * live registration panel below.
  *
  * No cash / £ language anywhere — prizes are trips, tech and experiences.
  */
@@ -49,7 +46,7 @@ export function FantasyLeagueSellItSection() {
       <div className="relative w-full overflow-hidden">
         <img
           src={POSTER}
-          alt="Footy Oracle Fantasy Premier League — crest, Gaffer and top prizes"
+          alt="Build Your Dream XI — Footy Oracle Fantasy 2026/27. Pick your stars. Beat The Gaffer. Win prizes."
           loading="lazy"
           draggable={false}
           className="block h-auto w-full select-none"
