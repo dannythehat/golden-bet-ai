@@ -418,6 +418,20 @@ export default function FantasyWaitlist() {
         {/* ═══ LIVE COUNTDOWN ═══ */}
         <CountdownStrip />
 
+        {/* ═══ Dream XI showcase banner ═══ */}
+        <Reveal>
+          <div className="relative border-b border-white/10">
+            <img
+              src="/images/fantasy/dream-xi.jpg"
+              alt="Build your Dream XI — Footy Oracle Fantasy 2026/27. Pick your stars. Beat The Gaffer. Win prizes."
+              loading="lazy"
+              draggable={false}
+              className="block w-full select-none"
+            />
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#130321] to-transparent" />
+          </div>
+        </Reveal>
+
         {/* ═══ Register / waitlist ═══ */}
         <Reveal>
           <section className="border-b border-white/10 bg-[#130321] px-5 py-8 text-center md:px-8 md:py-10">
