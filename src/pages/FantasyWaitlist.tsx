@@ -58,7 +58,7 @@ function WaitlistForm({ source }: { source: string }) {
       </div>
       {state === 'error' && <p className="mt-2 text-center text-xs text-rose-300">{msg}</p>}
       <p className="mt-2.5 flex items-center justify-center gap-1.5 text-[11px] text-white/45">
-        <ShieldCheck className="h-3.5 w-3.5" /> Free to play. No payment, no spam — just your spot saved.
+        <ShieldCheck className="h-3.5 w-3.5" /> No payment now, no spam — just your spot saved for kick-off.
       </p>
     </form>
   );
@@ -176,7 +176,7 @@ export default function FantasyWaitlist() {
             {/* copy — left */}
             <div className="flex min-w-0 flex-1 flex-col justify-center px-5 py-9 md:px-8 md:py-14">
               <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-sm">
-                <Sparkles className="h-3 w-3" /> Coming Soon
+                <Sparkles className="h-3 w-3" /> Kicks off 1st August
               </span>
               <h1 className="mt-3 font-display text-[42px] uppercase leading-[0.84] tracking-tight text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.35)] sm:text-6xl md:text-7xl">
                 Fantasy<br /><span className="text-[#f8e7a1]">Football</span>
@@ -203,8 +203,9 @@ export default function FantasyWaitlist() {
             Register to play
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-white/70 [text-wrap:balance]">
-            Powered by the official Premier League game — <b className="text-white">free to play</b>, real players, real points,
-            and prizes you'll actually want. It's not live yet: get on the waitlist and you're first through the door.
+            Powered by the official Premier League game — real players, real points, real prizes. Your entry's part of the
+            all-in Footy Oracle membership: <b className="text-white">£8.99 a month, everything included</b>. The season kicks
+            off <b className="text-white">1st August</b> — join the waitlist and you're first through the door.
           </p>
           <div className="mt-6"><WaitlistForm source="fantasy-hero" /></div>
           <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-white/40">
@@ -234,18 +235,18 @@ export default function FantasyWaitlist() {
         </SectionHead>
         <div className="space-y-3 px-5 pb-8 md:px-8">
           <PrizeHeroCard
-            img="/images/fantasy/prizes/prize-tropical.jpg" Icon={Palmtree}
+            img="/images/fantasy/prizes/hi/prize-tropical.jpg" Icon={Palmtree}
             tag="1st Prize · Season Winner" title="A dream tropical getaway"
             body="Win the season and you're not getting a mug — you're on a plane. Seven nights for two, anywhere the sun's shining."
           />
           <div className="grid gap-3 sm:grid-cols-2">
             <PrizeRow
-              img="/images/fantasy/prizes/prize-voucher.jpg" Icon={Gift}
+              img="/images/fantasy/prizes/hi/prize-voucher.jpg" Icon={Gift}
               tag="Weekly" title="Vouchers & rewards"
               body="Top the gameweek, bank a voucher. Fresh shot every week."
             />
             <PrizeRow
-              img="/images/fantasy/prizes/prize-experiences.jpg" Icon={Ticket}
+              img="/images/fantasy/prizes/hi/prize-matchday.jpg" Icon={Ticket}
               tag="Monthly" title="Matchday experiences"
               body="Tickets, kit and money-can't-buy bits for the month's best."
             />

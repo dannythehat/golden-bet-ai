@@ -5,14 +5,14 @@ import { Icon } from './icons';
 
 /**
  * Final CTA — premium gold membership banner: a floodlit-stadium hero band with
- * the Gaffer and a £20/month badge, 3D feature tiles, then the join buttons.
+ * the Gaffer and an £8.99/month badge, 3D feature tiles, then the join buttons.
  */
 export function FinalCallToActionBanner() {
   return (
     <section id="join" className="relative overflow-hidden rounded-[1.6rem] border border-[#f5c542]/35 bg-[#0a0613] shadow-[0_30px_90px_-42px_rgba(245,197,66,0.65)]">
       <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
 
-      {/* ── hero band: stadium photo + the Gaffer + £20 badge ── */}
+      {/* ── hero band: stadium photo + the Gaffer + £8.99 badge ── */}
       <div className="relative min-h-[230px] overflow-hidden md:min-h-[270px]">
         <img
           src="/images/backgrounds/bg-stadium.jpg"
@@ -42,7 +42,7 @@ export function FinalCallToActionBanner() {
             <span className="bg-gradient-to-r from-[#ffe487] to-[#f5c542] bg-clip-text text-transparent">smarter?</span>
           </h2>
           <div className="mt-3.5 inline-flex items-baseline gap-1 rounded-full border border-[#f5c542]/40 bg-black/40 px-3.5 py-1.5 backdrop-blur-sm">
-            <span className="font-display text-2xl leading-none text-[#f8e7a1]">£20</span>
+            <span className="font-display text-2xl leading-none text-[#f8e7a1]">£8.99</span>
             <span className="text-xs font-bold text-white/60">/month</span>
           </div>
         </div>
@@ -67,7 +67,7 @@ export function FinalCallToActionBanner() {
 
         <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center">
           <span className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-[#f8e7a1]">
-            <Clock className="h-4 w-4" /> Membership Opening Soon
+            <Clock className="h-4 w-4" /> Membership Opens 1st August
           </span>
           <Link
             to="/form-tables"
