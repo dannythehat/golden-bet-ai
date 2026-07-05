@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { TeamAvatar } from '@/components/TeamAvatar';
+import ledger from '@/data/pnlLedger.json';
 
 // ── endpoint contract: settled gaffer_picks → summary + recent settlements ──
 type Settlement = {
@@ -42,39 +41,35 @@ const SAMPLE: PnLSummary = {
   ],
 };
 
-type RawLeg = { home_team?: string; away_team?: string; home_logo?: string | null; away_logo?: string | null; selection?: string; market?: string; label?: string; league?: string; region?: string };
-type RawRow = { pick_date: string; stake: number | null; profit_loss: number | null; status: string; combined_odds: number | string | null; potential_returns: number | string | null; legs: RawLeg[] | null; title: string | null; updated_at: string | null };
+type LedgerLeg = { home: string; away: string; region?: string; league?: string; selection: string; odds: number; ft?: string; result: string };
+type LedgerBet = { date: string; kind: string; stake: number; combinedOdds: number; status: string; returns: number; profit: number; legs: LedgerLeg[] };
 
-async function fetchPnLSummary(): Promise<PnLSummary> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase as any)
-    .from('gaffer_picks')
-    .select('pick_date, stake, profit_loss, status, combined_odds, potential_returns, legs, title, updated_at')
-    .in('status', ['won', 'lost'])
-    .order('pick_date', { ascending: true });
-  if (error || !Array.isArray(data) || data.length === 0) return SAMPLE;
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-  let staked = 0, profit = 0, wins = 0, losses = 0;
-  let latest = 0;
+// The record is our own committed ledger of settled bets — the single source of
+// truth. No external DB: what settles here IS the P&L.
+function buildFromLedger(): PnLSummary {
+  const bets = (((ledger as { bets?: LedgerBet[] }).bets) ?? []).filter((b) => b.status === 'won' || b.status === 'lost');
+  if (!bets.length) return SAMPLE;
+
+  let staked = 0, profit = 0, wins = 0, losses = 0, latest = 0;
   const settlements: Settlement[] = [];
-  for (const row of data as RawRow[]) {
-    const s = Number(row.stake ?? 10), pl = Number(row.profit_loss ?? 0);
-    staked += s; profit += pl;
-    const t = row.updated_at ? new Date(row.updated_at).getTime() : 0;
+  for (const b of bets) {
+    staked += b.stake; profit += b.profit;
+    if (b.status === 'won') wins += 1; else losses += 1;
+    const t = new Date(b.date).getTime();
     if (Number.isFinite(t) && t > latest) latest = t;
-    if (row.status === 'won') wins += 1; else losses += 1;
-    const legsArr = Array.isArray(row.legs) ? row.legs : [];
-    const leg = legsArr[0];
-    const isDouble = legsArr.length > 1;
+    const leg0 = b.legs[0];
+    const isMulti = b.legs.length > 1;
     settlements.push({
-      fixture: leg ? `${leg.home_team ?? ''} v ${leg.away_team ?? ''}`.trim() : (row.title ?? 'Pick'),
-      league: leg?.league ?? leg?.region ?? '',
-      market: isDouble ? legsArr.map((l) => l.selection ?? l.market ?? l.label).filter(Boolean).join(' + ') : (leg?.selection ?? leg?.market ?? leg?.label ?? row.title ?? 'Pick'),
-      odds: Number(row.combined_odds ?? 0) || 0,
-      stake: s, return: row.status === 'won' ? (Number(row.potential_returns ?? s + pl) || s + pl) : 0,
-      result: row.status === 'won' ? 'WIN' : 'LOSS',
-      legs: legsArr.length || 1,
-      homeLogo: leg?.home_logo ?? null, awayLogo: leg?.away_logo ?? null,
+      fixture: leg0 ? `${leg0.home} v ${leg0.away}` : cap(b.kind),
+      league: leg0?.league ?? leg0?.region ?? '',
+      market: isMulti ? b.legs.map((l) => l.selection).join(' + ') : (leg0?.selection ?? cap(b.kind)),
+      odds: b.combinedOdds,
+      stake: b.stake, return: b.status === 'won' ? b.returns : 0,
+      result: b.status === 'won' ? 'WIN' : 'LOSS',
+      legs: b.legs.length || 1,
+      homeLogo: null, awayLogo: null,
     });
   }
   const games = wins + losses;
@@ -109,8 +104,7 @@ function useCountUp(target: number, decimals = 0, dur = 800) {
  * settled gaffer_picks number; sample until the first bets settle.
  */
 export function GafferPnLTrustSection() {
-  const { data } = useQuery({ queryKey: ['gaffer_pnl_summary'], staleTime: 1000 * 60 * 5, queryFn: fetchPnLSummary });
-  const p = data ?? SAMPLE;
+  const p = buildFromLedger();
   const s = p.summary;
   const updated = fmtUpdated(p.updatedAt);
   const up = s.profit >= 0;
@@ -183,7 +177,7 @@ export function GafferPnLTrustSection() {
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[12px] font-semibold leading-tight text-white/85">
                         {home}{away ? <> <span className="text-white/25">v</span> {away}</> : ''}
-                        {(st.legs ?? 1) > 1 && <span className="ml-1.5 rounded bg-violet-500/25 px-1 py-px text-[8px] font-black uppercase tracking-wide text-violet-200">Double</span>}
+                        {(st.legs ?? 1) > 1 && <span className="ml-1.5 rounded bg-violet-500/25 px-1 py-px text-[8px] font-black uppercase tracking-wide text-violet-200">{st.legs === 3 ? 'Treble' : st.legs === 2 ? 'Double' : `${st.legs} legs`}</span>}
                       </div>
                       <div className="truncate text-[10px] leading-tight text-white/45">{[st.market, st.odds ? st.odds.toFixed(2) : null, money(st.stake)].filter(Boolean).join(' · ')}</div>
                     </div>
