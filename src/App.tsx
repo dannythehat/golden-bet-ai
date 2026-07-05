@@ -20,6 +20,8 @@ const FantasyMyTeam = lazy(() => import("./pages/FantasyMyTeam"));
 const FantasyTransfers = lazy(() => import("./pages/FantasyTransfers"));
 const FantasyResults = lazy(() => import("./pages/FantasyResults"));
 const Pnl = lazy(() => import("./pages/Pnl"));
+const FantasyWaitlist = lazy(() => import("./pages/FantasyWaitlist"));
+const AdminWaitlist = lazy(() => import("./pages/AdminWaitlist"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -70,6 +72,8 @@ const App = () => {
                 <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
                 <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
                 <Route path="/pnl" element={<Pnl />} />
+                <Route path="/fantasy-waitlist" element={<FantasyWaitlist />} />
+                <Route path="/admin" element={<AdminWaitlist />} />
                 <Route path="/the-gaffer" element={<ComingSoon title="The Gaffer" eyebrow="In Build" />} />
                 <Route path="/community" element={<ComingSoon title="Community" eyebrow="In Build" />} />
 
