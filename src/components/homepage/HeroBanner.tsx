@@ -17,7 +17,7 @@ const FEATURES: { img: string; title: string; to: string }[] = [
   { img: '/images/hero-features/tips-form.jpg', title: 'Tips Based on Form', to: '/form-tables' },
   { img: '/images/hero-features/form-tables.jpg', title: 'Form Tables', to: '/form-tables' },
   { img: '/images/hero-features/weekly-prizes.jpg', title: 'Weekly Prizes', to: '/pricing' },
-  { img: '/images/hero-features/fantasy-football.jpg', title: 'Fantasy Football', to: '/fantasy-league' },
+  { img: '/images/hero-features/fantasy-football.jpg', title: 'Fantasy Football', to: '/fantasy-waitlist' },
   { img: '/images/hero-features/community.jpg', title: 'Community & More', to: '/community' },
 ];
 
