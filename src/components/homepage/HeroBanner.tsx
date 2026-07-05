@@ -46,22 +46,13 @@ export function HeroBanner() {
         />
         <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent md:block" />
 
-        {/* DESKTOP — The Gaffer's signature, purple, angled across the scene */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute right-[6%] top-[46%] z-[1] hidden -rotate-[26deg] font-['Great_Vibes'] text-8xl font-normal leading-none text-violet-300 [text-shadow:0_2px_18px_rgba(139,92,246,0.65)] md:block lg:text-9xl"
-        >
-          The Gaffer
-        </span>
-
-        {/* Fantasy League — Coming Soon promo, floated top-right over the scene
-            (clear of the Gaffer and the baked-in "Know the game…" script). */}
+        {/* Fantasy League — Coming Soon promo (DESKTOP: top-right, clear of the left-hand copy) */}
         <img
           src="/images/fantasy-coming-soon.png"
           alt="Footy Oracle's Fantasy League — Coming Soon"
           loading="lazy"
           draggable={false}
-          className="pointer-events-none absolute right-2 top-2 z-[3] w-[56%] max-w-[340px] select-none drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)] sm:w-[52%] md:right-6 md:top-6 md:w-[42%] md:max-w-[560px]"
+          className="pointer-events-none absolute right-6 top-6 z-[3] hidden w-[46%] max-w-[620px] select-none drop-shadow-[0_14px_34px_rgba(0,0,0,0.6)] md:block"
         />
 
         <div className="relative flex flex-col md:min-h-[660px] md:justify-between md:gap-8">
@@ -72,13 +63,14 @@ export function HeroBanner() {
             style={{ backgroundImage: `url(${HERO_SCENE})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/25 to-transparent" />
-            {/* MOBILE — The Gaffer's signature, purple, angled across the scene */}
-            <span
-              aria-hidden
-              className="pointer-events-none absolute bottom-4 left-4 -rotate-[16deg] font-['Great_Vibes'] text-6xl font-normal leading-none text-violet-300 [text-shadow:0_2px_14px_rgba(139,92,246,0.7)] sm:text-7xl"
-            >
-              The Gaffer
-            </span>
+            {/* MOBILE — Fantasy League Coming Soon promo, bottom-left and large */}
+            <img
+              src="/images/fantasy-coming-soon.png"
+              alt="Footy Oracle's Fantasy League — Coming Soon"
+              loading="lazy"
+              draggable={false}
+              className="pointer-events-none absolute bottom-2.5 left-2.5 z-[3] w-[86%] select-none drop-shadow-[0_10px_26px_rgba(0,0,0,0.65)]"
+            />
           </div>
 
           {/* copy */}
