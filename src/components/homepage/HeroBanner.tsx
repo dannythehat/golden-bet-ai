@@ -47,13 +47,19 @@ export function HeroBanner() {
         <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent md:block" />
 
         {/* Fantasy League — Coming Soon promo (DESKTOP: top-right, clear of the left-hand copy) */}
-        <img
-          src="/images/fantasy-coming-soon.png"
-          alt="Footy Oracle's Fantasy League — Coming Soon"
-          loading="lazy"
-          draggable={false}
-          className="pointer-events-none absolute right-6 top-6 z-[3] hidden w-[46%] max-w-[620px] select-none drop-shadow-[0_14px_34px_rgba(0,0,0,0.6)] md:block"
-        />
+        <Link
+          to="/fantasy-waitlist"
+          aria-label="Join the Fantasy League waitlist"
+          className="absolute right-6 top-6 z-[3] hidden w-[46%] max-w-[620px] transition-transform hover:-translate-y-0.5 md:block"
+        >
+          <img
+            src="/images/fantasy-coming-soon.png"
+            alt="Footy Oracle's Fantasy League — Coming Soon"
+            loading="lazy"
+            draggable={false}
+            className="w-full select-none drop-shadow-[0_14px_34px_rgba(0,0,0,0.6)]"
+          />
+        </Link>
 
         <div className="relative flex flex-col md:min-h-[660px] md:justify-between md:gap-8">
           {/* MOBILE scene banner — the Gaffer shown clearly up top, fading into the copy */}
@@ -64,13 +70,19 @@ export function HeroBanner() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/25 to-transparent" />
             {/* MOBILE — Fantasy League Coming Soon promo, bottom-left and large */}
-            <img
-              src="/images/fantasy-coming-soon.png"
-              alt="Footy Oracle's Fantasy League — Coming Soon"
-              loading="lazy"
-              draggable={false}
-              className="pointer-events-none absolute bottom-2.5 left-2.5 z-[3] w-[86%] select-none drop-shadow-[0_10px_26px_rgba(0,0,0,0.65)]"
-            />
+            <Link
+              to="/fantasy-waitlist"
+              aria-label="Join the Fantasy League waitlist"
+              className="absolute bottom-2.5 left-2.5 z-[3] block w-[86%] active:scale-[0.99]"
+            >
+              <img
+                src="/images/fantasy-coming-soon.png"
+                alt="Footy Oracle's Fantasy League — Coming Soon"
+                loading="lazy"
+                draggable={false}
+                className="w-full select-none drop-shadow-[0_10px_26px_rgba(0,0,0,0.65)]"
+              />
+            </Link>
           </div>
 
           {/* copy */}

@@ -4,3 +4,8 @@
 name = "golden-bet-ai"
 pages_build_output_dir = "./dist"
 compatibility_date = "2025-01-01"
+
+# Fantasy League waitlist store — read/written by functions/api/waitlist.ts.
+[[kv_namespaces]]
+binding = "WAITLIST"
+id = "7271f2775d904ee3934fa04f97f46c6d"
