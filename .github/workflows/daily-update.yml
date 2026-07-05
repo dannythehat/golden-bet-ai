@@ -1,0 +1,72 @@
+name: Daily Board + P&L
+
+# The Gaffer's morning routine, automated:
+#   1. SETTLE yesterday's locked bet against the real result → append to the P&L
+#      ledger (with the Gaffer's stored word on the day).
+#   2. REGENERATE today's value board from fresh fixtures / form / odds.
+# Both write committed JSON the site reads; the commit triggers the auto-deploy,
+# so the board never goes stale and the record settles itself.
+
+on:
+  schedule:
+    # 05:30 UTC — yesterday's fixtures are all final, today's are published.
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+    inputs:
+      settle_dates:
+        description: 'Dates to settle/backfill (e.g. "2026-07-02 2026-07-03"). Blank = yesterday.'
+        required: false
+        default: ''
+      skip_generate:
+        description: 'Skip regenerating the board (settle only).'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Settle FIRST — while yesterday's locked picks are still in the board file.
+      - name: Settle the P&L ledger
+        env:
+          FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS_KEY }}
+        run: node scripts/settle.mjs ${{ github.event.inputs.settle_dates }}
+
+      # Then refresh the board (merges — keeps yesterday for the next settle).
+      - name: Regenerate the value board
+        if: ${{ github.event.inputs.skip_generate != 'true' }}
+        env:
+          FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS_KEY }}
+        run: python3 scripts/generate-board.py
+
+      - name: Commit updates
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add src/data/pnlLedger.json src/data/formTablesData.json
+          if git diff --staged --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "🤖 Daily board + P&L update [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+            git push
+          fi

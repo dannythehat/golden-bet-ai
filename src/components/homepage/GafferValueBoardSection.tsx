@@ -145,10 +145,23 @@ function withLogos(leg: Leg): Leg {
   };
 }
 
-type Enriched = { formScore: number | null; leagueAverage: number | null; headToHead: string | null };
+type FormGame = { res?: string; gf?: number; ga?: number; corners?: number; cards?: number; btts?: boolean };
+type Enriched = {
+  formScore: number | null; leagueAverage: number | null; headToHead: string | null;
+  homeForm: string[]; awayForm: string[];       // recent W/D/L, most recent first
+  marketHits: { hits: number; total: number } | null; // how often the pick landed recently
+};
+// Did a single recent game hit the leg's market?
+function gameHitsMarket(g: FormGame, market: Leg['market'], line: number): boolean {
+  if (market === 'Goals') return (Number(g.gf ?? 0) + Number(g.ga ?? 0)) > line;
+  if (market === 'Corners') return Number(g.corners ?? 0) > line;
+  if (market === 'BTTS') return !!g.btts;
+  return Number(g.cards ?? 0) > line;
+}
 function enrich(leg: Leg): Enriched {
   const f = findFixture(leg);
-  if (!f) return { formScore: leg.prob ?? null, leagueAverage: null, headToHead: null };
+  const base = { homeForm: [] as string[], awayForm: [] as string[], marketHits: null as Enriched['marketHits'] };
+  if (!f) return { formScore: leg.prob ?? null, leagueAverage: null, headToHead: null, ...base };
   const line = lineOf(leg.selection);
   const key = String(line);
   const formScore =
@@ -173,7 +186,35 @@ function enrich(leg: Leg): Enriched {
     }
     headToHead = `${hits}/${total}`;
   }
-  return { formScore: formScore ?? leg.prob ?? null, leagueAverage: leagueAverage ?? null, headToHead };
+  const homeGames = (f.home_form as FormGame[] | undefined ?? []).slice(0, 5);
+  const awayGames = (f.away_form as FormGame[] | undefined ?? []).slice(0, 5);
+  const homeForm = homeGames.map((g) => String(g.res ?? '·').toUpperCase());
+  const awayForm = awayGames.map((g) => String(g.res ?? '·').toUpperCase());
+  const marketGames = [...homeGames, ...awayGames];
+  const marketHits = marketGames.length
+    ? { hits: marketGames.filter((g) => gameHitsMarket(g, leg.market, line)).length, total: marketGames.length }
+    : null;
+  return { formScore: formScore ?? leg.prob ?? null, leagueAverage: leagueAverage ?? null, headToHead, homeForm, awayForm, marketHits };
+}
+
+// Market-aware average label so "Avg 71.5" reads clearly per market.
+const avgLabel = (market: Leg['market'], avg: number | null): string | null => {
+  if (avg == null) return null;
+  if (market === 'BTTS') return `${avg}% BTTS`;
+  if (market === 'Corners') return `${avg.toFixed(1)} crnrs/gm`;
+  return `${avg.toFixed(1)} gls/gm`;
+};
+
+// Recent form as compact W / D / L chips.
+function FormDots({ results }: { results: string[] }) {
+  if (!results.length) return <span className="text-white/30">—</span>;
+  return (
+    <span className="inline-flex gap-0.5">
+      {results.map((r, i) => (
+        <span key={i} className={`grid h-3.5 w-3.5 place-items-center rounded-[3px] text-[8px] font-black leading-none ${r === 'W' ? 'bg-emerald-500/30 text-emerald-200' : r === 'L' ? 'bg-rose-500/30 text-rose-200' : 'bg-white/12 text-white/55'}`}>{r}</span>
+      ))}
+    </span>
+  );
 }
 
 // ── month-to-date profit from settled picks ─────────────────────────────────
@@ -237,7 +278,15 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
   const won = isWon(st);
   return (
-    <div className={`card-3d relative overflow-hidden rounded-2xl p-4 ${won ? 'ring-2 ring-inset ring-emerald-400/50' : ''}`}>
+    <div
+      className={`relative rounded-[1.15rem] p-[1.6px] ${won
+        ? 'shadow-[0_34px_64px_-28px_rgba(0,0,0,1),0_0_50px_-14px_rgba(16,185,129,0.6)]'
+        : 'shadow-[0_34px_64px_-28px_rgba(0,0,0,1),0_0_46px_-16px_rgba(124,58,237,0.55)]'}`}
+      style={{ background: won
+        ? 'linear-gradient(155deg,#6ee7b7 0%,#059669 48%,#34d399 100%)'
+        : 'linear-gradient(155deg,rgba(245,197,66,0.75) 0%,rgba(124,58,237,0.62) 46%,rgba(34,211,238,0.66) 100%)' }}
+    >
+    <div className={`card-3d relative overflow-hidden rounded-[1.05rem] p-4 ${won ? 'ring-1 ring-inset ring-emerald-400/40' : ''}`}>
       {won && <WonTag />}
       {/* premium top sheen line */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
@@ -257,7 +306,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       </div>
 
       {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
-      <div className="inset-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl p-3">
+      <div className="inset-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl border border-white/[0.07] p-3">
         <div className="flex flex-col items-center gap-1.5 text-center">
           <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
           <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.home.name}</div>
@@ -271,11 +320,19 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
         </div>
       </div>
 
+      {/* league — boxed chip so obscure fixtures are identifiable */}
+      <div className="mt-2.5 flex justify-center">
+        <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#f5c542]/30 bg-[#f5c542]/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_6px_14px_-10px_rgba(245,197,66,0.5)]">
+          <Trophy className="h-3 w-3 shrink-0 text-[#f5c542]/85" />
+          <span className="truncate">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
+        </span>
+      </div>
+
       {/* the pick + odds */}
       <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/[0.16] to-emerald-500/[0.02] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_26px_-16px_rgba(16,185,129,0.55)]">
         <div className="min-w-0">
           <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300/90 text-emboss">The pick</div>
-          <div className="truncate font-display text-lg uppercase tracking-tight text-white text-extrude">{leg.selection}</div>
+          <div className="font-display text-lg uppercase leading-tight tracking-tight text-white text-extrude">{leg.selection}</div>
         </div>
         <div className="shrink-0 text-right">
           <div className="font-display text-[27px] leading-none text-[#f5c542] text-extrude">{leg.odds.toFixed(2)}</div>
@@ -283,18 +340,38 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
         </div>
       </div>
 
-      <div className="mt-3">
-        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
+      <div className="inset-3d mt-3 rounded-xl px-3 py-2.5">
+        {/* confidence */}
+        <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
           <span>Confidence</span>
           <span className="text-white">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
+
+        {/* recent form — both teams, last 5 (most recent first) */}
+        <div className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1 border-t border-white/10 pt-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="w-9 shrink-0 truncate text-[9px] font-black uppercase tracking-wide text-white/45">{leg.home.short}</span>
+            <FormDots results={e.homeForm} />
+          </div>
+          <div className="flex items-center justify-end gap-1.5">
+            <FormDots results={e.awayForm} />
+            <span className="w-9 shrink-0 truncate text-right text-[9px] font-black uppercase tracking-wide text-white/45">{leg.away.short}</span>
+          </div>
+        </div>
+
+        {/* market evidence — how often the pick has actually landed lately */}
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-white/70">
+          {e.marketHits && (
+            <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-emerald-300" /> Landed <b className="text-emerald-300">{e.marketHits.hits}/{e.marketHits.total}</b> recent</span>
+          )}
+          {e.leagueAverage != null && (
+            <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> <b className="text-white">{avgLabel(leg.market, e.leagueAverage)}</b></span>
+          )}
+          <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/25">+{leg.edge.toFixed(1)}% edge</span>
+        </div>
       </div>
-      <div className="inset-3d mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg px-2.5 py-1.5 text-[11px] text-white/70">
-        <span className="inline-flex items-center gap-1"><Activity className="h-3 w-3 text-violet-300" /> Form <b className="text-white">{e.formScore != null ? `${e.formScore}%` : '—'}</b></span>
-        <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> Avg <b className="text-white">{e.leagueAverage != null ? e.leagueAverage.toFixed(1) : '—'}</b></span>
-        <span className="ml-auto inline-flex items-center gap-1 rounded bg-emerald-500/12 px-1.5 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/20">+{leg.edge.toFixed(1)}%</span>
-      </div>
+    </div>
     </div>
   );
 }
@@ -457,17 +534,18 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
         <span className="text-[8px] font-black uppercase text-white/40">v</span>
         <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
       </div>
-      {/* selection + meta */}
+      {/* selection + meta — the bet type gets its own full line, never truncated */}
       <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="truncate text-[14px] font-bold leading-tight text-white text-emboss">{leg.selection}</span>
+        <div className="text-[14px] font-black leading-tight text-white text-emboss">{leg.selection}</div>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="truncate text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</span>
           {st
             ? (st.state === 'ft'
                 ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
                 : <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
             : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
-        <div className="mt-0.5 text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</div>
+        <div className="mt-0.5 truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</div>
       </div>
       {/* odds + edge */}
       <div className="shrink-0 text-right">
@@ -567,33 +645,21 @@ export function GafferValueBoardSection() {
 
   const updatedAt = live?.updatedAt ?? null;
 
-  // ── Value-ranked board ──────────────────────────────────────────────────
-  // Best value picks (any market — goals, corners or BTTS), one per fixture,
-  // ranked by value (edge): best 2 = the £10 double, next 3 = the £10 treble.
-  // Games that finished and WON stay on (a winning pick is proof worth showing);
-  // only games that finished and LOST drop off. Upcoming and in-play stay too.
+  // ── The day's locked bet ────────────────────────────────────────────────
+  // Every morning the Gaffer checks the fixtures and locks the day's bet:
+  // the best value pick becomes leg 1, on down the value ranking (any market —
+  // goals, corners or BTTS). Top 2 = the £10 double, next 3 = the £10 treble.
+  // The picks are FIXED for the day: they go in-play, and the real result is
+  // shown after the final whistle. No re-shuffling, no dropping — win or lose,
+  // what was locked in the morning is what's on the board.
   const round2 = (n: number) => Math.round(n * 100) / 100;
   const candidates: Leg[] = (() => {
     const best = new Map<string, Leg>();
     for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l); // sorted by edge desc
     return [...best.values()];
   })();
-  // Settlement for games that have kicked off, so a finished LOSER doesn't sit on
-  // the board (and we can tell it from a winner).
-  const checkIds = candidates.slice(0, 16).filter((l) => legPhase(l) !== 'pre').map((l) => l.fixtureId);
-  const { data: settle } = useInPlay(checkIds);
-
-  // Pure value ranking — top 2 = the £10 double, next 3 = the £10 treble — with two
-  // skips only: a game that's IN PLAY (today's in-play data is unreliable) and a
-  // game that FINISHED and LOST. Their slots go to the next value game. Winners and
-  // games yet to play stay exactly where the value ranks them.
-  const rankedPicks = candidates.filter((l) => {
-    const ip = settle?.[l.fixtureId];
-    if (ip?.ended) return settleLeg(l, ip) !== 'lost'; // finished → drop losers, keep winners
-    return legPhase(l) !== 'live';                      // not finished → drop in-play, keep upcoming
-  });
-  const doubleLegs: Leg[] = rankedPicks.slice(0, 2).map((l) => withLogos(l));
-  const trebleLegs: Leg[] = rankedPicks.slice(2, 5).map((l) => withLogos(l));
+  const doubleLegs: Leg[] = candidates.slice(0, 2).map((l) => withLogos(l));
+  const trebleLegs: Leg[] = candidates.slice(2, 5).map((l) => withLogos(l));
   const featuredLegs = doubleLegs;
   const featuredIsTip = doubleLegs.length > 0;
   const hasTreble = trebleLegs.length === 3;

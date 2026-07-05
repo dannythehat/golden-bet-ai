@@ -1,0 +1,185 @@
+{
+  "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
+  "bets": [
+    {
+      "date": "2026-07-04",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.72,
+      "status": "won",
+      "returns": 27.23,
+      "profit": 17.23,
+      "legs": [
+        {
+          "home": "Egersund",
+          "away": "Moss",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.53,
+          "ft": "3-0",
+          "result": "won"
+        },
+        {
+          "home": "Cheongju",
+          "away": "Daegu",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.78,
+          "ft": "1-5",
+          "result": "won"
+        }
+      ],
+      "verdict": "Slips are settled, so here’s your honest word from the Gaffer. Mixed bag, this. The double came in — get in! — but the treble fell short. no danger in Egersund v Moss — 3-0, 3 goals, easy as you like. Degerfors couldn’t buy a goal (0-1) — no both-teams-scored, and that’s what cost us. Long game, this. We reset and go again."
+    },
+    {
+      "date": "2026-07-04",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.09,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Degerfors",
+          "away": "Malmö FF",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "BTTS - Yes",
+          "odds": 1.65,
+          "ft": "0-1",
+          "result": "lost"
+        },
+        {
+          "home": "Ansan Greeners",
+          "away": "Suwon",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.58,
+          "ft": "1-3",
+          "result": "won"
+        },
+        {
+          "home": "Qingdao Youth Island",
+          "away": "Shanghai SIPG",
+          "region": "China",
+          "league": "Chinese Super League",
+          "selection": "BTTS - Yes",
+          "odds": 1.57,
+          "ft": "2-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "Slips are settled, so here’s your honest word from the Gaffer. Mixed bag, this. The double came in — get in! — but the treble fell short. no danger in Egersund v Moss — 3-0, 3 goals, easy as you like. Degerfors couldn’t buy a goal (0-1) — no both-teams-scored, and that’s what cost us. Long game, this. We reset and go again."
+    },
+    {
+      "date": "2026-07-03",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.4,
+      "status": "won",
+      "returns": 34.02,
+      "profit": 24.02,
+      "legs": [
+        {
+          "home": "Ranheim",
+          "away": "Stabæk",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.89,
+          "ft": "2-5",
+          "result": "won"
+        },
+        {
+          "home": "FH",
+          "away": "Stjarnan",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.8,
+          "ft": "2-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Verdict time. The good, the bad, all of it. Bit of both. Pocketed one, waved the other goodbye. Still ahead, still smiling. 7-goal thriller at Ranheim — 2-5, and the over strolled home. only one team turned up in Drogheda United v Bohemians, 0-2 — Drogheda United silent, there’s the dud. Fresh card tomorrow — let’s keep the good times rolling."
+    },
+    {
+      "date": "2026-07-03",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.41,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Raufoss",
+          "away": "Strømmen",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.44,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Derry City",
+          "away": "Waterford",
+          "region": "Republic of Ireland",
+          "league": "Premier Division",
+          "selection": "BTTS - Yes",
+          "odds": 1.8,
+          "ft": "2-4",
+          "result": "won"
+        },
+        {
+          "home": "Drogheda United",
+          "away": "Bohemians",
+          "region": "Republic of Ireland",
+          "league": "Premier Division",
+          "selection": "BTTS - Yes",
+          "odds": 1.7,
+          "ft": "0-2",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Verdict time. The good, the bad, all of it. Bit of both. Pocketed one, waved the other goodbye. Still ahead, still smiling. 7-goal thriller at Ranheim — 2-5, and the over strolled home. only one team turned up in Drogheda United v Bohemians, 0-2 — Drogheda United silent, there’s the dud. Fresh card tomorrow — let’s keep the good times rolling."
+    },
+    {
+      "date": "2026-07-02",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.51,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Thór",
+          "away": "KR",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.59,
+          "ft": "3-3",
+          "result": "lost"
+        },
+        {
+          "home": "Lyn",
+          "away": "Åsane",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.58,
+          "ft": "6-2",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Whistle’s gone on the lot — here’s the damage. Didn’t come off, simple as. I deal in edges, not miracles — some days the ball won’t roll our way. the corners dried right up in Thór v KR — the one leg that let the slip down. On to the next — the Gaffer’s already eyeing tomorrow’s value."
+    }
+  ]
+}
