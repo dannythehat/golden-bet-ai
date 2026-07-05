@@ -54,6 +54,15 @@ export function HeroBanner() {
           The Gaffer
         </span>
 
+        {/* Fantasy League — Coming Soon promo, floated top-right over the scene
+            (clear of the Gaffer and the baked-in "Know the game…" script). */}
+        <img
+          src="/images/fantasy-coming-soon.png"
+          alt="Footy Oracle's Fantasy League — Coming Soon"
+          loading="lazy"
+          draggable={false}
+          className="pointer-events-none absolute right-2 top-2 z-[3] w-[56%] max-w-[340px] select-none drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)] sm:w-[52%] md:right-6 md:top-6 md:w-[42%] md:max-w-[560px]"
+        />
 
         <div className="relative flex flex-col md:min-h-[660px] md:justify-between md:gap-8">
           {/* MOBILE scene banner — the Gaffer shown clearly up top, fading into the copy */}
