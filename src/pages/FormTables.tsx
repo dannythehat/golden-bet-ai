@@ -289,9 +289,17 @@ function fixtureLive(time: string, date: string, today: string): boolean {
   return nowMin >= ko && nowMin < ko + 160;
 }
 
+// For corners/cards selections the market metric IS the story — append it to
+// the score so members can see the count (live and at FT).
+function metricNote(catKey: CatKey, ip: InPlayState): string {
+  if (catKey === 'corners' && ip.corners != null) return ` · ${ip.corners} crn`;
+  if (catKey === 'cards' && ip.cards != null) return ` · ${ip.cards} cards`;
+  return '';
+}
+
 function valueStatus(sel: ValueSel, ip: InPlayState | undefined, live: LiveScore | undefined, today: string): VStatus | null {
-  // Finished — settle Won/Lost from FootyStats final numbers.
-  if (ip?.ended) return { state: 'ft', result: settleMarket(sel.catKey, sel.line, sel.under, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}` };
+  // Finished — settle Won/Lost from FootyStats final numbers (+ corner/card count).
+  if (ip?.ended) return { state: 'ft', result: settleMarket(sel.catKey, sel.line, sel.under, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}${metricNote(sel.catKey, ip)}` };
   // Real live score from API-Football.
   if (live) {
     const score = `${live.gh}–${live.ga}`;
@@ -301,6 +309,12 @@ function valueStatus(sel: ValueSel, ip: InPlayState | undefined, live: LiveScore
       : !sel.under && sel.catKey === 'btts' ? live.gh > 0 && live.ga > 0
       : false;
     return { state: 'live', landed, text: `${clock} · ${score}` };
+  }
+  // FootyStats carries a running score + corner count mid-match for leagues
+  // API-Football doesn't stream — show it rather than a bare 'In Play'.
+  if (ip?.live) {
+    const landed = settleMarket(sel.catKey, sel.line, sel.under, ip) === 'won';
+    return { state: 'live', landed, text: `LIVE · ${ip.homeGoals}–${ip.awayGoals}${metricNote(sel.catKey, ip)}` };
   }
   if (fixtureLive(sel.f.time, sel.f.date, today)) return { state: 'live', text: 'In Play' };
   return null;

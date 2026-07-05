@@ -61,9 +61,13 @@ function settleLeg(leg: Leg, ip: InPlayState): 'won' | 'lost' | null {
   return metric > line ? 'won' : 'lost';
 }
 
+// Corners picks live and die on the corner count — append it to the score.
+const cornerNote = (leg: Leg, ip: InPlayState): string =>
+  leg.market === 'Corners' && ip.corners != null ? ` · ${ip.corners} crn` : '';
+
 function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | null {
   // Finished — FootyStats carries the final numbers → settle Won/Lost.
-  if (ip?.ended) return { state: 'ft', result: settleLeg(leg, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}` };
+  if (ip?.ended) return { state: 'ft', result: settleLeg(leg, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}${cornerNote(leg, ip)}` };
   // Live score from API-Football (real in-play, carries the minute).
   if (live) {
     const score = `${live.gh}–${live.ga}`;
@@ -79,7 +83,7 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
   // FootyStats carries the running goal count during the match, so show it.
   if (ip?.live) {
     const landed = settleLeg(leg, ip) === 'won';
-    return { state: 'live', landed, text: `LIVE · ${ip.homeGoals}–${ip.awayGoals}` };
+    return { state: 'live', landed, text: `LIVE · ${ip.homeGoals}–${ip.awayGoals}${cornerNote(leg, ip)}` };
   }
   // No score data anywhere yet — the time-based badge so it still reads live.
   if (legPhase(leg) === 'live') return { state: 'live', text: 'In Play' };
