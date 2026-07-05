@@ -9,7 +9,7 @@ import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 
 // FPL-style vibrant band.
 const BAND = 'bg-[linear-gradient(120deg,#22d3ee_0%,#3b82f6_38%,#8b5cf6_72%,#d946ef_100%)]';
-const KICKOFF = '2026-08-01T18:00:00+01:00';
+const KICKOFF = '2026-08-22T15:00:00+01:00';
 
 /* ═══ tiny animation hooks (no deps) ═══════════════════════════════════════ */
 
@@ -323,7 +323,7 @@ function CountdownStrip() {
       <div className="mx-auto flex max-w-md items-center justify-between gap-2">
         <div className="shrink-0">
           <div className="text-[10px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">Season kicks off in</div>
-          <div className="mt-0.5 text-[11px] font-bold text-white/45">1st August · 6pm UK</div>
+          <div className="mt-0.5 text-[11px] font-bold text-white/45">Sat 22nd August 2026</div>
         </div>
         <div className="flex gap-1.5">
           {cells.map(([v, l]) => (
@@ -398,7 +398,7 @@ export default function FantasyWaitlist() {
           <div className="relative flex items-stretch">
             <div className="flex min-w-0 flex-1 flex-col justify-center px-5 py-9 md:px-8 md:py-14">
               <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-sm">
-                <Sparkles className="h-3 w-3" /> Kicks off 1st August
+                <Sparkles className="h-3 w-3" /> Season starts 22nd Aug
               </span>
               <h1 className="mt-3 font-display text-[42px] uppercase leading-[0.84] tracking-tight text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.35)] sm:text-6xl md:text-7xl">
                 Fantasy<br /><span className="text-[#f8e7a1]">Football</span>
@@ -427,8 +427,9 @@ export default function FantasyWaitlist() {
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-white/70 [text-wrap:balance]">
               Powered by the official Premier League game — real players, real points, real prizes. Your entry's part of the
-              all-in Footy Oracle membership: <b className="text-white">£8.99 a month, everything included</b>. The season kicks
-              off <b className="text-white">1st August</b> — join the waitlist and you're first through the door.
+              all-in Footy Oracle membership: <b className="text-white">£8.99 a month, everything included</b>, opening{' '}
+              <b className="text-white">1st August</b>. The Premier League season kicks off{' '}
+              <b className="text-white">Sat 22nd August</b> — join the waitlist and you're first through the door.
             </p>
             <div className="mt-6"><WaitlistForm source="fantasy-hero" /></div>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-white/40">
