@@ -104,8 +104,8 @@ export function FantasyLeagueSellItSection() {
           )}
 
           <div className="mt-5">
-            <Link to="/fantasy-league" className="inline-flex items-center gap-1.5 text-[13px] font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:text-white">
-              Preview the league <ArrowRight className="h-4 w-4" />
+            <Link to="/fantasy-waitlist" className="inline-flex items-center gap-1.5 text-[13px] font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:text-white">
+              See how it works <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
