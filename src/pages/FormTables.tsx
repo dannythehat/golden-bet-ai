@@ -475,28 +475,27 @@ export default function FormTables() {
   const gafferPick = useMemo(() => pickGafferDaily(tables.fixtures, today), [tables, today]);
 
   // The Gaffer's LOCKED selections today — the same top-5 value ranking the
-  // homepage board uses (top 2 = double, next 3 = treble). Each selection is a
-  // SPECIFIC bet type, so it only glows purple in ITS market's table.
-  const gafferMkt = useMemo(() => {
+  // homepage board uses (top 2 = double, next 3 = treble), refreshed by the
+  // morning cron. Each selection is an EXACT bet (market + line), so it glows
+  // purple only in that exact form table: an Over 2.5 Goals pick lights up on
+  // the Goals tab at the 2.5 line — nowhere else.
+  const gafferSel = useMemo(() => {
     const ok = (c: FormValueCell | null | undefined) => !!c?.odds && c.odds >= 1.4 && (c.prob ?? 0) >= 60;
-    type Cand = { id: string; mkt: CatKey; edge: number };
+    type Cand = { id: string; mkt: CatKey; line: string | null; edge: number };
     const legs: Cand[] = [];
     for (const f of tables.fixtures) {
       if (f.date !== today) continue;
-      for (const c of Object.values(f.value.corners ?? {})) if (ok(c)) legs.push({ id: f.id, mkt: 'corners', edge: c!.edge });
-      for (const c of Object.values(f.value.goals ?? {})) if (ok(c)) legs.push({ id: f.id, mkt: 'goals', edge: c!.edge });
-      if (ok(f.value.btts)) legs.push({ id: f.id, mkt: 'btts', edge: f.value.btts!.edge });
+      for (const [ln, c] of Object.entries(f.value.corners ?? {})) if (ok(c)) legs.push({ id: f.id, mkt: 'corners', line: ln, edge: c!.edge });
+      for (const [ln, c] of Object.entries(f.value.goals ?? {})) if (ok(c)) legs.push({ id: f.id, mkt: 'goals', line: ln, edge: c!.edge });
+      if (ok(f.value.btts)) legs.push({ id: f.id, mkt: 'btts', line: null, edge: f.value.btts!.edge });
     }
-    // Best leg per fixture (its actual bet type), then top 5 by edge.
+    // Best leg per fixture (its actual exact bet), then top 5 by edge.
     const best = new Map<string, Cand>();
     for (const l of legs) if (!best.has(l.id) || l.edge > best.get(l.id)!.edge) best.set(l.id, l);
     const top5 = [...best.values()].sort((a, b) => b.edge - a.edge).slice(0, 5);
-    return new Map(top5.map((l) => [l.id, l.mkt]));
+    return new Map(top5.map((l) => [l.id, l]));
   }, [tables, today]);
 
-  // Has a today's game already kicked off (UK wall-clock)? Started games never glow.
-  const nowUK = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false });
-  const kickedOff = (f: Fixture) => f.date < today || (f.date === today && !!f.time && f.time <= nowUK);
 
   // Fixtures the value board considers — same window + league filter as the table.
   const valueFixtures = useMemo(
@@ -616,14 +615,13 @@ export default function FormTables() {
             const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id && gafferPick?.catKey === cat;
             const isToday = f.date === today;
-            // Playable = today AND not kicked off yet. Started/past games never glow.
-            const playable = isToday && !kickedOff(f);
-            // The Gaffer's selection → neon PURPLE, but ONLY in its own bet-type
-            // table (a goals pick glows on the Goals tab, nowhere else) and only
-            // for overs (his picks are overs/BTTS-yes).
-            const gafferToday = playable && !underMode && gafferMkt.get(f.id) === cat;
-            // Other value at THIS table's bet type → neon GREEN frame.
-            const valueToday = !gafferToday && playable && !!computeValue(formPct, o)?.flag;
+            // The Gaffer's selection → neon PURPLE, only for the EXACT bet: right
+            // market tab AND right line (Over 2.5 Goals pick → Goals tab, 2.5
+            // line). Overs only (his picks are overs/BTTS-yes). Glows all day.
+            const sel = gafferSel.get(f.id);
+            const gafferToday = isToday && !underMode && !!sel && sel.mkt === cat && (cat === 'btts' || sel.line === mark);
+            // Other value at THIS table's exact bet type/line, today → neon GREEN.
+            const valueToday = !gafferToday && isToday && !!computeValue(formPct, o)?.flag;
             return (
               <button
                 key={f.id}
