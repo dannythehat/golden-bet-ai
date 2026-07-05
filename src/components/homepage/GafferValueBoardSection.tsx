@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Trophy, Star, Coins, ArrowRight, Telescope, Ticket, Activity, BarChart3, Swords, Check, Layers, Clock } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { getLedgerBets } from '@/lib/pnlLedger';
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { getValueCandidates, STAKE, type Leg, type DailyBet } from '@/lib/gafferSelection';
 import { useLiveDailyPicks } from './useLiveDailyPicks';
@@ -217,26 +216,17 @@ function FormDots({ results }: { results: string[] }) {
   );
 }
 
-// ── month-to-date profit from settled picks ─────────────────────────────────
-function useMonthProfit() {
-  return useQuery({
-    queryKey: ['homepage_month_profit'],
-    staleTime: 1000 * 60 * 10,
-    queryFn: async (): Promise<number | null> => {
-      const now = new Date();
-      const first = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString().slice(0, 10);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase as any)
-        .from('gaffer_picks')
-        .select('profit_loss, status, pick_date')
-        .in('status', ['won', 'lost'])
-        .gte('pick_date', first);
-      if (error || !Array.isArray(data) || data.length === 0) return null;
-      let p = 0;
-      for (const r of data) p += Number((r as { profit_loss?: number }).profit_loss ?? 0);
-      return Math.round(p * 10) / 10;
-    },
-  });
+// ── month-to-date profit from the committed settled-bet ledger ───────────────
+// Same source as the Gaffer's Record — never the stale DB, so the two agree.
+function monthProfitFromLedger(): number | null {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  let p = 0, any = false;
+  for (const b of getLedgerBets()) {
+    const d = new Date(b.date + 'T12:00:00');
+    if (d.getFullYear() === y && d.getMonth() === m) { p += b.profit; any = true; }
+  }
+  return any ? Math.round(p * 100) / 100 : null;
 }
 
 const money = (n: number) => (Number.isInteger(n) ? `£${n}` : `£${n.toFixed(2)}`);
@@ -534,18 +524,21 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
         <span className="text-[8px] font-black uppercase text-white/40">v</span>
         <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
       </div>
-      {/* selection + meta — the bet type gets its own full line, never truncated */}
+      {/* selection + meta — bet type never truncated; both teams shown in full */}
       <div className="min-w-0">
+        {/* line 1: the bet type, its own full line — never truncated or broken */}
         <div className="text-[14px] font-black leading-tight text-white text-emboss">{leg.selection}</div>
+        {/* line 2: both teams, in full (wraps if long — never cut off) */}
+        <div className="mt-1 text-[12px] font-semibold leading-snug text-white/75">{leg.home.name} <span className="text-white/35">v</span> {leg.away.name}</div>
+        {/* line 3: league + the live/FT/kickoff chip */}
         <div className="mt-1 flex items-center gap-2">
-          <span className="truncate text-[11px] leading-snug text-white/55">{leg.home.name} <span className="text-white/30">v</span> {leg.away.name}</span>
+          <span className="min-w-0 flex-1 truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
           {st
             ? (st.state === 'ft'
-                ? <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
-                : <span className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
-            : <span className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
+                ? <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
+                : <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
+            : <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
         </div>
-        <div className="mt-0.5 truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</div>
       </div>
       {/* odds + edge */}
       <div className="shrink-0 text-right">
@@ -641,7 +634,7 @@ function SlipCard({ bet }: { bet: DailyBet }) {
 export function GafferValueBoardSection() {
   useClock(); // advance in-play state every 30s
   const { data: live } = useLiveDailyPicks();
-  const { data: monthProfit } = useMonthProfit();
+  const monthProfit = monthProfitFromLedger();
 
   const updatedAt = live?.updatedAt ?? null;
 
@@ -683,7 +676,7 @@ export function GafferValueBoardSection() {
 
   const activeCount = doubleLegs.length + trebleLegs.length;
 
-  const profit = monthProfit ?? 48; // sample until first settlements
+  const profit = monthProfit ?? 0;
 
   return (
     <section

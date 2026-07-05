@@ -49,14 +49,14 @@ jobs:
       # Settle FIRST — while yesterday's locked picks are still in the board file.
       - name: Settle the P&L ledger
         env:
-          FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS_KEY }}
+          FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS }}
         run: node scripts/settle.mjs ${{ github.event.inputs.settle_dates }}
 
       # Then refresh the board (merges — keeps yesterday for the next settle).
       - name: Regenerate the value board
         if: ${{ github.event.inputs.skip_generate != 'true' }}
         env:
-          FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS_KEY }}
+          FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS }}
         run: python3 scripts/generate-board.py
 
       - name: Commit updates
