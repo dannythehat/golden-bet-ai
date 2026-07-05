@@ -153,7 +153,7 @@ export function HeroBanner() {
                 key={f.title}
                 to={f.to}
                 aria-label={f.title}
-                className="group relative overflow-hidden rounded-2xl border border-violet-400/20 shadow-[0_12px_30px_-16px_rgba(0,0,0,0.9)] transition-all hover:-translate-y-1 hover:border-violet-400/60 hover:shadow-[0_0_38px_-10px_rgba(139,92,246,0.75)]"
+                className="group relative overflow-hidden rounded-2xl border border-white/[0.16] shadow-[0_3px_5px_-1px_rgba(0,0,0,0.75),0_22px_38px_-16px_rgba(0,0,0,0.98),0_46px_64px_-34px_rgba(0,0,0,0.85)] transition-all duration-300 hover:-translate-y-1.5 hover:border-violet-400/70 hover:shadow-[0_3px_5px_-1px_rgba(0,0,0,0.75),0_0_46px_-8px_rgba(139,92,246,0.85),0_28px_46px_-16px_rgba(0,0,0,0.98)]"
               >
                 <img
                   src={f.img}
@@ -162,7 +162,8 @@ export function HeroBanner() {
                   draggable={false}
                   className="aspect-square w-full select-none object-cover transition-transform duration-300 group-hover:scale-[1.05]"
                 />
-                <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5" />
+                {/* razor-sharp bevel: bright top edge + crisp inner frame */}
+                <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.4),inset_0_0_0_1px_rgba(255,255,255,0.08),inset_0_-2px_2px_rgba(0,0,0,0.5)]" />
               </Link>
             ))}
           </div>
