@@ -1,85 +1,18 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react';
-import { TeamAvatar } from '@/components/TeamAvatar';
-import ledger from '@/data/pnlLedger.json';
+import { getLedgerBets, summarize, latestSettledISO } from '@/lib/pnlLedger';
+import { BetCard } from '@/components/pnl/BetCard';
 
-// ── endpoint contract: settled gaffer_picks → summary + recent settlements ──
-type Settlement = {
-  fixture: string; league: string; market: string; odds: number; stake: number;
-  return: number; result: 'WIN' | 'LOSS'; legs?: number; homeLogo?: string | null; awayLogo?: string | null;
-};
-type PnLSummary = {
-  status: 'live' | 'sample' | 'empty';
-  summary: { profit: number; roi: number; wins: number; losses: number; strikeRate: number; staked: number; returned: number };
-  recentSettlements: Settlement[];
-  updatedAt: string | null;
-};
+const money = (n: number) => `£${n.toFixed(n % 1 === 0 ? 0 : 2)}`;
 
 // "Last updated" in the viewer's own local date + time.
 const fmtUpdated = (iso: string | null): string | null => {
   if (!iso) return null;
   const t = new Date(iso);
   if (Number.isNaN(t.getTime())) return null;
-  return t.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  return t.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 };
-
-const round2 = (n: number) => Math.round(n * 100) / 100;
-const money = (n: number) => `£${n.toFixed(n % 1 === 0 ? 0 : 2)}`;
-const splitFix = (f: string) => { const p = f.split(/\s+v\s+/i); return { home: p[0]?.trim() ?? f, away: p[1]?.trim() ?? '' }; };
-
-// Sample until the first real settlements land.
-const SAMPLE: PnLSummary = {
-  status: 'sample',
-  updatedAt: null,
-  summary: { profit: 48, roi: 8.9, wins: 30, losses: 24, strikeRate: 56, staked: 540, returned: 588 },
-  recentSettlements: [
-    { fixture: 'Arsenal v Spurs', league: 'Premier League', market: 'Over 2.5 Goals', odds: 1.72, stake: 10, return: 17.2, result: 'WIN' },
-    { fixture: 'Chelsea v Brighton', league: 'Premier League', market: 'BTTS', odds: 1.85, stake: 10, return: 18.5, result: 'WIN' },
-    { fixture: 'Man Utd v Everton', league: 'Premier League', market: 'Over 1.5 Goals', odds: 1.6, stake: 10, return: 16, result: 'WIN' },
-    { fixture: 'Newcastle v Fulham', league: 'Premier League', market: 'Home Win', odds: 1.91, stake: 10, return: 0, result: 'LOSS' },
-    { fixture: 'Liverpool v West Ham', league: 'Premier League', market: 'Over 2.5 Goals', odds: 1.7, stake: 10, return: 17, result: 'WIN' },
-  ],
-};
-
-type LedgerLeg = { home: string; away: string; region?: string; league?: string; selection: string; odds: number; ft?: string; result: string };
-type LedgerBet = { date: string; kind: string; stake: number; combinedOdds: number; status: string; returns: number; profit: number; legs: LedgerLeg[] };
-
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-// The record is our own committed ledger of settled bets — the single source of
-// truth. No external DB: what settles here IS the P&L.
-function buildFromLedger(): PnLSummary {
-  const bets = (((ledger as { bets?: LedgerBet[] }).bets) ?? []).filter((b) => b.status === 'won' || b.status === 'lost');
-  if (!bets.length) return SAMPLE;
-
-  let staked = 0, profit = 0, wins = 0, losses = 0, latest = 0;
-  const settlements: Settlement[] = [];
-  for (const b of bets) {
-    staked += b.stake; profit += b.profit;
-    if (b.status === 'won') wins += 1; else losses += 1;
-    const t = new Date(b.date).getTime();
-    if (Number.isFinite(t) && t > latest) latest = t;
-    const leg0 = b.legs[0];
-    const isMulti = b.legs.length > 1;
-    settlements.push({
-      fixture: leg0 ? `${leg0.home} v ${leg0.away}` : cap(b.kind),
-      league: leg0?.league ?? leg0?.region ?? '',
-      market: isMulti ? b.legs.map((l) => l.selection).join(' + ') : (leg0?.selection ?? cap(b.kind)),
-      odds: b.combinedOdds,
-      stake: b.stake, return: b.status === 'won' ? b.returns : 0,
-      result: b.status === 'won' ? 'WIN' : 'LOSS',
-      legs: b.legs.length || 1,
-      homeLogo: null, awayLogo: null,
-    });
-  }
-  const games = wins + losses;
-  return {
-    status: 'live',
-    updatedAt: latest > 0 ? new Date(latest).toISOString() : null,
-    summary: { profit: round2(profit), roi: staked > 0 ? round2((profit / staked) * 100) : 0, wins, losses, strikeRate: games ? Math.round((wins / games) * 100) : 0, staked: round2(staked), returned: round2(staked + profit) },
-    recentSettlements: settlements.reverse().slice(0, 8),
-  };
-}
 
 // Ease the headline figure up on mount.
 function useCountUp(target: number, decimals = 0, dur = 800) {
@@ -99,16 +32,16 @@ function useCountUp(target: number, decimals = 0, dur = 800) {
 }
 
 /**
- * GafferPnLTrustSection — deliberately lean: one profit/loss box (the number
- * that matters) and the list of past selections + bets. Every figure is a real
- * settled gaffer_picks number; sample until the first bets settle.
+ * GafferPnLTrustSection — the honest record. One profit/loss box, then the recent
+ * bets shown in full (every leg, won/lost), each clickable through to the full
+ * /pnl history. Reads the committed settled-bet ledger — the single source of truth.
  */
 export function GafferPnLTrustSection() {
-  const p = buildFromLedger();
-  const s = p.summary;
-  const updated = fmtUpdated(p.updatedAt);
+  const bets = getLedgerBets();
+  const s = summarize(bets);
+  const updated = fmtUpdated(latestSettledISO(bets));
+  const hasBets = bets.length > 0;
   const up = s.profit >= 0;
-  const sampleMode = p.status !== 'live';
   const games = s.wins + s.losses;
   const profitDec = s.profit % 1 === 0 ? 0 : 2;
   const aProfit = useCountUp(Math.abs(s.profit), profitDec);
@@ -125,8 +58,8 @@ export function GafferPnLTrustSection() {
             <p className="mt-0.5 text-xs text-white/50">Every £10 pick tracked — wins and losses, all logged.</p>
             {updated && <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-white/40">Last updated @ {updated}</p>}
           </div>
-          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${sampleMode ? 'border-white/15 bg-white/[0.05] text-white/55' : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200'}`}>
-            <ShieldCheck className="h-3.5 w-3.5" /> {sampleMode ? 'Sample' : 'Live · settled'}
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${hasBets ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200' : 'border-white/15 bg-white/[0.05] text-white/55'}`}>
+            <ShieldCheck className="h-3.5 w-3.5" /> {hasBets ? 'Live · settled' : 'No bets yet'}
           </span>
         </div>
 
@@ -152,42 +85,31 @@ export function GafferPnLTrustSection() {
           </div>
         </div>
 
-        {/* ── past selections & bets ── */}
+        {/* ── recent bets in full — tap any to see the whole history ── */}
         <div className="mt-4">
           <div className="mb-2 flex items-center justify-between px-1">
-            <span className="text-[11px] font-black uppercase tracking-[0.16em] text-white/45">Past bets</span>
-            <a href="/pnl" className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:text-white">
-              View all <ArrowRight className="h-3 w-3" />
-            </a>
+            <span className="text-[11px] font-black uppercase tracking-[0.16em] text-white/45">Recent bets</span>
+            <Link to="/pnl" className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:text-white">
+              Full history <ArrowRight className="h-3 w-3" />
+            </Link>
           </div>
-          {p.recentSettlements.length === 0 ? (
+          {!hasBets ? (
             <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-5 text-center text-sm text-white/50">
               First results appear once our selections settle.
             </div>
           ) : (
-            <div className="divide-y divide-white/[0.06] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.015]">
-              {p.recentSettlements.map((st, i) => {
-                const { home, away } = splitFix(st.fixture);
-                return (
-                  <div key={i} className="flex items-center gap-2.5 px-3 py-2.5">
-                    <div className="flex shrink-0 -space-x-1.5">
-                      <TeamAvatar name={home} logoUrl={st.homeLogo} size={20} className="ring-1 ring-[#0b0617]" />
-                      {away && <TeamAvatar name={away} logoUrl={st.awayLogo} size={20} className="ring-1 ring-[#0b0617]" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[12px] font-semibold leading-tight text-white/85">
-                        {home}{away ? <> <span className="text-white/25">v</span> {away}</> : ''}
-                        {(st.legs ?? 1) > 1 && <span className="ml-1.5 rounded bg-violet-500/25 px-1 py-px text-[8px] font-black uppercase tracking-wide text-violet-200">{st.legs === 3 ? 'Treble' : st.legs === 2 ? 'Double' : `${st.legs} legs`}</span>}
-                      </div>
-                      <div className="truncate text-[10px] leading-tight text-white/45">{[st.market, st.odds ? st.odds.toFixed(2) : null, money(st.stake)].filter(Boolean).join(' · ')}</div>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <div className={`text-[13px] font-bold leading-none ${st.result === 'WIN' ? 'text-[#f8e7a1]' : 'text-white/45'}`}>{st.result === 'WIN' ? money(st.return) : '£0'}</div>
-                      <div className={`mt-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'WIN' ? 'text-emerald-300' : 'text-rose-400'}`}>{st.result}</div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="space-y-3">
+              {bets.slice(0, 2).map((b, i) => (
+                <Link key={`${b.date}-${b.kind}-${i}`} to="/pnl" className="block transition-transform hover:-translate-y-0.5">
+                  <BetCard bet={b} />
+                </Link>
+              ))}
+              <Link
+                to="/pnl"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-[#f5c542]/30 bg-[#f5c542]/[0.06] py-3 text-sm font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:bg-[#f5c542]/15"
+              >
+                View every bet & profits <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           )}
           <p className="mt-2 px-1 text-[10px] text-white/35">Settled bets only. Prices may vary from tip time.</p>
