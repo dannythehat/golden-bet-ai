@@ -564,7 +564,7 @@ export default function FormTables() {
             <span className="w-5 text-center">#</span>
             <span className="w-[40px]" />
             <span className="flex-1">Fixture</span>
-            <span className="hidden w-10 text-right sm:block">Avg</span>
+            <span className="w-[46px] text-right">Avg</span>
             <span className="w-[50px] text-right">Form</span>
             <span className="w-[48px] text-right">When</span>
             <span className="hidden w-3.5 sm:block" />
@@ -600,7 +600,15 @@ export default function FormTables() {
                     <span className="truncate">{f.region} · {fold(f.league)}</span>
                   </div>
                 </div>
-                <span className="hidden w-9 shrink-0 text-right text-[11px] font-medium text-white/30 sm:block">{C.avg(f).toFixed(1)}</span>
+                {/* market average per game — always visible, with its unit */}
+                <div className="w-[46px] shrink-0 text-right">
+                  <div className="text-[12.5px] font-bold leading-none text-sky-300/90 tabular-nums">
+                    {cat === 'btts' ? `${Math.round(C.avg(f))}%` : C.avg(f).toFixed(1)}
+                  </div>
+                  <div className="text-[8px] font-black uppercase leading-tight tracking-wide text-white/35">
+                    {cat === 'btts' ? 'btts avg' : `${cat === 'corners' ? 'crn' : cat === 'goals' ? 'gls' : 'crd'}/game`}
+                  </div>
+                </div>
                 <div className="w-[46px] shrink-0 text-right">
                   <div className={`font-display text-[13px] leading-none ${isPick ? 'text-violet-300/80' : 'text-emerald-400/65'}`}>{formPct != null ? `${formPct}%` : '—'}</div>
                   <div className="text-[10px] font-medium leading-tight text-[#f8e7a1]/50">{odd(o)}</div>
@@ -670,8 +678,52 @@ function FormList({ title, games }: { title: string; games: FormGame[] }) {
   );
 }
 
+/** Per-team averages over their recent games (the form strips). */
+function teamAvgs(games: FormGame[]) {
+  if (!games.length) return null;
+  const n = games.length;
+  const sum = (fn: (g: FormGame) => number) => games.reduce((a, g) => a + fn(g), 0);
+  return {
+    goals: sum((g) => Number(g.gf ?? 0) + Number(g.ga ?? 0)) / n,
+    corners: sum((g) => Number(g.corners ?? 0)) / n,
+    cards: sum((g) => Number(g.cards ?? 0)) / n,
+    btts: Math.round((100 * sum((g) => (g.btts ? 1 : 0))) / n),
+    n,
+  };
+}
+
+/** One market row: home avg | dual bar | away avg, with the combined figure. */
+function HomeAwayRow({ label, home, away, combined, unit, active }: {
+  label: string; home: number | null; away: number | null; combined: string; unit: string; active: boolean;
+}) {
+  const max = Math.max(home ?? 0, away ?? 0, 0.01);
+  const fmt = (v: number | null) => (v == null ? '—' : unit === '%' ? `${Math.round(v)}%` : v.toFixed(1));
+  return (
+    <div className={`rounded-xl border px-3 py-2.5 ${active ? 'border-[#f5c542]/45 bg-[#f5c542]/[0.06]' : 'border-white/8 bg-white/[0.03]'}`}>
+      <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-wider">
+        <span className={active ? 'text-[#f8e7a1]' : 'text-white/50'}>{label}</span>
+        <span className="text-white/45">combined <b className={active ? 'text-[#f8e7a1]' : 'text-white/80'}>{combined}</b></span>
+      </div>
+      <div className="grid grid-cols-[44px_1fr_44px] items-center gap-2">
+        <span className="text-right text-[14px] font-bold text-emerald-300 tabular-nums">{fmt(home)}</span>
+        <div className="flex h-2 gap-0.5">
+          <div className="flex flex-1 justify-end overflow-hidden rounded-l-full bg-black/40">
+            <div className="h-full rounded-l-full bg-emerald-400/85" style={{ width: `${((home ?? 0) / max) * 100}%` }} />
+          </div>
+          <div className="flex flex-1 overflow-hidden rounded-r-full bg-black/40">
+            <div className="h-full rounded-r-full bg-violet-400/85" style={{ width: `${((away ?? 0) / max) * 100}%` }} />
+          </div>
+        </div>
+        <span className="text-[14px] font-bold text-violet-300 tabular-nums">{fmt(away)}</span>
+      </div>
+    </div>
+  );
+}
+
 function FixtureDetail({ f, cat }: { f: Fixture; cat: CatKey }) {
   const C = CATS.find((c) => c.key === cat)!;
+  const h = teamAvgs(f.home_form ?? []);
+  const a = teamAvgs(f.away_form ?? []);
   return (
     <div>
       <SheetHeader className="border-b border-white/10 bg-gradient-to-br from-emerald-950/40 to-[#0b0617] p-5">
@@ -687,14 +739,24 @@ function FixtureDetail({ f, cat }: { f: Fixture; cat: CatKey }) {
       </SheetHeader>
 
       <div className="space-y-6 p-5">
+        {/* Averages per game — home vs away, every market, active one highlighted */}
         <section>
-          <h3 className="mb-2 text-xs font-black uppercase tracking-wider text-white/50">Combined averages</h3>
-          <div className="grid grid-cols-4 gap-2">
-            <StatTile label="goals" value={f.goals_avg.toFixed(1)} />
-            <StatTile label="corners" value={f.corners_avg.toFixed(1)} />
-            <StatTile label="cards" value={f.cards_avg.toFixed(1)} />
-            <StatTile label="BTTS" value={`${f.btts_pct}%`} />
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-xs font-black uppercase tracking-wider text-white/50">Averages per game</h3>
+            <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-wider">
+              <span className="flex items-center gap-1 text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> {f.home.short} home</span>
+              <span className="flex items-center gap-1 text-violet-300"><span className="h-1.5 w-1.5 rounded-full bg-violet-400" /> {f.away.short} away</span>
+            </div>
           </div>
+          <div className="space-y-1.5">
+            <HomeAwayRow label="Goals" home={h?.goals ?? null} away={a?.goals ?? null} combined={f.goals_avg.toFixed(1)} unit="n" active={cat === 'goals'} />
+            <HomeAwayRow label="Corners" home={h?.corners ?? null} away={a?.corners ?? null} combined={f.corners_avg.toFixed(1)} unit="n" active={cat === 'corners'} />
+            <HomeAwayRow label="Cards" home={h?.cards ?? null} away={a?.cards ?? null} combined={f.cards_avg.toFixed(1)} unit="n" active={cat === 'cards'} />
+            <HomeAwayRow label="BTTS" home={h?.btts ?? null} away={a?.btts ?? null} combined={`${f.btts_pct}%`} unit="%" active={cat === 'btts'} />
+          </div>
+          {(h || a) && (
+            <p className="mt-1.5 text-[10px] text-white/35">Team averages from each side's last {Math.max(h?.n ?? 0, a?.n ?? 0)} games.</p>
+          )}
         </section>
 
         {/* Market breakdown — over + under, form % + odds + value per mark */}
