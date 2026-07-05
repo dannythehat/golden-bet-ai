@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, TrendingUp } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Percent, Swords, Coins } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
@@ -15,12 +16,47 @@ const RANGES: { key: Range; label: string }[] = [
   { key: 'all', label: 'All time' },
 ];
 
-function StatCard({ label, value, tone = 'gold' }: { label: string; value: string; tone?: 'gold' | 'up' | 'down' | 'white' }) {
-  const colour = tone === 'up' ? 'text-emerald-400' : tone === 'down' ? 'text-rose-400' : tone === 'white' ? 'text-white' : 'text-[#f5c542]';
+type Tone = 'gold' | 'up' | 'down' | 'white';
+
+// Tone → { gradient rim, number colour, icon chip }. Same premium language as the
+// homepage BetCards: a coloured gradient rim wrapping a raised card-3d surface.
+const TONES: Record<Tone, { rim: string; glow: string; num: string; chip: string; icon: string }> = {
+  up: {
+    rim: 'linear-gradient(150deg,#6ee7b7 0%,#059669 52%,#34d399 100%)',
+    glow: '0 24px 48px -26px rgba(0,0,0,1),0 0 40px -18px rgba(16,185,129,0.5)',
+    num: 'text-emerald-300', chip: 'border-emerald-400/45 bg-emerald-500/15 text-emerald-200', icon: 'text-emerald-300',
+  },
+  down: {
+    rim: 'linear-gradient(150deg,rgba(251,113,133,0.85) 0%,rgba(124,58,237,0.5) 50%,rgba(251,113,133,0.7) 100%)',
+    glow: '0 24px 48px -26px rgba(0,0,0,1),0 0 38px -18px rgba(244,63,94,0.45)',
+    num: 'text-rose-300', chip: 'border-rose-400/45 bg-rose-500/15 text-rose-200', icon: 'text-rose-300',
+  },
+  gold: {
+    rim: 'linear-gradient(150deg,#f8e7a1 0%,#c99a17 50%,#f5c542 100%)',
+    glow: '0 24px 48px -26px rgba(0,0,0,1),0 0 40px -18px rgba(245,197,66,0.5)',
+    num: 'text-[#f8e7a1]', chip: 'border-[#f5c542]/45 bg-[#f5c542]/15 text-[#f8e7a1]', icon: 'text-[#f5c542]',
+  },
+  white: {
+    rim: 'linear-gradient(150deg,rgba(255,255,255,0.5) 0%,rgba(124,58,237,0.45) 52%,rgba(255,255,255,0.35) 100%)',
+    glow: '0 24px 48px -26px rgba(0,0,0,1),0 0 34px -20px rgba(139,92,246,0.5)',
+    num: 'text-white', chip: 'border-white/25 bg-white/10 text-white/80', icon: 'text-violet-200',
+  },
+};
+
+function StatCard({ label, value, sub, tone = 'gold', Icon }: { label: string; value: string; sub?: string; tone?: Tone; Icon: LucideIcon }) {
+  const t = TONES[tone];
   return (
-    <div className="inset-3d rounded-2xl p-4">
-      <div className={`font-display text-2xl md:text-3xl text-extrude ${colour}`}>{value}</div>
-      <div className="mt-1 text-[10px] uppercase tracking-wide text-white/45">{label}</div>
+    <div className="relative rounded-[1.15rem] p-[1.5px]" style={{ background: t.rim, boxShadow: t.glow }}>
+      <div className="card-3d h-full rounded-[1.02rem] p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-[9.5px] font-black uppercase tracking-[0.16em] text-white/45">{label}</span>
+          <span className={`inline-flex h-6 w-6 items-center justify-center rounded-lg border ${t.chip}`}>
+            <Icon className={`h-3.5 w-3.5 ${t.icon}`} />
+          </span>
+        </div>
+        <div className={`font-display text-3xl leading-none text-extrude md:text-[2rem] ${t.num}`}>{value}</div>
+        {sub && <div className="mt-1.5 text-[10.5px] text-white/45">{sub}</div>}
+      </div>
     </div>
   );
 }
@@ -97,10 +133,10 @@ export default function Pnl() {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-              <StatCard label="profit / loss" value={`${up ? '+' : '−'}${money(Math.abs(s.profit))}`} tone={up ? 'up' : 'down'} />
-              <StatCard label="ROI" value={`${s.roi >= 0 ? '+' : ''}${s.roi}%`} />
-              <StatCard label="W–L record" value={`${s.wins}–${s.losses}`} tone="white" />
-              <StatCard label="staked → back" value={`${money(s.staked)} → ${money(s.returned)}`} tone="white" />
+              <StatCard label="profit / loss" value={`${up ? '+' : '−'}${money(Math.abs(s.profit))}`} sub={`${s.strikeRate}% strike rate`} tone={up ? 'up' : 'down'} Icon={TrendingUp} />
+              <StatCard label="ROI" value={`${s.roi >= 0 ? '+' : ''}${s.roi}%`} sub="return on stakes" tone="gold" Icon={Percent} />
+              <StatCard label="W–L record" value={`${s.wins}–${s.losses}`} sub={`${s.wins + s.losses} bets settled`} tone="white" Icon={Swords} />
+              <StatCard label="staked → back" value={money(s.returned)} sub={`from ${money(s.staked)} staked`} tone="white" Icon={Coins} />
             </div>
 
             {series.length >= 2 && (

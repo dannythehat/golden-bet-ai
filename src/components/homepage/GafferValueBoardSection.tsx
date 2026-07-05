@@ -645,33 +645,21 @@ export function GafferValueBoardSection() {
 
   const updatedAt = live?.updatedAt ?? null;
 
-  // ── Value-ranked board ──────────────────────────────────────────────────
-  // Best value picks (any market — goals, corners or BTTS), one per fixture,
-  // ranked by value (edge): best 2 = the £10 double, next 3 = the £10 treble.
-  // Games that finished and WON stay on (a winning pick is proof worth showing);
-  // only games that finished and LOST drop off. Upcoming and in-play stay too.
+  // ── The day's locked bet ────────────────────────────────────────────────
+  // Every morning the Gaffer checks the fixtures and locks the day's bet:
+  // the best value pick becomes leg 1, on down the value ranking (any market —
+  // goals, corners or BTTS). Top 2 = the £10 double, next 3 = the £10 treble.
+  // The picks are FIXED for the day: they go in-play, and the real result is
+  // shown after the final whistle. No re-shuffling, no dropping — win or lose,
+  // what was locked in the morning is what's on the board.
   const round2 = (n: number) => Math.round(n * 100) / 100;
   const candidates: Leg[] = (() => {
     const best = new Map<string, Leg>();
     for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l); // sorted by edge desc
     return [...best.values()];
   })();
-  // Settlement for games that have kicked off, so a finished LOSER doesn't sit on
-  // the board (and we can tell it from a winner).
-  const checkIds = candidates.slice(0, 16).filter((l) => legPhase(l) !== 'pre').map((l) => l.fixtureId);
-  const { data: settle } = useInPlay(checkIds);
-
-  // Pure value ranking — top 2 = the £10 double, next 3 = the £10 treble — with two
-  // skips only: a game that's IN PLAY (today's in-play data is unreliable) and a
-  // game that FINISHED and LOST. Their slots go to the next value game. Winners and
-  // games yet to play stay exactly where the value ranks them.
-  const rankedPicks = candidates.filter((l) => {
-    const ip = settle?.[l.fixtureId];
-    if (ip?.ended) return settleLeg(l, ip) !== 'lost'; // finished → drop losers, keep winners
-    return legPhase(l) !== 'live';                      // not finished → drop in-play, keep upcoming
-  });
-  const doubleLegs: Leg[] = rankedPicks.slice(0, 2).map((l) => withLogos(l));
-  const trebleLegs: Leg[] = rankedPicks.slice(2, 5).map((l) => withLogos(l));
+  const doubleLegs: Leg[] = candidates.slice(0, 2).map((l) => withLogos(l));
+  const trebleLegs: Leg[] = candidates.slice(2, 5).map((l) => withLogos(l));
   const featuredLegs = doubleLegs;
   const featuredIsTip = doubleLegs.length > 0;
   const hasTreble = trebleLegs.length === 3;
