@@ -93,15 +93,6 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
 // Whether a selection has landed (live line already beaten, or settled won).
 const isWon = (st: StatusInfo | null): boolean => !!st && (st.state === 'ft' ? st.result === 'won' : !!st.landed);
 
-// Corner "WON" flag for a leg box.
-function WonTag() {
-  return (
-    <span className="absolute left-0 top-0 z-20 inline-flex items-center gap-0.5 rounded-br-xl bg-gradient-to-r from-emerald-400 to-emerald-500 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#04140d] shadow-[0_5px_14px_-4px_rgba(16,185,129,0.9)]">
-      Won ✓
-    </span>
-  );
-}
-
 function StatusChip({ st }: { st: StatusInfo }) {
   if (st.state === 'ft') {
     const tone = st.result === 'won'
@@ -260,6 +251,33 @@ function CrestPair({ leg, size = 64 }: { leg: Leg; size?: number }) {
   );
 }
 
+// ── slip totals — odds × stake = returns, hairline-divided like a betting slip ──
+function TotalsStrip({ odds, stake, returns, oddsLabel, tone = 'gold' }: { odds: number; stake: number; returns: number; oddsLabel: string; tone?: 'gold' | 'cyan' }) {
+  const oddsColor = tone === 'gold' ? 'text-[#f5c542]' : 'text-cyan-200';
+  return (
+    <div
+      className="relative rounded-[13px] p-px shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_18px_36px_-18px_rgba(0,0,0,0.95)]"
+      style={{ background: 'linear-gradient(160deg,rgba(255,255,255,0.3) 0%,rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.16) 100%)' }}
+    >
+      <div className="relative grid grid-cols-3 divide-x divide-white/[0.08] overflow-hidden rounded-[12px] bg-gradient-to-b from-[#191031] to-[#0f0921]">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+        <div className="px-3 py-2.5 md:px-4">
+          <div className="whitespace-nowrap text-[8px] font-black uppercase tracking-[0.12em] text-white/40">{oddsLabel}</div>
+          <div className={`mt-1 font-display text-[22px] leading-none ${oddsColor} [font-variant-numeric:tabular-nums] drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]`}>{odds.toFixed(2)}</div>
+        </div>
+        <div className="px-3 py-2.5 text-center md:px-4">
+          <div className="whitespace-nowrap text-[8px] font-black uppercase tracking-[0.12em] text-white/40">Stake</div>
+          <div className="mt-1 font-display text-[22px] leading-none text-white [font-variant-numeric:tabular-nums]">{money(stake)}</div>
+        </div>
+        <div className="px-3 py-2.5 text-right md:px-4">
+          <div className="whitespace-nowrap text-[8px] font-black uppercase tracking-[0.12em] text-white/40">Returns</div>
+          <div className="mt-1 font-display text-[22px] leading-none text-emerald-300 [font-variant-numeric:tabular-nums]">{money(returns)}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ConfidenceBar({ pct }: { pct: number }) {
   return (
     <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/10 ring-1 ring-inset ring-white/5">
@@ -278,96 +296,95 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
   const won = isWon(st);
   return (
     <div
-      className={`relative rounded-[1.15rem] p-[1.6px] ${won
-        ? 'shadow-[0_34px_64px_-28px_rgba(0,0,0,1),0_0_50px_-14px_rgba(16,185,129,0.6)]'
-        : 'shadow-[0_34px_64px_-28px_rgba(0,0,0,1),0_0_46px_-16px_rgba(124,58,237,0.55)]'}`}
+      className={`relative rounded-[15px] p-px ${won
+        ? 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95),0_0_34px_-10px_rgba(16,185,129,0.5)]'
+        : 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95),0_0_30px_-12px_rgba(139,92,246,0.45)]'}`}
       style={{ background: won
-        ? 'linear-gradient(155deg,#6ee7b7 0%,#059669 48%,#34d399 100%)'
-        : 'linear-gradient(155deg,rgba(245,197,66,0.75) 0%,rgba(124,58,237,0.62) 46%,rgba(34,211,238,0.66) 100%)' }}
+        ? 'linear-gradient(160deg,#6ee7b7 0%,#065f46 55%,#34d399 100%)'
+        : 'linear-gradient(160deg,rgba(245,197,66,0.85) 0%,rgba(124,58,237,0.7) 48%,rgba(34,211,238,0.7) 100%)' }}
     >
-    <div className={`card-3d relative overflow-hidden rounded-[1.05rem] p-4 ${won ? 'ring-1 ring-inset ring-emerald-400/40' : ''}`}>
-      {won && <WonTag />}
-      {/* premium top sheen line */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+    <div className="relative overflow-hidden rounded-[14px] bg-gradient-to-b from-[#1b1236] to-[#120a28]">
+      {/* hairline top light */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/45 to-transparent" />
 
-      {/* header: leg number + prominent kickoff pill */}
-      <div className="flex items-center justify-between gap-2">
-        <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/65 ${won ? 'pl-[54px]' : ''}`}>
-          <span className="grid h-5 w-5 place-items-center rounded-full border border-[#f5c542]/50 bg-[#f5c542]/12 text-[10px] font-black text-[#f8e7a1]">{index + 1}</span>
-          Leg {index + 1} of {total}
+      {/* ── header strip ── */}
+      <div className="flex items-center justify-between gap-2 border-b border-white/[0.07] px-3.5 py-2">
+        <span className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45">
+          <span className="grid h-[18px] w-[18px] place-items-center rounded-full bg-[#f5c542] text-[10px] font-black leading-none text-[#16051f]">{index + 1}</span>
+          Leg {index + 1} <span className="text-white/25">/</span> {total}
         </span>
         {st ? <StatusChip st={st} /> : (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-2.5 py-1 text-[13px] font-black tracking-wide text-[#f8e7a1] shadow-[0_0_16px_-6px_rgba(245,197,66,0.65)]">
-            <Clock className="h-3.5 w-3.5" /> {leg.time}
-            <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/65">KO</span>
+          <span className="inline-flex items-baseline gap-1 text-[13px] font-black tracking-tight text-[#f8e7a1] [font-variant-numeric:tabular-nums]">
+            <Clock className="h-3 w-3 self-center text-[#f5c542]/80" /> {leg.time}
+            <span className="text-[8px] font-black uppercase tracking-[0.18em] text-white/35">KO</span>
           </span>
         )}
       </div>
 
-      {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
-      <div className="frost-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl p-3">
-        <div className="flex flex-col items-center gap-1.5 text-center">
-          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
-          <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.home.name}</div>
-          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/45">Home</div>
+      {/* ── teams ── */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-3.5 py-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={36} className="shrink-0 rounded-[10px] bg-black/45 p-1 ring-1 ring-white/12" />
+          <div className="min-w-0">
+            <div className="line-clamp-2 text-[13px] font-semibold leading-[1.15] tracking-[-0.01em] text-white">{leg.home.name}</div>
+            <div className="mt-0.5 text-[8px] font-black uppercase tracking-[0.22em] text-white/30">Home</div>
+          </div>
         </div>
-        <span className="mt-3 grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/[0.06] text-[10px] font-black text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">VS</span>
-        <div className="flex flex-col items-center gap-1.5 text-center">
-          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
-          <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.away.name}</div>
-          <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/45">Away</div>
+        <span className="shrink-0 font-display text-[11px] uppercase tracking-tight text-white/25">vs</span>
+        <div className="flex min-w-0 flex-row-reverse items-center gap-2.5 text-right">
+          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={36} className="shrink-0 rounded-[10px] bg-black/45 p-1 ring-1 ring-white/12" />
+          <div className="min-w-0">
+            <div className="line-clamp-2 text-[13px] font-semibold leading-[1.15] tracking-[-0.01em] text-white">{leg.away.name}</div>
+            <div className="mt-0.5 text-[8px] font-black uppercase tracking-[0.22em] text-white/30">Away</div>
+          </div>
         </div>
       </div>
 
-      {/* league — boxed chip so obscure fixtures are identifiable */}
-      <div className="mt-2.5 flex justify-center">
-        <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#f5c542]/30 bg-[#f5c542]/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_6px_14px_-10px_rgba(245,197,66,0.5)]">
-          <Trophy className="h-3 w-3 shrink-0 text-[#f5c542]/85" />
-          <span className="truncate">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
-        </span>
+      {/* ── league line ── */}
+      <div className="flex items-center justify-center gap-1.5 border-y border-white/[0.07] bg-black/20 px-3.5 py-1.5">
+        <Trophy className="h-2.5 w-2.5 shrink-0 text-[#f5c542]/70" />
+        <span className="truncate text-[9px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]/70">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
       </div>
 
-      {/* the pick + odds */}
-      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/[0.16] to-emerald-500/[0.02] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_26px_-16px_rgba(16,185,129,0.55)]">
+      {/* ── the pick ── */}
+      <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-emerald-500/[0.14] via-emerald-500/[0.05] to-transparent px-3.5 py-2.5">
         <div className="min-w-0">
-          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300/90 text-emboss">The pick</div>
-          <div className="font-display text-lg uppercase leading-tight tracking-tight text-white text-extrude">{leg.selection}</div>
+          <div className="text-[8.5px] font-black uppercase tracking-[0.22em] text-emerald-300/80">The pick</div>
+          <div className="mt-0.5 truncate font-display text-[17px] uppercase leading-none tracking-tight text-white">{leg.selection}</div>
         </div>
-        <div className="shrink-0 text-right">
-          <div className="font-display text-[27px] leading-none text-[#f5c542] text-extrude">{leg.odds.toFixed(2)}</div>
-          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/60">Odds</div>
+        <div className="flex shrink-0 items-baseline gap-1.5">
+          <span className="font-display text-[26px] leading-none text-[#f5c542] [font-variant-numeric:tabular-nums] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">{leg.odds.toFixed(2)}</span>
+          <span className="text-[8.5px] font-black uppercase tracking-[0.18em] text-white/35">odds</span>
         </div>
       </div>
 
-      <div className="frost-3d mt-3 rounded-xl px-3 py-2.5">
-        {/* confidence */}
-        <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
-          <span>Confidence</span>
-          <span className="text-white">{leg.prob}%</span>
+      {/* ── confidence + form + evidence ── */}
+      <div className="border-t border-white/[0.07] px-3.5 pb-3 pt-2.5">
+        <div className="mb-1.5 flex items-baseline justify-between">
+          <span className="text-[8.5px] font-black uppercase tracking-[0.22em] text-white/40">Confidence</span>
+          <span className="font-display text-[15px] leading-none text-white [font-variant-numeric:tabular-nums]">{leg.prob}%</span>
         </div>
         <ConfidenceBar pct={leg.prob} />
 
-        {/* recent form — both teams, last 5 (most recent first) */}
-        <div className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1 border-t border-white/10 pt-2.5">
+        <div className="mt-2.5 grid grid-cols-2 items-center gap-x-3">
           <div className="flex items-center gap-1.5">
-            <span className="w-9 shrink-0 truncate text-[9px] font-black uppercase tracking-wide text-white/45">{leg.home.short}</span>
+            <span className="w-8 shrink-0 truncate text-[8.5px] font-black uppercase tracking-[0.14em] text-white/35">{leg.home.short}</span>
             <FormDots results={e.homeForm} />
           </div>
           <div className="flex items-center justify-end gap-1.5">
             <FormDots results={e.awayForm} />
-            <span className="w-9 shrink-0 truncate text-right text-[9px] font-black uppercase tracking-wide text-white/45">{leg.away.short}</span>
+            <span className="w-8 shrink-0 truncate text-right text-[8.5px] font-black uppercase tracking-[0.14em] text-white/35">{leg.away.short}</span>
           </div>
         </div>
 
-        {/* market evidence — how often the pick has actually landed lately */}
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-white/70">
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-white/[0.07] pt-2 text-[10.5px] leading-none text-white/60">
           {e.marketHits && (
-            <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-emerald-300" /> Landed <b className="text-emerald-300">{e.marketHits.hits}/{e.marketHits.total}</b> recent</span>
+            <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-emerald-300" /> Landed <b className="font-bold text-emerald-300 [font-variant-numeric:tabular-nums]">{e.marketHits.hits}/{e.marketHits.total}</b> recent</span>
           )}
           {e.leagueAverage != null && (
-            <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> <b className="text-white">{avgLabel(leg.market, e.leagueAverage)}</b></span>
+            <span className="inline-flex items-center gap-1"><BarChart3 className="h-3 w-3 text-violet-300" /> <b className="font-bold text-white/85 [font-variant-numeric:tabular-nums]">{avgLabel(leg.market, e.leagueAverage)}</b></span>
           )}
-          <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300 ring-1 ring-inset ring-emerald-400/25">+{leg.edge.toFixed(1)}% edge</span>
+          <span className="ml-auto inline-flex items-center rounded-[6px] bg-emerald-500/15 px-1.5 py-[3px] text-[9.5px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-inset ring-emerald-400/30 [font-variant-numeric:tabular-nums]">+{leg.edge.toFixed(1)}% edge</span>
         </div>
       </div>
     </div>
@@ -463,19 +480,8 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
 
         {/* combined slip strip — visible for singles AND multis */}
         {isTip && (
-          <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#f5c542]/30 bg-gradient-to-r from-[#1a1003]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
-            <div>
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">{single ? 'Odds' : 'Combined odds'}</div>
-              <div className="font-display text-xl leading-none text-[#f5c542] text-extrude">{combined.toFixed(2)}</div>
-            </div>
-            <div>
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Stake</div>
-              <div className="font-display text-xl leading-none text-white text-extrude">{money(stake)}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Returns</div>
-              <div className="font-display text-xl leading-none text-emerald-300 text-extrude">{money(returns)}</div>
-            </div>
+          <div className="mt-3">
+            <TotalsStrip odds={combined} stake={stake} returns={returns} oddsLabel={single ? 'Odds' : 'Combined odds'} />
           </div>
         )}
 
@@ -498,19 +504,26 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
             </div>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {legs.map((l, i) => (
-              <div key={l.fixtureId} className="relative overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-br from-violet-500/[0.1] to-violet-500/[0.015] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_28px_-20px_rgba(0,0,0,0.9)]">
-                <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f5c542]/35 bg-[#f5c542]/10 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]">
-                    {legs.length > 1 ? `Leg ${i + 1} · ` : ''}{l.selection}
-                  </span>
-                  <span className="text-[11px] font-semibold text-white/55">{l.home.name} v {l.away.name}</span>
+              <div key={l.fixtureId} className="relative overflow-hidden rounded-[13px] border border-white/[0.09] bg-gradient-to-b from-[#171029] to-[#0f0a1e] shadow-[0_2px_4px_-1px_rgba(0,0,0,0.6),0_16px_30px_-18px_rgba(0,0,0,0.9)]">
+                {/* violet spine — his signature colour */}
+                <div aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-fuchsia-400 via-violet-500 to-violet-700" />
+                <div className="flex items-center gap-2 border-b border-white/[0.07] py-2 pl-4 pr-3.5">
+                  {legs.length > 1 && (
+                    <>
+                      <span className="shrink-0 text-[9px] font-black uppercase tracking-[0.2em] text-[#f8e7a1]">Leg {i + 1}</span>
+                      <span aria-hidden className="h-3 w-px shrink-0 bg-white/15" />
+                    </>
+                  )}
+                  <span className="shrink-0 text-[11px] font-black uppercase tracking-wide text-white/90">{l.selection}</span>
+                  <span className="ml-auto min-w-0 truncate text-right text-[10px] font-semibold text-white/40">{l.home.name} v {l.away.name}</span>
                 </div>
-                <div className="flex gap-2">
-                  <span className="font-display text-2xl leading-[0.7] text-violet-300/70">“</span>
-                  <p className="text-[13px] italic leading-relaxed text-white/85">{l.placeholderReason}</p>
-                </div>
+                <p className="py-2.5 pl-4 pr-3.5 text-[13px] italic leading-relaxed text-white/80">
+                  <span aria-hidden className="mr-1 font-display text-lg leading-none text-violet-300/70">“</span>
+                  {l.placeholderReason}
+                  <span aria-hidden className="ml-0.5 font-display text-lg leading-none text-violet-300/70">”</span>
+                </p>
               </div>
             ))}
           </div>
@@ -524,35 +537,47 @@ function FeaturedCard({ legs, isTip, bet, inplay, liveList }: { legs: Leg[]; isT
 function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveList?: LiveScore[] }) {
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
   const won = isWon(st);
+  const lost = !!st && st.state === 'ft' && st.result === 'lost';
   return (
-    <div className={`frost-3d relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-xl px-3 ${won ? 'pb-2.5 pt-6 ring-2 ring-inset ring-emerald-400/45' : 'py-2.5'}`}>
-      {won && <WonTag />}
-      {/* crests */}
-      <div className="flex shrink-0 items-center gap-1">
-        <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
-        <span className="text-[8px] font-black uppercase text-white/40">v</span>
-        <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/50 p-0.5 ring-1 ring-white/15" />
-      </div>
-      {/* selection + meta — bet type never truncated; both teams shown in full */}
-      <div className="min-w-0">
-        {/* line 1: the bet type, its own full line — never truncated or broken */}
-        <div className="text-[14px] font-black leading-tight text-white text-emboss">{leg.selection}</div>
-        {/* line 2: both teams, in full (wraps if long — never cut off) */}
-        <div className="mt-1 text-[12px] font-semibold leading-snug text-white/75">{leg.home.name} <span className="text-white/35">v</span> {leg.away.name}</div>
-        {/* line 3: league + the live/FT/kickoff chip */}
-        <div className="mt-1 flex items-center gap-2">
-          <span className="min-w-0 flex-1 truncate text-[9px] font-black uppercase tracking-[0.12em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
-          {st
-            ? (st.state === 'ft'
-                ? <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
-                : <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
-            : <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1]"><Clock className="h-3 w-3" />{leg.time}</span>}
+    <div
+      className={`relative rounded-[13px] p-px ${won
+        ? 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_18px_36px_-18px_rgba(0,0,0,0.95),0_0_26px_-9px_rgba(16,185,129,0.5)]'
+        : 'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_18px_36px_-18px_rgba(0,0,0,0.95)]'}`}
+      style={{ background: won
+        ? 'linear-gradient(160deg,#6ee7b7 0%,#065f46 55%,#34d399 100%)'
+        : lost
+          ? 'linear-gradient(160deg,rgba(251,113,133,0.55) 0%,rgba(255,255,255,0.06) 50%,rgba(251,113,133,0.3) 100%)'
+          : 'linear-gradient(160deg,rgba(255,255,255,0.26) 0%,rgba(255,255,255,0.05) 45%,rgba(255,255,255,0.14) 100%)' }}
+    >
+      <div className="relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-[12px] bg-gradient-to-b from-[#1b1236] to-[#120a28] px-3 py-2.5">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+        {/* crests */}
+        <div className="flex shrink-0 items-center gap-1">
+          <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={30} className="rounded-lg bg-black/45 p-0.5 ring-1 ring-white/12" />
+          <span className="text-[8px] font-black uppercase text-white/35">v</span>
+          <TeamAvatar name={leg.away.name} logoUrl={leg.away.logo} size={30} className="rounded-lg bg-black/45 p-0.5 ring-1 ring-white/12" />
         </div>
-      </div>
-      {/* odds + edge */}
-      <div className="shrink-0 text-right">
-        <div className="font-display text-xl leading-none text-[#f5c542] text-extrude">{leg.odds.toFixed(2)}</div>
-        <div className="mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-emerald-300">+{leg.edge.toFixed(1)}%</div>
+        {/* selection + meta — bet type never truncated; both teams shown in full */}
+        <div className="min-w-0">
+          {/* line 1: the bet type, its own full line — never truncated or broken */}
+          <div className="font-display text-[15px] uppercase leading-none tracking-tight text-white">{leg.selection}</div>
+          {/* line 2: both teams, in full (wraps if long — never cut off) */}
+          <div className="mt-1 text-[12px] font-semibold leading-snug text-white/75">{leg.home.name} <span className="text-white/35">v</span> {leg.away.name}</div>
+          {/* line 3: league + the live/FT/kickoff chip */}
+          <div className="mt-1 flex items-center gap-2">
+            <span className="min-w-0 flex-1 truncate text-[9px] font-black uppercase tracking-[0.14em] text-[#f8e7a1]/60">{[leg.region, leg.league].filter(Boolean).join(' · ')}</span>
+            {st
+              ? (st.state === 'ft'
+                  ? <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide [font-variant-numeric:tabular-nums] ${st.result === 'won' ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : st.result === 'lost' ? 'border-rose-400/50 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>{st.text}{st.result === 'won' ? ' ✓' : st.result === 'lost' ? ' ✗' : ''}</span>
+                  : <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide [font-variant-numeric:tabular-nums] ${st.landed ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200' : 'border-rose-400/50 bg-rose-500/15 text-rose-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${st.landed ? 'bg-emerald-400' : 'bg-rose-400'} [animation:pulse_1.4s_ease-in-out_infinite]`} />{st.text}</span>)
+              : <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#f5c542]/40 bg-[#f5c542]/10 px-2 py-0.5 text-[10px] font-black text-[#f8e7a1] [font-variant-numeric:tabular-nums]"><Clock className="h-3 w-3" />{leg.time}</span>}
+          </div>
+        </div>
+        {/* odds + edge */}
+        <div className="shrink-0 text-right">
+          <div className="font-display text-[20px] leading-none text-[#f5c542] [font-variant-numeric:tabular-nums] drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]">{leg.odds.toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-emerald-300 [font-variant-numeric:tabular-nums]">+{leg.edge.toFixed(1)}%</div>
+        </div>
       </div>
     </div>
   );
@@ -578,19 +603,8 @@ function TrebleCard({ legs, inplay, liveList }: { legs: Leg[]; inplay?: Record<s
         <div className="mt-3 space-y-2">
           {legs.map((l) => <SecondaryRow key={l.fixtureId} leg={l} ip={inplay?.[l.fixtureId]} liveList={liveList} />)}
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-[#06202a]/80 to-[#0b0518]/70 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_32px_-18px_rgba(0,0,0,0.9)]">
-          <div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Combined odds</div>
-            <div className="font-display text-xl leading-none text-cyan-200 text-extrude">{odds.toFixed(2)}</div>
-          </div>
-          <div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Stake</div>
-            <div className="font-display text-xl leading-none text-white text-extrude">£10</div>
-          </div>
-          <div className="text-right">
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/60 text-emboss">Returns</div>
-            <div className="font-display text-xl leading-none text-emerald-300 text-extrude">£{returns.toFixed(2)}</div>
-          </div>
+        <div className="mt-3">
+          <TotalsStrip odds={odds} stake={10} returns={Math.round(returns * 100) / 100} oddsLabel="Combined odds" tone="cyan" />
         </div>
       </div>
     </div>
