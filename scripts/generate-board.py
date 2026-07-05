@@ -82,10 +82,11 @@ def map_form(s):
     overPct={}
     for label,field in OVER_PCT_FIELD.items():
         if s.get(field) is not None: overPct[label]=num(s[field])
-    if s.get("cardsTotalAVG_overall") is not None:
-        avgCards=num(s["cardsTotalAVG_overall"])
-    else:
-        avgCards=num(s.get("cardsAVG_overall"))+num(s.get("cardsAgainstAVG_overall"))
+    # MATCH-total cards in this team's games (own + opponent) — matches the
+    # Over-x.5 Cards market, which counts both sides. cardsTotalAVG_overall is
+    # the team's own cards only, so it's just the last-resort fallback.
+    own=num(s.get("cardsAVG_overall")); agn=num(s.get("cardsAgainstAVG_overall"))
+    avgCards=(own+agn) if (own or agn) else num(s.get("cardsTotalAVG_overall"))
     return {"overPct":overPct,
             "avgGoals":num(s.get("seasonScoredAVG_overall"))+num(s.get("seasonConcededAVG_overall")),
             "avgCorners":num(s.get("cornersTotalAVG_overall")),
@@ -198,6 +199,13 @@ def over_map(h,a,marks,suf):
 def odds_map(od,marks,suf): return {mk: od.get(f"Over {mk} {suf}") for mk in marks}
 def under_map(od,marks,suf): return {mk: od.get(f"Under {mk} {suf}") for mk in marks}
 
+# Match-total cards per game from a team's recent real results (the season
+# stats endpoint only carries the team's OWN cards for these leagues, which
+# undercounts the Over-x.5 Cards market that counts both sides).
+def recent_match_cards(tid, name):
+    vals=[g["cards"] for g in games_for(tid, name)[:8] if g.get("cards") is not None]
+    return r1(sum(vals)/len(vals)) if vals else 0.0
+
 fixtures=[]
 for f in sorted(all_upcoming,key=lambda x:(x["kickoff"] or 0)):
     d=dstr(f["kickoff"]) if f["kickoff"] else None
@@ -214,7 +222,7 @@ for f in sorted(all_upcoming,key=lambda x:(x["kickoff"] or 0)):
         "away":{"name":f["awayName"],"short":short(f["awayName"]),"logo":f["awayLogo"]},
         "result":{"hg":0,"ag":0,"corners":0,"cards":0,"btts":False},
         "goals_avg":combined(h["avgGoals"],a["avgGoals"]),"corners_avg":combined(h["avgCorners"],a["avgCorners"]),
-        "cards_avg":combined(h["avgCards"],a["avgCards"]),"btts_pct":btts_pct,
+        "cards_avg":(lambda hc,ac: combined(hc,ac) if (hc or ac) else combined(h["avgCards"],a["avgCards"]))(recent_match_cards(f["homeId"],f["homeName"]),recent_match_cards(f["awayId"],f["awayName"])),"btts_pct":btts_pct,
         "goals_over":goals_over,"corners_over":corners_over,"cards_over":cards_over,
         "goals_odds":goals_odds,"corners_odds":corners_odds,"cards_odds":cards_odds,"btts_odds":od.get("BTTS"),
         "goals_under_odds":under_map(od,GOAL_UNDER,"Goals"),"corners_under_odds":under_map(od,CORNER_UNDER,"Corners"),
@@ -236,9 +244,13 @@ first_window=window[0]
 merged={}
 for x in existing:
     dt=x.get("date")
-    if dt and cutoff <= dt < first_window:   # keep settled/past days only
+    # Keep past days AND today frozen — today's slate is the locked board and
+    # must survive a re-run after kickoffs (the API stops returning games that
+    # have started, so a naive refresh would drop them). Fresh rows below still
+    # override matching ids (e.g. a not-yet-started evening game).
+    if dt and cutoff <= dt <= first_window:
         merged[x["id"]]=x
-for x in fixtures:                            # today→+2, freshly generated, win any clash
+for x in fixtures:                            # fresh pull, wins any clash
     merged[x["id"]]=x
 allfx=sorted(merged.values(), key=lambda r:(r["date"], r.get("time") or ""))
 

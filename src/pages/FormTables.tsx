@@ -752,7 +752,7 @@ function HomeAwayRow({ label, home, away, combined, unit, active }: {
     <div className={`rounded-xl border px-3 py-2.5 ${active ? 'border-[#f5c542]/45 bg-[#f5c542]/[0.06]' : 'border-white/8 bg-white/[0.03]'}`}>
       <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-wider">
         <span className={active ? 'text-[#f8e7a1]' : 'text-white/50'}>{label}</span>
-        <span className="text-white/45">combined <b className={active ? 'text-[#f8e7a1]' : 'text-white/80'}>{combined}</b></span>
+        <span className="text-white/45">season <b className={active ? 'text-[#f8e7a1]' : 'text-white/80'}>{combined}</b></span>
       </div>
       <div className="grid grid-cols-[44px_1fr_44px] items-center gap-2">
         <span className="text-right text-[14px] font-bold text-emerald-300 tabular-nums">{fmt(home)}</span>
@@ -805,7 +805,9 @@ function FixtureDetail({ f, cat }: { f: Fixture; cat: CatKey }) {
             <HomeAwayRow label="BTTS" home={h?.btts ?? null} away={a?.btts ?? null} combined={`${f.btts_pct}%`} unit="%" active={cat === 'btts'} />
           </div>
           {(h || a) && (
-            <p className="mt-1.5 text-[10px] text-white/35">Team averages from each side's last {Math.max(h?.n ?? 0, a?.n ?? 0)} games.</p>
+            <p className="mt-1.5 text-[10px] text-white/35">
+              Bars = each side's last {Math.max(h?.n ?? 0, a?.n ?? 0)} games (recent form). Season = both teams' full-season average — recent form above it means they're hot, below it means they're cooling.
+            </p>
           )}
         </section>
 
