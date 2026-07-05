@@ -6,7 +6,7 @@ import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { BetCard } from '@/components/pnl/BetCard';
 import { GafferDayWord } from '@/components/pnl/GafferDayWord';
-import { getLedgerBets, filterByRange, summarize, type Range } from '@/lib/pnlLedger';
+import { getLedgerBets, filterByRange, summarize, groupByDate, type Range } from '@/lib/pnlLedger';
 
 const money = (n: number) => `£${n % 1 === 0 ? n : n.toFixed(2)}`;
 
@@ -152,10 +152,8 @@ export default function Pnl() {
           </div>
         </section>
 
-        {/* The Gaffer's word on the latest day */}
-        {allBets.length > 0 && <GafferDayWord bets={allBets} className="mt-5" />}
-
-        {/* Full detailed history */}
+        {/* Full detailed history — grouped by day, each day led by the Gaffer's
+            stored word so any past day's review is viewable at any time. */}
         <section className="mt-6">
           <h2 className="mb-3 font-display text-xl uppercase tracking-tight text-white md:text-2xl">Selection history</h2>
           {bets.length === 0 ? (
@@ -163,8 +161,13 @@ export default function Pnl() {
               No settled bets in this range.
             </div>
           ) : (
-            <div className="space-y-3">
-              {bets.map((b, i) => <BetCard key={`${b.date}-${b.kind}-${i}`} bet={b} />)}
+            <div className="space-y-7">
+              {groupByDate(bets).map(({ date, bets: dayBets }) => (
+                <div key={date} className="space-y-3">
+                  <GafferDayWord bets={dayBets} date={date} />
+                  {dayBets.map((b, i) => <BetCard key={`${date}-${b.kind}-${i}`} bet={b} />)}
+                </div>
+              ))}
             </div>
           )}
         </section>

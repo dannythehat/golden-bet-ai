@@ -122,6 +122,28 @@ async function fetchResults(fixtureIds) {
   return byId;
 }
 
+// ── The Gaffer's word (frozen into the ledger) ──────────────────────────────
+// Bundle the TS voice engine once so the stored verdict uses the exact same
+// banks/logic as the site — no duplicated wording. Best-effort: if esbuild
+// isn't available the frontend still generates the verdict deterministically.
+let _verdictFn;
+async function getVerdictFn() {
+  if (_verdictFn !== undefined) return _verdictFn;
+  try {
+    const esbuild = await import('esbuild');
+    const r = await esbuild.build({
+      entryPoints: [join(ROOT, 'src/lib/gafferVoice.ts')],
+      bundle: true, write: false, format: 'esm', platform: 'node',
+    });
+    const mod = await import('data:text/javascript,' + encodeURIComponent(r.outputFiles[0].text));
+    _verdictFn = mod.gafferDayVerdict ?? false;
+  } catch (e) {
+    console.warn(`  (verdict baking skipped — ${e.message})`);
+    _verdictFn = false;
+  }
+  return _verdictFn;
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 function yesterdayUTC() {
   const d = new Date(Date.now() - 86400000);
@@ -155,6 +177,13 @@ async function main() {
       else entries.push({ date, ...trb });
     } else {
       console.log(`${date}: only ${treble.length} treble candidate(s) — double only.`);
+    }
+
+    // Freeze the Gaffer's word on the day onto every entry for it.
+    const verdictFn = await getVerdictFn();
+    if (verdictFn) {
+      const verdict = verdictFn(entries, date);
+      if (verdict) for (const e of entries) e.verdict = verdict;
     }
 
     // Idempotent: drop any prior entries for this date, then add the fresh ones.

@@ -8,7 +8,17 @@ export type LedgerLeg = {
 export type LedgerBet = {
   date: string; kind: string; stake: number; combinedOdds: number;
   status: 'won' | 'lost' | string; returns: number; profit: number; legs: LedgerLeg[];
+  verdict?: string; // the Gaffer's stored word on that day (frozen at settle time)
 };
+
+/** Group settled bets by date, newest day first. */
+export function groupByDate(bets: LedgerBet[]): { date: string; bets: LedgerBet[] }[] {
+  const map = new Map<string, LedgerBet[]>();
+  for (const b of bets) (map.get(b.date) ?? map.set(b.date, []).get(b.date)!).push(b);
+  return [...map.entries()]
+    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+    .map(([date, list]) => ({ date, bets: list }));
+}
 
 /** Settled bets, newest first. */
 export function getLedgerBets(): LedgerBet[] {

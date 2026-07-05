@@ -8,16 +8,21 @@ const fmtDay = (iso: string) => {
 };
 
 /**
- * The Gaffer's spoken word on the day's slips — a fresh, in-character verdict
- * assembled from the real settled result (what won, what lost, and how). Reads
- * the most recent settled day from the ledger. Never the same words twice.
+ * The Gaffer's spoken word on a day's slips — a fresh, in-character verdict
+ * driven by the real settled result (what won, what lost, and how). Prefers the
+ * verdict frozen into the ledger at settle time; falls back to generating it
+ * deterministically (same date → same words) so every historical day always has
+ * one. Pass `date` to render a specific day, or omit for the most recent.
  */
-export function GafferDayWord({ bets, className = '' }: { bets: LedgerBet[]; className?: string }) {
-  const latestDate = bets[0]?.date;
-  if (!latestDate) return null;
-  const dayBets = bets.filter((b) => b.date === latestDate) as unknown as DayBet[];
-  const verdict = gafferDayVerdict(dayBets, latestDate);
+export function GafferDayWord({ bets, date, className = '' }: { bets: LedgerBet[]; date?: string; className?: string }) {
+  const targetDate = date ?? bets[0]?.date;
+  if (!targetDate) return null;
+  const dayBets = bets.filter((b) => b.date === targetDate);
+  if (dayBets.length === 0) return null;
+  const stored = dayBets.find((b) => b.verdict)?.verdict;
+  const verdict = stored || gafferDayVerdict(dayBets as unknown as DayBet[], targetDate);
   if (!verdict) return null;
+  const latestDate = targetDate;
 
   const won = dayBets.filter((b) => b.status === 'won').length;
   const lost = dayBets.filter((b) => b.status === 'lost').length;
