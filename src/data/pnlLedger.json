@@ -74,6 +74,112 @@
         }
       ],
       "verdict": "Slips are settled, so here’s your honest word from the Gaffer. Mixed bag, this. The double came in — get in! — but the treble fell short. 3 goals in the Egersund game, 3-0 — called the goal-fest to a tee. Degerfors v Malmö FF stayed one-sided at 0-1 — Degerfors never showed up, there’s the loser. That’s yesterday. Today’s another day, another slip, another chance."
+    },
+    {
+      "date": "2026-07-03",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.4,
+      "status": "won",
+      "returns": 34.02,
+      "profit": 24.02,
+      "legs": [
+        {
+          "home": "Ranheim",
+          "away": "Stabæk",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.89,
+          "ft": "2-5",
+          "result": "won"
+        },
+        {
+          "home": "FH",
+          "away": "Stjarnan",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.8,
+          "ft": "2-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Verdict time. The good, the bad, all of it. Bit of both. Pocketed one, waved the other goodbye. Still ahead, still smiling. 7 goals in the Ranheim game, 2-5 — called the goal-fest to a tee. Drogheda United v Bohemians stayed one-sided at 0-2 — Drogheda United never showed up, there’s the loser. Fresh card tomorrow — let’s keep the good times rolling."
+    },
+    {
+      "date": "2026-07-03",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.41,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Raufoss",
+          "away": "Strømmen",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.44,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Derry City",
+          "away": "Waterford",
+          "region": "Republic of Ireland",
+          "league": "Premier Division",
+          "selection": "BTTS - Yes",
+          "odds": 1.8,
+          "ft": "2-4",
+          "result": "won"
+        },
+        {
+          "home": "Drogheda United",
+          "away": "Bohemians",
+          "region": "Republic of Ireland",
+          "league": "Premier Division",
+          "selection": "BTTS - Yes",
+          "odds": 1.7,
+          "ft": "0-2",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Verdict time. The good, the bad, all of it. Bit of both. Pocketed one, waved the other goodbye. Still ahead, still smiling. 7 goals in the Ranheim game, 2-5 — called the goal-fest to a tee. Drogheda United v Bohemians stayed one-sided at 0-2 — Drogheda United never showed up, there’s the loser. Fresh card tomorrow — let’s keep the good times rolling."
+    },
+    {
+      "date": "2026-07-02",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.51,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Thór",
+          "away": "KR",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.59,
+          "ft": "3-3",
+          "result": "lost"
+        },
+        {
+          "home": "Lyn",
+          "away": "Åsane",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.58,
+          "ft": "6-2",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Whistle’s gone on the lot — here’s the damage. Didn’t come off, simple as. I deal in edges, not miracles — some days the ball won’t roll our way. the corners dried right up in Thór v KR — the one leg that let the slip down. On to the next — the Gaffer’s already eyeing tomorrow’s value."
     }
   ]
 }
