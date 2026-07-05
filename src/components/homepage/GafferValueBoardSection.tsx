@@ -64,7 +64,7 @@ function settleLeg(leg: Leg, ip: InPlayState): 'won' | 'lost' | null {
 function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | null {
   // Finished — FootyStats carries the final numbers → settle Won/Lost.
   if (ip?.ended) return { state: 'ft', result: settleLeg(leg, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}` };
-  // Live score from API-Football (real in-play).
+  // Live score from API-Football (real in-play, carries the minute).
   if (live) {
     const score = `${live.gh}–${live.ga}`;
     const clock = live.status === 'HT' ? 'HT' : live.elapsed != null ? `${live.elapsed}'` : 'LIVE';
@@ -75,8 +75,13 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
       : false;
     return { state: 'live', landed, text: `${clock} · ${score}` };
   }
-  // No live data (e.g. corners-only markets, or match not on the live feed) —
-  // fall back to the time-based badge so it still reads as in-play.
+  // Fallback score for leagues API-Football doesn't stream (China, K-League…):
+  // FootyStats carries the running goal count during the match, so show it.
+  if (ip?.live) {
+    const landed = settleLeg(leg, ip) === 'won';
+    return { state: 'live', landed, text: `LIVE · ${ip.homeGoals}–${ip.awayGoals}` };
+  }
+  // No score data anywhere yet — the time-based badge so it still reads live.
   if (legPhase(leg) === 'live') return { state: 'live', text: 'In Play' };
   return null;
 }
