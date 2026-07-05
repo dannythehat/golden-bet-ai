@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, Facebook, Instagram, Youtube, Send, LockKeyhole, Trophy, Zap } from 'lucide-react';
+import { Menu, X, Facebook, Instagram, Youtube, Send, LockKeyhole, Zap } from 'lucide-react';
 import { OracleWordmark } from './primitives';
 import { NAV_LINKS } from './content';
 
@@ -67,14 +67,6 @@ export function HomepageNav() {
               Login
             </a>
 
-            <a
-              href="/pricing"
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-[#f5c542] px-4 text-[12px] font-black uppercase tracking-wide text-[#16051f] shadow-[0_12px_32px_-14px_rgba(245,197,66,1)] transition-all hover:-translate-y-0.5 hover:bg-[#ffe487] md:px-5"
-            >
-              <Trophy className="h-4 w-4 fill-current" />
-              <span className="hidden min-[370px]:inline">Join</span>
-            </a>
-
             <button
               type="button"
               aria-label={open ? 'Close menu' : 'Open menu'}
@@ -102,20 +94,13 @@ export function HomepageNav() {
                 {l.label}
               </a>
             ))}
-            <div className="col-span-2 mt-1 grid grid-cols-2 gap-2 border-t border-white/10 pt-3">
+            <div className="col-span-2 mt-1 border-t border-white/10 pt-3">
               <a
                 href="/auth"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#f5c542]/40 px-4 py-3 text-center text-[12px] font-black uppercase tracking-wide text-[#f8e7a1]"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#f5c542]/40 px-4 py-3 text-center text-[12px] font-black uppercase tracking-wide text-[#f8e7a1]"
               >
                 <LockKeyhole className="h-4 w-4" /> Login
-              </a>
-              <a
-                href="/pricing"
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f5c542] px-4 py-3 text-center text-[12px] font-black uppercase tracking-wide text-[#16051f] shadow-[0_12px_32px_-14px_rgba(245,197,66,1)]"
-              >
-                <Trophy className="h-4 w-4 fill-current" /> Join
               </a>
             </div>
             <div className="col-span-2 mt-1 flex items-center justify-center gap-2 text-[#f8e7a1]">

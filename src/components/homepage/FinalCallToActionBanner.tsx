@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { FINAL_CTA_FEATURES } from './content';
 import { Icon } from './icons';
 
@@ -34,8 +34,8 @@ export function FinalCallToActionBanner() {
         />
 
         <div className="relative z-[2] max-w-[62%] p-5 md:p-8">
-          <span className="inline-flex w-fit items-center rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
-            Join the Club
+          <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#f8e7a1]">
+            <Clock className="h-3 w-3" /> Coming Soon
           </span>
           <h2 className="mt-3 font-display text-3xl uppercase leading-[0.9] tracking-tight text-white text-extrude md:text-5xl">
             Ready to bet{' '}
@@ -65,18 +65,15 @@ export function FinalCallToActionBanner() {
           ))}
         </div>
 
-        <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+          <span className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[#f5c542]/45 bg-[#f5c542]/12 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-[#f8e7a1]">
+            <Clock className="h-4 w-4" /> Membership Opening Soon
+          </span>
           <Link
-            to="/pricing"
-            className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-[#16051f] shadow-[0_18px_44px_-16px_rgba(245,197,66,1)] transition-transform hover:-translate-y-0.5"
+            to="/form-tables"
+            className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white/80 transition-colors hover:bg-white/[0.06]"
           >
-            Join the Footy Oracle Club <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          <Link
-            to="/pricing"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-[#f5c542]/45 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:bg-[#f5c542]/10"
-          >
-            See What's Inside <ArrowRight className="h-4 w-4" />
+            Explore Today's Tips <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
       </div>

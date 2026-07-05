@@ -101,16 +101,16 @@ export function HeroBanner() {
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
-                to="/pricing"
+                to="/form-tables"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-7 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-[0_18px_44px_-18px_rgba(139,92,246,1)] transition-all hover:-translate-y-0.5 hover:from-violet-400 hover:to-fuchsia-400"
               >
-                Join the Club <ChevronRight className="h-4 w-4" />
+                Explore Today's Tips <ChevronRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/form-tables"
+                to="/pnl"
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#f5c542]/55 bg-[#f5c542]/[0.06] px-7 py-3.5 text-sm font-black uppercase tracking-wide text-[#f8e7a1] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-[#f5c542]/15"
               >
-                Explore Today's Tips <ChevronRight className="h-4 w-4" />
+                The Gaffer's Record <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
 
