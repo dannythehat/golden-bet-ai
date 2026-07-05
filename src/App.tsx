@@ -16,9 +16,6 @@ const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const FormTables = lazy(() => import("./pages/FormTables"));
 const FantasyLeague = lazy(() => import("./pages/FantasyLeague"));
-const FantasyMyTeam = lazy(() => import("./pages/FantasyMyTeam"));
-const FantasyTransfers = lazy(() => import("./pages/FantasyTransfers"));
-const FantasyResults = lazy(() => import("./pages/FantasyResults"));
 const Pnl = lazy(() => import("./pages/Pnl"));
 const FantasyWaitlist = lazy(() => import("./pages/FantasyWaitlist"));
 const AdminWaitlist = lazy(() => import("./pages/AdminWaitlist"));
@@ -65,9 +62,10 @@ const App = () => {
 
                 {/* Placeholder shells — to be rebuilt from scratch */}
                 <Route path="/fantasy-league" element={<FantasyLeague />} />
-                <Route path="/fantasy-league/my-team" element={<FantasyMyTeam />} />
-                <Route path="/fantasy-league/transfers" element={<FantasyTransfers />} />
-                <Route path="/fantasy-league/results" element={<FantasyResults />} />
+                {/* Team management is locked until the membership opens (1 Aug). */}
+                <Route path="/fantasy-league/my-team" element={<ComingSoon title="My Team" eyebrow="Coming 1st August" description="Team building opens with the membership on 1st August — the Premier League season kicks off Sat 22nd. Join the fantasy waitlist to be first in." />} />
+                <Route path="/fantasy-league/transfers" element={<ComingSoon title="Transfers" eyebrow="Coming 1st August" description="The transfer market opens with the membership on 1st August. Join the fantasy waitlist to be first in." />} />
+                <Route path="/fantasy-league/results" element={<ComingSoon title="Gameweek Results" eyebrow="Coming 1st August" description="Gameweek results go live once the season kicks off on Sat 22nd August. Join the fantasy waitlist to be first in." />} />
                 <Route path="/form-tables" element={<FormTables />} />
                 <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
                 <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
