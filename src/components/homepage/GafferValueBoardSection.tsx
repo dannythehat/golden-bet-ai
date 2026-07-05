@@ -296,7 +296,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
       </div>
 
       {/* teams — crest on top, name centred underneath, VS between (no cramped single row) */}
-      <div className="inset-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl border border-white/[0.07] p-3">
+      <div className="frost-3d mt-3 grid grid-cols-[1fr_auto_1fr] items-start gap-2 rounded-xl p-3">
         <div className="flex flex-col items-center gap-1.5 text-center">
           <TeamAvatar name={leg.home.name} logoUrl={leg.home.logo} size={44} className="rounded-xl bg-black/50 p-1.5 ring-1 ring-white/15 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.15)]" />
           <div className="text-[13px] font-bold leading-tight text-white text-emboss">{leg.home.name}</div>
@@ -330,7 +330,7 @@ function LegBlock({ leg, index, total, ip, liveList }: { leg: Leg; index: number
         </div>
       </div>
 
-      <div className="inset-3d mt-3 rounded-xl px-3 py-2.5">
+      <div className="frost-3d mt-3 rounded-xl px-3 py-2.5">
         {/* confidence */}
         <div className="mb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-white/70 text-emboss">
           <span>Confidence</span>
@@ -516,7 +516,7 @@ function SecondaryRow({ leg, ip, liveList }: { leg: Leg; ip?: InPlayState; liveL
   const st = statusInfo(leg, ip, matchLive(leg.home.name, leg.away.name, liveList));
   const won = isWon(st);
   return (
-    <div className={`inset-3d relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-xl px-3 ${won ? 'pb-2.5 pt-6 ring-2 ring-inset ring-emerald-400/45' : 'py-2.5'}`}>
+    <div className={`frost-3d relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-xl px-3 ${won ? 'pb-2.5 pt-6 ring-2 ring-inset ring-emerald-400/45' : 'py-2.5'}`}>
       {won && <WonTag />}
       {/* crests */}
       <div className="flex shrink-0 items-center gap-1">
@@ -742,7 +742,7 @@ export function GafferValueBoardSection() {
 
 
         {/* Footer bar — month profit + view all */}
-        <div className="mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="frost-3d mt-4 flex flex-col items-stretch gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#f5c542]/25 bg-[#f5c542]/10 text-[#f5c542]"><Telescope className="h-5 w-5" /></span>
             <div>
