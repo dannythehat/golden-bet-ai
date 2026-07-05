@@ -75,7 +75,7 @@
       },
       "goals_avg": 3.1,
       "corners_avg": 10.7,
-      "cards_avg": 2,
+      "cards_avg": 3.3,
       "btts_pct": 34.5,
       "goals_over": {
         "0.5": 96,
@@ -105,7 +105,7 @@
         "8.5": 1.23,
         "9.5": 1.58,
         "10.5": 1.77,
-        "11.5": 2.0
+        "11.5": 2
       },
       "cards_odds": {
         "3.5": null,
@@ -114,7 +114,7 @@
       },
       "btts_odds": 1.47,
       "goals_under_odds": {
-        "0.5": 15.0,
+        "0.5": 15,
         "1.5": 5.25,
         "2.5": 2.55,
         "3.5": 1.58
@@ -179,7 +179,7 @@
           },
           "11.5": {
             "prob": 31,
-            "odds": 2.0,
+            "odds": 2,
             "implied": 50,
             "edge": -19,
             "flag": null
@@ -400,7 +400,7 @@
       },
       "goals_avg": 3.3,
       "corners_avg": 9,
-      "cards_avg": 1.7,
+      "cards_avg": 3.4,
       "btts_pct": 48.5,
       "goals_over": {
         "0.5": 97,
@@ -439,8 +439,8 @@
       },
       "btts_odds": 1.44,
       "goals_under_odds": {
-        "0.5": 15.0,
-        "1.5": 6.0,
+        "0.5": 15,
+        "1.5": 6,
         "2.5": 2.33,
         "3.5": 1.54
       },
@@ -711,7 +711,7 @@
       },
       "goals_avg": 2.9,
       "corners_avg": 11.5,
-      "cards_avg": 1.7,
+      "cards_avg": 3.8,
       "btts_pct": 47,
       "goals_over": {
         "0.5": 97,
@@ -750,7 +750,7 @@
       },
       "btts_odds": 1.76,
       "goals_under_odds": {
-        "0.5": 17.0,
+        "0.5": 17,
         "1.5": 3.5,
         "2.5": 2.55,
         "3.5": 1.49
@@ -1040,7 +1040,7 @@
       },
       "goals_avg": 4.7,
       "corners_avg": 13.3,
-      "cards_avg": 2.1,
+      "cards_avg": 4.4,
       "btts_pct": 75,
       "goals_over": {
         "0.5": 100,
@@ -1079,8 +1079,8 @@
       },
       "btts_odds": 1.22,
       "goals_under_odds": {
-        "0.5": 27.0,
-        "1.5": 11.0,
+        "0.5": 27,
+        "1.5": 11,
         "2.5": 4.5,
         "3.5": 2.7
       },
@@ -1375,7 +1375,7 @@
       },
       "goals_avg": 3.8,
       "corners_avg": 11.8,
-      "cards_avg": 1.8,
+      "cards_avg": 4.4,
       "btts_pct": 56.5,
       "goals_over": {
         "0.5": 100,
@@ -1414,8 +1414,8 @@
       },
       "btts_odds": 1.53,
       "goals_under_odds": {
-        "0.5": 23.0,
-        "1.5": 9.0,
+        "0.5": 23,
+        "1.5": 9,
         "2.5": 3.75,
         "3.5": 1.91
       },
@@ -1710,7 +1710,7 @@
       },
       "goals_avg": 2.9,
       "corners_avg": 9.8,
-      "cards_avg": 1.9,
+      "cards_avg": 4.1,
       "btts_pct": 62.5,
       "goals_over": {
         "0.5": 94,
@@ -1749,7 +1749,7 @@
       },
       "btts_odds": 1.42,
       "goals_under_odds": {
-        "0.5": 17.0,
+        "0.5": 17,
         "1.5": 7.28,
         "2.5": 2.5,
         "3.5": 1.64
@@ -2045,7 +2045,7 @@
       },
       "goals_avg": 2.1,
       "corners_avg": 9.9,
-      "cards_avg": 2,
+      "cards_avg": 3.5,
       "btts_pct": 21,
       "goals_over": {
         "0.5": 92,
@@ -2356,7 +2356,7 @@
       },
       "goals_avg": 2,
       "corners_avg": 9.6,
-      "cards_avg": 1.6,
+      "cards_avg": 3.9,
       "btts_pct": 37.5,
       "goals_over": {
         "0.5": 83.5,
@@ -2378,7 +2378,7 @@
         "5.5": 12.5
       },
       "goals_odds": {
-        "2.5": 2.0,
+        "2.5": 2,
         "3.5": 3.42,
         "4.5": 6.75
       },
@@ -2416,7 +2416,7 @@
         "goals": {
           "2.5": {
             "prob": 33,
-            "odds": 2.0,
+            "odds": 2,
             "implied": 50,
             "edge": -17,
             "flag": null
@@ -2667,7 +2667,7 @@
       },
       "goals_avg": 3.8,
       "corners_avg": 9.7,
-      "cards_avg": 1.5,
+      "cards_avg": 2.4,
       "btts_pct": 58,
       "goals_over": {
         "0.5": 100,
@@ -2706,8 +2706,8 @@
       },
       "btts_odds": 1.41,
       "goals_under_odds": {
-        "0.5": 15.0,
-        "1.5": 6.0,
+        "0.5": 15,
+        "1.5": 6,
         "2.5": 2.43,
         "3.5": 1.63
       },
@@ -2992,7 +2992,7 @@
       },
       "goals_avg": 4.1,
       "corners_avg": 11.8,
-      "cards_avg": 1.6,
+      "cards_avg": 3.2,
       "btts_pct": 69.5,
       "goals_over": {
         "0.5": 100,
@@ -3317,7 +3317,7 @@
       },
       "goals_avg": 3.4,
       "corners_avg": 10.6,
-      "cards_avg": 2.1,
+      "cards_avg": 4.5,
       "btts_pct": 69,
       "goals_over": {
         "0.5": 100,
@@ -3356,7 +3356,7 @@
       },
       "btts_odds": 1.5,
       "goals_under_odds": {
-        "0.5": 16.0,
+        "0.5": 16,
         "1.5": 5.4,
         "2.5": 2.5,
         "3.5": 1.68
@@ -3652,7 +3652,7 @@
       },
       "goals_avg": 3.9,
       "corners_avg": 12,
-      "cards_avg": 1.5,
+      "cards_avg": 2.9,
       "btts_pct": 65.5,
       "goals_over": {
         "0.5": 100,
@@ -3691,7 +3691,7 @@
       },
       "btts_odds": 1.3,
       "goals_under_odds": {
-        "0.5": 19.0,
+        "0.5": 19,
         "1.5": 6.8,
         "2.5": 3.1,
         "3.5": 1.93
@@ -3977,7 +3977,7 @@
       },
       "goals_avg": 3.1,
       "corners_avg": 9.4,
-      "cards_avg": 1.7,
+      "cards_avg": 3.7,
       "btts_pct": 50,
       "goals_over": {
         "0.5": 95,
@@ -4001,7 +4001,7 @@
       "goals_odds": {
         "2.5": 1.66,
         "3.5": 2.48,
-        "4.5": 5.0
+        "4.5": 5
       },
       "corners_odds": {
         "8.5": 1.29,
@@ -4051,7 +4051,7 @@
           },
           "4.5": {
             "prob": 30,
-            "odds": 5.0,
+            "odds": 5,
             "implied": 20,
             "edge": 10,
             "flag": "value"
@@ -4302,7 +4302,7 @@
       },
       "goals_avg": 3.6,
       "corners_avg": 10.8,
-      "cards_avg": 1.7,
+      "cards_avg": 2.9,
       "btts_pct": 70,
       "goals_over": {
         "0.5": 97,
@@ -4341,7 +4341,7 @@
       },
       "btts_odds": 1.32,
       "goals_under_odds": {
-        "0.5": 34.0,
+        "0.5": 34,
         "1.5": 8.5,
         "2.5": 3.3,
         "3.5": 1.96
@@ -4613,7 +4613,7 @@
       },
       "goals_avg": 2.4,
       "corners_avg": 10.1,
-      "cards_avg": 2,
+      "cards_avg": 3.8,
       "btts_pct": 47.5,
       "goals_over": {
         "0.5": 91,
@@ -4637,7 +4637,7 @@
       "goals_odds": {
         "2.5": 1.79,
         "3.5": 2.89,
-        "4.5": 6.0
+        "4.5": 6
       },
       "corners_odds": {
         "8.5": 1.44,
@@ -4654,7 +4654,7 @@
       "goals_under_odds": {
         "0.5": 10.9,
         "1.5": 3.62,
-        "2.5": 2.0,
+        "2.5": 2,
         "3.5": 1.32
       },
       "corners_under_odds": {
@@ -4687,7 +4687,7 @@
           },
           "4.5": {
             "prob": 11,
-            "odds": 6.0,
+            "odds": 6,
             "implied": 16.7,
             "edge": -5.7,
             "flag": null
@@ -4957,7 +4957,7 @@
       },
       "goals_avg": 2.8,
       "corners_avg": 10.6,
-      "cards_avg": 2.6,
+      "cards_avg": 5.1,
       "btts_pct": 61,
       "goals_over": {
         "0.5": 89,
@@ -4996,7 +4996,7 @@
       },
       "btts_odds": 1.8,
       "goals_under_odds": {
-        "0.5": 12.0,
+        "0.5": 12,
         "1.5": 4.41,
         "2.5": 2.18,
         "3.5": 1.43
@@ -5301,7 +5301,7 @@
       },
       "goals_avg": 2.7,
       "corners_avg": 10.6,
-      "cards_avg": 1.8,
+      "cards_avg": 4.1,
       "btts_pct": 53.5,
       "goals_over": {
         "0.5": 93,
@@ -5340,7 +5340,7 @@
       },
       "btts_odds": 1.83,
       "goals_under_odds": {
-        "0.5": 15.0,
+        "0.5": 15,
         "1.5": 4.3,
         "2.5": 2.35,
         "3.5": 1.44
@@ -5645,7 +5645,7 @@
       },
       "goals_avg": 3,
       "corners_avg": 10.2,
-      "cards_avg": 2.8,
+      "cards_avg": 5.1,
       "btts_pct": 71,
       "goals_over": {
         "0.5": 93.5,
@@ -5989,7 +5989,7 @@
       },
       "goals_avg": 2.8,
       "corners_avg": 10,
-      "cards_avg": 1.9,
+      "cards_avg": 4.6,
       "btts_pct": 63.5,
       "goals_over": {
         "0.5": 89.5,
@@ -6044,7 +6044,7 @@
         "3.5": null,
         "4.5": null
       },
-      "btts_no_odds": 2.0,
+      "btts_no_odds": 2,
       "value": {
         "goals": {
           "2.5": {
@@ -6333,7 +6333,7 @@
       },
       "goals_avg": 4,
       "corners_avg": 12.6,
-      "cards_avg": 2.5,
+      "cards_avg": 4.7,
       "btts_pct": 83.5,
       "goals_over": {
         "0.5": 100,
@@ -6668,7 +6668,7 @@
       },
       "goals_avg": 2.6,
       "corners_avg": 10.2,
-      "cards_avg": 1.8,
+      "cards_avg": 4.1,
       "btts_pct": 67,
       "goals_over": {
         "0.5": 87.5,
@@ -6945,7 +6945,7 @@
       },
       "goals_avg": 2,
       "corners_avg": 9.1,
-      "cards_avg": 2.4,
+      "cards_avg": 4.3,
       "btts_pct": 50,
       "goals_over": {
         "0.5": 93,
@@ -6968,7 +6968,7 @@
       },
       "goals_odds": {
         "2.5": 2.4,
-        "3.5": 5.0,
+        "3.5": 5,
         "4.5": 9.5
       },
       "corners_odds": {
@@ -6982,7 +6982,7 @@
         "4.5": null,
         "5.5": null
       },
-      "btts_odds": 2.0,
+      "btts_odds": 2,
       "goals_under_odds": {
         "0.5": 6.91,
         "1.5": 2.48,
@@ -7012,7 +7012,7 @@
           },
           "3.5": {
             "prob": 10,
-            "odds": 5.0,
+            "odds": 5,
             "implied": 20,
             "edge": -10,
             "flag": null
@@ -7057,7 +7057,7 @@
         },
         "btts": {
           "prob": 50,
-          "odds": 2.0,
+          "odds": 2,
           "implied": 50,
           "edge": 0,
           "flag": null
@@ -7280,7 +7280,7 @@
       },
       "goals_avg": 2,
       "corners_avg": 8.1,
-      "cards_avg": 1.8,
+      "cards_avg": 4.3,
       "btts_pct": 33.5,
       "goals_over": {
         "0.5": 86.5,
@@ -7573,7 +7573,7 @@
       },
       "goals_avg": 2.1,
       "corners_avg": 8.4,
-      "cards_avg": 2.4,
+      "cards_avg": 5.1,
       "btts_pct": 43.5,
       "goals_over": {
         "0.5": 87,
@@ -7902,7 +7902,7 @@
       },
       "goals_avg": 2.1,
       "corners_avg": 8.2,
-      "cards_avg": 1.9,
+      "cards_avg": 4.6,
       "btts_pct": 53.5,
       "goals_over": {
         "0.5": 82.5,
@@ -8227,7 +8227,7 @@
       },
       "goals_avg": 3,
       "corners_avg": 9.1,
-      "cards_avg": 1.7,
+      "cards_avg": 3.9,
       "btts_pct": 71.5,
       "goals_over": {
         "0.5": 86,
@@ -8552,7 +8552,7 @@
       },
       "goals_avg": 3,
       "corners_avg": 8.7,
-      "cards_avg": 1.6,
+      "cards_avg": 4,
       "btts_pct": 75,
       "goals_over": {
         "0.5": 96.5,
@@ -8877,7 +8877,7 @@
       },
       "goals_avg": 2.7,
       "corners_avg": 8.3,
-      "cards_avg": 2.7,
+      "cards_avg": 4.3,
       "btts_pct": 60.5,
       "goals_over": {
         "0.5": 86,
@@ -8901,7 +8901,7 @@
       "goals_odds": {
         "2.5": 1.98,
         "3.5": 3.63,
-        "4.5": 8.0
+        "4.5": 8
       },
       "corners_odds": {
         "8.5": 1.91,
@@ -8916,7 +8916,7 @@
       },
       "btts_odds": 1.8,
       "goals_under_odds": {
-        "0.5": 9.0,
+        "0.5": 9,
         "1.5": 3.21,
         "2.5": 1.74,
         "3.5": 1.25
@@ -8951,7 +8951,7 @@
           },
           "4.5": {
             "prob": 14,
-            "odds": 8.0,
+            "odds": 8,
             "implied": 12.5,
             "edge": 1.5,
             "flag": null
@@ -9202,7 +9202,7 @@
       },
       "goals_avg": 2.8,
       "corners_avg": 10,
-      "cards_avg": 2.4,
+      "cards_avg": 4.6,
       "btts_pct": 75,
       "goals_over": {
         "0.5": 94,
@@ -9241,7 +9241,7 @@
       },
       "btts_odds": 1.57,
       "goals_under_odds": {
-        "0.5": 9.0,
+        "0.5": 9,
         "1.5": 4.21,
         "2.5": 2.12,
         "3.5": 1.46
@@ -9537,7 +9537,7 @@
       },
       "goals_avg": 2.7,
       "corners_avg": 9.7,
-      "cards_avg": 1.8,
+      "cards_avg": 3.7,
       "btts_pct": 50,
       "goals_over": {
         "0.5": 94,
@@ -9576,7 +9576,7 @@
       },
       "btts_odds": 1.8,
       "goals_under_odds": {
-        "0.5": 9.0,
+        "0.5": 9,
         "1.5": 3.28,
         "2.5": 1.78,
         "3.5": 1.28
@@ -9872,7 +9872,7 @@
       },
       "goals_avg": 2.4,
       "corners_avg": 8.9,
-      "cards_avg": 2.1,
+      "cards_avg": 3.9,
       "btts_pct": 47,
       "goals_over": {
         "0.5": 87,
@@ -10149,7 +10149,7 @@
       },
       "goals_avg": 2.1,
       "corners_avg": 8.2,
-      "cards_avg": 1.4,
+      "cards_avg": 3.3,
       "btts_pct": 45.5,
       "goals_over": {
         "0.5": 87.5,
@@ -10426,7 +10426,7 @@
       },
       "goals_avg": 2.5,
       "corners_avg": 9.6,
-      "cards_avg": 1.7,
+      "cards_avg": 3.9,
       "btts_pct": 54,
       "goals_over": {
         "0.5": 96,
@@ -10703,7 +10703,7 @@
       },
       "goals_avg": 2.5,
       "corners_avg": 9.8,
-      "cards_avg": 2.4,
+      "cards_avg": 4.1,
       "btts_pct": 37.5,
       "goals_over": {
         "0.5": 87.5,
@@ -10980,7 +10980,7 @@
       },
       "goals_avg": 3.3,
       "corners_avg": 10.6,
-      "cards_avg": 2.3,
+      "cards_avg": 5.1,
       "btts_pct": 62.5,
       "goals_over": {
         "0.5": 100,
@@ -11315,7 +11315,7 @@
       },
       "goals_avg": 3.3,
       "corners_avg": 10,
-      "cards_avg": 2,
+      "cards_avg": 4.3,
       "btts_pct": 72,
       "goals_over": {
         "0.5": 97,
@@ -11354,7 +11354,7 @@
       },
       "btts_odds": 1.38,
       "goals_under_odds": {
-        "0.5": 26.0,
+        "0.5": 26,
         "1.5": 11.7,
         "2.5": 3.34,
         "3.5": 1.84
@@ -11650,7 +11650,7 @@
       },
       "goals_avg": 3.8,
       "corners_avg": 10.5,
-      "cards_avg": 1.7,
+      "cards_avg": 3.3,
       "btts_pct": 69.5,
       "goals_over": {
         "0.5": 96,
@@ -11695,7 +11695,7 @@
         "3.5": 1.61
       },
       "corners_under_odds": {
-        "8.5": 3.0,
+        "8.5": 3,
         "9.5": 2.23,
         "10.5": 1.78,
         "11.5": 1.47
@@ -11975,7 +11975,7 @@
       },
       "goals_avg": 2.5,
       "corners_avg": 9.5,
-      "cards_avg": 2.5,
+      "cards_avg": 4.3,
       "btts_pct": 50,
       "goals_over": {
         "0.5": 96,
@@ -11998,7 +11998,7 @@
       },
       "goals_odds": {
         "2.5": 1.85,
-        "3.5": 3.0,
+        "3.5": 3,
         "4.5": 5.75
       },
       "corners_odds": {
@@ -12042,7 +12042,7 @@
           },
           "3.5": {
             "prob": 19,
-            "odds": 3.0,
+            "odds": 3,
             "implied": 33.3,
             "edge": -14.3,
             "flag": null
@@ -12310,7 +12310,7 @@
       },
       "goals_avg": 4,
       "corners_avg": 9.6,
-      "cards_avg": 1.5,
+      "cards_avg": 2.9,
       "btts_pct": 70,
       "goals_over": {
         "0.5": 97,
@@ -12597,7 +12597,7 @@
       },
       "goals_avg": 2.8,
       "corners_avg": 11.2,
-      "cards_avg": 2.2,
+      "cards_avg": 4.4,
       "btts_pct": 63,
       "goals_over": {
         "0.5": 97,
@@ -12636,7 +12636,7 @@
       },
       "btts_odds": 1.7,
       "goals_under_odds": {
-        "0.5": 23.0,
+        "0.5": 23,
         "1.5": 3.5,
         "2.5": 1.9,
         "3.5": 1.31
@@ -12932,7 +12932,7 @@
       },
       "goals_avg": 3.4,
       "corners_avg": 9.8,
-      "cards_avg": 1.9,
+      "cards_avg": 3.8,
       "btts_pct": 75,
       "goals_over": {
         "0.5": 100,
@@ -12955,7 +12955,7 @@
       },
       "goals_odds": {
         "2.5": 1.85,
-        "3.5": 3.0,
+        "3.5": 3,
         "4.5": 5.43
       },
       "corners_odds": {
@@ -12971,7 +12971,7 @@
       },
       "btts_odds": 1.65,
       "goals_under_odds": {
-        "0.5": 10.0,
+        "0.5": 10,
         "1.5": 3.54,
         "2.5": 1.95,
         "3.5": 1.38
@@ -12999,7 +12999,7 @@
           },
           "3.5": {
             "prob": 45,
-            "odds": 3.0,
+            "odds": 3,
             "implied": 33.3,
             "edge": 11.7,
             "flag": "value"
@@ -13257,7 +13257,7 @@
       },
       "goals_avg": 3.4,
       "corners_avg": 9.8,
-      "cards_avg": 1.2,
+      "cards_avg": 3.2,
       "btts_pct": 65,
       "goals_over": {
         "0.5": 100,
@@ -13582,7 +13582,7 @@
       },
       "goals_avg": 2.8,
       "corners_avg": 10.4,
-      "cards_avg": 1.6,
+      "cards_avg": 3.5,
       "btts_pct": 45.5,
       "goals_over": {
         "0.5": 91.5,
@@ -13604,7 +13604,7 @@
         "5.5": 8
       },
       "goals_odds": {
-        "2.5": 2.0,
+        "2.5": 2,
         "3.5": 3.08,
         "4.5": 5.95
       },
@@ -13642,7 +13642,7 @@
         "goals": {
           "2.5": {
             "prob": 50,
-            "odds": 2.0,
+            "odds": 2,
             "implied": 50,
             "edge": 0,
             "flag": null
@@ -13893,7 +13893,7 @@
       },
       "goals_avg": 3.5,
       "corners_avg": 11.9,
-      "cards_avg": 1.4,
+      "cards_avg": 3.5,
       "btts_pct": 62,
       "goals_over": {
         "0.5": 96,
@@ -13932,7 +13932,7 @@
       },
       "btts_odds": 1.47,
       "goals_under_odds": {
-        "0.5": 18.0,
+        "0.5": 18,
         "1.5": 6.53,
         "2.5": 3.1,
         "3.5": 1.85
@@ -14218,7 +14218,7 @@
       },
       "goals_avg": 2.5,
       "corners_avg": 9.4,
-      "cards_avg": 2.2,
+      "cards_avg": 4.3,
       "btts_pct": 58,
       "goals_over": {
         "0.5": 92,
@@ -14242,7 +14242,7 @@
       "goals_odds": {
         "2.5": 1.66,
         "3.5": 2.57,
-        "4.5": 5.0
+        "4.5": 5
       },
       "corners_odds": {
         "8.5": 1.36,
@@ -14292,7 +14292,7 @@
           },
           "4.5": {
             "prob": 11.5,
-            "odds": 5.0,
+            "odds": 5,
             "implied": 20,
             "edge": -8.5,
             "flag": null
@@ -14553,7 +14553,7 @@
       },
       "goals_avg": 3.4,
       "corners_avg": 8.8,
-      "cards_avg": 1.6,
+      "cards_avg": 3.4,
       "btts_pct": 57,
       "goals_over": {
         "0.5": 96.5,
@@ -14592,7 +14592,7 @@
       },
       "btts_odds": 1.5,
       "goals_under_odds": {
-        "0.5": 10.0,
+        "0.5": 10,
         "1.5": 4.65,
         "2.5": 2.35,
         "3.5": 1.55
@@ -14888,7 +14888,7 @@
       },
       "goals_avg": 3.9,
       "corners_avg": 12.5,
-      "cards_avg": 2.1,
+      "cards_avg": 4.3,
       "btts_pct": 66.5,
       "goals_over": {
         "0.5": 96,
@@ -15223,7 +15223,7 @@
       },
       "goals_avg": 2.3,
       "corners_avg": 10,
-      "cards_avg": 2,
+      "cards_avg": 4,
       "btts_pct": 50,
       "goals_over": {
         "0.5": 92.5,
@@ -15262,7 +15262,7 @@
       },
       "btts_odds": 1.86,
       "goals_under_odds": {
-        "0.5": 15.0,
+        "0.5": 15,
         "1.5": 4.6,
         "2.5": 2.25,
         "3.5": 1.45
@@ -15558,7 +15558,7 @@
       },
       "goals_avg": 3.1,
       "corners_avg": 10.8,
-      "cards_avg": 2.1,
+      "cards_avg": 3.9,
       "btts_pct": 42,
       "goals_over": {
         "0.5": 100,
@@ -15603,7 +15603,7 @@
         "3.5": 1.44
       },
       "corners_under_odds": {
-        "8.5": 3.0,
+        "8.5": 3,
         "9.5": 2.6,
         "10.5": 1.78,
         "11.5": 1.47
@@ -15883,7 +15883,7 @@
       },
       "goals_avg": 3.9,
       "corners_avg": 11.7,
-      "cards_avg": 2.4,
+      "cards_avg": 3.8,
       "btts_pct": 80,
       "goals_over": {
         "0.5": 100,
@@ -15928,7 +15928,7 @@
         "3.5": 1.74
       },
       "corners_under_odds": {
-        "8.5": 4.0,
+        "8.5": 4,
         "9.5": 2.83,
         "10.5": 2.08,
         "11.5": 1.7
@@ -16218,7 +16218,7 @@
       },
       "goals_avg": 2.9,
       "corners_avg": 10.3,
-      "cards_avg": 2.2,
+      "cards_avg": 4.3,
       "btts_pct": 63,
       "goals_over": {
         "0.5": 94,
@@ -16553,7 +16553,7 @@
       },
       "goals_avg": 3.2,
       "corners_avg": 10.7,
-      "cards_avg": 2.4,
+      "cards_avg": 4.5,
       "btts_pct": 53.5,
       "goals_over": {
         "0.5": 97,
@@ -16592,14 +16592,14 @@
       },
       "btts_odds": 1.86,
       "goals_under_odds": {
-        "0.5": 16.0,
+        "0.5": 16,
         "1.5": 6.5,
         "2.5": 3.1,
         "3.5": 1.79
       },
       "corners_under_odds": {
-        "8.5": 4.0,
-        "9.5": 3.0,
+        "8.5": 4,
+        "9.5": 3,
         "10.5": 2.3,
         "11.5": 1.86
       },
@@ -16888,7 +16888,7 @@
       },
       "goals_avg": 2.9,
       "corners_avg": 7.7,
-      "cards_avg": 2.2,
+      "cards_avg": 3.6,
       "btts_pct": 43.5,
       "goals_over": {
         "0.5": 86.5,
@@ -16927,7 +16927,7 @@
       },
       "btts_odds": 2.03,
       "goals_under_odds": {
-        "0.5": 10.0,
+        "0.5": 10,
         "1.5": 3.3,
         "2.5": 1.85,
         "3.5": 1.26
@@ -17223,7 +17223,7 @@
       },
       "goals_avg": 2.2,
       "corners_avg": 8.7,
-      "cards_avg": 2.2,
+      "cards_avg": 3.9,
       "btts_pct": 57,
       "goals_over": {
         "0.5": 93,
@@ -17245,7 +17245,7 @@
         "5.5": 23
       },
       "goals_odds": {
-        "2.5": 2.0,
+        "2.5": 2,
         "3.5": 3.44,
         "4.5": 6.55
       },
@@ -17283,7 +17283,7 @@
         "goals": {
           "2.5": {
             "prob": 36.5,
-            "odds": 2.0,
+            "odds": 2,
             "implied": 50,
             "edge": -13.5,
             "flag": null
@@ -17558,7 +17558,7 @@
       },
       "goals_avg": 2.6,
       "corners_avg": 8.6,
-      "cards_avg": 2.2,
+      "cards_avg": 4.7,
       "btts_pct": 53,
       "goals_over": {
         "0.5": 93,
@@ -17893,7 +17893,7 @@
       },
       "goals_avg": 2.6,
       "corners_avg": 7.8,
-      "cards_avg": 2.6,
+      "cards_avg": 4.6,
       "btts_pct": 60.5,
       "goals_over": {
         "0.5": 93,
@@ -18218,7 +18218,7 @@
       },
       "goals_avg": 2.9,
       "corners_avg": 8.2,
-      "cards_avg": 2,
+      "cards_avg": 4.4,
       "btts_pct": 65.5,
       "goals_over": {
         "0.5": 96.5,
@@ -18247,7 +18247,7 @@
       "corners_odds": {
         "8.5": 1.76,
         "9.5": 2.69,
-        "10.5": 3.0,
+        "10.5": 3,
         "11.5": 4.34
       },
       "cards_odds": {
@@ -18315,7 +18315,7 @@
           },
           "10.5": {
             "prob": 27.5,
-            "odds": 3.0,
+            "odds": 3,
             "implied": 33.3,
             "edge": -5.8,
             "flag": null
@@ -18543,7 +18543,7 @@
       },
       "goals_avg": 3,
       "corners_avg": 9.4,
-      "cards_avg": 1.9,
+      "cards_avg": 3.4,
       "btts_pct": 64.5,
       "goals_over": {
         "0.5": 96.5,
@@ -18582,9 +18582,9 @@
       },
       "btts_odds": 1.62,
       "goals_under_odds": {
-        "0.5": 11.0,
+        "0.5": 11,
         "1.5": 3.8,
-        "2.5": 2.0,
+        "2.5": 2,
         "3.5": 1.36
       },
       "corners_under_odds": {
@@ -18868,7 +18868,7 @@
       },
       "goals_avg": 2.6,
       "corners_avg": 9.4,
-      "cards_avg": 2,
+      "cards_avg": 3.9,
       "btts_pct": 60.5,
       "goals_over": {
         "0.5": 89.5,
@@ -18898,7 +18898,7 @@
         "8.5": 1.69,
         "9.5": 2.62,
         "10.5": 2.82,
-        "11.5": 4.0
+        "11.5": 4
       },
       "cards_odds": {
         "3.5": null,
@@ -18972,7 +18972,7 @@
           },
           "11.5": {
             "prob": 28.5,
-            "odds": 4.0,
+            "odds": 4,
             "implied": 25,
             "edge": 3.5,
             "flag": null
@@ -19193,7 +19193,7 @@
       },
       "goals_avg": 3.3,
       "corners_avg": 10.2,
-      "cards_avg": 2.2,
+      "cards_avg": 5.9,
       "btts_pct": 59.5,
       "goals_over": {
         "0.5": 97,
@@ -19232,7 +19232,7 @@
       },
       "btts_odds": 1.62,
       "goals_under_odds": {
-        "0.5": 15.0,
+        "0.5": 15,
         "1.5": 4.45,
         "2.5": 2.34,
         "3.5": 1.5
@@ -19528,7 +19528,7 @@
       },
       "goals_avg": 2.5,
       "corners_avg": 9.2,
-      "cards_avg": 2.4,
+      "cards_avg": 4.6,
       "btts_pct": 50,
       "goals_over": {
         "0.5": 96,
@@ -19567,7 +19567,7 @@
       },
       "btts_odds": 1.88,
       "goals_under_odds": {
-        "0.5": 8.0,
+        "0.5": 8,
         "1.5": 2.88,
         "2.5": 1.66,
         "3.5": 1.22
@@ -19853,7 +19853,7 @@
       },
       "goals_avg": 2.7,
       "corners_avg": 10.8,
-      "cards_avg": 1.7,
+      "cards_avg": 3.2,
       "btts_pct": 65.5,
       "goals_over": {
         "0.5": 91.5,
@@ -19892,7 +19892,7 @@
       },
       "btts_odds": 1.8,
       "goals_under_odds": {
-        "0.5": 10.0,
+        "0.5": 10,
         "1.5": 3.08,
         "2.5": 1.8,
         "3.5": 1.25
@@ -20178,7 +20178,7 @@
       },
       "goals_avg": 3,
       "corners_avg": 8.6,
-      "cards_avg": 1.8,
+      "cards_avg": 2.9,
       "btts_pct": 62.5,
       "goals_over": {
         "0.5": 100,
@@ -20219,7 +20219,7 @@
       "goals_under_odds": {
         "0.5": 11.8,
         "1.5": 4.5,
-        "2.5": 2.0,
+        "2.5": 2,
         "3.5": 1.4
       },
       "corners_under_odds": {
@@ -20503,7 +20503,7 @@
       },
       "goals_avg": 3.3,
       "corners_avg": 11,
-      "cards_avg": 2.5,
+      "cards_avg": 4.4,
       "btts_pct": 62.5,
       "goals_over": {
         "0.5": 97,
@@ -20542,9 +20542,9 @@
       },
       "btts_odds": 1.4,
       "goals_under_odds": {
-        "0.5": 21.0,
-        "1.5": 7.0,
-        "2.5": 3.0,
+        "0.5": 21,
+        "1.5": 7,
+        "2.5": 3,
         "3.5": 1.75
       },
       "corners_under_odds": {
@@ -20838,7 +20838,7 @@
       },
       "goals_avg": 3.1,
       "corners_avg": 10.8,
-      "cards_avg": 3,
+      "cards_avg": 4.2,
       "btts_pct": 65,
       "goals_over": {
         "0.5": 100,
@@ -20877,7 +20877,7 @@
       },
       "btts_odds": 1.56,
       "goals_under_odds": {
-        "0.5": 13.0,
+        "0.5": 13,
         "1.5": 4.1,
         "2.5": 2.16,
         "3.5": 1.38
@@ -21163,7 +21163,7 @@
       },
       "goals_avg": 3,
       "corners_avg": 10.4,
-      "cards_avg": 1.4,
+      "cards_avg": 3.1,
       "btts_pct": 55,
       "goals_over": {
         "0.5": 100,
@@ -21187,7 +21187,7 @@
       "goals_odds": {
         "2.5": 1.65,
         "3.5": 2.64,
-        "4.5": 5.0
+        "4.5": 5
       },
       "corners_odds": {
         "8.5": 1.29,
@@ -21218,7 +21218,7 @@
         "3.5": null,
         "4.5": null
       },
-      "btts_no_odds": 2.0,
+      "btts_no_odds": 2,
       "value": {
         "goals": {
           "2.5": {
@@ -21237,7 +21237,7 @@
           },
           "4.5": {
             "prob": 20,
-            "odds": 5.0,
+            "odds": 5,
             "implied": 20,
             "edge": 0,
             "flag": null
@@ -21488,7 +21488,7 @@
       },
       "goals_avg": 3.8,
       "corners_avg": 11.2,
-      "cards_avg": 1.5,
+      "cards_avg": 2.5,
       "btts_pct": 64,
       "goals_over": {
         "0.5": 97,
@@ -21527,8 +21527,8 @@
       },
       "btts_odds": 1.29,
       "goals_under_odds": {
-        "0.5": 23.0,
-        "1.5": 8.0,
+        "0.5": 23,
+        "1.5": 8,
         "2.5": 3.08,
         "3.5": 1.92
       },
@@ -21799,7 +21799,7 @@
       },
       "goals_avg": 4.2,
       "corners_avg": 10.6,
-      "cards_avg": 1.2,
+      "cards_avg": 3.1,
       "btts_pct": 72,
       "goals_over": {
         "0.5": 100,
@@ -21838,8 +21838,8 @@
       },
       "btts_odds": 1.25,
       "goals_under_odds": {
-        "0.5": 29.0,
-        "1.5": 9.0,
+        "0.5": 29,
+        "1.5": 9,
         "2.5": 3.48,
         "3.5": 2.06
       },
@@ -22110,7 +22110,7 @@
       },
       "goals_avg": 4.1,
       "corners_avg": 10.7,
-      "cards_avg": 1.5,
+      "cards_avg": 3,
       "btts_pct": 69.5,
       "goals_over": {
         "0.5": 96,
@@ -22149,7 +22149,7 @@
       },
       "btts_odds": 1.3,
       "goals_under_odds": {
-        "0.5": 23.0,
+        "0.5": 23,
         "1.5": 6.1,
         "2.5": 2.92,
         "3.5": 1.85
@@ -22435,7 +22435,7 @@
       },
       "goals_avg": 2.9,
       "corners_avg": 8.6,
-      "cards_avg": 1.5,
+      "cards_avg": 3.4,
       "btts_pct": 64,
       "goals_over": {
         "0.5": 100,
@@ -22474,8 +22474,8 @@
       },
       "btts_odds": 1.62,
       "goals_under_odds": {
-        "0.5": 13.0,
-        "1.5": 4.0,
+        "0.5": 13,
+        "1.5": 4,
         "2.5": 2.14,
         "3.5": 1.4
       },
@@ -22760,7 +22760,7 @@
       },
       "goals_avg": 2.3,
       "corners_avg": 10.5,
-      "cards_avg": 1.6,
+      "cards_avg": 4.1,
       "btts_pct": 37.5,
       "goals_over": {
         "0.5": 96,
@@ -23134,7 +23134,7 @@
       },
       "btts_odds": 1.5,
       "goals_under_odds": {
-        "0.5": 13.0,
+        "0.5": 13,
         "1.5": 4.8,
         "2.5": 2.35,
         "3.5": 1.5
@@ -23469,8 +23469,8 @@
       },
       "btts_odds": 1.44,
       "goals_under_odds": {
-        "0.5": 15.0,
-        "1.5": 5.0,
+        "0.5": 15,
+        "1.5": 5,
         "2.5": 2.34,
         "3.5": 1.62
       },
@@ -23794,7 +23794,7 @@
       },
       "btts_odds": 1.67,
       "goals_under_odds": {
-        "0.5": 10.0,
+        "0.5": 10,
         "1.5": 3.44,
         "2.5": 1.96,
         "3.5": 1.33
@@ -24104,7 +24104,7 @@
       "goals_odds": {
         "2.5": 1.36,
         "3.5": 1.94,
-        "4.5": 3.0
+        "4.5": 3
       },
       "corners_odds": {
         "8.5": 1.09,
@@ -24119,9 +24119,9 @@
       },
       "btts_odds": 1.33,
       "goals_under_odds": {
-        "0.5": 21.0,
+        "0.5": 21,
         "1.5": 6.36,
-        "2.5": 3.0,
+        "2.5": 3,
         "3.5": 1.85
       },
       "corners_under_odds": {
@@ -24135,7 +24135,7 @@
         "3.5": null,
         "4.5": null
       },
-      "btts_no_odds": 3.0,
+      "btts_no_odds": 3,
       "value": {
         "goals": {
           "2.5": {
@@ -24154,7 +24154,7 @@
           },
           "4.5": {
             "prob": 41.5,
-            "odds": 3.0,
+            "odds": 3,
             "implied": 33.3,
             "edge": 8.2,
             "flag": null
