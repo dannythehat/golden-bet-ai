@@ -474,6 +474,24 @@ export default function FormTables() {
   // today's card (not per-tab). Highlighted in the table only within its market.
   const gafferPick = useMemo(() => pickGafferDaily(tables.fixtures, today), [tables, today]);
 
+  // The Gaffer's LOCKED selections today — the same top-5 value ranking the
+  // homepage board uses (top 2 = double, next 3 = treble). These rows glow
+  // neon purple in every table, whatever tab you're on.
+  const gafferIds = useMemo(() => {
+    const ok = (c: FormValueCell | null | undefined) => !!c?.odds && c.odds >= 1.4 && (c.prob ?? 0) >= 60;
+    type Cand = { id: string; edge: number };
+    const legs: Cand[] = [];
+    for (const f of tables.fixtures) {
+      if (f.date !== today) continue;
+      for (const c of Object.values(f.value.corners ?? {})) if (ok(c)) legs.push({ id: f.id, edge: c!.edge });
+      for (const c of Object.values(f.value.goals ?? {})) if (ok(c)) legs.push({ id: f.id, edge: c!.edge });
+      if (ok(f.value.btts)) legs.push({ id: f.id, edge: f.value.btts!.edge });
+    }
+    const best = new Map<string, number>();
+    for (const l of legs) if (!best.has(l.id) || l.edge > best.get(l.id)!) best.set(l.id, l.edge);
+    return new Set([...best.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id]) => id));
+  }, [tables, today]);
+
   // Fixtures the value board considers — same window + league filter as the table.
   const valueFixtures = useMemo(
     () => tables.fixtures.filter((f) => windowDates.includes(f.date) && (league === 'all' || f.league === league)),
@@ -563,6 +581,16 @@ export default function FormTables() {
         {/* The Gaffer's one pick of the day — same call on every tab */}
         <GafferPickCard pick={gafferPick} />
 
+        {/* Legend — what the neon frames mean */}
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-fuchsia-500/[0.08] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-fuchsia-200 ring-2 ring-inset ring-fuchsia-400/85 shadow-[0_0_12px_-3px_rgba(192,132,252,0.6)]">
+            The Gaffer's picks · today
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/[0.06] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-200 ring-2 ring-inset ring-emerald-400/80 shadow-[0_0_12px_-3px_rgba(52,211,153,0.55)]">
+            Value bets · today
+          </span>
+        </div>
+
         {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.015]">
           {/* Header */}
@@ -582,16 +610,20 @@ export default function FormTables() {
             const o = oddsFor(f);
             const isPick = gafferPick?.f.id === f.id && gafferPick?.catKey === cat;
             const isToday = f.date === today;
-            // Value bet playing TODAY → neon green frame so it jumps off the table.
-            const valueToday = isToday && !!computeValue(formPct, o)?.flag;
+            // The Gaffer's locked selection today → neon PURPLE frame (any tab).
+            const gafferToday = isToday && gafferIds.has(f.id);
+            // Other value playing TODAY → neon GREEN frame.
+            const valueToday = !gafferToday && isToday && !!computeValue(formPct, o)?.flag;
             return (
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
                 className={`group flex w-full items-center gap-2.5 px-3 py-1.5 text-left transition-colors ${
-                  valueToday
-                    ? 'relative z-[1] my-1 rounded-xl bg-emerald-400/[0.06] ring-2 ring-inset ring-emerald-400/80 shadow-[inset_0_0_22px_-10px_rgba(52,211,153,0.7),0_0_14px_-4px_rgba(52,211,153,0.45)] hover:bg-emerald-400/[0.1]'
-                    : isPick ? 'bg-violet-500/[0.045] hover:bg-violet-500/[0.08]' : 'hover:bg-white/[0.02]'
+                  gafferToday
+                    ? 'relative z-[1] my-1 rounded-xl bg-fuchsia-500/[0.08] ring-2 ring-inset ring-fuchsia-400/85 shadow-[inset_0_0_22px_-10px_rgba(232,121,249,0.75),0_0_16px_-4px_rgba(192,132,252,0.55)] hover:bg-fuchsia-500/[0.12]'
+                    : valueToday
+                      ? 'relative z-[1] my-1 rounded-xl bg-emerald-400/[0.06] ring-2 ring-inset ring-emerald-400/80 shadow-[inset_0_0_22px_-10px_rgba(52,211,153,0.7),0_0_14px_-4px_rgba(52,211,153,0.45)] hover:bg-emerald-400/[0.1]'
+                      : isPick ? 'bg-violet-500/[0.045] hover:bg-violet-500/[0.08]' : 'hover:bg-white/[0.02]'
                 }`}
               >
                 <span className={`w-5 shrink-0 text-center text-[12px] font-semibold tabular-nums ${isPick ? 'text-violet-300/75' : 'text-white/30'}`}>{i + 1}</span>
