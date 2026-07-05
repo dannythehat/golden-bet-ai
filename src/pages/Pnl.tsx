@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { HomepageNav } from '@/components/homepage/HomepageNav';
 import { FooterNavigation } from '@/components/homepage/FooterNavigation';
 import { BetCard } from '@/components/pnl/BetCard';
+import { GafferDayWord } from '@/components/pnl/GafferDayWord';
 import { getLedgerBets, filterByRange, summarize, type Range } from '@/lib/pnlLedger';
 
 const money = (n: number) => `£${n % 1 === 0 ? n : n.toFixed(2)}`;
@@ -150,6 +151,9 @@ export default function Pnl() {
             )}
           </div>
         </section>
+
+        {/* The Gaffer's word on the latest day */}
+        {allBets.length > 0 && <GafferDayWord bets={allBets} className="mt-5" />}
 
         {/* Full detailed history */}
         <section className="mt-6">

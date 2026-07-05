@@ -14,6 +14,10 @@ import {
   OPENERS, MARKET_FLAVOUR, VERDICT_STRONG, VERDICT_VALUE, EDGE_PHRASES,
   HEDGES, SIGN_OFFS, ASIDES, NO_BET, DONKEY_ROASTS, nickname,
 } from '../data/gaffer/phraseLibrary';
+import {
+  DAY_OPENERS, DAY_PERFECT, DAY_WIN, DAY_MIXED, DAY_ALL_LOST,
+  WIN_LEG, LOSS_LEG, DAY_CLOSERS,
+} from '../data/gaffer/dayVerdict';
 
 export type Market = 'Corners' | 'Goals' | 'Cards' | 'BTTS';
 
@@ -118,6 +122,83 @@ export function gafferReason(s: PickSignals, seed = ''): string {
     closer,
   ];
   return parts.map((p) => fill(p, vars)).join(' ');
+}
+
+/* ── The Gaffer's word on the day ────────────────────────────────────────── */
+
+export interface DayLeg {
+  home: string; away: string; selection: string;
+  ft?: string; result: 'won' | 'lost' | string;
+  note?: string; // optional match colour (hook for live football news later)
+}
+export interface DayBet {
+  kind: string; status: 'won' | 'lost' | string; legs: DayLeg[];
+}
+
+const marketOf = (sel: string): 'Goals' | 'Corners' | 'BTTS' | 'default' =>
+  /corner/i.test(sel) ? 'Corners' : /btts|both team/i.test(sel) ? 'BTTS' : /goal/i.test(sel) ? 'Goals' : 'default';
+
+// Fill the leg placeholders from the real scoreline.
+function legVars(l: DayLeg): Record<string, string> {
+  const [hg, ag] = (l.ft ?? '').split('-').map((n) => parseInt(n, 10));
+  const total = Number.isFinite(hg) && Number.isFinite(ag) ? hg + ag : NaN;
+  // For a BTTS loss, the culprit is whichever side failed to score.
+  const cul = Number.isFinite(hg) && Number.isFinite(ag)
+    ? (hg === 0 && ag === 0 ? 'neither side' : hg === 0 ? l.home : ag === 0 ? l.away : l.home)
+    : l.home;
+  return {
+    home: l.home, away: l.away, ft: l.ft ?? '',
+    g: Number.isFinite(total) ? String(total) : 'the',
+    cul, note: l.note ? ` — ${l.note}` : '',
+  };
+}
+
+const fillLeg = (tpl: string, l: DayLeg) => fill(tpl, legVars(l));
+
+/**
+ * A fresh, in-character verdict on a settled day's slips. Reacts to what really
+ * happened — both home (buzzing), mixed (wry), blank (honest chin-up) — names the
+ * exact teams and scorelines that won or cost us, and closes looking forward.
+ * Seed with the date so it's stable for the day but different day to day.
+ */
+export function gafferDayVerdict(bets: DayBet[], seed = ''): string {
+  const settled = bets.filter((b) => b.status === 'won' || b.status === 'lost');
+  if (settled.length === 0) return '';
+  const rng = mulberry32(seedOf(`dayverdict|${seed}`));
+
+  const wins = settled.filter((b) => b.status === 'won');
+  const losses = settled.filter((b) => b.status === 'lost');
+  const allWon = losses.length === 0;
+  const allLost = wins.length === 0;
+
+  const parts: string[] = [pick(DAY_OPENERS, 'day:open', rng)];
+  if (allWon && settled.length >= 2) parts.push(pick(DAY_PERFECT, 'day:perfect', rng));
+  else if (allWon) parts.push(pick(DAY_WIN, 'day:win', rng));
+  else if (allLost) parts.push(pick(DAY_ALL_LOST, 'day:lost', rng));
+  else parts.push(pick(DAY_MIXED, 'day:mixed', rng));
+
+  // Shout about one real winning leg (pick the juiciest — most goals).
+  const wonLegs = wins.flatMap((b) => b.legs).filter((l) => l.result === 'won');
+  if (wonLegs.length) {
+    const star = [...wonLegs].sort((a, b) => legGoals(b) - legGoals(a))[Math.floor(rng() * Math.min(2, wonLegs.length))] ?? wonLegs[0];
+    const bank = WIN_LEG[marketOf(star.selection)] ?? WIN_LEG.default;
+    parts.push(fillLeg(pick(bank, `day:winleg:${marketOf(star.selection)}`, rng), star));
+  }
+  // Own the leg that cost us.
+  const lostLegs = losses.flatMap((b) => b.legs).filter((l) => l.result === 'lost');
+  if (lostLegs.length) {
+    const dud = lostLegs[Math.floor(rng() * lostLegs.length)];
+    const bank = LOSS_LEG[marketOf(dud.selection)] ?? LOSS_LEG.default;
+    parts.push(fillLeg(pick(bank, `day:lossleg:${marketOf(dud.selection)}`, rng), dud));
+  }
+
+  parts.push(pick(DAY_CLOSERS, 'day:close', rng));
+  return parts.join(' ');
+}
+
+function legGoals(l: DayLeg): number {
+  const [hg, ag] = (l.ft ?? '').split('-').map((n) => parseInt(n, 10));
+  return Number.isFinite(hg) && Number.isFinite(ag) ? hg + ag : 0;
 }
 
 /** A fresh "no value today" line. */

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react';
 import { getLedgerBets, summarize, latestSettledISO } from '@/lib/pnlLedger';
 import { BetCard } from '@/components/pnl/BetCard';
+import { GafferDayWord } from '@/components/pnl/GafferDayWord';
 
 const money = (n: number) => `£${n.toFixed(n % 1 === 0 ? 0 : 2)}`;
 
@@ -84,6 +85,9 @@ export function GafferPnLTrustSection() {
             {games} bet{games === 1 ? '' : 's'} settled · <span className="text-white/80">{money(s.staked)}</span> staked → <span className="text-[#f8e7a1]">{money(s.returned)}</span> back
           </div>
         </div>
+
+        {/* ── the Gaffer's spoken word on the day's slips ── */}
+        {hasBets && <GafferDayWord bets={bets} className="mt-4" />}
 
         {/* ── recent bets in full — tap any to see the whole history ── */}
         <div className="mt-4">
