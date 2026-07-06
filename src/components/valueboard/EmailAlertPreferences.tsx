@@ -134,7 +134,7 @@ export function EmailAlertPreferences({ pendingMarket, onConsumedPending }: {
             </div>
           )}
           {error && <div className="text-sm font-bold text-rose-300">{error}</div>}
-          <p className="text-[10.5px] text-white/35">Alerts start with the membership on 1st August — preferences saved now carry over. No spam, ever.</p>
+          <p className="text-[10.5px] text-white/35">Alerts go live 1st August — preferences saved now carry over. No spam, ever.</p>
         </form>
       </div>
     </section>
