@@ -16,10 +16,6 @@ const statusTone: Record<FixtureStatus, string> = {
   scheduled: 'text-white/50', live: 'text-emerald-300', finished: 'text-white/40', stale: 'text-rose-300',
 };
 
-// 'Over 2.5 Goals' → 'O 2.5' for tight chips.
-const shortLabel = (s: MarketSummary): string =>
-  s.family === 'btts' ? s.label.replace('Both Teams To Score — ', 'BTTS ') : s.label.replace(/^Over /, 'O ').replace(/^Under /, 'U ').replace(/ (Goals|Corners|Cards)$/, '');
-
 /* ── Market family tabs ─────────────────────────────────────────────────── */
 function MarketFamilyTabs({ family, counts, onChange }: {
   family: ValueMarketFamily;
@@ -82,7 +78,8 @@ function MarketFixtureTable({ marketKey, onRowClick }: { marketKey: ValueMarketK
   const leagues = useValueBoardLeagues();
   const res = useValueMarketFixtures({ marketKey, league });
   if (!res.ok) return null;
-  const rows = res.data.fixtures;
+  // Value board = value only. Games without an edge don't belong here.
+  const rows = res.data.fixtures.filter((r) => r.qualifies);
 
   return (
     <div className="mt-4 overflow-hidden rounded-[14px] border border-white/[0.1] bg-gradient-to-b from-[#170e2e] to-[#0f0821]">
@@ -122,9 +119,7 @@ function MarketFixtureTable({ marketKey, onRowClick }: { marketKey: ValueMarketK
               </div>
               <div className="shrink-0 text-right">
                 {r.oddsSnapshot != null && <div className="font-display text-[19px] leading-none text-[#f5c542] [font-variant-numeric:tabular-nums] drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]">{r.oddsSnapshot.toFixed(2)}</div>}
-                {r.qualifies
-                  ? <div className="mt-1 inline-flex items-center rounded-[6px] bg-emerald-500/15 px-1.5 py-[3px] text-[9.5px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-inset ring-emerald-400/30 [font-variant-numeric:tabular-nums]">+{r.valueGap.toFixed(1)}% edge</div>
-                  : <div className="mt-1 text-[10px] font-bold text-white/35 [font-variant-numeric:tabular-nums]">{r.valueGap >= 0 ? '+' : ''}{r.valueGap.toFixed(1)}% · no edge</div>}
+                <div className="mt-1 inline-flex items-center rounded-[6px] bg-emerald-500/15 px-1.5 py-[3px] text-[9.5px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-inset ring-emerald-400/30 [font-variant-numeric:tabular-nums]">+{r.valueGap.toFixed(1)}% edge</div>
               </div>
             </button>
           ))}
@@ -250,13 +245,11 @@ export function MarketBoard({ summary, onAddAlert }: { summary: HubSummary; onAd
   const [breakdown, setBreakdown] = useState<{ fixtureId: string; marketKey: ValueMarketKey } | null>(null);
 
   const familyMarkets = useMemo(() => summary.allMarkets.filter((s) => s.family === family), [summary, family]);
+  // Value board = value only: markets without an edge today simply aren't shown.
   const valueMarkets = familyMarkets.filter((s) => s.status === 'value');
-  const quietMarkets = familyMarkets.filter((s) => s.status === 'priced');
-  const unpricedMarkets = familyMarkets.filter((s) => s.status === 'unpriced');
 
-  const activeKey = marketKey && VALUE_MARKETS.find((m) => m.key === marketKey)?.family === family
-    ? marketKey
-    : valueMarkets[0]?.marketKey ?? quietMarkets[0]?.marketKey ?? null;
+  const activeCandidate = marketKey && valueMarkets.some((s) => s.marketKey === marketKey) ? marketKey : null;
+  const activeKey = activeCandidate ?? valueMarkets[0]?.marketKey ?? null;
 
   return (
     <section id="market-board" className="relative overflow-hidden rounded-[1.6rem] border border-violet-400/25 bg-[#130321]">
@@ -288,27 +281,6 @@ export function MarketBoard({ summary, onAddAlert }: { summary: HubSummary; onAd
             <h3 className="font-display text-xl uppercase text-white">Nowt in {FAMILIES.find((f) => f.family === family)?.label} today.</h3>
             <p className="mx-auto mt-1 max-w-md text-sm text-white/55">The bookies have this family priced right for once — check another tab, or browse the raw numbers below.</p>
           </div>
-        )}
-
-        {/* quiet markets — one compact row, not a wall of grey boxes */}
-        {quietMarkets.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-1.5 rounded-xl border border-white/[0.08] bg-black/20 px-3 py-2.5">
-            <span className="mr-1 text-[9.5px] font-black uppercase tracking-[0.16em] text-white/35">No edge today</span>
-            {quietMarkets.map((s) => (
-              <button
-                key={s.marketKey}
-                onClick={() => setMarketKey(s.marketKey)}
-                className={`rounded-md px-2 py-1 text-[10.5px] font-bold transition-colors [font-variant-numeric:tabular-nums] ${s.marketKey === activeKey ? 'bg-[#f5c542]/15 text-[#f8e7a1] ring-1 ring-inset ring-[#f5c542]/40' : 'bg-white/[0.05] text-white/55 ring-1 ring-inset ring-white/10 hover:bg-white/[0.1]'}`}
-              >
-                {shortLabel(s)}
-              </button>
-            ))}
-          </div>
-        )}
-        {unpricedMarkets.length > 0 && (
-          <p className="mt-2 px-1 text-[10.5px] text-white/35">
-            No bookmaker prices in today's leagues for: {unpricedMarkets.map(shortLabel).join(', ')}.
-          </p>
         )}
 
         {activeKey && <MarketFixtureTable marketKey={activeKey} onRowClick={(fixtureId) => setBreakdown({ fixtureId, marketKey: activeKey })} />}
