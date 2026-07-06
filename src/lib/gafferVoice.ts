@@ -96,8 +96,10 @@ export function gafferPickLine(s: PickSignals, seed = '', flavourful = true): st
     pick(edgeBankFor(s), 'edge', rng),
     pick(verdictBankFor(s), `verdict:${s.tier}`, rng),
   ];
-  if (flavourful && rng() > 0.5) parts.push(pick(ASIDES, 'aside', rng));
-  parts.push(pick(HEDGES, 'hedge', rng));
+  // ONE personality beat, not a pile-up — the entries are full thoughts now,
+  // so stacking aside AND hedge AND sign-off turns him into a rambler.
+  if (flavourful && rng() > 0.55) parts.push(pick(ASIDES, 'aside', rng));
+  else parts.push(pick(HEDGES, 'hedge', rng));
   parts.push(pick(SIGN_OFFS, 'signoff', rng));
   return parts.map((p) => fill(p, vars)).join(' ');
 }
