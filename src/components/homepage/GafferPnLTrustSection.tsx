@@ -37,9 +37,27 @@ function useCountUp(target: number, decimals = 0, dur = 800) {
  * bets shown in full (every leg, won/lost), each clickable through to the full
  * /pnl history. Reads the committed settled-bet ledger — the single source of truth.
  */
+// "Sat 5 Jul" — compact day header for the rolling results list.
+const fmtDay = (iso: string): string =>
+  new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+
 export function GafferPnLTrustSection() {
   const bets = getLedgerBets();
   const s = summarize(bets);
+  // Rolling window: every bet from the 3 most recent settled days (newest first).
+  const days = (() => {
+    const dates: string[] = [];
+    for (const b of bets) {
+      if (!dates.includes(b.date)) {
+        dates.push(b.date);
+        if (dates.length === 3) break;
+      }
+    }
+    return dates.map((date) => {
+      const list = bets.filter((b) => b.date === date);
+      return { date, list, net: Math.round(list.reduce((p, b) => p + b.profit, 0) * 100) / 100 };
+    });
+  })();
   const updated = fmtUpdated(latestSettledISO(bets));
   const hasBets = bets.length > 0;
   const up = s.profit >= 0;
@@ -92,7 +110,7 @@ export function GafferPnLTrustSection() {
         {/* ── recent bets in full — tap any to see the whole history ── */}
         <div className="mt-4">
           <div className="mb-2 flex items-center justify-between px-1">
-            <span className="text-[11px] font-black uppercase tracking-[0.16em] text-white/45">Recent bets</span>
+            <span className="text-[11px] font-black uppercase tracking-[0.16em] text-white/45">Last 3 days · every bet</span>
             <Link to="/pnl" className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide text-[#f8e7a1] transition-colors hover:text-white">
               Full history <ArrowRight className="h-3 w-3" />
             </Link>
@@ -102,11 +120,23 @@ export function GafferPnLTrustSection() {
               First results appear once our selections settle.
             </div>
           ) : (
-            <div className="space-y-3">
-              {bets.slice(0, 2).map((b, i) => (
-                <Link key={`${b.date}-${b.kind}-${i}`} to="/pnl" className="block transition-transform hover:-translate-y-0.5">
-                  <BetCard bet={b} />
-                </Link>
+            <div className="space-y-4">
+              {days.map(({ date, list, net }) => (
+                <div key={date}>
+                  <div className="mb-1.5 flex items-baseline justify-between px-1">
+                    <span className="text-[11px] font-black uppercase tracking-[0.14em] text-white/60">{fmtDay(date)}</span>
+                    <span className={`text-[11px] font-black [font-variant-numeric:tabular-nums] ${net >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {net >= 0 ? '+' : '−'}£{Math.abs(net).toFixed(2)} on the day
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    {list.map((b, i) => (
+                      <Link key={`${b.date}-${b.kind}-${i}`} to="/pnl" className="block transition-transform hover:-translate-y-0.5">
+                        <BetCard bet={b} />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               ))}
               <Link
                 to="/pnl"
