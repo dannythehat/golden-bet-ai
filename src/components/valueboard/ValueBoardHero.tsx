@@ -1,11 +1,11 @@
 import { BarChart3, Bell, ShieldCheck, Sparkles, Lock } from 'lucide-react';
+import { BoardSection } from './BoardSection';
 
 /** Hero — the Gaffer fronting his data command centre. */
 export function ValueBoardHero({ updatedLabel, quietDay }: { updatedLabel: string; quietDay: boolean }) {
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   return (
-    <section className="relative overflow-hidden rounded-[1.6rem] border border-[#f5c542]/25 bg-[#130321]">
-      <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
+    <BoardSection tone="gold">
       {/* stadium backdrop + the Gaffer as curator */}
       <div className="relative">
         <img
@@ -70,6 +70,6 @@ export function ValueBoardHero({ updatedLabel, quietDay }: { updatedLabel: strin
           </div>
         </div>
       </div>
-    </section>
+    </BoardSection>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { X, BellPlus, Swords, TrendingUp, Activity, Search } from 'lucide-react';
 import { TeamAvatar } from '@/components/TeamAvatar';
+import { BoardSection } from './BoardSection';
 import {
   FAMILIES, VALUE_MARKETS, type HubSummary, type MarketSummary,
   type ValueMarketFamily, type ValueMarketKey, type Confidence, type FixtureStatus,
@@ -252,8 +253,7 @@ export function MarketBoard({ summary, onAddAlert }: { summary: HubSummary; onAd
   const activeKey = activeCandidate ?? valueMarkets[0]?.marketKey ?? null;
 
   return (
-    <section id="market-board" className="relative overflow-hidden rounded-[1.6rem] border border-violet-400/25 bg-[#130321]">
-      <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
+    <BoardSection id="market-board" tone="violet">
       <div className="p-5 md:p-7">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -294,6 +294,6 @@ export function MarketBoard({ summary, onAddAlert }: { summary: HubSummary; onAd
           onAddAlert={(k) => { setBreakdown(null); onAddAlert(k); }}
         />
       )}
-    </section>
+    </BoardSection>
   );
 }

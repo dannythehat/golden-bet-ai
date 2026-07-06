@@ -1,5 +1,6 @@
 import { Star, Layers, Bell, Clock, Trophy, ShieldAlert } from 'lucide-react';
 import { TeamAvatar } from '@/components/TeamAvatar';
+import { BoardSection } from './BoardSection';
 import type { GafferDailyCardData, DailyCardSelection } from '@/lib/valueBoard';
 
 /** One selection — the homepage leg-card language: crests, gold odds,
@@ -81,8 +82,7 @@ function SelectionCard({ s }: { s: DailyCardSelection }) {
  *  treble (this page never re-picks). Honest quiet-day state when thin. */
 export function GafferDailyCardSection({ card, onEmailCard }: { card: GafferDailyCardData; onEmailCard: () => void }) {
   return (
-    <section id="gaffer-daily-card" className="relative overflow-hidden rounded-[1.6rem] border border-[#f5c542]/25 bg-[#130321]">
-      <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
+    <BoardSection id="gaffer-daily-card" tone="gold">
       {/* the Gaffer keeps an eye on his card */}
       <img
         src="/images/gaffer/opt/gaffer-pointing-you.webp"
@@ -143,6 +143,6 @@ export function GafferDailyCardSection({ card, onEmailCard }: { card: GafferDail
           </button>
         </div>
       </div>
-    </section>
+    </BoardSection>
   );
 }

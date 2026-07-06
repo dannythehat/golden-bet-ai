@@ -487,3 +487,37 @@ export function getFixtureValueBreakdown(fixtureId: string, marketKey: ValueMark
 export function getLeaguesOn(date = todayUK()): string[] {
   return [...new Set(fixturesOn(date).map((f) => f.league))].sort();
 }
+
+/* ── The Gaffer's word on the day's slate — quiet Monday or bumper Saturday,
+ *    he sets the scene before you scroll. Seeded by date so it holds all day. */
+const PROMPT_QUIET = [
+  'Quiet {day}, this — only {n} games on the card, not much to sink our teeth into. Still, the scan pulled {v} proper edge{vs} out of it. Quality over quantity, always.',
+  '{day}s like this test a man’s patience: {n} fixtures and the bookies behaving themselves on most. {v} edge{vs} made the cut — I’d rather hand you {v} real one{vs} than ten pretend ones.',
+  'Thin card today, I’ll not dress it up — {n} games on a sleepy {day}. But even a quiet card usually hides something, and I’ve dug out {v}.',
+  'Not a lot on this {day} — {n} games, most of them priced about right. The {v} below earned their place; nothing else did.',
+];
+const PROMPT_NONE = [
+  'I’ll level with you: {n} game{ns} on this {day} card and not one of them mispriced. No edges, no picks, no pretending — a blank board beats a bad bet every time.',
+  'Quiet {day}, quieter board — the scan went through {n} game{ns} and came back empty-handed. The bookies got today right; we go again tomorrow.',
+];
+const PROMPT_MID = [
+  'Decent {day} card — {n} games scanned across the leagues and {v} carrying a genuine edge. Enough to work with, not enough to get carried away.',
+  'Fair bit on this {day}: {n} fixtures through the scanner, {v} worth your attention below. Pick your market and have a proper look.',
+];
+const PROMPT_BUSY = [
+  'Now we’re talking — {n} games on the card this {day} and the scanner’s been earning its keep: {v} edges flagged below. Get a brew on and have a wander through your markets.',
+  'Big {day}, this: {n} fixtures scanned and {v} carrying real value. The board’s full — dig into the family you fancy and take your time.',
+];
+
+export function gafferBoardPrompt(s: HubSummary): string {
+  const day = new Date(s.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long' });
+  const n = s.totalFixturesScanned, v = s.totalValueFixtures;
+  const bank = v === 0 ? PROMPT_NONE : n <= 6 ? PROMPT_QUIET : n <= 18 ? PROMPT_MID : PROMPT_BUSY;
+  const tpl = bank[seedHash(`prompt|${s.date}`) % bank.length];
+  return tpl
+    .replace(/\{day\}/g, day)
+    .replace(/\{n\}/g, String(n))
+    .replace(/\{ns\}/g, n === 1 ? '' : 's')
+    .replace(/\{v\}/g, String(v))
+    .replace(/\{vs\}/g, v === 1 ? '' : 's');
+}

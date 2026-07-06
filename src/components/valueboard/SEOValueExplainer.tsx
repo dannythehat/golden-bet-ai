@@ -1,3 +1,4 @@
+import { BoardSection } from './BoardSection';
 /**
  * SEOValueExplainer — the long-form, honest explanation of how the Value Board
  * works, written for both readers and search engines. Sits beneath the
@@ -8,8 +9,7 @@ export function SEOValueExplainer() {
   const h2 = 'mt-8 font-display text-xl uppercase tracking-tight text-[#f8e7a1] md:text-2xl';
   const p = 'mt-3 text-[13.5px] leading-relaxed text-white/65';
   return (
-    <section className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#130321]">
-      <div className="h-[3px] bg-[linear-gradient(90deg,#5b1b8f_0%,#f5c542_48%,#5b1b8f_100%)]" />
+    <BoardSection tone="cyan">
       <article className="mx-auto max-w-3xl p-5 md:p-9">
         <h2 className="font-display text-2xl uppercase tracking-tight text-white md:text-3xl">
           How Our Football Value Board Works
@@ -113,7 +113,7 @@ export function SEOValueExplainer() {
           machine: we show our working, we show our losses, and we let the edges do the talking over a season.
         </p>
       </article>
-    </section>
+    </BoardSection>
   );
 }
 
