@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-05",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.32,
+      "status": "won",
+      "returns": 33.22,
+      "profit": 23.22,
+      "legs": [
+        {
+          "home": "Meizhou Hakka",
+          "away": "Changchun Yatai",
+          "region": "China",
+          "league": "China League One",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.73,
+          "ft": "1-3",
+          "result": "won"
+        },
+        {
+          "home": "Odd",
+          "away": "Haugesund",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.92,
+          "ft": "1-3",
+          "result": "won"
+        }
+      ],
+      "verdict": "Let’s run the rule over the day’s action. Winning day overall — the double paid even if the treble let us slip. Onwards. Odd v Haugesund served up 1-3 — that’s 4 goals for the greedy, over romped in. FC Seoul v Incheon United froze at 1-0 — nowhere near the goals, and that’s our loser. Never stop, never settle — tomorrow’s winners are already brewing."
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 5.66,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Guangxi Hengchen",
+          "away": "Dalian Huayi",
+          "region": "China",
+          "league": "China League One",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.51,
+          "ft": "3-1",
+          "result": "won"
+        },
+        {
+          "home": "FC Seoul",
+          "away": "Incheon United",
+          "region": "South Korea",
+          "league": "K League 1",
+          "selection": "Over 2.5 Goals",
+          "odds": 2.05,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Gimhae City",
+          "away": "Seoul E-Land",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.83,
+          "ft": "1-3",
+          "result": "won"
+        }
+      ],
+      "verdict": "Let’s run the rule over the day’s action. Winning day overall — the double paid even if the treble let us slip. Onwards. Odd v Haugesund served up 1-3 — that’s 4 goals for the greedy, over romped in. FC Seoul v Incheon United froze at 1-0 — nowhere near the goals, and that’s our loser. Never stop, never settle — tomorrow’s winners are already brewing."
+    },
+    {
       "date": "2026-07-04",
       "kind": "double",
       "stake": 10,
