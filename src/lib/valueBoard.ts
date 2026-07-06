@@ -105,6 +105,10 @@ export interface HubSummary {
 export interface DailyCardSelection {
   fixtureId: string;
   fixture: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeLogo: string | null;
+  awayLogo: string | null;
   league: string;
   kickoff: string;
   kickoffLabel: string;
@@ -115,7 +119,8 @@ export interface DailyCardSelection {
   valueGap: number;
   confidence: Confidence;
   oddsSnapshot: number | null;
-  gafferVerdict: string;
+  gafferVerdict: string;      // full read (breakdowns, long formats)
+  gafferShortVerdict: string; // first beat only — card-friendly
 }
 
 export interface GafferDailyCardData {
@@ -366,12 +371,28 @@ const legMarketKey = (leg: Leg): ValueMarketKey | null => {
   return null;
 };
 
+// First sentence or two of a long read — cards want a punch, not a column.
+function firstBeat(text: string, max = 180): string {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [text];
+  let out = '';
+  for (const s of sentences) {
+    if (out && (out + s).length > max) break;
+    out += s;
+    if (out.length >= max * 0.55) break;
+  }
+  return out.trim() || text.slice(0, max);
+}
+
 function legToSelection(leg: Leg): DailyCardSelection {
   const implied = leg.odds > 1 ? Math.round((100 / leg.odds) * 10) / 10 : 0;
   const date = todayUK();
+  const snap = SNAP.find((x) => x.id === leg.fixtureId);
   return {
     fixtureId: leg.fixtureId,
     fixture: `${leg.home.name} v ${leg.away.name}`,
+    homeTeam: leg.home.name, awayTeam: leg.away.name,
+    homeLogo: leg.home.logo ?? snap?.home.logo ?? null,
+    awayLogo: leg.away.logo ?? snap?.away.logo ?? null,
     league: [leg.region, leg.league].filter(Boolean).join(' · '),
     kickoff: ukWallToISO(date, leg.time), kickoffLabel: leg.time,
     marketKey: legMarketKey(leg), marketLabel: leg.selection,
@@ -380,6 +401,7 @@ function legToSelection(leg: Leg): DailyCardSelection {
     confidence: confidenceOf(leg.prob),
     oddsSnapshot: leg.odds,
     gafferVerdict: leg.placeholderReason,
+    gafferShortVerdict: firstBeat(leg.placeholderReason),
   };
 }
 

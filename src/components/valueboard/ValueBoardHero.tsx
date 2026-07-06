@@ -23,9 +23,17 @@ export function ValueBoardHero({ updatedLabel, quietDay }: { updatedLabel: strin
           draggable={false}
           className="pointer-events-none absolute right-0 top-0 z-[1] hidden h-full w-auto select-none object-cover object-left [mask-image:linear-gradient(90deg,transparent_0%,#000_30%)] md:block md:max-w-[46%]"
         />
+        {/* mobile: the Gaffer celebrating in the corner — never a wall of text alone */}
+        <img
+          src="/images/gaffer/opt/gaffer-celebrating.webp"
+          alt=""
+          loading="eager"
+          draggable={false}
+          className="pointer-events-none absolute -right-4 -top-1 z-[1] h-36 w-auto select-none opacity-90 md:hidden"
+        />
 
         <div className="relative z-[2] p-5 md:max-w-[58%] md:p-9">
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 pr-24 md:pr-0">
             {[
               { icon: Sparkles, text: 'Free Preview' },
               { icon: Lock, text: quietDay ? 'Quiet Day — No Forced Picks' : `Updated ${updatedLabel}` },
