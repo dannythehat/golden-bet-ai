@@ -80,12 +80,14 @@ jobs:
       - name: Deploy to Cloudflare Pages
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # wrangler v4 required: v3 hits /memberships, which this token can't read.
+          CLOUDFLARE_ACCOUNT_ID: 964cd8ee33ecf4e58a581f4806cd0cb5
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::error::CLOUDFLARE_API_TOKEN secret is not set — data was committed but the LIVE SITE WAS NOT UPDATED."
             exit 1
           fi
-          npx wrangler@3 pages deploy dist --project-name=golden-bet-ai --branch=main
+          npx wrangler@4 pages deploy dist --project-name=golden-bet-ai --branch=main
 
       # Morning report straight to the boss's pocket (skips if secrets unset).
       - name: Telegram report
