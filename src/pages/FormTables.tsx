@@ -465,8 +465,9 @@ export default function FormTables() {
 
   // TODAY only (UK date). Snapshot dates are real fixture dates.
   const today = useMemo(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), []);
-  // 3-day window: today, tomorrow, day after — today's games highlighted.
-  const windowDates = useMemo(() => [0, 1, 2].map((n) => addDays(today, n)), [today]);
+  // 7-day window: today plus the coming week — past days never shown, and a
+  // quiet midweek still surfaces the weekend card. Only today's games glow.
+  const windowDates = useMemo(() => [0, 1, 2, 3, 4, 5, 6].map((n) => addDays(today, n)), [today]);
 
   const rows = useMemo(() => {
     // Rank by the SELECTED line's form probability (over-% or, in unders, the
