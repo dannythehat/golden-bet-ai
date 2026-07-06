@@ -27,8 +27,8 @@ export function ValueBoardHero({ updatedLabel, quietDay }: { updatedLabel: strin
         <div className="relative z-[2] p-5 md:max-w-[58%] md:p-9">
           <div className="flex flex-wrap items-center gap-1.5">
             {[
-              { icon: Lock, text: 'Members Only' },
-              { icon: Sparkles, text: quietDay ? 'Quiet Day — No Forced Picks' : `Updated ${updatedLabel}` },
+              { icon: Sparkles, text: 'Free Preview' },
+              { icon: Lock, text: quietDay ? 'Quiet Day — No Forced Picks' : `Updated ${updatedLabel}` },
               { icon: ShieldCheck, text: 'No Forced Picks' },
               { icon: BarChart3, text: 'Data-led Football Insights' },
             ].map((b) => (

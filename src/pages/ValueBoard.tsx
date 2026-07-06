@@ -19,21 +19,10 @@ const SEO_DESC =
 function SubscriberLockPanel({ state, children }: { state: ReturnType<typeof useSubscriberState>; children: React.ReactNode }) {
   if (state === 'paid') return <>{children}</>;
 
-  if (state === 'preview') {
-    return (
-      <>
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f5c542]/35 bg-[#f5c542]/[0.07] px-4 py-3">
-          <span className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-wide text-[#f8e7a1]">
-            <Sparkles className="h-4 w-4" /> Launch preview — free to explore until 1st August, then members only
-          </span>
-          <Link to="/#join" className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide text-white/80 transition-colors hover:text-white">
-            Join the club · £8.99/month <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-        {children}
-      </>
-    );
-  }
+  // Preview (pre-launch): no paid gating, no membership CTAs — the whole board
+  // is simply open. The teaser/lock/expired states below stay built and ready
+  // to switch on come 1st August.
+  if (state === 'preview') return <>{children}</>;
 
   // free / expired: teaser — the real board, blurred, behind an honest lock.
   return (
