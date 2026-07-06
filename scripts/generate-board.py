@@ -23,7 +23,7 @@ if not KEY:
     raise SystemExit("FOOTYSTATS_KEY is not set — refusing to run without a key.")
 BASE = "https://api.football-data-api.com"
 OUT = "src/data/formTablesData.json"
-KEEP_PAST_DAYS = 8   # keep this many past days in the file for settlement / history
+KEEP_PAST_DAYS = 2   # yesterday (for settlement) + one spare; the UI never shows past days
 
 def get(path, tries=4):
     for i in range(tries):
@@ -122,7 +122,7 @@ for lg in ll:
         if s.get("id") is not None and nm: smap[int(s["id"])]={"name":nm,"country":co}
 
 today=datetime.datetime.utcnow().date()
-window=[(today+datetime.timedelta(days=n)).isoformat() for n in range(3)]
+window=[(today+datetime.timedelta(days=n)).isoformat() for n in range(7)]  # a week ahead — quiet midweeks still show the coming games
 active=set()
 for d in window:
     for m in get(f"/todays-matches?key={KEY}&date={d}").get("data",[]):
