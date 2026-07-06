@@ -8,7 +8,38 @@ import { MarketBoard } from '@/components/valueboard/MarketBoard';
 import { EmailAlertPreferences } from '@/components/valueboard/EmailAlertPreferences';
 import { SEOValueExplainer, ResponsibleFooterNote } from '@/components/valueboard/SEOValueExplainer';
 import { useValueHubSummary, useGafferDailyCard, useSubscriberState, useValueBoardRealtime } from '@/hooks/useValueBoard';
-import type { ValueMarketKey } from '@/lib/valueBoard';
+import { gafferBoardPrompt, type HubSummary, type ValueMarketKey } from '@/lib/valueBoard';
+
+/** The Gaffer sets the scene on the day's slate — quiet Monday or bumper Saturday. */
+function GafferSlatePrompt({ summary }: { summary: HubSummary }) {
+  return (
+    <div
+      className="relative rounded-[15px] p-px shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_18px_36px_-18px_rgba(0,0,0,0.95)]"
+      style={{ background: 'linear-gradient(160deg,rgba(232,121,249,0.8) 0%,rgba(139,92,246,0.6) 48%,rgba(245,197,66,0.7) 100%)' }}
+    >
+      <div className="relative flex items-start gap-3 overflow-hidden rounded-[14px] bg-gradient-to-b from-[#1c1338] to-[#110a26] p-4">
+        <span className="relative shrink-0">
+          <img
+            src="/images/the-gaffer.png"
+            alt="The Gaffer"
+            loading="eager"
+            draggable={false}
+            className="h-11 w-11 select-none rounded-full object-cover object-top ring-2 ring-violet-400/50 shadow-[0_6px_16px_-6px_rgba(0,0,0,0.9)]"
+          />
+          <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#110a26] bg-emerald-400 [animation:pulse_1.6s_ease-in-out_infinite]" />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-300">The Gaffer's word on today's card</div>
+          <p className="mt-1 text-[13px] italic leading-relaxed text-white/85">
+            <span aria-hidden className="mr-1 font-display text-base leading-none text-violet-300/70">“</span>
+            {gafferBoardPrompt(summary)}
+            <span aria-hidden className="ml-0.5 font-display text-base leading-none text-violet-300/70">”</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const SEO_TITLE = "The Gaffer's Value Board | Football Value Bets Today";
 const SEO_DESC =
@@ -94,6 +125,7 @@ export default function ValueBoard() {
         ) : (
           <>
             <ValueBoardHero updatedLabel={updatedLabel} quietDay={summary.data.quietDay} />
+            <GafferSlatePrompt summary={summary.data} />
             <SubscriberLockPanel state={subscriberState}>
               <div className="space-y-4 md:space-y-5">
                 <GafferDailyCardSection card={card.data} onEmailCard={() => goToAlerts(null)} />
