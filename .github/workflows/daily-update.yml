@@ -4,13 +4,15 @@ name: Daily Board + P&L
 #   1. SETTLE yesterday's locked bet against the real result → append to the P&L
 #      ledger (with the Gaffer's stored word on the day).
 #   2. REGENERATE today's value board from fresh fixtures / form / odds.
-# Both write committed JSON the site reads; the commit triggers the auto-deploy,
-# so the board never goes stale and the record settles itself.
+#   3. BUILD + DEPLOY to Cloudflare Pages — the project is a direct-upload
+#      project (no git integration), so committing alone does NOT update the
+#      live site. The deploy step here is what keeps thefootyoracle.com fresh.
 
 on:
   schedule:
-    # 05:30 UTC — yesterday's fixtures are all final, today's are published.
-    - cron: '30 5 * * *'
+    # 03:10 UTC — yesterday's fixtures are final everywhere, and the board is
+    # fresh before Europe wakes up (06:10 in Sofia, 04:10 in London).
+    - cron: '10 3 * * *'
   workflow_dispatch:
     inputs:
       settle_dates:
@@ -70,3 +72,33 @@ jobs:
             git commit -m "🤖 Daily board + P&L update [$(date -u +'%Y-%m-%d %H:%M UTC')]"
             git push
           fi
+
+      # The live site is a direct-upload Pages project — deploy or it stays stale.
+      - name: Build the site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN secret is not set — data was committed but the LIVE SITE WAS NOT UPDATED."
+            exit 1
+          fi
+          npx wrangler@3 pages deploy dist --project-name=golden-bet-ai --branch=main
+
+      # Morning report straight to the boss's pocket (skips if secrets unset).
+      - name: Telegram report
+        if: always()
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STATUS: ${{ job.status }}
+        run: |
+          if [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ]; then exit 0; fi
+          if [ "$STATUS" = "success" ]; then
+            MSG="✅ Morning update done — yesterday settled, today's board live on thefootyoracle.com"
+          else
+            MSG="🚨 MORNING UPDATE FAILED — the site may be showing stale picks. Check GitHub Actions → Daily Board + P&L."
+          fi
+          curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" -d chat_id="${TG_CHAT}" -d text="$MSG" >/dev/null || true
