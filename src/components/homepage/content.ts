@@ -30,6 +30,7 @@ export const SOCIAL_LINKS = {
 export const NAV_LINKS = [
   { label: 'Predictions', href: '#daily-picks' },
   { label: 'Form Tables', href: '/form-tables' },
+  { label: 'Value Board', href: '/value-board' },
   { label: 'Fantasy League', href: '/fantasy-league' },
   { label: 'P&L', href: '/pnl' },
   { label: 'Articles', href: '#latest-articles' },

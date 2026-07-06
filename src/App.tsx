@@ -15,6 +15,7 @@ const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const MembersDashboard = lazy(() => import("./pages/MembersDashboard"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const FormTables = lazy(() => import("./pages/FormTables"));
+const ValueBoard = lazy(() => import("./pages/ValueBoard"));
 const FantasyLeague = lazy(() => import("./pages/FantasyLeague"));
 const Pnl = lazy(() => import("./pages/Pnl"));
 const FantasyWaitlist = lazy(() => import("./pages/FantasyWaitlist"));
@@ -67,6 +68,8 @@ const App = () => {
                 <Route path="/fantasy-league/transfers" element={<ComingSoon title="Transfers" eyebrow="Coming 1st August" description="The transfer market opens with the membership on 1st August. Join the fantasy waitlist to be first in." />} />
                 <Route path="/fantasy-league/results" element={<ComingSoon title="Gameweek Results" eyebrow="Coming 1st August" description="Gameweek results go live once the season kicks off on Sat 22nd August. Join the fantasy waitlist to be first in." />} />
                 <Route path="/form-tables" element={<FormTables />} />
+                <Route path="/value-board" element={<ValueBoard />} />
+                <Route path="/match-insights" element={<ValueBoard />} />
                 <Route path="/fixtures" element={<ComingSoon title="Today's Fixtures" eyebrow="In Build" />} />
                 <Route path="/tips" element={<ComingSoon title="Daily Tips" eyebrow="In Build" />} />
                 <Route path="/pnl" element={<Pnl />} />
