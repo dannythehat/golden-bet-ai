@@ -2,6 +2,38 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-06",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.65,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Brommapojkarna",
+          "away": "GAIS",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.88,
+          "ft": "1-1",
+          "result": "lost"
+        },
+        {
+          "home": "Keflavík",
+          "away": "Fram",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.94,
+          "ft": "1-1",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. Both slips down, hands up from me. I deal in edges, and edges mean sometimes the percentages take a day off — the long game is where we win, and the long game continues tomorrow. The leg that cost us was Brommapojkarna v GAIS at 1-1 — I read an open game and got a chess match, and I’ll hold my hands up: the goals simply never came. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
       "date": "2026-07-05",
       "kind": "double",
       "stake": 10,
