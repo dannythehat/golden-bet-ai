@@ -10,9 +10,17 @@ name: Daily Board + P&L
 
 on:
   schedule:
-    # 03:10 UTC — yesterday's fixtures are final everywhere, and the board is
-    # fresh before Europe wakes up (06:10 in Sofia, 04:10 in London).
-    - cron: '10 3 * * *'
+    # GitHub's scheduler is unreliable — it fires late or not at all, and a
+    # missed run means a stale site with NO failure alert (nothing ran, so
+    # nothing could scream). Defence: three slots across the early morning.
+    # The whole job is idempotent (settle replaces same-date entries, the
+    # board merge is stable, deploys overwrite), so extra runs are harmless.
+    #   02:45 UTC — first attempt (05:45 Sofia, 03:45 London)
+    #   03:35 UTC — backup if the first never fired
+    #   04:25 UTC — belt and braces
+    - cron: '45 2 * * *'
+    - cron: '35 3 * * *'
+    - cron: '25 4 * * *'
   workflow_dispatch:
     inputs:
       settle_dates:
@@ -62,15 +70,18 @@ jobs:
         run: python3 scripts/generate-board.py
 
       - name: Commit updates
+        id: commit
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add src/data/pnlLedger.json src/data/formTablesData.json
           if git diff --staged --quiet; then
-            echo "Nothing to commit."
+            echo "Nothing to commit — an earlier run already did today's work."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "🤖 Daily board + P&L update [$(date -u +'%Y-%m-%d %H:%M UTC')]"
             git push
+            echo "committed=true" >> "$GITHUB_OUTPUT"
           fi
 
       # The live site is a direct-upload Pages project — deploy or it stays stale.
@@ -90,15 +101,19 @@ jobs:
           npx wrangler@4 pages deploy dist --project-name=golden-bet-ai --branch=main
 
       # Morning report straight to the boss's pocket (skips if secrets unset).
+      # Success pings come only from the run that did the day's work — the
+      # backup cron slots stay silent unless something actually went wrong.
       - name: Telegram report
         if: always()
         env:
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
           STATUS: ${{ job.status }}
+          COMMITTED: ${{ steps.commit.outputs.committed }}
         run: |
           if [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ]; then exit 0; fi
           if [ "$STATUS" = "success" ]; then
+            if [ "$COMMITTED" != "true" ]; then exit 0; fi
             MSG="✅ Morning update done — yesterday settled, today's board live on thefootyoracle.com"
           else
             MSG="🚨 MORNING UPDATE FAILED — the site may be showing stale picks. Check GitHub Actions → Daily Board + P&L."
