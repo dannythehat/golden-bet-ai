@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 // /api/inplay (which proxies FootyStats server-side). corners/cards are null
 // when the feed hasn't recorded them yet — never a made-up number.
 export type InPlayState = {
+  /** FootyStats has real live numbers (false = placeholder 0-0, hide score). */
+  feed?: boolean;
   live: boolean;
   ended: boolean;
   goals: number;

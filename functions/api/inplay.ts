@@ -37,9 +37,15 @@ function shape(m: Json, nowSec: number) {
   const cornersRaw = num(m.totalCornerCount);
   const cardsA = num(m.team_a_cards_num);
   const cardsB = num(m.team_b_cards_num);
+  // Does FootyStats actually have a live feed for this game? Some leagues only
+  // get their numbers at full time — until then the API returns a placeholder
+  // 0-0 with no minute and -1 corners, which must never be shown as a score.
+  const minuteRaw = m.game_minute ?? m.minute;
+  const feed = complete || minuteRaw != null || cornersRaw >= 0 || homeGoals + awayGoals > 0;
   return {
     live,
     ended: complete,
+    feed,
     goals: homeGoals + awayGoals,
     homeGoals,
     awayGoals,

@@ -80,8 +80,9 @@ function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | 
     return { state: 'live', landed, text: `${clock} · ${score}` };
   }
   // Fallback score for leagues API-Football doesn't stream (China, K-League…):
-  // FootyStats carries the running goal count during the match, so show it.
-  if (ip?.live) {
+  // FootyStats carries the running goal count during the match, so show it —
+  // but ONLY when it has a real feed; a placeholder 0-0 is worse than no score.
+  if (ip?.live && ip.feed) {
     const landed = settleLeg(leg, ip) === 'won';
     return { state: 'live', landed, text: `LIVE · ${ip.homeGoals}–${ip.awayGoals}${cornerNote(leg, ip)}` };
   }
