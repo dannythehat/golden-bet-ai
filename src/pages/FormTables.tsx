@@ -312,7 +312,7 @@ function valueStatus(sel: ValueSel, ip: InPlayState | undefined, live: LiveScore
   }
   // FootyStats carries a running score + corner count mid-match for leagues
   // API-Football doesn't stream — show it rather than a bare 'In Play'.
-  if (ip?.live) {
+  if (ip?.live && ip.feed) {
     const landed = settleMarket(sel.catKey, sel.line, sel.under, ip) === 'won';
     return { state: 'live', landed, text: `LIVE · ${ip.homeGoals}–${ip.awayGoals}${metricNote(sel.catKey, ip)}` };
   }
