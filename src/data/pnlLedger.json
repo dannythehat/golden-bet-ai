@@ -2,6 +2,28 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-09",
+      "kind": "single",
+      "stake": 10,
+      "combinedOdds": 1.47,
+      "status": "won",
+      "returns": 14.7,
+      "profit": 4.7,
+      "legs": [
+        {
+          "home": "Maardu Linnameeskond",
+          "away": "Tallinna FC Flora U21",
+          "region": "Estonia",
+          "league": "Esiliiga",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.47,
+          "ft": "3-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Results are in, and you know the house rule by now: I read them out whether they flatter me or not. And it’s a green one — the slip did exactly what the numbers said it would, which is the most satisfying sentence in this whole trade. I told you the Maardu Linnameeskond v Tallinna FC Flora U21 defences were held together with tape, and 5 goals later the scoreboard read 3-2 — that’s the form table talking, not luck. On we go — the season is a marathon of small edges, and yesterday, whatever it was, is now just one more data point behind us."
+    },
+    {
       "date": "2026-07-06",
       "kind": "double",
       "stake": 10,
