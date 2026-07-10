@@ -126,6 +126,26 @@ export const MARKET_FLAVOUR: Record<string, string[]> = {
   ],
 };
 
+/* ── Evidence — the actual numbers behind a pick, spoken with team names ──
+ * This is what separates a read from a slogan: the Gaffer quotes the real
+ * hit counts and averages from the form tables, same as he quotes real
+ * scorelines after the games. COMBO entries need avgs + hit rate; HITS
+ * entries need only the hit rate (BTTS, or when averages are missing). */
+export const EVIDENCE_COMBO = [
+  'Let’s talk actual numbers: {team}’s recent games have been running at {homeAvg} {unit} apiece and {opp}’s at {awayAvg}, and this exact line has landed in {hits} of their combined last {total} matches — that’s not a hunch, that’s a habit.',
+  'The tale of the tape reads {homeAvg} {unit} a game around {team} lately and {awayAvg} around {opp} — and sure enough, {hits} of their combined last {total} have cleared this line.',
+  'Between them, {team} and {opp} have cleared this line in {hits} of their last {total}, and the shape behind it is solid — {homeAvg} {unit} per game in one camp, {awayAvg} in the other.',
+  'I counted it twice: {hits} of the last {total} matches involving {team} and {opp} have gone over this line, off the back of {homeAvg} and {awayAvg} {unit} a game respectively — the pattern is doing all the work here.',
+  '{team} have been living at {homeAvg} {unit} a game, {opp} at {awayAvg}, and this line has been beaten in {hits} of their combined last {total} — when both roads point the same way, I stop arguing with the map.',
+] as const;
+
+export const EVIDENCE_HITS = [
+  'The receipts are simple: across {team} and {opp}’s combined last {total} matches, this exact bet has landed {hits} times — I didn’t have to dig for it, it was lying in plain sight.',
+  'Check the recent ledger — {hits} of the last {total} games involving {team} and {opp} have seen this land, and that kind of consistency is exactly what the price is failing to respect.',
+  '{hits} out of the combined last {total} for {team} and {opp} — that’s how often this has been landing lately, and form like that tends to keep its habits longer than the odds admit.',
+  'Strip away the opinions and count: {team} and {opp}’s last {total} between them, {hits} times this came in. I back counts, not vibes.',
+] as const;
+
 /* ── Verdicts — STRONG tier (his bankers) ────────────────────────────────── */
 export const VERDICT_STRONG = [
   'This is the strongest call on the card by a distance, and I don’t say that lightly — I’ve turned down prettier prices this morning because the football didn’t back them up. This one has both.',

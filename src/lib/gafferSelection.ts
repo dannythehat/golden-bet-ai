@@ -8,9 +8,36 @@
  */
 import raw from '@/data/formTablesData.json';
 import type { FormFixtureRow, FormValueCell } from '@/types/footy';
-import { gafferReason } from '@/lib/gafferVoice';
+import { gafferReason, type PickEvidence } from '@/lib/gafferVoice';
 
 const DATA = raw as unknown as { fixtures: FormFixtureRow[] };
+
+/* ── The concrete facts behind a pick — mined from both teams' recent games
+ *    so the Gaffer's pre-match read quotes real numbers, like his results
+ *    write-up does. ─────────────────────────────────────────────────────── */
+type FG = { gf?: number; ga?: number; corners?: number; cards?: number; btts?: boolean };
+function evidenceFor(f: FormFixtureRow, market: 'Goals' | 'Corners' | 'BTTS' | 'Cards', selection: string): PickEvidence | undefined {
+  const line = Number(/(\d+(?:\.\d+)?)/.exec(selection)?.[1] ?? 0);
+  const homeGames = ((f as unknown as { home_form?: FG[] }).home_form ?? []).slice(0, 8);
+  const awayGames = ((f as unknown as { away_form?: FG[] }).away_form ?? []).slice(0, 8);
+  const metric = (g: FG) =>
+    market === 'Goals' ? (g.gf ?? 0) + (g.ga ?? 0)
+    : market === 'Corners' ? g.corners ?? 0
+    : market === 'Cards' ? g.cards ?? 0
+    : g.btts ? 1 : 0;
+  const hit = (g: FG) => (market === 'BTTS' ? !!g.btts : metric(g) > line);
+  const both = [...homeGames, ...awayGames];
+  if (!both.length) return undefined;
+  const avg = (gs: FG[]) => (gs.length ? Math.round((gs.reduce((p, g) => p + metric(g), 0) / gs.length) * 10) / 10 : null);
+  const unit = market === 'Goals' ? 'goals' : market === 'Corners' ? 'corners' : market === 'Cards' ? 'cards' : undefined;
+  return {
+    hits: both.filter(hit).length,
+    total: both.length,
+    homeAvg: market === 'BTTS' ? null : avg(homeGames),
+    awayAvg: market === 'BTTS' ? null : avg(awayGames),
+    unit,
+  };
+}
 export const STAKE = 10;
 
 /** Today's UK date (YYYY-MM-DD) — the Gaffer only picks from today's card. */
@@ -75,6 +102,7 @@ export function getGafferPicks(): Leg[] {
           team: base.home.name, opp: base.away.name, market: base.market,
           selection: base.selection, odds: base.odds, pct: base.prob,
           edge: base.edge, tier: base.flag,
+          evidence: evidenceFor(f, base.market, base.selection),
         },
         base.fixtureId,
       ),
@@ -105,7 +133,7 @@ export function getValueFixtures(): Leg[] {
     fixtureId: f.id, home: f.home, away: f.away, region: f.region, league: f.league, time: f.time,
     market, selection, odds: cell.odds!, prob: cell.prob, edge: cell.edge, flag: cell.flag ?? 'value',
     placeholderReason: gafferReason(
-      { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value' },
+      { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value', evidence: evidenceFor(f, market, selection) },
       f.id,
     ),
   });
@@ -137,7 +165,7 @@ export function getValueCandidates(): Leg[] {
       time: localKO(koMs, f.time), kickoffMs: koMs,
       market, selection, odds: cell.odds!, prob: cell.prob, edge: cell.edge, flag: cell.flag ?? 'value',
       placeholderReason: gafferReason(
-        { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value' },
+        { team: f.home.name, opp: f.away.name, market, selection, odds: cell.odds!, pct: cell.prob, edge: cell.edge, tier: cell.flag ?? 'value', evidence: evidenceFor(f, market, selection) },
         f.id,
       ),
     };

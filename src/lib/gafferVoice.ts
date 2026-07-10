@@ -13,6 +13,7 @@
 import {
   OPENERS, MARKET_FLAVOUR, VERDICT_STRONG, VERDICT_VALUE, EDGE_PHRASES,
   HEDGES, SIGN_OFFS, ASIDES, NO_BET, DONKEY_ROASTS, nickname,
+  EVIDENCE_COMBO, EVIDENCE_HITS,
 } from '../data/gaffer/phraseLibrary';
 import {
   DAY_OPENERS, DAY_PERFECT, DAY_WIN, DAY_MIXED, DAY_ALL_LOST,
@@ -20,6 +21,15 @@ import {
 } from '../data/gaffer/dayVerdict';
 
 export type Market = 'Corners' | 'Goals' | 'Cards' | 'BTTS';
+
+/** The concrete facts behind a pick — same fuel the results write-up runs on. */
+export interface PickEvidence {
+  hits: number;           // times the exact line landed across both teams' recent games
+  total: number;          // games counted
+  homeAvg?: number | null; // per-game metric average in the home side's recent games
+  awayAvg?: number | null;
+  unit?: string;           // 'goals' | 'corners' | 'cards'
+}
 
 export interface PickSignals {
   team: string;
@@ -32,6 +42,7 @@ export interface PickSignals {
   edge: number;
   streak?: number;       // current run in the market (optional)
   tier: 'strong' | 'value';
+  evidence?: PickEvidence; // when present, the read quotes the real numbers
 }
 
 /* ── Deterministic-but-varied RNG (so a given seed is reproducible) ───────── */
@@ -111,18 +122,26 @@ export function gafferPickLine(s: PickSignals, seed = '', flavourful = true): st
  */
 export function gafferReason(s: PickSignals, seed = ''): string {
   const rng = mulberry32(seedOf(`${s.team}|${s.opp}|${s.market}|reason|${seed}`));
-  const vars = varsFor(s, rng);
-  // Read → value → PUNCHLINE. He lands on a bit of wit or a confident verdict —
-  // never a limp "bet responsibly" hedge (that belongs on the small print, not
-  // in his mouth). Keeps every pick fun, funny and sharp.
+  const vars: Record<string, string | number> = varsFor(s, rng);
+  // Read → EVIDENCE (the real numbers, with team names — what makes it a read
+  // about THIS game and not any game) → value → PUNCHLINE. He lands on wit or
+  // a confident verdict, never a limp hedge.
   const closer = rng() > 0.38
     ? pick(ASIDES, 'aside', rng)
     : pick(verdictBankFor(s), `verdict:${s.tier}`, rng);
-  const parts = [
-    pick(MARKET_FLAVOUR[s.market] ?? MARKET_FLAVOUR.Goals, `flavour:${s.market}`, rng),
-    pick(edgeBankFor(s), 'edge', rng),
-    closer,
-  ];
+  const parts = [pick(MARKET_FLAVOUR[s.market] ?? MARKET_FLAVOUR.Goals, `flavour:${s.market}`, rng)];
+  const ev = s.evidence;
+  if (ev && ev.total > 0) {
+    vars.hits = ev.hits; vars.total = ev.total;
+    const combo = ev.homeAvg != null && ev.awayAvg != null && ev.unit;
+    if (combo) {
+      vars.homeAvg = ev.homeAvg!.toFixed(1); vars.awayAvg = ev.awayAvg!.toFixed(1); vars.unit = ev.unit!;
+      parts.push(pick(EVIDENCE_COMBO as unknown as string[], 'evidence:combo', rng));
+    } else {
+      parts.push(pick(EVIDENCE_HITS as unknown as string[], 'evidence:hits', rng));
+    }
+  }
+  parts.push(pick(edgeBankFor(s), 'edge', rng), closer);
   return parts.map((p) => fill(p, vars)).join(' ');
 }
 
