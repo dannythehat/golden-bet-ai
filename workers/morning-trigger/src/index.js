@@ -9,6 +9,10 @@
 const DISPATCH_URL =
   'https://api.github.com/repos/dannythehat/golden-bet-ai/actions/workflows/daily-update.yml/dispatches';
 
+// Secrets piped in from files can carry a trailing newline — always compare
+// and transmit them trimmed.
+const clean = (v) => (v ?? '').trim();
+
 export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(kick(env));
@@ -16,7 +20,7 @@ export default {
   // Manual trigger for testing: GET /?key=<ADMIN_KEY>
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.searchParams.get('key') !== env.ADMIN_KEY) return new Response('not found', { status: 404 });
+    if (!clean(env.ADMIN_KEY) || url.searchParams.get('key') !== clean(env.ADMIN_KEY)) return new Response('not found', { status: 404 });
     const result = await kick(env);
     return new Response(JSON.stringify(result), { headers: { 'content-type': 'application/json' } });
   },
@@ -27,7 +31,7 @@ async function kick(env) {
     const res = await fetch(DISPATCH_URL, {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        authorization: `Bearer ${clean(env.GITHUB_TOKEN)}`,
         accept: 'application/vnd.github+json',
         'user-agent': 'footy-morning-trigger',
         'x-github-api-version': '2022-11-28',
@@ -47,10 +51,10 @@ async function kick(env) {
 async function alarm(env, text) {
   if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return;
   try {
-    await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot${clean(env.TELEGRAM_BOT_TOKEN)}/sendMessage`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text }),
+      body: JSON.stringify({ chat_id: clean(env.TELEGRAM_CHAT_ID), text }),
     });
   } catch {
     /* the alarm about the alarm failing goes nowhere — nothing else to do */
