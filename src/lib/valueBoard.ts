@@ -464,6 +464,12 @@ export function getFixtureValueBreakdown(fixtureId: string, marketKey: ValueMark
     selection: m.label, mark: m.line ?? undefined,
     odds: row.oddsSnapshot ?? 0, pct: row.modelProbability, edge: row.valueGap,
     tier: row.confidence === 'high' ? 'strong' : 'value',
+    evidence: hits ? {
+      hits: hits.hits, total: hits.total,
+      homeAvg: m.family === 'btts' ? null : homeAvg,
+      awayAvg: m.family === 'btts' ? null : awayAvg,
+      unit: m.family === 'btts' ? undefined : m.family,
+    } : undefined,
   };
 
   const { gafferNote: _drop, ...rest } = row;
