@@ -1,0 +1,11 @@
+# The punctual alarm clock. GitHub's own scheduler fires hours late or not at
+# all; Cloudflare cron fires on the minute. This worker's only job is to kick
+# the Daily Board + P&L workflow every morning.
+name = "footy-morning-trigger"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+[triggers]
+# 03:10 UTC — 06:10 in Sofia, 04:10 in London. One slot is enough here:
+# unlike GitHub, Cloudflare cron actually fires when told.
+crons = ["10 3 * * *"]
