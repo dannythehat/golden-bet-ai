@@ -174,14 +174,17 @@ async function main() {
   let changed = false;
   for (const date of dates) {
     const { double, treble } = lockedBetFor(fixtures, date);
-    if (double.length < 2) { console.log(`${date}: no bet (only ${double.length} value pick(s)) — skipped.`); continue; }
+    if (double.length === 0) { console.log(`${date}: no picks on the card — nothing to settle.`); continue; }
 
     const needIds = [...double, ...treble].map((l) => String(l.fixtureId));
     const results = await fetchResults(needIds);
 
     const entries = [];
-    const dbl = buildBet('double', double, results);
-    if (dbl.pending) { console.log(`${date}: double not final yet — skipped (will settle once complete).`); continue; }
+    // 1 qualifying pick = the day's bet is a £10 SINGLE (the board shows it as
+    // "Gaffer's Top Pick"). It settles like any other bet — never skipped.
+    const kind = double.length === 1 ? 'single' : 'double';
+    const dbl = buildBet(kind, double, results);
+    if (dbl.pending) { console.log(`${date}: ${kind} not final yet — skipped (will settle once complete).`); continue; }
     entries.push({ date, ...dbl });
 
     if (treble.length === 3) {
