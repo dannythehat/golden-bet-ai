@@ -11,6 +11,7 @@ import { useInPlay, type InPlayState } from '@/components/homepage/useInPlay';
 import { useLiveScores, matchLive, type LiveScore } from '@/components/homepage/useLiveScores';
 import { supabase } from '@/integrations/supabase/client';
 import raw from '@/data/formTablesData.json';
+import rawVoids from '@/data/voids.json';
 import type { FormFixtureRow as Fixture, FormValueCell, FormValueFlag, FormGame } from '@/types/footy';
 
 type ValueCell = FormValueCell | null;
@@ -299,6 +300,7 @@ function metricNote(catKey: CatKey, ip: InPlayState): string {
 
 function valueStatus(sel: ValueSel, ip: InPlayState | undefined, live: LiveScore | undefined, today: string): VStatus | null {
   // Finished — settle Won/Lost from FootyStats final numbers (+ corner/card count).
+  if ((rawVoids as Record<string, unknown>)[sel.f.id] || ip?.voided) return { state: 'ft', text: 'Abandoned · void' };
   if (ip?.ended) return { state: 'ft', result: settleMarket(sel.catKey, sel.line, sel.under, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}${metricNote(sel.catKey, ip)}` };
   // Real live score from API-Football.
   if (live) {

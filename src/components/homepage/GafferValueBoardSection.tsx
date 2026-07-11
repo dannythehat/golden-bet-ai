@@ -8,6 +8,7 @@ import { useLiveDailyPicks } from './useLiveDailyPicks';
 import { useInPlay, type InPlayState } from './useInPlay';
 import { useLiveScores, matchLive, type LiveScore } from './useLiveScores';
 import rawSnapshot from '@/data/formTablesData.json';
+import rawVoids from '@/data/voids.json';
 import type { FormFixtureRow } from '@/types/footy';
 
 // ── in-play (time-based v1; live counts land once the FootyStats poller ships) ──
@@ -65,7 +66,11 @@ function settleLeg(leg: Leg, ip: InPlayState): 'won' | 'lost' | null {
 const cornerNote = (leg: Leg, ip: InPlayState): string =>
   leg.market === 'Corners' && ip.corners != null ? ` · ${ip.corners} crn` : '';
 
+const VOIDS = rawVoids as Record<string, { date: string; reason: string }>;
+
 function statusInfo(leg: Leg, ip?: InPlayState, live?: LiveScore): StatusInfo | null {
+  // Abandoned — the leg is void (bookie convention), never won or lost.
+  if (VOIDS[leg.fixtureId] || ip?.voided) return { state: 'ft', text: 'Abandoned · leg void' };
   // Finished — FootyStats carries the final numbers → settle Won/Lost.
   if (ip?.ended) return { state: 'ft', result: settleLeg(leg, ip) ?? undefined, text: `FT ${ip.homeGoals}–${ip.awayGoals}${cornerNote(leg, ip)}` };
   // Live score from API-Football (real in-play, carries the minute).
