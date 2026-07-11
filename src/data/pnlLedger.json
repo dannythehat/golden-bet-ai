@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-10",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.11,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Cheonan City",
+          "away": "Gimhae City",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.83,
+          "ft": "0-1",
+          "result": "lost"
+        },
+        {
+          "home": "Harju Jalgpallikool",
+          "away": "Trans",
+          "region": "Estonia",
+          "league": "Meistriliiga",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.7,
+          "ft": "3-0",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. Our BTTS died in Cheonan City v Gimhae City, where Cheonan City forgot their shooting boots entirely — 0-1 at the whistle, one net untouched, slip down the drain. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.49,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Suwon",
+          "away": "Jeonnam Dragons",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.67,
+          "ft": "5-0",
+          "result": "lost"
+        },
+        {
+          "home": "Dundalk",
+          "away": "Drogheda United",
+          "region": "Republic of Ireland",
+          "league": "Premier Division",
+          "selection": "BTTS - Yes",
+          "odds": 1.62,
+          "ft": "1-2",
+          "result": "won"
+        },
+        {
+          "home": "Waterford",
+          "away": "St Patrick's Athl.",
+          "region": "Republic of Ireland",
+          "league": "Premier Division",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.66,
+          "ft": "1-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. Our BTTS died in Cheonan City v Gimhae City, where Cheonan City forgot their shooting boots entirely — 0-1 at the whistle, one net untouched, slip down the drain. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
       "date": "2026-07-09",
       "kind": "single",
       "stake": 10,
