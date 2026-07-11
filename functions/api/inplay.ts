@@ -30,6 +30,7 @@ function shape(m: Json, nowSec: number) {
   const ko = num(m.date_unix);
   const status = String(m.status ?? "");
   const complete = status === "complete";
+  const voided = ["suspended", "canceled", "cancelled", "abandoned", "postponed"].includes(status);
   const started = ko > 0 && nowSec >= ko;
   const live = started && !complete && nowSec < ko + 160 * 60;
   const homeGoals = num(m.homeGoalCount);
@@ -43,8 +44,9 @@ function shape(m: Json, nowSec: number) {
   const minuteRaw = m.game_minute ?? m.minute;
   const feed = complete || minuteRaw != null || cornersRaw >= 0 || homeGoals + awayGoals > 0;
   return {
-    live,
+    live: live && !voided,
     ended: complete,
+    voided,
     feed,
     goals: homeGoals + awayGoals,
     homeGoals,

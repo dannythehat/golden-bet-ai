@@ -31,6 +31,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const FORM_PATH = join(ROOT, 'src/data/formTablesData.json');
 const LEDGER_PATH = join(ROOT, 'src/data/pnlLedger.json');
+const VOIDS_PATH = join(ROOT, 'src/data/voids.json');
+
+// Abandoned/void handling — bookmaker convention: a void leg's odds become
+// 1.00 and the bet settles on the remaining legs; all legs void = stake back.
+// Sources: FootyStats status (when it's honest) + the voids.json override for
+// days when the feed marks an abandoned game 'complete' with a partial score.
+const VOID_STATUSES = new Set(['suspended', 'canceled', 'cancelled', 'abandoned', 'postponed']);
+let VOIDS = {};
+try { VOIDS = JSON.parse(readFileSync(VOIDS_PATH, 'utf8')); } catch { /* no overrides */ }
 const STAKE = 10;
 const round2 = (n) => Math.round(n * 100) / 100;
 
@@ -82,19 +91,25 @@ function settleLeg(leg, m) {
 function buildBet(kind, legs, resultsById) {
   const settled = legs.map((l) => {
     const m = resultsById.get(String(l.fixtureId));
+    // Void leg: odds collapse to 1.00, result recorded as 'void'.
+    if (VOIDS[String(l.fixtureId)] || (m && VOID_STATUSES.has(String(m.status)))) {
+      return { ...l, ft: 'ABD', result: 'void', odds: 1 };
+    }
     if (!m || m.status !== 'complete') return null; // not finished → can't settle yet
     return settleLeg(l, m);
   });
   if (settled.some((s) => s === null)) return { pending: true };
   // Multiply the exact odds (a bookmaker settles on the real product, not the
   // rounded-for-display figure), then round the money once at the end.
-  const rawOdds = settled.reduce((p, l) => p * l.odds, 1);
+  const rawOdds = settled.reduce((p, l) => p * l.odds, 1); // void legs are 1.00
   const combinedOdds = round2(rawOdds);
-  const allWon = settled.every((l) => l.result === 'won');
-  const returns = allWon ? round2(STAKE * rawOdds) : 0;
+  const anyLost = settled.some((l) => l.result === 'lost');
+  const allVoid = settled.every((l) => l.result === 'void');
+  const status = anyLost ? 'lost' : allVoid ? 'void' : 'won';
+  const returns = status === 'lost' ? 0 : round2(STAKE * rawOdds); // all-void → stake back
   return {
     kind, stake: STAKE, combinedOdds,
-    status: allWon ? 'won' : 'lost',
+    status,
     returns, profit: round2(returns - STAKE),
     legs: settled.map(({ fixtureId, prob, edge, market, ...keep }) => keep),
   };
