@@ -1,11 +1,28 @@
 import { Star, Layers, Bell, Clock, Trophy, ShieldAlert } from 'lucide-react';
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { BoardSection } from './BoardSection';
-import type { GafferDailyCardData, DailyCardSelection } from '@/lib/valueBoard';
+import { settleMarketKey, VOIDS, type GafferDailyCardData, type DailyCardSelection, type InPlayLite } from '@/lib/valueBoard';
 
 /** One selection — the homepage leg-card language: crests, gold odds,
  *  confidence bar, emerald edge chip, one short line from the Gaffer. */
-function SelectionCard({ s }: { s: DailyCardSelection }) {
+function SelectionCard({ s, ip }: { s: DailyCardSelection; ip?: InPlayLite }) {
+  // Real match state beats the clock: FT with result, live score, or KO time.
+  const voided = !!VOIDS[s.fixtureId] || !!ip?.voided;
+  const result = ip?.ended && s.marketKey ? settleMarketKey(s.marketKey, ip) : null;
+  const isCorners = s.marketKey?.includes('corners');
+  const crn = isCorners && ip?.corners != null ? ` · ${ip.corners} crn` : '';
+  const statusChip = voided ? (
+    <span className="inline-flex shrink-0 items-center rounded-full border border-white/25 bg-white/[0.08] px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-white/70">Abandoned · void</span>
+  ) : ip?.ended ? (
+    <span className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wide [font-variant-numeric:tabular-nums] ${result === 'won' ? 'border-emerald-400/55 bg-emerald-500/15 text-emerald-200' : result === 'lost' ? 'border-rose-400/55 bg-rose-500/15 text-rose-200' : 'border-white/20 bg-white/[0.06] text-white/70'}`}>
+      FT {ip.homeGoals}–{ip.awayGoals}{crn}{result === 'won' ? ' · Won ✓' : result === 'lost' ? ' · Lost' : ''}
+    </span>
+  ) : ip?.live && ip.feed ? (
+    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-400/55 bg-emerald-500/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-emerald-200 [font-variant-numeric:tabular-nums]">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 [animation:pulse_1.4s_ease-in-out_infinite]" />
+      LIVE · {ip.homeGoals}–{ip.awayGoals}{crn}
+    </span>
+  ) : null;
   return (
     <div
       className="relative rounded-[15px] p-px shadow-[0_2px_4px_-1px_rgba(0,0,0,0.7),0_24px_44px_-20px_rgba(0,0,0,0.95)]"
@@ -33,9 +50,11 @@ function SelectionCard({ s }: { s: DailyCardSelection }) {
             <Trophy className="h-2.5 w-2.5 shrink-0 text-[#f5c542]/70" />
             <span className="truncate text-[9px] font-black uppercase tracking-[0.16em] text-[#f8e7a1]/70">{s.league}</span>
           </span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-[12px] font-black text-[#f8e7a1] [font-variant-numeric:tabular-nums]">
-            <Clock className="h-3 w-3 text-[#f5c542]/80" /> {s.kickoffLabel} <span className="text-[8px] font-black uppercase tracking-[0.18em] text-white/35">KO</span>
-          </span>
+          {statusChip ?? (
+            <span className="inline-flex shrink-0 items-center gap-1 text-[12px] font-black text-[#f8e7a1] [font-variant-numeric:tabular-nums]">
+              <Clock className="h-3 w-3 text-[#f5c542]/80" /> {s.kickoffLabel} <span className="text-[8px] font-black uppercase tracking-[0.18em] text-white/35">KO</span>
+            </span>
+          )}
         </div>
 
         {/* the pick */}
@@ -80,7 +99,7 @@ function SelectionCard({ s }: { s: DailyCardSelection }) {
 
 /** The Gaffer's Daily Card — surfaces the tipping engine's locked double and
  *  treble (this page never re-picks). Honest quiet-day state when thin. */
-export function GafferDailyCardSection({ card, onEmailCard }: { card: GafferDailyCardData; onEmailCard: () => void }) {
+export function GafferDailyCardSection({ card, inplay, onEmailCard }: { card: GafferDailyCardData; inplay?: Record<string, InPlayLite>; onEmailCard: () => void }) {
   return (
     <BoardSection id="gaffer-daily-card" tone="gold">
       {/* the Gaffer keeps an eye on his card */}
@@ -111,7 +130,7 @@ export function GafferDailyCardSection({ card, onEmailCard }: { card: GafferDail
                 <Star className="h-3.5 w-3.5" /> Daily Double
               </div>
               <div className="space-y-3">
-                {card.double.selections.map((s) => <SelectionCard key={s.fixtureId} s={s} />)}
+                {card.double.selections.map((s) => <SelectionCard key={s.fixtureId} s={s} ip={inplay?.[s.fixtureId]} />)}
               </div>
             </div>
             <div>
@@ -120,7 +139,7 @@ export function GafferDailyCardSection({ card, onEmailCard }: { card: GafferDail
               </div>
               {card.treble.available ? (
                 <div className="space-y-3">
-                  {card.treble.selections.map((s) => <SelectionCard key={s.fixtureId} s={s} />)}
+                  {card.treble.selections.map((s) => <SelectionCard key={s.fixtureId} s={s} ip={inplay?.[s.fixtureId]} />)}
                 </div>
               ) : (
                 <div className="rounded-[13px] border border-white/10 bg-black/25 p-5 text-sm text-white/55">

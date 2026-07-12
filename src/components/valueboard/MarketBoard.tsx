@@ -3,8 +3,8 @@ import { X, BellPlus, Swords, TrendingUp, Activity, Search } from 'lucide-react'
 import { TeamAvatar } from '@/components/TeamAvatar';
 import { BoardSection } from './BoardSection';
 import {
-  FAMILIES, VALUE_MARKETS, type HubSummary, type MarketSummary,
-  type ValueMarketFamily, type ValueMarketKey, type Confidence, type FixtureStatus,
+  FAMILIES, VALUE_MARKETS, settleMarketKey, VOIDS, type HubSummary, type MarketSummary,
+  type ValueMarketFamily, type ValueMarketKey, type Confidence, type FixtureStatus, type InPlayLite,
 } from '@/lib/valueBoard';
 import { useValueMarketFixtures, useFixtureValueBreakdown, useValueBoardLeagues } from '@/hooks/useValueBoard';
 
@@ -74,7 +74,7 @@ function ValueMarketCard({ s, active, onOpen }: { s: MarketSummary; active: bool
 }
 
 /* ── Ranked fixtures for the selected market ────────────────────────────── */
-function MarketFixtureTable({ marketKey, onRowClick }: { marketKey: ValueMarketKey; onRowClick: (fixtureId: string) => void }) {
+function MarketFixtureTable({ marketKey, onRowClick, inplay }: { marketKey: ValueMarketKey; onRowClick: (fixtureId: string) => void; inplay?: Record<string, InPlayLite> }) {
   const [league, setLeague] = useState('all');
   const leagues = useValueBoardLeagues();
   const res = useValueMarketFixtures({ marketKey, league });
@@ -114,7 +114,17 @@ function MarketFixtureTable({ marketKey, onRowClick }: { marketKey: ValueMarketK
                 <div className="truncate text-[13.5px] font-semibold text-white">{r.fixture}</div>
                 <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[10.5px] text-white/45 [font-variant-numeric:tabular-nums]">
                   <span className="truncate">{r.league}</span>
-                  <span className={statusTone[r.status]}>{r.status === 'scheduled' ? `${r.kickoffLabel} KO` : r.status.toUpperCase()}</span>
+                  {(() => {
+                    const ip = inplay?.[r.id];
+                    if (VOIDS[r.id] || ip?.voided) return <span className="text-white/50">ABANDONED · VOID</span>;
+                    if (ip?.ended) {
+                      const res = settleMarketKey(r.marketKey, ip);
+                      return <span className={res === 'won' ? 'text-emerald-300' : res === 'lost' ? 'text-rose-300' : 'text-white/50'}>FT {ip.homeGoals}–{ip.awayGoals}{res === 'won' ? ' ✓' : res === 'lost' ? ' ✗' : ''}</span>;
+                    }
+                    if (ip?.live && ip.feed) return <span className="text-emerald-300">LIVE {ip.homeGoals}–{ip.awayGoals}</span>;
+                    if (r.status === 'scheduled') return <span className="text-white/50">{r.kickoffLabel} KO</span>;
+                    return <span className="text-white/40">result soon…</span>;
+                  })()}
                   <span>Form <b className="text-white/80">{Math.round(r.formScore)}%</b> · price says <b className="text-white/80">{Math.round(r.impliedProbability)}%</b></span>
                 </div>
               </div>
@@ -240,7 +250,7 @@ function FixtureBreakdownPanel({ fixtureId, marketKey, onClose, onAddAlert }: {
 }
 
 /* ── The board: tabs → value cards → quiet chips → table → breakdown ────── */
-export function MarketBoard({ summary, onAddAlert }: { summary: HubSummary; onAddAlert: (k: ValueMarketKey) => void }) {
+export function MarketBoard({ summary, inplay, onAddAlert }: { summary: HubSummary; inplay?: Record<string, InPlayLite>; onAddAlert: (k: ValueMarketKey) => void }) {
   const [family, setFamily] = useState<ValueMarketFamily>('goals');
   const [marketKey, setMarketKey] = useState<ValueMarketKey | null>(null);
   const [breakdown, setBreakdown] = useState<{ fixtureId: string; marketKey: ValueMarketKey } | null>(null);
@@ -283,7 +293,7 @@ export function MarketBoard({ summary, onAddAlert }: { summary: HubSummary; onAd
           </div>
         )}
 
-        {activeKey && <MarketFixtureTable marketKey={activeKey} onRowClick={(fixtureId) => setBreakdown({ fixtureId, marketKey: activeKey })} />}
+        {activeKey && <MarketFixtureTable marketKey={activeKey} inplay={inplay} onRowClick={(fixtureId) => setBreakdown({ fixtureId, marketKey: activeKey })} />}
       </div>
 
       {breakdown && (

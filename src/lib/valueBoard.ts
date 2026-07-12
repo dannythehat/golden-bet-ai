@@ -15,6 +15,7 @@
  * quiet days report as quiet, and nothing here ever invents a fixture.
  */
 import rawSnapshot from '@/data/formTablesData.json';
+import rawVoids from '@/data/voids.json';
 import type { FormFixtureRow } from '@/types/footy';
 import { getValueCandidates, type Leg } from '@/lib/gafferSelection';
 import { gafferReason, type PickSignals } from '@/lib/gafferVoice';
@@ -148,6 +149,30 @@ export interface MarketStats {
   hitRate: { hits: number; total: number } | null; // exact line, last-8 both teams
   averages: { label: string; home: number | null; away: number | null; combined: number | null };
   series: number[]; // per-game metric across recent games (chronological-ish)
+}
+
+export const VOIDS = rawVoids as Record<string, { date: string; reason: string }>;
+
+/** Live/final match numbers (shape of /api/inplay entries). */
+export interface InPlayLite {
+  live: boolean; ended: boolean; voided?: boolean; feed?: boolean;
+  goals: number; homeGoals: number; awayGoals: number;
+  corners: number | null; cards: number | null;
+}
+
+/** Settle a market key against real match numbers: 'won' | 'lost' | null. */
+export function settleMarketKey(key: ValueMarketKey, ip: InPlayLite): 'won' | 'lost' | null {
+  const m = MARKET_BY_KEY[key];
+  if (!m) return null;
+  if (m.family === 'btts') {
+    const both = ip.homeGoals > 0 && ip.awayGoals > 0;
+    return (m.side === 'yes' ? both : !both) ? 'won' : 'lost';
+  }
+  const metric = m.family === 'goals' ? ip.goals : m.family === 'corners' ? ip.corners : ip.cards;
+  if (metric == null) return null;
+  const line = Number(m.line);
+  const over = metric > line;
+  return (m.side === 'over' ? over : !over) ? 'won' : 'lost';
 }
 
 /* ── Market definitions (fixed by contract — the ONLY hard-coded part) ──── */
@@ -487,6 +512,21 @@ export function getFixtureValueBreakdown(fixtureId: string, marketKey: ValueMark
     gafferVerdict: gafferReason(signals, `${fixtureId}|${marketKey}|breakdown`),
     riskNote: riskNote(`${fixtureId}|${marketKey}`),
   });
+}
+
+/** Today's fixture ids for live polling — daily-card legs first (they matter
+ *  most), then the rest of the card by kickoff, capped to the API limit. */
+export function getTodayInPlayIds(limit = 20): string[] {
+  const cardIds: string[] = [];
+  {
+    const best = new Map<string, Leg>();
+    for (const l of getValueCandidates()) if (!best.has(l.fixtureId)) best.set(l.fixtureId, l);
+    for (const l of [...best.values()].slice(0, 5)) cardIds.push(l.fixtureId);
+  }
+  const rest = fixturesOn(todayUK())
+    .map((f) => f.id)
+    .filter((id) => !cardIds.includes(id));
+  return [...cardIds, ...rest].slice(0, limit);
 }
 
 /** Leagues present on a date — for table filters. */
