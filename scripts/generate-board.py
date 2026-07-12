@@ -92,6 +92,12 @@ def map_form(s):
             "avgCorners":num(s.get("cornersTotalAVG_overall")),
             "avgCards":avgCards}
 
+TEAM_NAME_EXPANSIONS = {'KA': 'KA Akureyri', 'ÍA': 'ÍA Akranes', 'KR': 'KR Reykjavík', 'FH': 'FH Hafnarfjördur', 'ÍBV': 'ÍBV Vestmannaeyjar', 'Fram': 'Fram Reykjavík', 'Thór': 'Thór Akureyri', 'Valur': 'Valur Reykjavík', 'KV': 'KV Reykjavík', 'HK': 'HK Kópavogur', 'Víkingur': 'Víkingur Reykjavík', 'Throttur': 'Throttur Reykjavík', 'VPS': 'VPS Vaasa', 'KTP': 'KTP Kotka', 'SJK': 'SJK Seinäjoki', 'JäPS': 'JäPS Järvenpää', 'KäPa': 'KäPa Helsinki', 'TPS': 'TPS Turku', 'KuPS': 'KuPS Kuopio', 'HJK': 'HJK Helsinki', 'MP': 'MP Mikkeli', 'EIF': 'EIF Ekenäs', 'JIPPO': 'JIPPO Joensuu', 'Haka': 'FC Haka', 'Lahti': 'FC Lahti', 'Oulu': 'AC Oulu', 'Inter': 'FC Inter Turku', 'KFUM': 'KFUM Oskarshamn', 'Brage': 'IK Brage', 'Öster': 'Östers IF', 'AIK': 'AIK Stockholm', 'Trans': 'Trans Narva', 'Elva': 'FC Elva', 'Zemun': 'FK Zemun', 'Argeș': 'FC Argeș'}
+def xn(name):
+    """Expand cryptic club initialisms ('KA' -> 'KA Akureyri') for display —
+    two-letter Nordic codes read as broken data to anyone browsing."""
+    return TEAM_NAME_EXPANSIONS.get((name or "").strip(), name)
+
 def norm_odds(m):
     out={}
     for label,field in ODDS_FIELD.items():
@@ -150,8 +156,8 @@ for lid in sorted(active):
         if st!="complete":
             all_upcoming.append({"fixtureId":m.get("id"),"leagueId":lid,
                 "kickoff":m.get("date_unix"),"homeId":m.get("homeID") or m.get("home_id"),
-                "awayId":m.get("awayID") or m.get("away_id"),"homeName":m.get("home_name"),
-                "awayName":m.get("away_name"),"homeLogo":badge(m.get("home_image")),
+                "awayId":m.get("awayID") or m.get("away_id"),"homeName":xn(m.get("home_name")),
+                "awayName":xn(m.get("away_name")),"homeLogo":badge(m.get("home_image")),
                 "awayLogo":badge(m.get("away_image")),"odds":norm_odds(m)})
         else:
             hg=int(num(m.get("homeGoalCount"))); ag=int(num(m.get("awayGoalCount")))
@@ -159,13 +165,13 @@ for lid in sorted(active):
             corners=int(num(corners)) if corners is not None else int(num(m.get("team_a_corners"))+num(m.get("team_b_corners")))
             cards=int(num(m.get("team_a_cards_num"))+num(m.get("team_b_cards_num")))
             all_detailed.append({"dateUnix":m.get("date_unix"),"homeId":m.get("homeID") or m.get("home_id"),
-                "awayId":m.get("awayID") or m.get("away_id"),"homeName":m.get("home_name"),
-                "awayName":m.get("away_name"),"hg":hg,"ag":ag,"corners":corners,"cards":cards})
+                "awayId":m.get("awayID") or m.get("away_id"),"homeName":xn(m.get("home_name")),
+                "awayName":xn(m.get("away_name")),"hg":hg,"ag":ag,"corners":corners,"cards":cards})
     try: lt=get(f"/league-teams?key={KEY}&season_id={lid}&include=stats")["data"]
     except Exception as e: print("  lt fail",lid,e); lt=[]
     for t in lt:
         stats=t.get("stats") if isinstance(t.get("stats"),dict) else t
-        f=map_form(stats); nm=t.get("cleanName") or t.get("name")
+        f=map_form(stats); nm=xn(t.get("cleanName") or t.get("name"))
         if t.get("id") is not None: form_by_id[int(t["id"])]=f
         if nm: form_by_name[nm]=f
 
