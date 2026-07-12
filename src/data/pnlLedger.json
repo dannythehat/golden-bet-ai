@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-11",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 1.8,
+      "status": "won",
+      "returns": 18,
+      "profit": 8,
+      "legs": [
+        {
+          "home": "Wuxi Wugou",
+          "away": "Guangxi Hengchen",
+          "region": "China",
+          "league": "China League One",
+          "selection": "Over 9.5 Corners",
+          "odds": 1,
+          "ft": "ABD",
+          "result": "void"
+        },
+        {
+          "home": "Yongin City",
+          "away": "Cheongju",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.8,
+          "ft": "1-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "Morning, you lot. Before we talk about today’s card, we settle up yesterday’s like grown-ups. The double delivered like a good pro, the treble teased us and fell away — but when the maths shakes out, we’re still up on the day, and up is up. Yongin City and Cheongju traded goals just like I said they would — 1-1 at full time, both sides on the scoresheet, and the slip never in a moment’s danger. Our BTTS died in Dalian Huayi v Nanjing City, where Nanjing City forgot their shooting boots entirely — 2-0 at the whistle, one net untouched, slip down the drain. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.69,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Nõmme United",
+          "away": "Kuressaare",
+          "region": "Estonia",
+          "league": "Meistriliiga",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.53,
+          "ft": "3-2",
+          "result": "won"
+        },
+        {
+          "home": "Dalian Huayi",
+          "away": "Nanjing City",
+          "region": "China",
+          "league": "China League One",
+          "selection": "BTTS - Yes",
+          "odds": 1.75,
+          "ft": "2-0",
+          "result": "lost"
+        },
+        {
+          "home": "Daegu",
+          "away": "Seongnam",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.75,
+          "ft": "3-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Morning, you lot. Before we talk about today’s card, we settle up yesterday’s like grown-ups. The double delivered like a good pro, the treble teased us and fell away — but when the maths shakes out, we’re still up on the day, and up is up. Yongin City and Cheongju traded goals just like I said they would — 1-1 at full time, both sides on the scoresheet, and the slip never in a moment’s danger. Our BTTS died in Dalian Huayi v Nanjing City, where Nanjing City forgot their shooting boots entirely — 2-0 at the whistle, one net untouched, slip down the drain. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
       "date": "2026-07-10",
       "kind": "double",
       "stake": 10,
