@@ -7,7 +7,7 @@ import { GafferDailyCardSection } from '@/components/valueboard/GafferDailyCardS
 import { MarketBoard } from '@/components/valueboard/MarketBoard';
 import { EmailAlertPreferences } from '@/components/valueboard/EmailAlertPreferences';
 import { SEOValueExplainer, ResponsibleFooterNote } from '@/components/valueboard/SEOValueExplainer';
-import { useValueHubSummary, useGafferDailyCard, useSubscriberState, useValueBoardRealtime } from '@/hooks/useValueBoard';
+import { useValueHubSummary, useGafferDailyCard, useSubscriberState, useValueBoardRealtime, useInPlayAll } from '@/hooks/useValueBoard';
 import { gafferBoardPrompt, type HubSummary, type ValueMarketKey } from '@/lib/valueBoard';
 
 /** The Gaffer sets the scene on the day's slate — quiet Monday or bumper Saturday. */
@@ -92,6 +92,7 @@ export default function ValueBoard() {
   const card = useGafferDailyCard();
   useValueBoardRealtime(); // contract seat for value-board-updates (no push channel yet)
   const [pendingMarket, setPendingMarket] = useState<ValueMarketKey | null>(null);
+  const inplay = useInPlayAll();
 
   // SEO title + meta description (restored on unmount).
   useEffect(() => {
@@ -128,8 +129,8 @@ export default function ValueBoard() {
             <GafferSlatePrompt summary={summary.data} />
             <SubscriberLockPanel state={subscriberState}>
               <div className="space-y-4 md:space-y-5">
-                <GafferDailyCardSection card={card.data} onEmailCard={() => goToAlerts(null)} />
-                <MarketBoard summary={summary.data} onAddAlert={(k) => goToAlerts(k)} />
+                <GafferDailyCardSection card={card.data} inplay={inplay} onEmailCard={() => goToAlerts(null)} />
+                <MarketBoard summary={summary.data} inplay={inplay} onAddAlert={(k) => goToAlerts(k)} />
                 <EmailAlertPreferences pendingMarket={pendingMarket} onConsumedPending={() => setPendingMarket(null)} />
               </div>
             </SubscriberLockPanel>

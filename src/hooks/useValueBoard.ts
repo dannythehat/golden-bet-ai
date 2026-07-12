@@ -7,6 +7,7 @@
  * these later move behind server functions.
  */
 import { useEffect, useMemo, useState } from 'react';
+import { getTodayInPlayIds, type InPlayLite } from '@/lib/valueBoard';
 import {
   getValueHubSummary, getValueMarketFamilies, getValueMarketFixtures,
   getGafferDailyCard, getFixtureValueBreakdown, getLeaguesOn, todayUK,
@@ -36,6 +37,27 @@ export function useFixtureValueBreakdown(fixtureId: string | null, marketKey: Va
 }
 export function useValueBoardLeagues(date?: string) {
   return useMemo(() => getLeaguesOn(date ?? todayUK()), [date]);
+}
+
+/** In-play state for the day's card — explicit ids (the bulk FootyStats feed
+ *  omits whole leagues, so per-id is the only reliable route). One poll serves
+ *  every widget on the page. */
+export function useInPlayAll(enabled = true) {
+  const ids = useMemo(() => getTodayInPlayIds().join(','), []);
+  const [data, setData] = useState<Record<string, InPlayLite>>({});
+  useEffect(() => {
+    if (!enabled || !ids) return;
+    let dead = false;
+    const load = () =>
+      fetch(`/api/inplay?ids=${encodeURIComponent(ids)}`)
+        .then((r) => r.json())
+        .then((j) => { if (!dead && j?.ok && j.data) setData(j.data as Record<string, InPlayLite>); })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 60_000);
+    return () => { dead = true; clearInterval(id); };
+  }, [enabled, ids]);
+  return data;
 }
 
 /* ── Subscriber state ──────────────────────────────────────────────────────
