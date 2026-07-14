@@ -2,6 +2,38 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-13",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.69,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Djurgården",
+          "away": "Halmstad",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "BTTS - Yes",
+          "odds": 1.91,
+          "ft": "3-0",
+          "result": "lost"
+        },
+        {
+          "home": "Maardu Linnameeskond",
+          "away": "Tartu JK Welco",
+          "region": "Estonia",
+          "league": "Esiliiga",
+          "selection": "BTTS - Yes",
+          "odds": 1.41,
+          "ft": "1-8",
+          "result": "won"
+        }
+      ],
+      "verdict": "I’ve had my coffee and read the scores twice, so here it is — yesterday’s verdict, straight from the man who picked them. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. The dud was the both-teams-to-score in Djurgården v Halmstad — Halmstad couldn’t buy a goal at 3-0, and one shy front line is all it takes to sink that market. Long game, this — one day never makes us and one day never breaks us, which is exactly why the record stays public and the method stays the same."
+    },
+    {
       "date": "2026-07-12",
       "kind": "double",
       "stake": 10,
