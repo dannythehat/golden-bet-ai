@@ -2,6 +2,28 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-14",
+      "kind": "single",
+      "stake": 10,
+      "combinedOdds": 1.5,
+      "status": "won",
+      "returns": 15,
+      "profit": 5,
+      "legs": [
+        {
+          "home": "Zhejiang FC",
+          "away": "Qingdao Jonoon",
+          "region": "China",
+          "league": "Chinese Super League",
+          "selection": "BTTS - Yes",
+          "odds": 1.5,
+          "ft": "3-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Team talk time — the whistle’s gone on everything we backed, so let’s tot up the damage and the glory in that order or the other. Winner. Not a dramatic one, not a lucky one — just the form doing what the form’s been doing for weeks, with our money sat on top of it. Sweetest of the winners was Zhejiang FC v Qingdao Jonoon — neither defence turned up, which is precisely why we were there, and the 3-2 paid us in full. We log it, we learn from it, and we go again — the beautiful thing about this game is there’s always another card tomorrow, and I intend to read it better than the bookies do."
+    },
+    {
       "date": "2026-07-13",
       "kind": "double",
       "stake": 10,
