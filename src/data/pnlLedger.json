@@ -2,6 +2,38 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-16",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.67,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Botafogo",
+          "away": "Santos",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.65,
+          "ft": "2-1",
+          "result": "won"
+        },
+        {
+          "home": "Montreal Impact",
+          "away": "Toronto",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.62,
+          "ft": "0-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. Everything stood up except Montreal Impact v Toronto, which froze at 0-0 — that’s the one I’d want back, and the one I’ll be studying over breakfast. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
       "date": "2026-07-14",
       "kind": "single",
       "stake": 10,
