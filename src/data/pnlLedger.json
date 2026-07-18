@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-17",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.38,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Seattle Sounders",
+          "away": "Portland Timbers",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "Over 10.5 Corners",
+          "odds": 1.93,
+          "ft": "1-5",
+          "result": "lost"
+        },
+        {
+          "home": "Tallinna FC Flora",
+          "away": "Nõmme United",
+          "region": "Estonia",
+          "league": "Meistriliiga",
+          "selection": "Over 10.5 Corners",
+          "odds": 1.75,
+          "ft": "1-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. Not our day, simple as that — the card went against us leg by leg, and I’d rather show you the loss in full than pretend it didn’t happen. Honest record, honest morning. The leg that let us down was the corners in Seattle Sounders v Portland Timbers — the game stayed narrow, the flags stayed still, and the count fell short of the line. On we go — the season is a marathon of small edges, and yesterday, whatever it was, is now just one more data point behind us."
+    },
+    {
+      "date": "2026-07-17",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.83,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Bahia",
+          "away": "Chapecoense",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.72,
+          "ft": "2-0",
+          "result": "lost"
+        },
+        {
+          "home": "Changchun Yatai",
+          "away": "Wuxi Wugou",
+          "region": "China",
+          "league": "China League One",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.79,
+          "ft": "1-5",
+          "result": "won"
+        },
+        {
+          "home": "Fluminense",
+          "away": "Bragantino",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.57,
+          "ft": "1-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. Not our day, simple as that — the card went against us leg by leg, and I’d rather show you the loss in full than pretend it didn’t happen. Honest record, honest morning. The leg that let us down was the corners in Seattle Sounders v Portland Timbers — the game stayed narrow, the flags stayed still, and the count fell short of the line. On we go — the season is a marathon of small edges, and yesterday, whatever it was, is now just one more data point behind us."
+    },
+    {
       "date": "2026-07-16",
       "kind": "double",
       "stake": 10,
