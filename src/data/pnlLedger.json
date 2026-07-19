@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-18",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.98,
+      "status": "won",
+      "returns": 29.75,
+      "profit": 19.75,
+      "legs": [
+        {
+          "home": "Suwon",
+          "away": "Seoul E-Land",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.7,
+          "ft": "2-2",
+          "result": "won"
+        },
+        {
+          "home": "Oddevold",
+          "away": "Varberg",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.75,
+          "ft": "2-4",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. It was a day of two halves, this — the double marched home without breaking sweat, but the treble found the one result on the card with other ideas. Oddevold v Varberg did everything I said it would and then some — 2-4 at the whistle, and the over sailed home with time to spare. The costly one was Seongnam v Busan I'Park at 1-0 — I needed both to score and Busan I'Park never looked like obliging, which is football’s way of keeping a man humble. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
+      "date": "2026-07-18",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.51,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Viking",
+          "away": "Sandefjord",
+          "region": "Norway",
+          "league": "Eliteserien",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.44,
+          "ft": "2-1",
+          "result": "won"
+        },
+        {
+          "home": "Seongnam",
+          "away": "Busan I'Park",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.78,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Trans Narva",
+          "away": "Vaprus",
+          "region": "Estonia",
+          "league": "Meistriliiga",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.76,
+          "ft": "3-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. It was a day of two halves, this — the double marched home without breaking sweat, but the treble found the one result on the card with other ideas. Oddevold v Varberg did everything I said it would and then some — 2-4 at the whistle, and the over sailed home with time to spare. The costly one was Seongnam v Busan I'Park at 1-0 — I needed both to score and Busan I'Park never looked like obliging, which is football’s way of keeping a man humble. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
       "date": "2026-07-17",
       "kind": "double",
       "stake": 10,
