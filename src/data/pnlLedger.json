@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-19",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.06,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Cheongju",
+          "away": "Cheonan City",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.8,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Gyeongnam",
+          "away": "Ansan Greeners",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.7,
+          "ft": "5-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "I’ve had my coffee and read the scores twice, so here it is — yesterday’s verdict, straight from the man who picked them. Both slips down, hands up from me. I deal in edges, and edges mean sometimes the percentages take a day off — the long game is where we win, and the long game continues tomorrow. One team turned up in Halmstad v Häcken and it wasn’t Halmstad — 0-2, no both-teams-scored, and there’s your loser, named and shamed. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 3.87,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "KR Reykjavík",
+          "away": "Stjarnan",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.59,
+          "ft": "5-0",
+          "result": "lost"
+        },
+        {
+          "home": "Halmstad",
+          "away": "Häcken",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "BTTS - Yes",
+          "odds": 1.57,
+          "ft": "0-2",
+          "result": "lost"
+        },
+        {
+          "home": "United Nordic",
+          "away": "Örebro",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.55,
+          "ft": "2-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "I’ve had my coffee and read the scores twice, so here it is — yesterday’s verdict, straight from the man who picked them. Both slips down, hands up from me. I deal in edges, and edges mean sometimes the percentages take a day off — the long game is where we win, and the long game continues tomorrow. One team turned up in Halmstad v Häcken and it wasn’t Halmstad — 0-2, no both-teams-scored, and there’s your loser, named and shamed. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
       "date": "2026-07-18",
       "kind": "double",
       "stake": 10,
