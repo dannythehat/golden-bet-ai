@@ -38445,867 +38445,6 @@
       ]
     },
     {
-      "id": "8551578",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "Radnički Kragujevac",
-        "short": "RAD",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-radnicki-1923-kragujevac.png"
-      },
-      "away": {
-        "name": "Železničar Pančevo",
-        "short": "ŽEL",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-zeleznicar-pancevo.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 2,
-      "corners_avg": 12.5,
-      "cards_avg": 4,
-      "btts_pct": 50,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 50,
-        "2.5": 50,
-        "3.5": 0,
-        "4.5": 0
-      },
-      "corners_over": {
-        "8.5": 100,
-        "9.5": 100,
-        "10.5": 50,
-        "11.5": 50
-      },
-      "cards_over": {
-        "2.5": 100,
-        "3.5": 100,
-        "4.5": 0,
-        "5.5": 0
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-18",
-          "opp": "Novi Pazar",
-          "ha": "A",
-          "gf": 0,
-          "ga": 1,
-          "res": "L",
-          "corners": 15,
-          "cards": 4,
-          "btts": false
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-17",
-          "opp": "Radnički Niš",
-          "ha": "H",
-          "gf": 2,
-          "ga": 1,
-          "res": "W",
-          "corners": 10,
-          "cards": 4,
-          "btts": true
-        }
-      ],
-      "h2h": []
-    },
-    {
-      "id": "8551710",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "Red Star Belgrade",
-        "short": "RED",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-red-star-belgrade.png"
-      },
-      "away": {
-        "name": "Vojvodina",
-        "short": "VOJ",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-vojvodina-novi-sad.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 4.5,
-      "corners_avg": 8,
-      "cards_avg": 2.5,
-      "btts_pct": 0,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 100,
-        "2.5": 100,
-        "3.5": 100,
-        "4.5": 50
-      },
-      "corners_over": {
-        "8.5": 50,
-        "9.5": 0,
-        "10.5": 0,
-        "11.5": 0
-      },
-      "cards_over": {
-        "2.5": 50,
-        "3.5": 0,
-        "4.5": 0,
-        "5.5": 0
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-17",
-          "opp": "Mačva Šabac",
-          "ha": "H",
-          "gf": 5,
-          "ga": 0,
-          "res": "W",
-          "corners": 9,
-          "cards": 2,
-          "btts": false
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-19",
-          "opp": "OFK Beograd",
-          "ha": "H",
-          "gf": 4,
-          "ga": 0,
-          "res": "W",
-          "corners": 7,
-          "cards": 3,
-          "btts": false
-        }
-      ],
-      "h2h": []
-    },
-    {
-      "id": "8551711",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "OFK Beograd",
-        "short": "OFK",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-ofk-beograd.png"
-      },
-      "away": {
-        "name": "Radnik Surdulica",
-        "short": "RAD",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-radnik-surdulica.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 3,
-      "corners_avg": 7.5,
-      "cards_avg": 3,
-      "btts_pct": 50,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 100,
-        "2.5": 50,
-        "3.5": 50,
-        "4.5": 0
-      },
-      "corners_over": {
-        "8.5": 0,
-        "9.5": 0,
-        "10.5": 0,
-        "11.5": 0
-      },
-      "cards_over": {
-        "2.5": 100,
-        "3.5": 0,
-        "4.5": 0,
-        "5.5": 0
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-19",
-          "opp": "Vojvodina",
-          "ha": "A",
-          "gf": 0,
-          "ga": 4,
-          "res": "L",
-          "corners": 7,
-          "cards": 3,
-          "btts": false
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-19",
-          "opp": "LFK Mladost Lučani",
-          "ha": "H",
-          "gf": 1,
-          "ga": 1,
-          "res": "D",
-          "corners": 8,
-          "cards": 3,
-          "btts": true
-        }
-      ],
-      "h2h": []
-    },
-    {
-      "id": "8551712",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "LFK Mladost Lučani",
-        "short": "LFK",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-lfk-mladost-lucani.png"
-      },
-      "away": {
-        "name": "Novi Pazar",
-        "short": "NOV",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-novi-pazar.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 1.5,
-      "corners_avg": 11.5,
-      "cards_avg": 3.5,
-      "btts_pct": 50,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 50,
-        "2.5": 0,
-        "3.5": 0,
-        "4.5": 0
-      },
-      "corners_over": {
-        "8.5": 50,
-        "9.5": 50,
-        "10.5": 50,
-        "11.5": 50
-      },
-      "cards_over": {
-        "2.5": 100,
-        "3.5": 50,
-        "4.5": 0,
-        "5.5": 0
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-19",
-          "opp": "Radnik Surdulica",
-          "ha": "A",
-          "gf": 1,
-          "ga": 1,
-          "res": "D",
-          "corners": 8,
-          "cards": 3,
-          "btts": true
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-18",
-          "opp": "Radnički Kragujevac",
-          "ha": "H",
-          "gf": 1,
-          "ga": 0,
-          "res": "W",
-          "corners": 15,
-          "cards": 4,
-          "btts": false
-        }
-      ],
-      "h2h": []
-    },
-    {
-      "id": "8551713",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "Radnički Niš",
-        "short": "RAD",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-radnicki-nis.png"
-      },
-      "away": {
-        "name": "Čukarički",
-        "short": "ČUK",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-cukaricki-stankom.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 2,
-      "corners_avg": 8,
-      "cards_avg": 6,
-      "btts_pct": 50,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 50,
-        "2.5": 50,
-        "3.5": 0,
-        "4.5": 0
-      },
-      "corners_over": {
-        "8.5": 50,
-        "9.5": 50,
-        "10.5": 0,
-        "11.5": 0
-      },
-      "cards_over": {
-        "2.5": 100,
-        "3.5": 100,
-        "4.5": 50,
-        "5.5": 50
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-17",
-          "opp": "Železničar Pančevo",
-          "ha": "A",
-          "gf": 1,
-          "ga": 2,
-          "res": "L",
-          "corners": 10,
-          "cards": 4,
-          "btts": true
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-19",
-          "opp": "IMT Novi Beograd",
-          "ha": "H",
-          "gf": 0,
-          "ga": 1,
-          "res": "L",
-          "corners": 6,
-          "cards": 8,
-          "btts": false
-        }
-      ],
-      "h2h": []
-    },
-    {
-      "id": "8551714",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "IMT Novi Beograd",
-        "short": "IMT",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-imt-novi-beograd.png"
-      },
-      "away": {
-        "name": "FK Zemun",
-        "short": "FK ",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-zemun.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 2.5,
-      "corners_avg": 5.5,
-      "cards_avg": 7,
-      "btts_pct": 50,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 50,
-        "2.5": 50,
-        "3.5": 50,
-        "4.5": 0
-      },
-      "corners_over": {
-        "8.5": 0,
-        "9.5": 0,
-        "10.5": 0,
-        "11.5": 0
-      },
-      "cards_over": {
-        "2.5": 100,
-        "3.5": 100,
-        "4.5": 100,
-        "5.5": 100
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-19",
-          "opp": "Čukarički",
-          "ha": "A",
-          "gf": 1,
-          "ga": 0,
-          "res": "W",
-          "corners": 6,
-          "cards": 8,
-          "btts": false
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-18",
-          "opp": "Partizan",
-          "ha": "H",
-          "gf": 2,
-          "ga": 2,
-          "res": "D",
-          "corners": 5,
-          "cards": 6,
-          "btts": true
-        }
-      ],
-      "h2h": []
-    },
-    {
-      "id": "8551716",
-      "league": "SuperLiga",
-      "region": "Serbia",
-      "date": "2026-07-25",
-      "time": "01:00",
-      "home": {
-        "name": "Mačva Šabac",
-        "short": "MAČ",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-macva-sabac.png"
-      },
-      "away": {
-        "name": "Partizan",
-        "short": "PAR",
-        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-partizan-beograd.png"
-      },
-      "result": {
-        "hg": 0,
-        "ag": 0,
-        "corners": 0,
-        "cards": 0,
-        "btts": false
-      },
-      "goals_avg": 4.5,
-      "corners_avg": 7,
-      "cards_avg": 4,
-      "btts_pct": 50,
-      "goals_over": {
-        "0.5": 100,
-        "1.5": 100,
-        "2.5": 100,
-        "3.5": 100,
-        "4.5": 50
-      },
-      "corners_over": {
-        "8.5": 50,
-        "9.5": 0,
-        "10.5": 0,
-        "11.5": 0
-      },
-      "cards_over": {
-        "2.5": 50,
-        "3.5": 50,
-        "4.5": 50,
-        "5.5": 50
-      },
-      "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "corners_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_odds": {
-        "3.5": null,
-        "4.5": null,
-        "5.5": null
-      },
-      "btts_odds": null,
-      "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
-      },
-      "corners_under_odds": {
-        "8.5": null,
-        "9.5": null,
-        "10.5": null,
-        "11.5": null
-      },
-      "cards_under_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
-      },
-      "btts_no_odds": null,
-      "value": {
-        "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
-        },
-        "corners": {
-          "8.5": null,
-          "9.5": null,
-          "10.5": null,
-          "11.5": null
-        },
-        "btts": null
-      },
-      "home_form": [
-        {
-          "date": "2026-07-17",
-          "opp": "Red Star Belgrade",
-          "ha": "A",
-          "gf": 0,
-          "ga": 5,
-          "res": "L",
-          "corners": 9,
-          "cards": 2,
-          "btts": false
-        }
-      ],
-      "away_form": [
-        {
-          "date": "2026-07-18",
-          "opp": "FK Zemun",
-          "ha": "A",
-          "gf": 2,
-          "ga": 2,
-          "res": "D",
-          "corners": 5,
-          "cards": 6,
-          "btts": true
-        }
-      ],
-      "h2h": []
-    },
-    {
       "id": "8471151",
       "league": "Chinese Super League",
       "region": "China",
@@ -48517,6 +47656,375 @@
           "res": "W",
           "corners": 9,
           "cards": 4,
+          "btts": true
+        }
+      ],
+      "h2h": []
+    },
+    {
+      "id": "8551711",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-25",
+      "time": "19:00",
+      "home": {
+        "name": "OFK Beograd",
+        "short": "OFK",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-ofk-beograd.png"
+      },
+      "away": {
+        "name": "Radnik Surdulica",
+        "short": "RAD",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-radnik-surdulica.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 3,
+      "corners_avg": 7.5,
+      "cards_avg": 3,
+      "btts_pct": 50,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 100,
+        "2.5": 50,
+        "3.5": 50,
+        "4.5": 0
+      },
+      "corners_over": {
+        "8.5": 0,
+        "9.5": 0,
+        "10.5": 0,
+        "11.5": 0
+      },
+      "cards_over": {
+        "2.5": 100,
+        "3.5": 0,
+        "4.5": 0,
+        "5.5": 0
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-19",
+          "opp": "Vojvodina",
+          "ha": "A",
+          "gf": 0,
+          "ga": 4,
+          "res": "L",
+          "corners": 7,
+          "cards": 3,
+          "btts": false
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-19",
+          "opp": "LFK Mladost Lučani",
+          "ha": "H",
+          "gf": 1,
+          "ga": 1,
+          "res": "D",
+          "corners": 8,
+          "cards": 3,
+          "btts": true
+        }
+      ],
+      "h2h": []
+    },
+    {
+      "id": "8551713",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-25",
+      "time": "19:00",
+      "home": {
+        "name": "Radnički Niš",
+        "short": "RAD",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-radnicki-nis.png"
+      },
+      "away": {
+        "name": "Čukarički",
+        "short": "ČUK",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-cukaricki-stankom.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 2,
+      "corners_avg": 8,
+      "cards_avg": 6,
+      "btts_pct": 50,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 50,
+        "2.5": 50,
+        "3.5": 0,
+        "4.5": 0
+      },
+      "corners_over": {
+        "8.5": 50,
+        "9.5": 50,
+        "10.5": 0,
+        "11.5": 0
+      },
+      "cards_over": {
+        "2.5": 100,
+        "3.5": 100,
+        "4.5": 50,
+        "5.5": 50
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-17",
+          "opp": "Železničar Pančevo",
+          "ha": "A",
+          "gf": 1,
+          "ga": 2,
+          "res": "L",
+          "corners": 10,
+          "cards": 4,
+          "btts": true
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-19",
+          "opp": "IMT Novi Beograd",
+          "ha": "H",
+          "gf": 0,
+          "ga": 1,
+          "res": "L",
+          "corners": 6,
+          "cards": 8,
+          "btts": false
+        }
+      ],
+      "h2h": []
+    },
+    {
+      "id": "8551714",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-25",
+      "time": "19:00",
+      "home": {
+        "name": "IMT Novi Beograd",
+        "short": "IMT",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-imt-novi-beograd.png"
+      },
+      "away": {
+        "name": "FK Zemun",
+        "short": "FK ",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-zemun.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 2.5,
+      "corners_avg": 5.5,
+      "cards_avg": 7,
+      "btts_pct": 50,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 50,
+        "2.5": 50,
+        "3.5": 50,
+        "4.5": 0
+      },
+      "corners_over": {
+        "8.5": 0,
+        "9.5": 0,
+        "10.5": 0,
+        "11.5": 0
+      },
+      "cards_over": {
+        "2.5": 100,
+        "3.5": 100,
+        "4.5": 100,
+        "5.5": 100
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-19",
+          "opp": "Čukarički",
+          "ha": "A",
+          "gf": 1,
+          "ga": 0,
+          "res": "W",
+          "corners": 6,
+          "cards": 8,
+          "btts": false
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-18",
+          "opp": "Partizan",
+          "ha": "H",
+          "gf": 2,
+          "ga": 2,
+          "res": "D",
+          "corners": 5,
+          "cards": 6,
           "btts": true
         }
       ],
@@ -61944,6 +61452,129 @@
       "h2h": []
     },
     {
+      "id": "8551710",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-26",
+      "time": "18:00",
+      "home": {
+        "name": "Red Star Belgrade",
+        "short": "RED",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-red-star-belgrade.png"
+      },
+      "away": {
+        "name": "Vojvodina",
+        "short": "VOJ",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-vojvodina-novi-sad.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 4.5,
+      "corners_avg": 8,
+      "cards_avg": 2.5,
+      "btts_pct": 0,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 100,
+        "2.5": 100,
+        "3.5": 100,
+        "4.5": 50
+      },
+      "corners_over": {
+        "8.5": 50,
+        "9.5": 0,
+        "10.5": 0,
+        "11.5": 0
+      },
+      "cards_over": {
+        "2.5": 50,
+        "3.5": 0,
+        "4.5": 0,
+        "5.5": 0
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-17",
+          "opp": "Mačva Šabac",
+          "ha": "H",
+          "gf": 5,
+          "ga": 0,
+          "res": "W",
+          "corners": 9,
+          "cards": 2,
+          "btts": false
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-19",
+          "opp": "OFK Beograd",
+          "ha": "H",
+          "gf": 4,
+          "ga": 0,
+          "res": "W",
+          "corners": 7,
+          "cards": 3,
+          "btts": false
+        }
+      ],
+      "h2h": []
+    },
+    {
       "id": "8411856",
       "league": "Eliteserien",
       "region": "Norway",
@@ -62317,6 +61948,252 @@
       },
       "home_form": [],
       "away_form": [],
+      "h2h": []
+    },
+    {
+      "id": "8551578",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-26",
+      "time": "19:30",
+      "home": {
+        "name": "Radnički Kragujevac",
+        "short": "RAD",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-radnicki-1923-kragujevac.png"
+      },
+      "away": {
+        "name": "Železničar Pančevo",
+        "short": "ŽEL",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-zeleznicar-pancevo.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 2,
+      "corners_avg": 12.5,
+      "cards_avg": 4,
+      "btts_pct": 50,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 50,
+        "2.5": 50,
+        "3.5": 0,
+        "4.5": 0
+      },
+      "corners_over": {
+        "8.5": 100,
+        "9.5": 100,
+        "10.5": 50,
+        "11.5": 50
+      },
+      "cards_over": {
+        "2.5": 100,
+        "3.5": 100,
+        "4.5": 0,
+        "5.5": 0
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-18",
+          "opp": "Novi Pazar",
+          "ha": "A",
+          "gf": 0,
+          "ga": 1,
+          "res": "L",
+          "corners": 15,
+          "cards": 4,
+          "btts": false
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-17",
+          "opp": "Radnički Niš",
+          "ha": "H",
+          "gf": 2,
+          "ga": 1,
+          "res": "W",
+          "corners": 10,
+          "cards": 4,
+          "btts": true
+        }
+      ],
+      "h2h": []
+    },
+    {
+      "id": "8551712",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-26",
+      "time": "19:30",
+      "home": {
+        "name": "LFK Mladost Lučani",
+        "short": "LFK",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-lfk-mladost-lucani.png"
+      },
+      "away": {
+        "name": "Novi Pazar",
+        "short": "NOV",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-novi-pazar.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 1.5,
+      "corners_avg": 11.5,
+      "cards_avg": 3.5,
+      "btts_pct": 50,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 50,
+        "2.5": 0,
+        "3.5": 0,
+        "4.5": 0
+      },
+      "corners_over": {
+        "8.5": 50,
+        "9.5": 50,
+        "10.5": 50,
+        "11.5": 50
+      },
+      "cards_over": {
+        "2.5": 100,
+        "3.5": 50,
+        "4.5": 0,
+        "5.5": 0
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-19",
+          "opp": "Radnik Surdulica",
+          "ha": "A",
+          "gf": 1,
+          "ga": 1,
+          "res": "D",
+          "corners": 8,
+          "cards": 3,
+          "btts": true
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-18",
+          "opp": "Radnički Kragujevac",
+          "ha": "H",
+          "gf": 1,
+          "ga": 0,
+          "res": "W",
+          "corners": 15,
+          "cards": 4,
+          "btts": false
+        }
+      ],
       "h2h": []
     },
     {
@@ -63015,6 +62892,129 @@
           "cards": 3
         }
       ]
+    },
+    {
+      "id": "8551716",
+      "league": "SuperLiga",
+      "region": "Serbia",
+      "date": "2026-07-26",
+      "time": "20:00",
+      "home": {
+        "name": "Mačva Šabac",
+        "short": "MAČ",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-macva-sabac.png"
+      },
+      "away": {
+        "name": "Partizan",
+        "short": "PAR",
+        "logo": "https://cdn.footystats.org/img/teams/serbia-fk-partizan-beograd.png"
+      },
+      "result": {
+        "hg": 0,
+        "ag": 0,
+        "corners": 0,
+        "cards": 0,
+        "btts": false
+      },
+      "goals_avg": 4.5,
+      "corners_avg": 7,
+      "cards_avg": 4,
+      "btts_pct": 50,
+      "goals_over": {
+        "0.5": 100,
+        "1.5": 100,
+        "2.5": 100,
+        "3.5": 100,
+        "4.5": 50
+      },
+      "corners_over": {
+        "8.5": 50,
+        "9.5": 0,
+        "10.5": 0,
+        "11.5": 0
+      },
+      "cards_over": {
+        "2.5": 50,
+        "3.5": 50,
+        "4.5": 50,
+        "5.5": 50
+      },
+      "goals_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "corners_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_odds": {
+        "3.5": null,
+        "4.5": null,
+        "5.5": null
+      },
+      "btts_odds": null,
+      "goals_under_odds": {
+        "0.5": null,
+        "1.5": null,
+        "2.5": null,
+        "3.5": null
+      },
+      "corners_under_odds": {
+        "8.5": null,
+        "9.5": null,
+        "10.5": null,
+        "11.5": null
+      },
+      "cards_under_odds": {
+        "2.5": null,
+        "3.5": null,
+        "4.5": null
+      },
+      "btts_no_odds": null,
+      "value": {
+        "goals": {
+          "2.5": null,
+          "3.5": null,
+          "4.5": null
+        },
+        "corners": {
+          "8.5": null,
+          "9.5": null,
+          "10.5": null,
+          "11.5": null
+        },
+        "btts": null
+      },
+      "home_form": [
+        {
+          "date": "2026-07-17",
+          "opp": "Red Star Belgrade",
+          "ha": "A",
+          "gf": 0,
+          "ga": 5,
+          "res": "L",
+          "corners": 9,
+          "cards": 2,
+          "btts": false
+        }
+      ],
+      "away_form": [
+        {
+          "date": "2026-07-18",
+          "opp": "FK Zemun",
+          "ha": "A",
+          "gf": 2,
+          "ga": 2,
+          "res": "D",
+          "corners": 5,
+          "cards": 6,
+          "btts": true
+        }
+      ],
+      "h2h": []
     },
     {
       "id": "8447216",
