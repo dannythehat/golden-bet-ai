@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-20",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.97,
+      "status": "won",
+      "returns": 29.7,
+      "profit": 19.7,
+      "legs": [
+        {
+          "home": "Norrby",
+          "away": "GIF Sundsvall",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.65,
+          "ft": "3-1",
+          "result": "won"
+        },
+        {
+          "home": "Hafnarfjördur",
+          "away": "Breidablik",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.8,
+          "ft": "0-0",
+          "result": "won"
+        }
+      ],
+      "verdict": "Morning, you lot. Before we talk about today’s card, we settle up yesterday’s like grown-ups. One slip in, one slip down, profit still positive — I’d call that a decent day at the office anywhere in football. Our corner play in Norrby v GIF Sundsvall was a joy — two teams whipping it wide all afternoon, the count climbing like a lift, and the over home well before the end. The dud was the both-teams-to-score in Örgryte v Djurgården — neither side couldn’t buy a goal at 0-0, and one shy front line is all it takes to sink that market. The card never sleeps and neither does the spreadsheet — see you in the morning with the next round of value."
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 3.93,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Keflavík",
+          "away": "Akranes",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 10.5 Corners",
+          "odds": 1.47,
+          "ft": "5-2",
+          "result": "won"
+        },
+        {
+          "home": "TPS Turku",
+          "away": "Ilves",
+          "region": "Finland",
+          "league": "Veikkausliiga",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.65,
+          "ft": "1-3",
+          "result": "won"
+        },
+        {
+          "home": "Örgryte",
+          "away": "Djurgården",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "BTTS - Yes",
+          "odds": 1.62,
+          "ft": "0-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Morning, you lot. Before we talk about today’s card, we settle up yesterday’s like grown-ups. One slip in, one slip down, profit still positive — I’d call that a decent day at the office anywhere in football. Our corner play in Norrby v GIF Sundsvall was a joy — two teams whipping it wide all afternoon, the count climbing like a lift, and the over home well before the end. The dud was the both-teams-to-score in Örgryte v Djurgården — neither side couldn’t buy a goal at 0-0, and one shy front line is all it takes to sink that market. The card never sleeps and neither does the spreadsheet — see you in the morning with the next round of value."
+    },
+    {
       "date": "2026-07-19",
       "kind": "double",
       "stake": 10,
