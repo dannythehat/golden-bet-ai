@@ -2,6 +2,38 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-21",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.74,
+      "status": "won",
+      "returns": 27.37,
+      "profit": 17.37,
+      "legs": [
+        {
+          "home": "Falkenberg",
+          "away": "Helsingborg",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.61,
+          "ft": "2-3",
+          "result": "won"
+        },
+        {
+          "home": "Atlético Mineiro",
+          "away": "Bahia",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.7,
+          "ft": "1-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. Banked it. When you read the game right, the final whistle is just an administrative detail — money in, on we go. The star of the show was Falkenberg against Helsingborg — 5 goals in it, finished 2-3, and honestly the over was home before some of you had found your seats. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
       "date": "2026-07-20",
       "kind": "double",
       "stake": 10,
