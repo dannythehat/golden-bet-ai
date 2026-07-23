@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-22",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.59,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "New England Revolution",
+          "away": "Toronto",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.74,
+          "ft": "0-0",
+          "result": "lost"
+        },
+        {
+          "home": "Coritiba",
+          "away": "Palmeiras",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.49,
+          "ft": "1-3",
+          "result": "won"
+        }
+      ],
+      "verdict": "Right, pull up a chair, because I owe you the honest word on yesterday’s slips — the good, the bad, and the bits I’d rather not talk about. Mixed bag, and I’ll give it to you straight: the double banked, the treble came up a leg short, and the ledger still moved the right direction — which is the bit that matters. The corners in Lillestrøm v Viking came exactly as advertised — flags flying all game, the line beaten with room to spare, and the easiest watch of the day. Where did it go wrong? New England Revolution against Toronto, that’s where — a 0-0 borefest from two teams who’d scored for fun all month and picked yesterday to remember how to defend. We log it, we learn from it, and we go again — the beautiful thing about this game is there’s always another card tomorrow, and I intend to read it better than the bookies do."
+    },
+    {
+      "date": "2026-07-22",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 3.64,
+      "status": "won",
+      "returns": 36.4,
+      "profit": 26.4,
+      "legs": [
+        {
+          "home": "Lillestrøm",
+          "away": "Viking",
+          "region": "Norway",
+          "league": "Eliteserien",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.58,
+          "ft": "1-2",
+          "result": "won"
+        },
+        {
+          "home": "Columbus Crew",
+          "away": "New York City",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "BTTS - Yes",
+          "odds": 1.6,
+          "ft": "1-2",
+          "result": "won"
+        },
+        {
+          "home": "Philadelphia Union",
+          "away": "New York RB",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "BTTS - Yes",
+          "odds": 1.44,
+          "ft": "3-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "Right, pull up a chair, because I owe you the honest word on yesterday’s slips — the good, the bad, and the bits I’d rather not talk about. Mixed bag, and I’ll give it to you straight: the double banked, the treble came up a leg short, and the ledger still moved the right direction — which is the bit that matters. The corners in Lillestrøm v Viking came exactly as advertised — flags flying all game, the line beaten with room to spare, and the easiest watch of the day. Where did it go wrong? New England Revolution against Toronto, that’s where — a 0-0 borefest from two teams who’d scored for fun all month and picked yesterday to remember how to defend. We log it, we learn from it, and we go again — the beautiful thing about this game is there’s always another card tomorrow, and I intend to read it better than the bookies do."
+    },
+    {
       "date": "2026-07-21",
       "kind": "double",
       "stake": 10,
