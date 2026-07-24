@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-23",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.19,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Austin",
+          "away": "Seattle Sounders",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.45,
+          "ft": "3-1",
+          "result": "lost"
+        },
+        {
+          "home": "SJ Earthquakes",
+          "away": "Orlando City",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "Over 11.5 Corners",
+          "odds": 2.2,
+          "ft": "0-4",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. Our BTTS died in Botafogo v Vitória, where neither side forgot their shooting boots entirely — 0-0 at the whistle, one net untouched, slip down the drain. Long game, this — one day never makes us and one day never breaks us, which is exactly why the record stays public and the method stays the same."
+    },
+    {
+      "date": "2026-07-23",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 3.93,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Sporting KC",
+          "away": "Minnesota United",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.54,
+          "ft": "2-1",
+          "result": "won"
+        },
+        {
+          "home": "Botafogo",
+          "away": "Vitória",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.7,
+          "ft": "0-0",
+          "result": "lost"
+        },
+        {
+          "home": "LA Galaxy",
+          "away": "St. Louis City",
+          "region": "USA",
+          "league": "MLS",
+          "selection": "BTTS - Yes",
+          "odds": 1.5,
+          "ft": "1-3",
+          "result": "won"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. Our BTTS died in Botafogo v Vitória, where neither side forgot their shooting boots entirely — 0-0 at the whistle, one net untouched, slip down the drain. Long game, this — one day never makes us and one day never breaks us, which is exactly why the record stays public and the method stays the same."
+    },
+    {
       "date": "2026-07-22",
       "kind": "double",
       "stake": 10,
