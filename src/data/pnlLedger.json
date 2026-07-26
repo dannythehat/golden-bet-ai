@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-25",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 4.05,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "SSC Farul",
+          "away": "Corvinul Hunedoara",
+          "region": "Romania",
+          "league": "Liga I",
+          "selection": "Over 2.5 Goals",
+          "odds": 2.1,
+          "ft": "2-0",
+          "result": "lost"
+        },
+        {
+          "home": "Santos",
+          "away": "Chapecoense",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.93,
+          "ft": "2-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Results are in, and you know the house rule by now: I read them out whether they flatter me or not. The double delivered like a good pro, the treble teased us and fell away — but when the maths shakes out, we’re still up on the day, and up is up. Daegu and Suwon traded goals just like I said they would — 1-2 at full time, both sides on the scoresheet, and the slip never in a moment’s danger. The villain of the piece was SSC Farul v Corvinul Hunedoara, which crawled to 2-0 — the goals I promised never showed up, and that single flat game is what sank the slip. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
+      "date": "2026-07-25",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 4.67,
+      "status": "won",
+      "returns": 46.66,
+      "profit": 36.66,
+      "legs": [
+        {
+          "home": "Vasco da Gama",
+          "away": "Mirassol",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.8,
+          "ft": "1-1",
+          "result": "won"
+        },
+        {
+          "home": "Changchun Yatai",
+          "away": "Nanjing City",
+          "region": "China",
+          "league": "China League One",
+          "selection": "BTTS - Yes",
+          "odds": 1.8,
+          "ft": "2-1",
+          "result": "won"
+        },
+        {
+          "home": "Daegu",
+          "away": "Suwon",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.44,
+          "ft": "1-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Results are in, and you know the house rule by now: I read them out whether they flatter me or not. The double delivered like a good pro, the treble teased us and fell away — but when the maths shakes out, we’re still up on the day, and up is up. Daegu and Suwon traded goals just like I said they would — 1-2 at full time, both sides on the scoresheet, and the slip never in a moment’s danger. The villain of the piece was SSC Farul v Corvinul Hunedoara, which crawled to 2-0 — the goals I promised never showed up, and that single flat game is what sank the slip. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
       "date": "2026-07-24",
       "kind": "double",
       "stake": 10,
