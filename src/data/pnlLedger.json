@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-26",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 5.33,
+      "status": "won",
+      "returns": 53.28,
+      "profit": 43.28,
+      "legs": [
+        {
+          "home": "Mačva Šabac",
+          "away": "Partizan",
+          "region": "Serbia",
+          "league": "SuperLiga",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.88,
+          "ft": "1-3",
+          "result": "won"
+        },
+        {
+          "home": "Red Star Belgrade",
+          "away": "Vojvodina",
+          "region": "Serbia",
+          "league": "SuperLiga",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.85,
+          "ft": "3-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. Half glory, half grumbling: the double did everything asked of it, the treble had one leg too ambitious. That’s trebles for you — bigger pay-off, more ways to break your heart. I told you the Mačva Šabac v Partizan defences were held together with tape, and 4 goals later the scoreboard read 1-3 — that’s the form table talking, not luck. The costly one was Cruzeiro v Botafogo at 0-1 — I needed both to score and Cruzeiro never looked like obliging, which is football’s way of keeping a man humble. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
+      "date": "2026-07-26",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 6.97,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Palmeiras",
+          "away": "Atlético Mineiro",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.97,
+          "ft": "1-2",
+          "result": "won"
+        },
+        {
+          "home": "Guangxi Hengchen",
+          "away": "Heilongjiang Lava Spring",
+          "region": "China",
+          "league": "China League One",
+          "selection": "BTTS - Yes",
+          "odds": 2,
+          "ft": "4-4",
+          "result": "won"
+        },
+        {
+          "home": "Cruzeiro",
+          "away": "Botafogo",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.77,
+          "ft": "0-1",
+          "result": "lost"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. Half glory, half grumbling: the double did everything asked of it, the treble had one leg too ambitious. That’s trebles for you — bigger pay-off, more ways to break your heart. I told you the Mačva Šabac v Partizan defences were held together with tape, and 4 goals later the scoreboard read 1-3 — that’s the form table talking, not luck. The costly one was Cruzeiro v Botafogo at 0-1 — I needed both to score and Cruzeiro never looked like obliging, which is football’s way of keeping a man humble. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
       "date": "2026-07-25",
       "kind": "double",
       "stake": 10,
