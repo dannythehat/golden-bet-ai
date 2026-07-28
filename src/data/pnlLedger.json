@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-27",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.77,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "CFR Cluj",
+          "away": "Voluntari",
+          "region": "Romania",
+          "league": "Liga I",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.94,
+          "ft": "5-0",
+          "result": "won"
+        },
+        {
+          "home": "Stabæk",
+          "away": "Hødd",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.43,
+          "ft": "6-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. Rough day at the office — both bets lost, and while the reads were right more than the results suggest, results are what pay, so we log it and move. Blame the corners in Stabæk v Hødd — two wide-loving teams picked yesterday to play through the middle, and our line never got close. The card never sleeps and neither does the spreadsheet — see you in the morning with the next round of value."
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 3.41,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Östers IF",
+          "away": "Varberg",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.57,
+          "ft": "3-0",
+          "result": "won"
+        },
+        {
+          "home": "Örebro",
+          "away": "Oddevold",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "BTTS - Yes",
+          "odds": 1.55,
+          "ft": "0-0",
+          "result": "lost"
+        },
+        {
+          "home": "Häcken",
+          "away": "AIK Stockholm",
+          "region": "Sweden",
+          "league": "Allsvenskan",
+          "selection": "BTTS - Yes",
+          "odds": 1.4,
+          "ft": "0-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. Rough day at the office — both bets lost, and while the reads were right more than the results suggest, results are what pay, so we log it and move. Blame the corners in Stabæk v Hødd — two wide-loving teams picked yesterday to play through the middle, and our line never got close. The card never sleeps and neither does the spreadsheet — see you in the morning with the next round of value."
+    },
+    {
       "date": "2026-07-26",
       "kind": "double",
       "stake": 10,
