@@ -2,6 +2,28 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-28",
+      "kind": "single",
+      "stake": 10,
+      "combinedOdds": 1.49,
+      "status": "won",
+      "returns": 14.9,
+      "profit": 4.9,
+      "legs": [
+        {
+          "home": "Helsingborg",
+          "away": "United Nordic",
+          "region": "Sweden",
+          "league": "Superettan",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.49,
+          "ft": "1-1",
+          "result": "won"
+        }
+      ],
+      "verdict": "I’ve had my coffee and read the scores twice, so here it is — yesterday’s verdict, straight from the man who picked them. A tidy green day — called it in the morning, cashed it by night, and slept like a man whose spreadsheet loves him. Our corner play in Helsingborg v United Nordic was a joy — two teams whipping it wide all afternoon, the count climbing like a lift, and the over home well before the end. We log it, we learn from it, and we go again — the beautiful thing about this game is there’s always another card tomorrow, and I intend to read it better than the bookies do."
+    },
+    {
       "date": "2026-07-27",
       "kind": "double",
       "stake": 10,
