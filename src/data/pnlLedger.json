@@ -2,6 +2,38 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-30",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.7,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Fluminense",
+          "away": "Bahia",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "BTTS - Yes",
+          "odds": 1.72,
+          "ft": "0-0",
+          "result": "lost"
+        },
+        {
+          "home": "Vitória",
+          "away": "Palmeiras",
+          "region": "Brazil",
+          "league": "Serie A",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.57,
+          "ft": "0-4",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Right, pull up a chair, because I owe you the honest word on yesterday’s slips — the good, the bad, and the bits I’d rather not talk about. Both slips down, hands up from me. I deal in edges, and edges mean sometimes the percentages take a day off — the long game is where we win, and the long game continues tomorrow. The dud was the both-teams-to-score in Fluminense v Bahia — neither side couldn’t buy a goal at 0-0, and one shy front line is all it takes to sink that market. On we go — the season is a marathon of small edges, and yesterday, whatever it was, is now just one more data point behind us."
+    },
+    {
       "date": "2026-07-29",
       "kind": "double",
       "stake": 10,
