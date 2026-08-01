@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-07-31",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 8.92,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Wil",
+          "away": "Neuchâtel Xamax",
+          "region": "Switzerland",
+          "league": "Challenge League",
+          "selection": "Over 4.5 Goals",
+          "odds": 3.5,
+          "ft": "1-2",
+          "result": "lost"
+        },
+        {
+          "home": "Kriens",
+          "away": "Winterthur",
+          "region": "Switzerland",
+          "league": "Challenge League",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.55,
+          "ft": "2-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. Blame the corners in Viktoria Žižkov v Prostějov — two wide-loving teams picked yesterday to play through the middle, and our line never got close. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 10.33,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Karviná",
+          "away": "Vlašim",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "Over 11.5 Corners",
+          "odds": 2.41,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Viktoria Žižkov",
+          "away": "Prostějov",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "Over 11.5 Corners",
+          "odds": 2.22,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "Kladno",
+          "away": "Baník Ostrava U21",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.93,
+          "ft": "1-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. Blame the corners in Viktoria Žižkov v Prostějov — two wide-loving teams picked yesterday to play through the middle, and our line never got close. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
       "date": "2026-07-30",
       "kind": "double",
       "stake": 10,
