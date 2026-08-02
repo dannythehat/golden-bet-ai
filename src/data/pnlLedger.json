@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-01",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 23.82,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Slovácko",
+          "away": "Líšeň",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "Over 4.5 Goals",
+          "odds": 5.5,
+          "ft": "1-1",
+          "result": "lost"
+        },
+        {
+          "home": "Voluntari",
+          "away": "UTA Arad",
+          "region": "Romania",
+          "league": "Liga I",
+          "selection": "Over 3.5 Goals",
+          "odds": 4.33,
+          "ft": "1-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. The leg that cost us was Viktoria Plzeň v Zbrojovka Brno at 1-1 — I read an open game and got a chess match, and I’ll hold my hands up: the goals simply never came. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
+      "date": "2026-08-01",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 15.2,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Slovan Liberec",
+          "away": "Teplice",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.92,
+          "ft": "0-1",
+          "result": "lost"
+        },
+        {
+          "home": "Třinec",
+          "away": "Vysočina Jihlava",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "Over 11.5 Corners",
+          "odds": 2.41,
+          "ft": "0-0",
+          "result": "won"
+        },
+        {
+          "home": "Viktoria Plzeň",
+          "away": "Zbrojovka Brno",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.16,
+          "ft": "1-1",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. The leg that cost us was Viktoria Plzeň v Zbrojovka Brno at 1-1 — I read an open game and got a chess match, and I’ll hold my hands up: the goals simply never came. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
       "date": "2026-07-31",
       "kind": "double",
       "stake": 10,
