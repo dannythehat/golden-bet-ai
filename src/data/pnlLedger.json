@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-02",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 4.27,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Sion",
+          "away": "Luzern",
+          "region": "Switzerland",
+          "league": "Super League",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.27,
+          "ft": "3-0",
+          "result": "lost"
+        },
+        {
+          "home": "Bohemians 1905",
+          "away": "Hradec Králové",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.88,
+          "ft": "0-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Team talk time — the whistle’s gone on everything we backed, so let’s tot up the damage and the glory in that order or the other. Not our day, simple as that — the card went against us leg by leg, and I’d rather show you the loss in full than pretend it didn’t happen. Honest record, honest morning. Everything stood up except Bohemians 1905 v Hradec Králové, which froze at 0-0 — that’s the one I’d want back, and the one I’ll be studying over breakfast. The card never sleeps and neither does the spreadsheet — see you in the morning with the next round of value."
+    },
+    {
+      "date": "2026-08-02",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 8.73,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Pardubice",
+          "away": "Jablonec",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.86,
+          "ft": "0-2",
+          "result": "lost"
+        },
+        {
+          "home": "Partizan",
+          "away": "IMT Novi Beograd",
+          "region": "Serbia",
+          "league": "SuperLiga",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.88,
+          "ft": "1-2",
+          "result": "lost"
+        },
+        {
+          "home": "Grasshopper",
+          "away": "Lugano",
+          "region": "Switzerland",
+          "league": "Super League",
+          "selection": "BTTS - Yes",
+          "odds": 1.63,
+          "ft": "1-4",
+          "result": "won"
+        }
+      ],
+      "verdict": "Team talk time — the whistle’s gone on everything we backed, so let’s tot up the damage and the glory in that order or the other. Not our day, simple as that — the card went against us leg by leg, and I’d rather show you the loss in full than pretend it didn’t happen. Honest record, honest morning. Everything stood up except Bohemians 1905 v Hradec Králové, which froze at 0-0 — that’s the one I’d want back, and the one I’ll be studying over breakfast. The card never sleeps and neither does the spreadsheet — see you in the morning with the next round of value."
+    },
+    {
       "date": "2026-08-01",
       "kind": "double",
       "stake": 10,
