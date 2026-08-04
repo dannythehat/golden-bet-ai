@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-03",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.15,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Vojvodina",
+          "away": "Mačva Šabac",
+          "region": "Serbia",
+          "league": "SuperLiga",
+          "selection": "Over 3.5 Goals",
+          "odds": 1.63,
+          "ft": "2-0",
+          "result": "lost"
+        },
+        {
+          "home": "FCSB",
+          "away": "SSC Farul",
+          "region": "Romania",
+          "league": "Liga I",
+          "selection": "Over 9.5 Corners",
+          "odds": 1.93,
+          "ft": "2-2",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Morning, you lot. Before we talk about today’s card, we settle up yesterday’s like grown-ups. Rough day at the office — both bets lost, and while the reads were right more than the results suggest, results are what pay, so we log it and move. One team turned up in Železničar Pančevo v LFK Mladost Lučani and it wasn’t neither side — 0-0, no both-teams-scored, and there’s your loser, named and shamed. We log it, we learn from it, and we go again — the beautiful thing about this game is there’s always another card tomorrow, and I intend to read it better than the bookies do."
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 7.54,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Universitatea Cluj",
+          "away": "Botoşani",
+          "region": "Romania",
+          "league": "Liga I",
+          "selection": "BTTS - Yes",
+          "odds": 1.83,
+          "ft": "2-1",
+          "result": "won"
+        },
+        {
+          "home": "Železničar Pančevo",
+          "away": "LFK Mladost Lučani",
+          "region": "Serbia",
+          "league": "SuperLiga",
+          "selection": "BTTS - Yes",
+          "odds": 1.83,
+          "ft": "0-0",
+          "result": "lost"
+        },
+        {
+          "home": "Ranheim",
+          "away": "Haugesund",
+          "region": "Norway",
+          "league": "First Division",
+          "selection": "Over 4.5 Goals",
+          "odds": 2.25,
+          "ft": "3-4",
+          "result": "won"
+        }
+      ],
+      "verdict": "Morning, you lot. Before we talk about today’s card, we settle up yesterday’s like grown-ups. Rough day at the office — both bets lost, and while the reads were right more than the results suggest, results are what pay, so we log it and move. One team turned up in Železničar Pančevo v LFK Mladost Lučani and it wasn’t neither side — 0-0, no both-teams-scored, and there’s your loser, named and shamed. We log it, we learn from it, and we go again — the beautiful thing about this game is there’s always another card tomorrow, and I intend to read it better than the bookies do."
+    },
+    {
       "date": "2026-08-02",
       "kind": "double",
       "stake": 10,
