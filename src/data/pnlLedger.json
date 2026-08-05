@@ -2,6 +2,28 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-04",
+      "kind": "single",
+      "stake": 10,
+      "combinedOdds": 1.61,
+      "status": "won",
+      "returns": 16.1,
+      "profit": 6.1,
+      "legs": [
+        {
+          "home": "Thór Akureyri",
+          "away": "Breidablik",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 10.5 Corners",
+          "odds": 1.61,
+          "ft": "1-0",
+          "result": "won"
+        }
+      ],
+      "verdict": "Results are in, and you know the house rule by now: I read them out whether they flatter me or not. The slip landed, the ledger ticks up, and the system does what the system does — no fireworks needed, just another brick in the wall. Thór Akureyri v Breidablik turned into the set-piece festival I promised — corner after corner until the line was a dot in the rear-view mirror. Right, that’s the accounting done — now if you’ll excuse me, tomorrow’s form tables aren’t going to squint at themselves."
+    },
+    {
       "date": "2026-08-03",
       "kind": "double",
       "stake": 10,
