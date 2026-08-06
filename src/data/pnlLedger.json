@@ -2,6 +2,38 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-05",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 2.54,
+      "status": "won",
+      "returns": 25.38,
+      "profit": 15.38,
+      "legs": [
+        {
+          "home": "Hafnarfjördur",
+          "away": "KR Reykjavík",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 11.5 Corners",
+          "odds": 1.75,
+          "ft": "1-1",
+          "result": "won"
+        },
+        {
+          "home": "Keflavík",
+          "away": "Akureyri",
+          "region": "Iceland",
+          "league": "Úrvalsdeild",
+          "selection": "Over 10.5 Corners",
+          "odds": 1.45,
+          "ft": "3-0",
+          "result": "won"
+        }
+      ],
+      "verdict": "The slips are settled and the kettle’s on, so here’s your report from the Gaffer — no spin, no hiding, just what happened. And it’s a green one — the slip did exactly what the numbers said it would, which is the most satisfying sentence in this whole trade. The corners in Hafnarfjördur v KR Reykjavík came exactly as advertised — flags flying all game, the line beaten with room to spare, and the easiest watch of the day. On we go — the season is a marathon of small edges, and yesterday, whatever it was, is now just one more data point behind us."
+    },
+    {
       "date": "2026-08-04",
       "kind": "single",
       "stake": 10,
