@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-07",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 3.2,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Blau-Weiß Linz",
+          "away": "Wacker Innsbruck",
+          "region": "Austria",
+          "league": "2. Liga",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.6,
+          "ft": "3-0",
+          "result": "lost"
+        },
+        {
+          "home": "Prostějov",
+          "away": "Karviná",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "Over 10.5 Corners",
+          "odds": 2,
+          "ft": "1-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "I’ve had my coffee and read the scores twice, so here it is — yesterday’s verdict, straight from the man who picked them. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. The leg that let us down was the corners in Vlašim v Viktoria Žižkov — the game stayed narrow, the flags stayed still, and the count fell short of the line. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
+      "date": "2026-08-07",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 6.25,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Vlašim",
+          "away": "Viktoria Žižkov",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "Over 10.5 Corners",
+          "odds": 1.97,
+          "ft": "4-1",
+          "result": "lost"
+        },
+        {
+          "home": "Gimpo Citizen",
+          "away": "Cheongju",
+          "region": "South Korea",
+          "league": "K League 2",
+          "selection": "BTTS - Yes",
+          "odds": 1.9,
+          "ft": "3-0",
+          "result": "lost"
+        },
+        {
+          "home": "Slavia Praha U21",
+          "away": "Třinec",
+          "region": "Czech Republic",
+          "league": "FNL",
+          "selection": "BTTS - Yes",
+          "odds": 1.67,
+          "ft": "3-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "I’ve had my coffee and read the scores twice, so here it is — yesterday’s verdict, straight from the man who picked them. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. The leg that let us down was the corners in Vlašim v Viktoria Žižkov — the game stayed narrow, the flags stayed still, and the count fell short of the line. Same time tomorrow, same honest report — bring your tenner, bring your patience, and let the numbers do their slow, reliable work."
+    },
+    {
       "date": "2026-08-05",
       "kind": "double",
       "stake": 10,
