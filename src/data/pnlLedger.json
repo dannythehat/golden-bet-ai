@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-08",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 7.88,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Rapid Wien II",
+          "away": "Voitsberg",
+          "region": "Austria",
+          "league": "2. Liga",
+          "selection": "Over 11.5 Corners",
+          "odds": 3.5,
+          "ft": "1-3",
+          "result": "lost"
+        },
+        {
+          "home": "Schwarz-Weiß Bregenz",
+          "away": "Kapfenberger SV",
+          "region": "Austria",
+          "league": "2. Liga",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.25,
+          "ft": "3-2",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. Blame the corners in Sturm Graz II v Floridsdorfer AC — two wide-loving teams picked yesterday to play through the middle, and our line never got close. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
+      "date": "2026-08-08",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 7.62,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Mladá Boleslav",
+          "away": "Sparta Praha",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "Over 3.5 Goals",
+          "odds": 2.24,
+          "ft": "2-0",
+          "result": "lost"
+        },
+        {
+          "home": "Sturm Graz II",
+          "away": "Floridsdorfer AC",
+          "region": "Austria",
+          "league": "2. Liga",
+          "selection": "Over 8.5 Corners",
+          "odds": 1.46,
+          "ft": "4-2",
+          "result": "lost"
+        },
+        {
+          "home": "Radnički Kragujevac",
+          "away": "FK Zemun",
+          "region": "Serbia",
+          "league": "SuperLiga",
+          "selection": "Over 9.5 Corners",
+          "odds": 2.33,
+          "ft": "3-0",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. A blank, and it stings — nothing landed, the ledger takes a knock, and I take it on the chin in public, because that’s the deal we have. Blame the corners in Sturm Graz II v Floridsdorfer AC — two wide-loving teams picked yesterday to play through the middle, and our line never got close. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
       "date": "2026-08-07",
       "kind": "double",
       "stake": 10,
