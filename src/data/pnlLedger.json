@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-09",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 7.47,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Amstetten",
+          "away": "Admira",
+          "region": "Austria",
+          "league": "2. Liga",
+          "selection": "Over 11.5 Corners",
+          "odds": 3.15,
+          "ft": "2-1",
+          "result": "won"
+        },
+        {
+          "home": "Ried",
+          "away": "Rapid Wien",
+          "region": "Austria",
+          "league": "Bundesliga",
+          "selection": "Over 10.5 Corners",
+          "odds": 2.37,
+          "ft": "1-2",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. Not our day, simple as that — the card went against us leg by leg, and I’d rather show you the loss in full than pretend it didn’t happen. Honest record, honest morning. The leg that let us down was the corners in Ried v Rapid Wien — the game stayed narrow, the flags stayed still, and the count fell short of the line. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
+      "date": "2026-08-09",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 5.37,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Líšeň",
+          "away": "Sigma Olomouc",
+          "region": "Czech Republic",
+          "league": "First League",
+          "selection": "BTTS - Yes",
+          "odds": 1.85,
+          "ft": "1-2",
+          "result": "won"
+        },
+        {
+          "home": "Austria Wien",
+          "away": "LASK Linz",
+          "region": "Austria",
+          "league": "Bundesliga",
+          "selection": "Over 2.5 Goals",
+          "odds": 1.76,
+          "ft": "0-2",
+          "result": "lost"
+        },
+        {
+          "home": "Lugano",
+          "away": "Zürich",
+          "region": "Switzerland",
+          "league": "Super League",
+          "selection": "BTTS - Yes",
+          "odds": 1.65,
+          "ft": "5-0",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Let me walk you through how yesterday actually went, because a record only means something if somebody’s honest about it every single morning. Not our day, simple as that — the card went against us leg by leg, and I’d rather show you the loss in full than pretend it didn’t happen. Honest record, honest morning. The leg that let us down was the corners in Ried v Rapid Wien — the game stayed narrow, the flags stayed still, and the count fell short of the line. That’s yesterday filed — today’s card is already on my desk, the coffee’s fresh, and the value doesn’t find itself. Back shortly with the picks."
+    },
+    {
       "date": "2026-08-08",
       "kind": "double",
       "stake": 10,
