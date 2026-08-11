@@ -21749,9 +21749,9 @@
         "5.5": 0
       },
       "goals_odds": {
-        "2.5": 2.25,
+        "2.5": 2.32,
         "3.5": 4.05,
-        "4.5": 7.8
+        "4.5": 9.5
       },
       "corners_odds": {
         "8.5": null,
@@ -21764,11 +21764,11 @@
         "4.5": null,
         "5.5": null
       },
-      "btts_odds": 2.0,
+      "btts_odds": 2.05,
       "goals_under_odds": {
-        "0.5": 7.5,
-        "1.5": 2.84,
-        "2.5": 1.6,
+        "0.5": 8.0,
+        "1.5": 2.64,
+        "2.5": 1.61,
         "3.5": 1.17
       },
       "corners_under_odds": {
@@ -21782,14 +21782,14 @@
         "3.5": null,
         "4.5": null
       },
-      "btts_no_odds": 1.67,
+      "btts_no_odds": 1.69,
       "value": {
         "goals": {
           "2.5": {
             "prob": 50,
-            "odds": 2.25,
-            "implied": 44.4,
-            "edge": 5.6,
+            "odds": 2.32,
+            "implied": 43.1,
+            "edge": 6.9,
             "flag": null
           },
           "3.5": {
@@ -21801,9 +21801,9 @@
           },
           "4.5": {
             "prob": 0,
-            "odds": 7.8,
-            "implied": 12.8,
-            "edge": -12.8,
+            "odds": 9.5,
+            "implied": 10.5,
+            "edge": -10.5,
             "flag": null
           }
         },
@@ -21815,9 +21815,9 @@
         },
         "btts": {
           "prob": 100,
-          "odds": 2.0,
-          "implied": 50,
-          "edge": 50,
+          "odds": 2.05,
+          "implied": 48.8,
+          "edge": 51.2,
           "flag": "strong"
         }
       },
@@ -45833,9 +45833,9 @@
         "5.5": 33
       },
       "goals_odds": {
-        "2.5": null,
-        "3.5": null,
-        "4.5": null
+        "2.5": 1.41,
+        "3.5": 2.3,
+        "4.5": 3.9
       },
       "corners_odds": {
         "8.5": null,
@@ -45848,12 +45848,12 @@
         "4.5": null,
         "5.5": null
       },
-      "btts_odds": null,
+      "btts_odds": 1.85,
       "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
-        "2.5": null,
-        "3.5": null
+        "0.5": 13.5,
+        "1.5": 5.2,
+        "2.5": 2.4,
+        "3.5": 1.57
       },
       "corners_under_odds": {
         "8.5": null,
@@ -45866,12 +45866,30 @@
         "3.5": null,
         "4.5": null
       },
-      "btts_no_odds": null,
+      "btts_no_odds": 1.77,
       "value": {
         "goals": {
-          "2.5": null,
-          "3.5": null,
-          "4.5": null
+          "2.5": {
+            "prob": 67,
+            "odds": 1.41,
+            "implied": 70.9,
+            "edge": -3.9,
+            "flag": null
+          },
+          "3.5": {
+            "prob": 50,
+            "odds": 2.3,
+            "implied": 43.5,
+            "edge": 6.5,
+            "flag": null
+          },
+          "4.5": {
+            "prob": 16.5,
+            "odds": 3.9,
+            "implied": 25.6,
+            "edge": -9.1,
+            "flag": null
+          }
         },
         "corners": {
           "8.5": null,
@@ -45879,7 +45897,13 @@
           "10.5": null,
           "11.5": null
         },
-        "btts": null
+        "btts": {
+          "prob": 50,
+          "odds": 1.85,
+          "implied": 54.1,
+          "edge": -4.1,
+          "flag": null
+        }
       },
       "home_form": [
         {
@@ -46627,8 +46651,8 @@
       },
       "goals_odds": {
         "2.5": 1.98,
-        "3.5": null,
-        "4.5": null
+        "3.5": 2.92,
+        "4.5": 5.55
       },
       "corners_odds": {
         "8.5": null,
@@ -46641,12 +46665,12 @@
         "4.5": null,
         "5.5": null
       },
-      "btts_odds": null,
+      "btts_odds": 1.67,
       "goals_under_odds": {
-        "0.5": null,
-        "1.5": null,
+        "0.5": 8.5,
+        "1.5": 3.5,
         "2.5": 1.83,
-        "3.5": null
+        "3.5": 1.31
       },
       "corners_under_odds": {
         "8.5": null,
@@ -46659,7 +46683,7 @@
         "3.5": null,
         "4.5": null
       },
-      "btts_no_odds": null,
+      "btts_no_odds": 2.06,
       "value": {
         "goals": {
           "2.5": {
@@ -46669,8 +46693,20 @@
             "edge": 12,
             "flag": "value"
           },
-          "3.5": null,
-          "4.5": null
+          "3.5": {
+            "prob": 50,
+            "odds": 2.92,
+            "implied": 34.2,
+            "edge": 15.8,
+            "flag": "value"
+          },
+          "4.5": {
+            "prob": 12.5,
+            "odds": 5.55,
+            "implied": 18,
+            "edge": -5.5,
+            "flag": null
+          }
         },
         "corners": {
           "8.5": null,
@@ -46678,7 +46714,13 @@
           "10.5": null,
           "11.5": null
         },
-        "btts": null
+        "btts": {
+          "prob": 37.5,
+          "odds": 1.67,
+          "implied": 59.9,
+          "edge": -22.4,
+          "flag": null
+        }
       },
       "home_form": [
         {
