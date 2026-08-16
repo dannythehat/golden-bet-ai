@@ -2,6 +2,80 @@
   "note": "Settled bet ledger — the tracked record. Each entry is a locked pre-match bet (double = 2 best value picks, treble = next 3) with its real result. Append new days here; never edit a settled result.",
   "bets": [
     {
+      "date": "2026-08-15",
+      "kind": "double",
+      "stake": 10,
+      "combinedOdds": 4.95,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Fagiano Okayama",
+          "away": "V-Varen Nagasaki",
+          "region": "Japan",
+          "league": "J1 League",
+          "selection": "Over 10.5 Corners",
+          "odds": 2.28,
+          "ft": "1-0",
+          "result": "lost"
+        },
+        {
+          "home": "JEF United",
+          "away": "Machida Zelvia",
+          "region": "Japan",
+          "league": "J1 League",
+          "selection": "Over 2.5 Goals",
+          "odds": 2.17,
+          "ft": "0-4",
+          "result": "won"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. Blame the corners in Portadown v Dungannon Swifts — two wide-loving teams picked yesterday to play through the middle, and our line never got close. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
+      "date": "2026-08-15",
+      "kind": "treble",
+      "stake": 10,
+      "combinedOdds": 18.37,
+      "status": "lost",
+      "returns": 0,
+      "profit": -10,
+      "legs": [
+        {
+          "home": "Kaizer Chiefs",
+          "away": "Mamelodi Sundowns",
+          "region": "South Africa",
+          "league": "Premier Soccer League",
+          "selection": "Over 3.5 Goals",
+          "odds": 4.33,
+          "ft": "1-1",
+          "result": "lost"
+        },
+        {
+          "home": "Portadown",
+          "away": "Dungannon Swifts",
+          "region": "Northern Ireland",
+          "league": "NIFL Premiership",
+          "selection": "Over 9.5 Corners",
+          "odds": 2.07,
+          "ft": "0-1",
+          "result": "lost"
+        },
+        {
+          "home": "Mito Hollyhock",
+          "away": "Gamba Osaka",
+          "region": "Japan",
+          "league": "J1 League",
+          "selection": "Over 2.5 Goals",
+          "odds": 2.05,
+          "ft": "1-1",
+          "result": "lost"
+        }
+      ],
+      "verdict": "Every morning I mark my own homework in public, which is either brave or daft depending on the scoreline — let’s find out which today. I’ll not dress it up: both slips went down, and no amount of clever words turns red into green. It happens to every honest record — the dishonest ones just delete days like this. Blame the corners in Portadown v Dungannon Swifts — two wide-loving teams picked yesterday to play through the middle, and our line never got close. Whatever yesterday gave us, today asks a new question — and I’ll have an answer on the board by breakfast, same as always."
+    },
+    {
       "date": "2026-08-14",
       "kind": "double",
       "stake": 10,
