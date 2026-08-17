@@ -1,0 +1,29 @@
+name: Take Golden Bet Offline
+
+# One-shot maintenance workflow. It only runs when offline-site/** changes.
+# After the offline page is deployed this workflow is removed again.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "offline-site/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: golden-bet-offline-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy-offline-page:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy offline page to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 964cd8ee33ecf4e58a581f4806cd0cb5
+          command: pages deploy offline-site --project-name=golden-bet-ai --branch=main
