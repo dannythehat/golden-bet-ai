@@ -1,23 +1,14 @@
 name: Daily Board + P&L
 
 # The Gaffer's morning routine, automated:
-#   1. SETTLE yesterday's locked bet against the real result → append to the P&L
-#      ledger (with the Gaffer's stored word on the day).
+#   1. SETTLE yesterday's locked bet against the real result -> append to the P&L ledger.
 #   2. REGENERATE today's value board from fresh fixtures / form / odds.
-#   3. BUILD + DEPLOY to Cloudflare Pages — the project is a direct-upload
-#      project (no git integration), so committing alone does NOT update the
-#      live site. The deploy step here is what keeps thefootyoracle.com fresh.
+#   3. COMMIT changed data to main. The separate Deploy to Cloudflare Pages
+#      workflow publishes that commit once, avoiding duplicate deployments.
 
 on:
   schedule:
-    # GitHub's scheduler is unreliable — it fires late or not at all, and a
-    # missed run means a stale site with NO failure alert (nothing ran, so
-    # nothing could scream). Defence: three slots across the early morning.
-    # The whole job is idempotent (settle replaces same-date entries, the
-    # board merge is stable, deploys overwrite), so extra runs are harmless.
-    #   02:45 UTC — first attempt (05:45 Sofia, 03:45 London)
-    #   03:35 UTC — backup if the first never fired
-    #   04:25 UTC — belt and braces
+    # Three early-morning slots are retained as the existing scheduler fallback.
     - cron: '45 2 * * *'
     - cron: '35 3 * * *'
     - cron: '25 4 * * *'
@@ -56,13 +47,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Settle FIRST — while yesterday's locked picks are still in the board file.
       - name: Settle the P&L ledger
         env:
           FOOTYSTATS_KEY: ${{ secrets.FOOTYSTATS }}
         run: node scripts/settle.mjs ${{ github.event.inputs.settle_dates }}
 
-      # Then refresh the board (merges — keeps yesterday for the next settle).
       - name: Regenerate the value board
         if: ${{ github.event.inputs.skip_generate != 'true' }}
         env:
@@ -79,30 +68,11 @@ jobs:
             echo "Nothing to commit — an earlier run already did today's work."
             echo "committed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "🤖 Daily board + P&L update [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+            git commit -m "Daily board + P&L update [$(date -u +'%Y-%m-%d %H:%M UTC')]"
             git push
             echo "committed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # The live site is a direct-upload Pages project — deploy or it stays stale.
-      - name: Build the site
-        run: npm run build
-
-      - name: Deploy to Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # wrangler v4 required: v3 hits /memberships, which this token can't read.
-          CLOUDFLARE_ACCOUNT_ID: 964cd8ee33ecf4e58a581f4806cd0cb5
-        run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "::error::CLOUDFLARE_API_TOKEN secret is not set — data was committed but the LIVE SITE WAS NOT UPDATED."
-            exit 1
-          fi
-          npx wrangler@4 pages deploy dist --project-name=golden-bet-ai --branch=main
-
-      # Morning report straight to the boss's pocket (skips if secrets unset).
-      # Success pings come only from the run that did the day's work — the
-      # backup cron slots stay silent unless something actually went wrong.
       - name: Telegram report
         if: always()
         env:
@@ -114,8 +84,8 @@ jobs:
           if [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ]; then exit 0; fi
           if [ "$STATUS" = "success" ]; then
             if [ "$COMMITTED" != "true" ]; then exit 0; fi
-            MSG="✅ Morning update done — yesterday settled, today's board live on thefootyoracle.com"
+            MSG="✅ Morning data update committed — production deploy workflow will publish it"
           else
-            MSG="🚨 MORNING UPDATE FAILED — the site may be showing stale picks. Check GitHub Actions → Daily Board + P&L."
+            MSG="🚨 MORNING UPDATE FAILED — today's data may be stale. Check GitHub Actions → Daily Board + P&L."
           fi
           curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" -d chat_id="${TG_CHAT}" -d text="$MSG" >/dev/null || true
